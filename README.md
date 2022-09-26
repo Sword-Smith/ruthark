@@ -5,7 +5,7 @@ Investigating and experimenting with various ways of using futhark in rust.
 ## Ok so do I try this out?
 0. Install Futhark if you haven't already. I prefer a precompiled snapshot: https://futhark.readthedocs.io/en/stable/installation.html#installing-from-a-precompiled-snapshot.
 1. Clone this repo.
-2. `Make all`.
+2. `make all`.
 
 ## What happened?
 
@@ -25,6 +25,8 @@ let dotprod [n] (xs: [n]i32) (ys: [n]i32): i32 =
 entry matmul [n][p][m] (xss: [n][p]i32) (yss: [p][m]i32): [n][m]i32 =
     map (\xs -> map (dotprod xs) (transpose yss)) xss
 ```
+
+There are a lot of moving parts, which you can see if you `make help`.
 
 ## What you need to use genfut
 
