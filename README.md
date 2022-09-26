@@ -36,8 +36,10 @@ Important: The generator finds the futhark source file from wherever you run the
 
 Since you can only specify one file, you will want to segregate futhark implementations from the outer entry-point file, which should import from other futhark fules and expose entry-points to the generator.
 
-## Ok but how actually?
+## Ok so do I try this out?
+0. Install Futhark if you haven't already. I prefer a precompiled snapshot: https://futhark.readthedocs.io/en/stable/installation.html#installing-from-a-precompiled-snapshot.
 1. Clone this repo.
 2. `Make help`.
 3. `Make all`.
-4. Read the code.
+
+It will then run some futhark code via Rust.
