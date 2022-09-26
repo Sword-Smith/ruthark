@@ -2,6 +2,14 @@
 
 Investigating and experimenting with various ways of using futhark in rust.
 
+## Ok so do I try this out?
+0. Install Futhark if you haven't already. I prefer a precompiled snapshot: https://futhark.readthedocs.io/en/stable/installation.html#installing-from-a-precompiled-snapshot.
+1. Clone this repo.
+2. `Make help`.
+3. `Make all`.
+
+It will then run some futhark code via Rust.
+
 ## Important stuff
 
 https://futhark-lang.org/blog/2022-07-01-how-futhark-talks-to-its-friends.html
@@ -35,11 +43,3 @@ The issue, then, is that the generator might have its own dependencies overwritt
 Important: The generator finds the futhark source file from wherever you run the binary, and it spits out the module from wherever you run the binary. Therefore, please run the binary from the workspace folder, so that the generated library is not dumped into the generator-module as a subfolder. Please also specify, in `generator/src/main.rs`, the full path __from the workspace folder__ to the specific file with an entrypoint, which you want the module to wrap around. 
 
 Since you can only specify one file, you will want to segregate futhark implementations from the outer entry-point file, which should import from other futhark fules and expose entry-points to the generator.
-
-## Ok so do I try this out?
-0. Install Futhark if you haven't already. I prefer a precompiled snapshot: https://futhark.readthedocs.io/en/stable/installation.html#installing-from-a-precompiled-snapshot.
-1. Clone this repo.
-2. `Make help`.
-3. `Make all`.
-
-It will then run some futhark code via Rust.
