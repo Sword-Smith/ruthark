@@ -1,4 +1,4 @@
-# rust-futhark
+# A rust/futhark demo
 
 Investigating and experimenting with various ways of using futhark in rust.
 
