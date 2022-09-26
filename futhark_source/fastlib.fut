@@ -1,5 +1,3 @@
-
-
 type BFieldElement = u64
 module BFieldElement = {
     def zero : BFieldElement = 0
