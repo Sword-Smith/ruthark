@@ -138,6 +138,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "generated_lib"
+version = "0.1.0"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "genfut"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -196,6 +203,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
+name = "lib_maker"
+version = "0.1.0"
+dependencies = [
+ "genfut",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -218,13 +232,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
 dependencies = [
  "cfg-if 1.0.0",
-]
-
-[[package]]
-name = "matmul"
-version = "0.1.0"
-dependencies = [
- "cc",
 ]
 
 [[package]]
@@ -315,14 +322,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3f87b73ce11b1619a3c6332f45341e0047173771e8b8b73f87bfeefb7b56244"
 
 [[package]]
-name = "rust-futhark"
-version = "0.1.0"
-dependencies = [
- "genfut",
- "matmul",
-]
-
-[[package]]
 name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -366,9 +365,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.100"
+version = "1.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52205623b1b0f064a4e71182c3b18ae902267282930c6d5462c91b859668426e"
+checksum = "e90cde112c4b9690b8cbe810cba9ddd8bc1d7472e2cae317b69e9438c1cba7d2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -410,6 +409,13 @@ name = "unicode-width"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c0edd1e5b14653f783770bce4a4dabb4a5108a5370a5f5d8cfe8710c361f6c8b"
+
+[[package]]
+name = "user_app"
+version = "0.1.0"
+dependencies = [
+ "generated_lib",
+]
 
 [[package]]
 name = "vec_map"
