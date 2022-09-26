@@ -5,10 +5,26 @@ Investigating and experimenting with various ways of using futhark in rust.
 ## Ok so do I try this out?
 0. Install Futhark if you haven't already. I prefer a precompiled snapshot: https://futhark.readthedocs.io/en/stable/installation.html#installing-from-a-precompiled-snapshot.
 1. Clone this repo.
-2. `Make help`.
-3. `Make all`.
+2. `Make all`.
 
-It will then run some futhark code via Rust. 
+## What happened?
+
+Assuming it worked with no errors, it compiled the sub-modules in a very specific order, and then executed a rust binary that makes use of a futhark backend to perform this matrix multiplication:
+
+```
+1 2         2 3         10 5
+3 4    *    4 1    =    22 13
+```
+
+The futhark code is:
+
+```futhark
+let dotprod [n] (xs: [n]i32) (ys: [n]i32): i32 =
+    i32.(reduce (+) (i32 0) (map2 (*) xs ys))
+
+entry matmul [n][p][m] (xss: [n][p]i32) (yss: [p][m]i32): [n][m]i32 =
+    map (\xs -> map (dotprod xs) (transpose yss)) xss
+```
 
 ## What you need to use genfut
 
