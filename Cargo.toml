@@ -3,5 +3,5 @@ members = [
     "lib_maker",
     "generated_lib",
     "user_app",
-    "twenty-first-fut",
+    "twenty-first",
 ]

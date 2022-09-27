@@ -1697,7 +1697,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "twenty-first-fut"
+name = "twenty-first"
 version = "0.2.0"
 dependencies = [
  "anyhow",
@@ -1721,8 +1721,8 @@ dependencies = [
  "primitive-types",
  "proptest",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_core 0.6.4",
+ "rand_chacha 0.2.2",
+ "rand_core 0.5.1",
  "rand_distr",
  "rand_pcg",
  "rayon",
