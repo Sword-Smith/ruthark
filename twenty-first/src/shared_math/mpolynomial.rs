@@ -558,6 +558,8 @@ impl<PFElem: FiniteField> MPolynomial<PFElem> {
         Ok(())
     }
 
+    // TODO MAKE FUTHARK OF THIS
+
     // Simple evaluation, without precalculated results
     pub fn evaluate(&self, point: &[PFElem]) -> PFElem {
         assert_eq!(
