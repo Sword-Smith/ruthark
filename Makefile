@@ -6,7 +6,7 @@ all:
 	@$(MAKE) generator --no-print-directory
 	@$(MAKE) generated --no-print-directory
 	@$(MAKE) user --no-print-directory
-	@$(MAKE) twenty-first-fut --no-print-directory
+	@$(MAKE) twenty-first --no-print-directory
 
 futhark:
 	futhark check futhark_source/matmul.fut
@@ -26,9 +26,9 @@ user:
 	cargo build -p user_app
 	cargo run --bin user_app
 
-twenty-first-fut:
-	cargo build -p twenty-first-fut
-	cargo run --bin twenty-first-fut
+twenty-first:
+	cargo build -p twenty-first
+	cargo run --bin twenty-first
 
 clean:
 	cargo clean
