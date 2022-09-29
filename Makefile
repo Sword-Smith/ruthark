@@ -2,10 +2,11 @@ help:
 	cat Makefile
 
 all:
-	@$(MAKE) generator --no-print-directory
 	@$(MAKE) futhark --no-print-directory
+	@$(MAKE) generator --no-print-directory
 	@$(MAKE) generated --no-print-directory
 	@$(MAKE) user --no-print-directory
+	@$(MAKE) twenty-first-fut --no-print-directory
 
 futhark:
 	futhark check futhark_source/matmul.fut
@@ -15,7 +16,7 @@ generator:
 	cargo run --bin lib_maker
 
 generated:
-	RUSTFLAGS=-Awarnings cargo build -p generated_lib 
+	RUSTFLAGS=-Awarnings cargo build -p generated_lib
 	@# Very quietly fix the generated code so we dont have to
 	@# restore when we accidentally save and auto-format it,
 	@# or have to suffer the eyestrain of poor formatting.
@@ -24,6 +25,10 @@ generated:
 user:
 	cargo build -p user_app
 	cargo run --bin user_app
+
+twenty-first-fut:
+	cargo build -p twenty-first-fut
+	cargo run --bin twenty-first-fut
 
 clean:
 	cargo clean
