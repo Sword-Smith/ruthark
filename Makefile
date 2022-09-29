@@ -8,8 +8,13 @@ all:
 	@$(MAKE) user --no-print-directory
 	@$(MAKE) twenty-first --no-print-directory
 
-futhark:
-	futhark check futhark_source/matmul.fut
+SRC_DIR := futhark_source
+SRC_FILES := $(wildcard $(SRC_DIR)/*.fut)
+
+futhark: $(SRC_FILES)
+	for file in $^ ; do \
+		futhark check $${file} ; \
+	done
 
 generator:
 	cargo build -p lib_maker
