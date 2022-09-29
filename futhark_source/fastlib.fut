@@ -1,8 +1,12 @@
-type BFieldElement = u64
-module BFieldElement = {
-    def zero : BFieldElement = 0
-    def one  : BFieldElement = 1
-}
+module BFieldElement = import "rp"
+
+type BFieldElement = BFieldElement.BFieldElement
+
+-- type BFieldElement = u64
+-- module BFieldElement = {
+--     def zero : BFieldElement = 0
+--     def one  : BFieldElement = 1
+-- }
 
 type XFieldElement = (BFieldElement, BFieldElement, BFieldElement)
 -- It's bad practice to have short arrays in futhark. The compiler
@@ -10,7 +14,9 @@ type XFieldElement = (BFieldElement, BFieldElement, BFieldElement)
 -- has a lot of overhead, and is not worth it for small arrays.
 -- If small and of constant size, use tuples/records instead.
 module XFieldElement = {
-    def zero : XFieldElement =
+    type Self = XFieldElement
+
+    def zero : Self =
         (
             BFieldElement.zero,
             BFieldElement.zero,
