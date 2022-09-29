@@ -1,4 +1,4 @@
-module BFieldElement = import "rp"
+module BFieldElement = import "BFieldElement"
 
 type BFieldElement = BFieldElement.BFieldElement
 

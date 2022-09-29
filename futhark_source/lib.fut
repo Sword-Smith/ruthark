@@ -1,6 +1,9 @@
-open import "fastlib"
-open import "rp"
-open import "matmul"
-open import "parametric_module"
+module BFieldElement = import "BFieldElement"
+module XFieldElement = import "XFieldElement"
 
-entry matmul = matmul
+module Fastlib = import "fastlib"
+module Matmul = import "matmul"
+
+module Parametric_module = import "parametric_module"
+
+entry matmul = Matmul.matmul

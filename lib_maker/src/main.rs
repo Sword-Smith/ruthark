@@ -1,7 +1,7 @@
 extern crate genfut;
 use genfut::{genfut, Opt};
 
-const FUTHARK_SOURCE_FILE: &str = "futhark_source/matmul.fut";
+const FUTHARK_SOURCE_FILE: &str = "futhark_source/lib.fut";
 const GENERATED_RUST_MODULE_NAME: &str = "generated_lib";
 
 fn main() {
