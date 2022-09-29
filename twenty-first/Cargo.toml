@@ -57,7 +57,7 @@ serde_json = "1.0"
 serde_with = "1"
 structopt = { version = "0.3", features = ["paw"] }
 emojihash-rs = "0.2"
-generated_lib = {path = "../generated_lib"}
+generated_lib = {path = "../futhark-library/generated_lib"}
 
 [[bench]]
 name = "polynomial_square"

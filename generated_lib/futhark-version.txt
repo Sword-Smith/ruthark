@@ -1,5 +1,0 @@
-Futhark 0.22.0
-git: ee9ca7615f051629528ab722c13c9667b2d60aad
-Copyright (C) DIKU, University of Copenhagen, released under the ISC license.
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.

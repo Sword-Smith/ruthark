@@ -1,1 +1,3 @@
-target/
+futhark-library/generated_lib
+futhark-library/target
+twenty-first/target
