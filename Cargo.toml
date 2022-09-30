@@ -1,2 +1,2 @@
 [workspace]
-members = ["twenty-first"]
+members = ["twenty-first", "futhark-library"]

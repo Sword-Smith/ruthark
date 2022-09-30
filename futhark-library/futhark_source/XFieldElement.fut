@@ -52,4 +52,16 @@ def neg ((lo, mi, hi) : XFieldElement) : XFieldElement =
 def sub (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   canonicalize (add a (neg b))
 
+def mul ((a_lo, a_mi, a_hi) : XFieldElement) ((b_lo, b_mi, b_hi) : XFieldElement) : XFieldElement =
+  ( (BFieldElement.mulmod a_lo b_lo)
+  , (BFieldElement.mulmod a_mi b_mi)
+  , (BFieldElement.mulmod a_hi b_hi)
+  ) -- TODO: IMPLEMENT PROPERLY
+
+def mod_pow_u32 ((a_lo, a_mi, a_hi) : XFieldElement) (exp :  u64) : XFieldElement =
+  ( (BFieldElement.powmod exp a_lo)
+  , (BFieldElement.powmod exp a_mi)
+  , (BFieldElement.powmod exp a_hi)
+  ) -- TODO: IMPLEMENT PROPERLY
+
 def inverse = id -- TODO
