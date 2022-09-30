@@ -12,6 +12,6 @@ fn main() {
         version: "0.1.0".to_string(),
         license: "YOLO".to_string(),
         description: "Futhark matrix multiplication example".to_string(),
-        backend: Backend::OpenCL,
+        backend: Backend::ISPC,
     })
 }
