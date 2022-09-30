@@ -22,11 +22,14 @@ generated:
 	@PARAM="COMPILING LIBRARY GENERATOR" $(MAKE) print_stage 
 	cd futhark-library && cargo build && cargo run
 
+	rm generated_lib -rf
+	mv futhark-library/generated_lib generated_lib
+
 	@PARAM="COMPILING LIBRARY" $(MAKE) print_stage 
-	cd futhark-library/generated_lib  && RUSTFLAGS=-Awarnings cargo build
+	cd generated_lib  && RUSTFLAGS=-Awarnings cargo build
 	
 	@PARAM="QUIETLY FIX GENERATED CODE" $(MAKE) print_stage 
-	cd futhark-library/generated_lib  && cargo fix --allow-dirty --allow-staged --allow-no-vcs 2> /dev/null
+	cd generated_lib  && cargo fix --allow-dirty --allow-staged --allow-no-vcs 2> /dev/null
 
 tf:
 	@PARAM="TWENTY-FIRST" $(MAKE) print_stage 
@@ -34,12 +37,12 @@ tf:
 
 clean:
 	cd futhark-library && cargo clean
-	cd futhark-library/generated_lib && cargo clean
+	cd generated_lib && cargo clean
 	cd twenty-first && cargo clean
 
 update:
 	cd futhark-library && cargo update
-	cd futhark-library/generated_lib && cargo update
+	cd generated_lib && cargo update
 	cd twenty-first && cargo update
 
 RELEASE := 0.22.2

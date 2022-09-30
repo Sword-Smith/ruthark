@@ -1,11 +1,15 @@
+-- Math foundation
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
+module Polynomial = import "Polynomial"
+module MPolynomial = import "MPolynomial"
 
+-- Experiments
 module Fastlib = import "fastlib"
 module Matmul = import "matmul"
-
 module Parametric_module = import "parametric_module"
 
+-- How to make imported functions callable
 entry matmul = Matmul.matmul
 
 type XFieldElementOpaque = XFieldElement.XFieldElement
@@ -39,7 +43,7 @@ def make_transposed_quotient_codewords
                     map2(\exps coefficient ->
                         XFieldElement.mul coefficient (
                             reduce (XFieldElement.mul) XFieldElement.one <|
-                            map2 (\exp elm -> XFieldElement.mod_pow_u32 elm exp) exps evaluation_points
+                            map2 (\exp elm -> XFieldElement.mod_pow_u64 elm exp) exps evaluation_points
                         )
                     ) expss coefficients
                 )

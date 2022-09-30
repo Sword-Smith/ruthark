@@ -1,2 +1,2 @@
 [workspace]
-members = ["twenty-first", "futhark-library"]
+members = ["twenty-first", "futhark-library", "generated_lib"]
