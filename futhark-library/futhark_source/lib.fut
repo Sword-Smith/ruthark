@@ -43,7 +43,7 @@ def make_transposed_quotient_codewords
                     map2(\exps coefficient ->
                         XFieldElement.mul coefficient (
                             reduce (XFieldElement.mul) XFieldElement.one <|
-                            map2 (\exp elm -> XFieldElement.mod_pow_u32 elm exp) exps evaluation_points
+                            map2 (\exp elm -> XFieldElement.mod_pow_u64 elm exp) exps evaluation_points
                         )
                     ) expss coefficients
                 )
