@@ -10,6 +10,15 @@
 #include <stdio.h>
 #include <float.h>
 
+#define CL_TARGET_OPENCL_VERSION 120
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+#ifdef __APPLE__
+#define CL_SILENCE_DEPRECATION
+#include <OpenCL/cl.h>
+#else
+#include <CL/cl.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,13 +27,29 @@ extern "C" {
 struct futhark_context_config;
 struct futhark_context_config *futhark_context_config_new(void);
 void futhark_context_config_free(struct futhark_context_config *cfg);
+void futhark_context_config_add_build_option(struct futhark_context_config *cfg, const char *opt);
 void futhark_context_config_set_debugging(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_profiling(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_logging(struct futhark_context_config *cfg, int flag);
+void futhark_context_config_set_device(struct futhark_context_config *cfg, const char *s);
+void futhark_context_config_set_platform(struct futhark_context_config *cfg, const char *s);
+void futhark_context_config_select_device_interactively(struct futhark_context_config *cfg);
+void futhark_context_config_list_devices(struct futhark_context_config *cfg);
+void futhark_context_config_dump_program_to(struct futhark_context_config *cfg, const char *path);
+void futhark_context_config_load_program_from(struct futhark_context_config *cfg, const char *path);
+void futhark_context_config_dump_binary_to(struct futhark_context_config *cfg, const char *path);
+void futhark_context_config_load_binary_from(struct futhark_context_config *cfg, const char *path);
+void futhark_context_config_set_default_group_size(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_num_groups(struct futhark_context_config *cfg, int num);
+void futhark_context_config_set_default_tile_size(struct futhark_context_config *cfg, int num);
+void futhark_context_config_set_default_reg_tile_size(struct futhark_context_config *cfg, int num);
+void futhark_context_config_set_default_threshold(struct futhark_context_config *cfg, int num);
+int futhark_context_config_set_tuning_param(struct futhark_context_config *cfg, const char *param_name, size_t new_value);
 struct futhark_context;
 struct futhark_context *futhark_context_new(struct futhark_context_config *cfg);
+struct futhark_context *futhark_context_new_with_command_queue(struct futhark_context_config *cfg, cl_command_queue queue);
 void futhark_context_free(struct futhark_context *ctx);
-int futhark_context_config_set_tuning_param(struct futhark_context_config *cfg, const char *param_name, size_t param_value);
+cl_command_queue futhark_context_get_command_queue(struct futhark_context *ctx);
 int futhark_get_tuning_param_count(void);
 const char *futhark_get_tuning_param_name(int);
 const char *futhark_get_tuning_param_class(int);
@@ -32,24 +57,24 @@ const char *futhark_get_tuning_param_class(int);
 // Arrays
 struct futhark_i32_2d;
 struct futhark_i32_2d *futhark_new_i32_2d(struct futhark_context *ctx, const int32_t *data, int64_t dim0, int64_t dim1);
-struct futhark_i32_2d *futhark_new_raw_i32_2d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1);
+struct futhark_i32_2d *futhark_new_raw_i32_2d(struct futhark_context *ctx, const cl_mem data, int64_t offset, int64_t dim0, int64_t dim1);
 int futhark_free_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
 int futhark_values_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr, int32_t *data);
-unsigned char *futhark_values_raw_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
+cl_mem futhark_values_raw_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
 const int64_t *futhark_shape_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
 struct futhark_u64_2d;
 struct futhark_u64_2d *futhark_new_u64_2d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1);
-struct futhark_u64_2d *futhark_new_raw_u64_2d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1);
+struct futhark_u64_2d *futhark_new_raw_u64_2d(struct futhark_context *ctx, const cl_mem data, int64_t offset, int64_t dim0, int64_t dim1);
 int futhark_free_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
 int futhark_values_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr, uint64_t *data);
-unsigned char *futhark_values_raw_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
+cl_mem futhark_values_raw_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
 const int64_t *futhark_shape_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
 struct futhark_u64_3d;
 struct futhark_u64_3d *futhark_new_u64_3d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1, int64_t dim2);
-struct futhark_u64_3d *futhark_new_raw_u64_3d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1, int64_t dim2);
+struct futhark_u64_3d *futhark_new_raw_u64_3d(struct futhark_context *ctx, const cl_mem data, int64_t offset, int64_t dim0, int64_t dim1, int64_t dim2);
 int futhark_free_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
 int futhark_values_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr, uint64_t *data);
-unsigned char *futhark_values_raw_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
+cl_mem futhark_values_raw_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
 const int64_t *futhark_shape_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
 
 // Opaque values
@@ -69,7 +94,7 @@ void futhark_context_set_logging_file(struct futhark_context *ctx, FILE *f);
 void futhark_context_pause_profiling(struct futhark_context *ctx);
 void futhark_context_unpause_profiling(struct futhark_context *ctx);
 int futhark_context_clear_caches(struct futhark_context *ctx);
-#define FUTHARK_BACKEND_c
+#define FUTHARK_BACKEND_opencl
 #define FUTHARK_SUCCESS 0
 #define FUTHARK_PROGRAM_ERROR 2
 #define FUTHARK_OUT_OF_MEMORY 3
