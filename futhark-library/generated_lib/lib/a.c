@@ -56,12 +56,27 @@ int futhark_free_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr)
 int futhark_values_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr, int32_t *data);
 unsigned char *futhark_values_raw_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
 const int64_t *futhark_shape_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
+struct futhark_u64_2d;
+struct futhark_u64_2d *futhark_new_u64_2d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1);
+struct futhark_u64_2d *futhark_new_raw_u64_2d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1);
+int futhark_free_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
+int futhark_values_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr, uint64_t *data);
+unsigned char *futhark_values_raw_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
+const int64_t *futhark_shape_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
+struct futhark_u64_3d;
+struct futhark_u64_3d *futhark_new_u64_3d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1, int64_t dim2);
+struct futhark_u64_3d *futhark_new_raw_u64_3d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1, int64_t dim2);
+int futhark_free_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
+int futhark_values_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr, uint64_t *data);
+unsigned char *futhark_values_raw_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
+const int64_t *futhark_shape_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
 
 // Opaque values
 
 
 
 // Entry points
+int futhark_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_3d *in2, const struct futhark_u64_3d *in3);
 int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **out0, const struct futhark_i32_2d *in0, const struct futhark_i32_2d *in1);
 
 // Miscellaneous
@@ -4932,7 +4947,8 @@ static int lexical_realloc(struct futhark_context *ctx,
 
 // End of context.h
 
-static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_7425, struct memblock xss_mem_7369, struct memblock yss_mem_7370, int64_t nz2080U_7179, int64_t pz2081U_7180, int64_t mz2082U_7181);
+static int futrts_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct memblock *mem_out_p_17559, struct memblock zzinvs_mem_17279, struct memblock eps_mem_17280, struct memblock expsss_mem_17281, struct memblock coefficientss_mem_17282, int64_t n_12238, int64_t m_12239, int64_t p_12240);
+static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_17568, struct memblock xss_mem_17279, struct memblock yss_mem_17280, int64_t nz2080U_9682, int64_t pz2081U_9683, int64_t mz2082U_9684);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -4948,6 +4964,142 @@ static int free_constants(struct futhark_context *ctx)
 {
     (void) ctx;
     return 0;
+}
+struct futhark_u64_2d {
+    struct memblock mem;
+    int64_t shape[2];
+};
+struct futhark_u64_2d *futhark_new_u64_2d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1)
+{
+    struct futhark_u64_2d *bad = NULL;
+    struct futhark_u64_2d *arr = (struct futhark_u64_2d *) malloc(sizeof(struct futhark_u64_2d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 8, "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    arr->shape[1] = dim1;
+    if ((size_t) (dim0 * dim1) * 8 > 0)
+        memmove(arr->mem.mem + 0, data + 0, (size_t) (dim0 * dim1) * 8);
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+struct futhark_u64_2d *futhark_new_raw_u64_2d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1)
+{
+    struct futhark_u64_2d *bad = NULL;
+    struct futhark_u64_2d *arr = (struct futhark_u64_2d *) malloc(sizeof(struct futhark_u64_2d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 8, "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    arr->shape[1] = dim1;
+    if ((size_t) (dim0 * dim1) * 8 > 0)
+        memmove(arr->mem.mem + 0, data + offset, (size_t) (dim0 * dim1) * 8);
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+int futhark_free_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr)
+{
+    lock_lock(&ctx->lock);
+    if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
+        return 1;
+    lock_unlock(&ctx->lock);
+    free(arr);
+    return 0;
+}
+int futhark_values_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr, uint64_t *data)
+{
+    lock_lock(&ctx->lock);
+    if ((size_t) (arr->shape[0] * arr->shape[1]) * 8 > 0)
+        memmove(data + 0, arr->mem.mem + 0, (size_t) (arr->shape[0] * arr->shape[1]) * 8);
+    lock_unlock(&ctx->lock);
+    return 0;
+}
+unsigned char *futhark_values_raw_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr)
+{
+    (void) ctx;
+    return arr->mem.mem;
+}
+const int64_t *futhark_shape_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr)
+{
+    (void) ctx;
+    return arr->shape;
+}
+struct futhark_u64_3d {
+    struct memblock mem;
+    int64_t shape[3];
+};
+struct futhark_u64_3d *futhark_new_u64_3d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1, int64_t dim2)
+{
+    struct futhark_u64_3d *bad = NULL;
+    struct futhark_u64_3d *arr = (struct futhark_u64_3d *) malloc(sizeof(struct futhark_u64_3d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * dim2 * 8, "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    arr->shape[1] = dim1;
+    arr->shape[2] = dim2;
+    if ((size_t) (dim0 * dim1 * dim2) * 8 > 0)
+        memmove(arr->mem.mem + 0, data + 0, (size_t) (dim0 * dim1 * dim2) * 8);
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+struct futhark_u64_3d *futhark_new_raw_u64_3d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1, int64_t dim2)
+{
+    struct futhark_u64_3d *bad = NULL;
+    struct futhark_u64_3d *arr = (struct futhark_u64_3d *) malloc(sizeof(struct futhark_u64_3d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * dim2 * 8, "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    arr->shape[1] = dim1;
+    arr->shape[2] = dim2;
+    if ((size_t) (dim0 * dim1 * dim2) * 8 > 0)
+        memmove(arr->mem.mem + 0, data + offset, (size_t) (dim0 * dim1 * dim2) * 8);
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+int futhark_free_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr)
+{
+    lock_lock(&ctx->lock);
+    if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
+        return 1;
+    lock_unlock(&ctx->lock);
+    free(arr);
+    return 0;
+}
+int futhark_values_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr, uint64_t *data)
+{
+    lock_lock(&ctx->lock);
+    if ((size_t) (arr->shape[0] * arr->shape[1] * arr->shape[2]) * 8 > 0)
+        memmove(data + 0, arr->mem.mem + 0, (size_t) (arr->shape[0] * arr->shape[1] * arr->shape[2]) * 8);
+    lock_unlock(&ctx->lock);
+    return 0;
+}
+unsigned char *futhark_values_raw_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr)
+{
+    (void) ctx;
+    return arr->mem.mem;
+}
+const int64_t *futhark_shape_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr)
+{
+    (void) ctx;
+    return arr->shape;
 }
 struct futhark_i32_2d {
     struct memblock mem;
@@ -5017,98 +5169,937 @@ const int64_t *futhark_shape_i32_2d(struct futhark_context *ctx, struct futhark_
     return arr->shape;
 }
 
-static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_7425, struct memblock xss_mem_7369, struct memblock yss_mem_7370, int64_t nz2080U_7179, int64_t pz2081U_7180, int64_t mz2082U_7181)
+static int futrts_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct memblock *mem_out_p_17559, struct memblock zzinvs_mem_17279, struct memblock eps_mem_17280, struct memblock expsss_mem_17281, struct memblock coefficientss_mem_17282, int64_t n_12238, int64_t m_12239, int64_t p_12240)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock mem_7374;
+    int64_t mem_17286_cached_sizze_17560 = 0;
+    unsigned char *mem_17286 = NULL;
+    int64_t mem_17290_cached_sizze_17561 = 0;
+    unsigned char *mem_17290 = NULL;
+    int64_t mem_17294_cached_sizze_17562 = 0;
+    unsigned char *mem_17294 = NULL;
+    int64_t mem_17422_cached_sizze_17563 = 0;
+    unsigned char *mem_17422 = NULL;
+    int64_t mem_17437_cached_sizze_17564 = 0;
+    unsigned char *mem_17437 = NULL;
+    int64_t mem_17440_cached_sizze_17565 = 0;
+    unsigned char *mem_17440 = NULL;
+    int64_t mem_17443_cached_sizze_17566 = 0;
+    unsigned char *mem_17443 = NULL;
+    int64_t mem_17490_cached_sizze_17567 = 0;
+    unsigned char *mem_17490 = NULL;
+    struct memblock mem_17525;
     
-    mem_7374.references = NULL;
+    mem_17525.references = NULL;
     
-    struct memblock mem_out_7421;
+    struct memblock mem_out_17532;
     
-    mem_out_7421.references = NULL;
+    mem_out_17532.references = NULL;
     
-    int64_t binop_x_7371 = nz2080U_7179 * mz2082U_7181;
-    int64_t binop_y_7372 = (int64_t) 4 * binop_x_7371;
-    int64_t bytes_7373 = smax64((int64_t) 0, binop_y_7372);
+    int64_t binop_x_17283 = m_12239 * p_12240;
+    int64_t binop_y_17284 = (int64_t) 8 * binop_x_17283;
+    int64_t bytes_17285 = smax64((int64_t) 0, binop_y_17284);
     
-    if (memblock_alloc(ctx, &mem_7374, bytes_7373, "mem_7374")) {
+    if (mem_17286_cached_sizze_17560 < bytes_17285) {
+        err = lexical_realloc(ctx, &mem_17286, &mem_17286_cached_sizze_17560, bytes_17285);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_17290_cached_sizze_17561 < bytes_17285) {
+        err = lexical_realloc(ctx, &mem_17290, &mem_17290_cached_sizze_17561, bytes_17285);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_17294_cached_sizze_17562 < bytes_17285) {
+        err = lexical_realloc(ctx, &mem_17294, &mem_17294_cached_sizze_17562, bytes_17285);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_17225 = 0; i_17225 < m_12239; i_17225++) {
+        for (int64_t i_17215 = 0; i_17215 < p_12240; i_17215++) {
+            int64_t defunc_0_f_res_13486 = ((int64_t *) coefficientss_mem_17282.mem)[i_17225 * ((int64_t) 3 * p_12240) + i_17215 * (int64_t) 3];
+            int64_t defunc_0_f_res_13487 = ((int64_t *) coefficientss_mem_17282.mem)[i_17225 * ((int64_t) 3 * p_12240) + i_17215 * (int64_t) 3 + (int64_t) 1];
+            int64_t defunc_0_f_res_13488 = ((int64_t *) coefficientss_mem_17282.mem)[i_17225 * ((int64_t) 3 * p_12240) + i_17215 * (int64_t) 3 + (int64_t) 2];
+            
+            ((int64_t *) mem_17286)[i_17225 * p_12240 + i_17215] = defunc_0_f_res_13486;
+            ((int64_t *) mem_17290)[i_17225 * p_12240 + i_17215] = defunc_0_f_res_13487;
+            ((int64_t *) mem_17294)[i_17225 * p_12240 + i_17215] = defunc_0_f_res_13488;
+        }
+    }
+    
+    int64_t binop_x_17418 = n_12238 * m_12239;
+    int64_t binop_y_17420 = (int64_t) 24 * binop_x_17418;
+    int64_t bytes_17421 = smax64((int64_t) 0, binop_y_17420);
+    
+    if (mem_17422_cached_sizze_17563 < bytes_17421) {
+        err = lexical_realloc(ctx, &mem_17422, &mem_17422_cached_sizze_17563, bytes_17421);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    
+    int64_t ixfun_arg_17434 = (int64_t) 3 * m_12239;
+    int64_t binop_y_17435 = (int64_t) 8 * m_12239;
+    int64_t bytes_17436 = smax64((int64_t) 0, binop_y_17435);
+    
+    if (mem_17437_cached_sizze_17564 < bytes_17436) {
+        err = lexical_realloc(ctx, &mem_17437, &mem_17437_cached_sizze_17564, bytes_17436);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_17440_cached_sizze_17565 < bytes_17436) {
+        err = lexical_realloc(ctx, &mem_17440, &mem_17440_cached_sizze_17565, bytes_17436);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_17443_cached_sizze_17566 < bytes_17436) {
+        err = lexical_realloc(ctx, &mem_17443, &mem_17443_cached_sizze_17566, bytes_17436);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_17490_cached_sizze_17567 < (int64_t) 24) {
+        err = lexical_realloc(ctx, &mem_17490, &mem_17490_cached_sizze_17567, (int64_t) 24);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_17253 = 0; i_17253 < n_12238; i_17253++) {
+        int64_t defunc_0_f_res_15415 = ((int64_t *) zzinvs_mem_17279.mem)[i_17253 * (int64_t) 3];
+        int64_t defunc_0_f_res_15416 = ((int64_t *) zzinvs_mem_17279.mem)[i_17253 * (int64_t) 3 + (int64_t) 1];
+        int64_t defunc_0_f_res_15417 = ((int64_t *) zzinvs_mem_17279.mem)[i_17253 * (int64_t) 3 + (int64_t) 2];
+        
+        for (int64_t i_17235 = 0; i_17235 < m_12239; i_17235++) {
+            int64_t defunc_0_f_res_15425 = ((int64_t *) eps_mem_17280.mem)[i_17253 * ((int64_t) 3 * m_12239) + i_17235 * (int64_t) 3];
+            int64_t defunc_0_f_res_15426 = ((int64_t *) eps_mem_17280.mem)[i_17253 * ((int64_t) 3 * m_12239) + i_17235 * (int64_t) 3 + (int64_t) 1];
+            int64_t defunc_0_f_res_15427 = ((int64_t *) eps_mem_17280.mem)[i_17253 * ((int64_t) 3 * m_12239) + i_17235 * (int64_t) 3 + (int64_t) 2];
+            
+            ((int64_t *) mem_17437)[i_17235] = defunc_0_f_res_15425;
+            ((int64_t *) mem_17440)[i_17235] = defunc_0_f_res_15426;
+            ((int64_t *) mem_17443)[i_17235] = defunc_0_f_res_15427;
+        }
+        
+        int64_t ah_15431 = lshr64(defunc_0_f_res_15415, (int64_t) 32);
+        int64_t al_15432 = (int64_t) 4294967295 & defunc_0_f_res_15415;
+        int64_t ah_15433 = lshr64(defunc_0_f_res_15416, (int64_t) 32);
+        int64_t al_15434 = (int64_t) 4294967295 & defunc_0_f_res_15416;
+        int64_t ah_15435 = lshr64(defunc_0_f_res_15417, (int64_t) 32);
+        int64_t al_15436 = (int64_t) 4294967295 & defunc_0_f_res_15417;
+        
+        for (int64_t i_17249 = 0; i_17249 < m_12239; i_17249++) {
+            int64_t defunc_0_f_res_17195;
+            int64_t defunc_0_f_res_17196;
+            int64_t defunc_0_f_res_17197;
+            int64_t redout_17243;
+            int64_t redout_17244;
+            int64_t redout_17245;
+            
+            redout_17243 = (int64_t) 0;
+            redout_17244 = (int64_t) 0;
+            redout_17245 = (int64_t) 0;
+            for (int64_t i_17246 = 0; i_17246 < p_12240; i_17246++) {
+                int64_t x_16590 = ((int64_t *) mem_17286)[i_17249 * p_12240 + i_17246];
+                int64_t x_16591 = ((int64_t *) mem_17290)[i_17249 * p_12240 + i_17246];
+                int64_t x_16592 = ((int64_t *) mem_17294)[i_17249 * p_12240 + i_17246];
+                int64_t defunc_0_f_res_17192;
+                int64_t defunc_0_f_res_17193;
+                int64_t defunc_0_f_res_17194;
+                int64_t redout_17239;
+                int64_t redout_17240;
+                int64_t redout_17241;
+                
+                redout_17239 = (int64_t) 1;
+                redout_17240 = (int64_t) 0;
+                redout_17241 = (int64_t) 0;
+                for (int64_t i_17242 = 0; i_17242 < m_12239; i_17242++) {
+                    int64_t x_17017 = ((int64_t *) expsss_mem_17281.mem)[i_17249 * (m_12239 * p_12240) + i_17246 * m_12239 + i_17242];
+                    int64_t x_17018 = ((int64_t *) mem_17437)[i_17242];
+                    int64_t x_17019 = ((int64_t *) mem_17440)[i_17242];
+                    int64_t x_17020 = ((int64_t *) mem_17443)[i_17242];
+                    bool loop_cond_17021 = ult64((int64_t) 0, x_17018);
+                    int64_t bh_17022 = lshr64(x_17017, (int64_t) 32);
+                    int64_t bl_17023 = (int64_t) 4294967295 & x_17017;
+                    bool binop_p_17024;
+                    int64_t binop_p_17025;
+                    int64_t binop_p_17026;
+                    bool loop_while_17027;
+                    int64_t acc_17028;
+                    int64_t exp_17029;
+                    
+                    loop_while_17027 = loop_cond_17021;
+                    acc_17028 = (int64_t) 1;
+                    exp_17029 = x_17018;
+                    while (loop_while_17027) {
+                        int64_t ah_17030 = lshr64(acc_17028, (int64_t) 32);
+                        int64_t al_17031 = (int64_t) 4294967295 & acc_17028;
+                        int64_t lol_17032 = mul64(bl_17023, al_17031);
+                        int64_t lolh_17033 = lshr64(lol_17032, (int64_t) 32);
+                        int64_t loll_17034 = (int64_t) 4294967295 & lol_17032;
+                        int64_t loh1_17035 = mul64(bl_17023, ah_17030);
+                        int64_t loh2_17036 = mul64(bh_17022, al_17031);
+                        int64_t x_17037 = lshr64(loh1_17035, (int64_t) 32);
+                        int64_t y_17038 = lshr64(loh2_17036, (int64_t) 32);
+                        int64_t x_17039 = add64(x_17037, y_17038);
+                        int64_t y_17040 = lshr64(lolh_17033, (int64_t) 32);
+                        int64_t lohh_17041 = add64(x_17039, y_17040);
+                        int64_t x_17042 = (int64_t) 4294967295 & loh1_17035;
+                        int64_t y_17043 = (int64_t) 4294967295 & loh2_17036;
+                        int64_t x_17044 = add64(x_17042, y_17043);
+                        int64_t y_17045 = (int64_t) 4294967295 & lolh_17033;
+                        int64_t lohl_17046 = add64(x_17044, y_17045);
+                        int64_t lohlh_17047 = lshr64(lohl_17046, (int64_t) 32);
+                        int64_t lohll_17048 = (int64_t) 4294967295 & lohl_17046;
+                        int64_t x_17049 = mul64(bh_17022, ah_17030);
+                        int64_t x_17050 = add64(lohh_17041, x_17049);
+                        int64_t hi_17051 = add64(lohlh_17047, x_17050);
+                        int64_t x_17052 = shl64(lohll_17048, (int64_t) 32);
+                        int64_t lo_17053 = loll_17034 | x_17052;
+                        int32_t u64_res_17054 = zext_i64_i32(hi_17051);
+                        int64_t u32_res_17055 = zext_i32_i64(u64_res_17054);
+                        int64_t d_17056 = lshr64(hi_17051, (int64_t) 32);
+                        int64_t overflowing_sub_res_17057 = sub64(lo_17053, d_17056);
+                        bool overflowing_sub_res_17058 = ult64(lo_17053, d_17056);
+                        int64_t unsign_arg_17059 = btoi_bool_i64(overflowing_sub_res_17058);
+                        int64_t wrapping_sub_arg_17060 = mul64((int64_t) 4294967295, unsign_arg_17059);
+                        int64_t wrapping_sub_res_17061 = sub64(overflowing_sub_res_17057, wrapping_sub_arg_17060);
+                        int64_t x_17062 = shl64(u32_res_17055, (int64_t) 32);
+                        int64_t tmp2_17063 = sub64(x_17062, u32_res_17055);
+                        int64_t sum_17064 = add64(wrapping_sub_res_17061, tmp2_17063);
+                        bool overflowing_add_res_17065 = ult64(sum_17064, wrapping_sub_res_17061);
+                        int64_t unsign_arg_17066 = btoi_bool_i64(overflowing_add_res_17065);
+                        int64_t wrapping_add_arg_17067 = mul64((int64_t) 4294967295, unsign_arg_17066);
+                        int64_t wrapping_add_res_17068 = add64(sum_17064, wrapping_add_arg_17067);
+                        int64_t loopres_17069 = sub64(exp_17029, (int64_t) 1);
+                        bool loop_cond_17070 = ult64((int64_t) 0, loopres_17069);
+                        bool loop_while_tmp_17550 = loop_cond_17070;
+                        int64_t acc_tmp_17551 = wrapping_add_res_17068;
+                        int64_t exp_tmp_17552 = loopres_17069;
+                        
+                        loop_while_17027 = loop_while_tmp_17550;
+                        acc_17028 = acc_tmp_17551;
+                        exp_17029 = exp_tmp_17552;
+                    }
+                    binop_p_17024 = loop_while_17027;
+                    binop_p_17025 = acc_17028;
+                    binop_p_17026 = exp_17029;
+                    
+                    bool loop_cond_17071 = ult64((int64_t) 0, x_17019);
+                    bool binop_p_17072;
+                    int64_t binop_p_17073;
+                    int64_t binop_p_17074;
+                    bool loop_while_17075;
+                    int64_t acc_17076;
+                    int64_t exp_17077;
+                    
+                    loop_while_17075 = loop_cond_17071;
+                    acc_17076 = (int64_t) 1;
+                    exp_17077 = x_17019;
+                    while (loop_while_17075) {
+                        int64_t ah_17078 = lshr64(acc_17076, (int64_t) 32);
+                        int64_t al_17079 = (int64_t) 4294967295 & acc_17076;
+                        int64_t lol_17080 = mul64(bl_17023, al_17079);
+                        int64_t lolh_17081 = lshr64(lol_17080, (int64_t) 32);
+                        int64_t loll_17082 = (int64_t) 4294967295 & lol_17080;
+                        int64_t loh1_17083 = mul64(bl_17023, ah_17078);
+                        int64_t loh2_17084 = mul64(bh_17022, al_17079);
+                        int64_t x_17085 = lshr64(loh1_17083, (int64_t) 32);
+                        int64_t y_17086 = lshr64(loh2_17084, (int64_t) 32);
+                        int64_t x_17087 = add64(x_17085, y_17086);
+                        int64_t y_17088 = lshr64(lolh_17081, (int64_t) 32);
+                        int64_t lohh_17089 = add64(x_17087, y_17088);
+                        int64_t x_17090 = (int64_t) 4294967295 & loh1_17083;
+                        int64_t y_17091 = (int64_t) 4294967295 & loh2_17084;
+                        int64_t x_17092 = add64(x_17090, y_17091);
+                        int64_t y_17093 = (int64_t) 4294967295 & lolh_17081;
+                        int64_t lohl_17094 = add64(x_17092, y_17093);
+                        int64_t lohlh_17095 = lshr64(lohl_17094, (int64_t) 32);
+                        int64_t lohll_17096 = (int64_t) 4294967295 & lohl_17094;
+                        int64_t x_17097 = mul64(bh_17022, ah_17078);
+                        int64_t x_17098 = add64(lohh_17089, x_17097);
+                        int64_t hi_17099 = add64(lohlh_17095, x_17098);
+                        int64_t x_17100 = shl64(lohll_17096, (int64_t) 32);
+                        int64_t lo_17101 = loll_17082 | x_17100;
+                        int32_t u64_res_17102 = zext_i64_i32(hi_17099);
+                        int64_t u32_res_17103 = zext_i32_i64(u64_res_17102);
+                        int64_t d_17104 = lshr64(hi_17099, (int64_t) 32);
+                        int64_t overflowing_sub_res_17105 = sub64(lo_17101, d_17104);
+                        bool overflowing_sub_res_17106 = ult64(lo_17101, d_17104);
+                        int64_t unsign_arg_17107 = btoi_bool_i64(overflowing_sub_res_17106);
+                        int64_t wrapping_sub_arg_17108 = mul64((int64_t) 4294967295, unsign_arg_17107);
+                        int64_t wrapping_sub_res_17109 = sub64(overflowing_sub_res_17105, wrapping_sub_arg_17108);
+                        int64_t x_17110 = shl64(u32_res_17103, (int64_t) 32);
+                        int64_t tmp2_17111 = sub64(x_17110, u32_res_17103);
+                        int64_t sum_17112 = add64(wrapping_sub_res_17109, tmp2_17111);
+                        bool overflowing_add_res_17113 = ult64(sum_17112, wrapping_sub_res_17109);
+                        int64_t unsign_arg_17114 = btoi_bool_i64(overflowing_add_res_17113);
+                        int64_t wrapping_add_arg_17115 = mul64((int64_t) 4294967295, unsign_arg_17114);
+                        int64_t wrapping_add_res_17116 = add64(sum_17112, wrapping_add_arg_17115);
+                        int64_t loopres_17117 = sub64(exp_17077, (int64_t) 1);
+                        bool loop_cond_17118 = ult64((int64_t) 0, loopres_17117);
+                        bool loop_while_tmp_17553 = loop_cond_17118;
+                        int64_t acc_tmp_17554 = wrapping_add_res_17116;
+                        int64_t exp_tmp_17555 = loopres_17117;
+                        
+                        loop_while_17075 = loop_while_tmp_17553;
+                        acc_17076 = acc_tmp_17554;
+                        exp_17077 = exp_tmp_17555;
+                    }
+                    binop_p_17072 = loop_while_17075;
+                    binop_p_17073 = acc_17076;
+                    binop_p_17074 = exp_17077;
+                    
+                    bool loop_cond_17119 = ult64((int64_t) 0, x_17020);
+                    bool binop_p_17120;
+                    int64_t binop_p_17121;
+                    int64_t binop_p_17122;
+                    bool loop_while_17123;
+                    int64_t acc_17124;
+                    int64_t exp_17125;
+                    
+                    loop_while_17123 = loop_cond_17119;
+                    acc_17124 = (int64_t) 1;
+                    exp_17125 = x_17020;
+                    while (loop_while_17123) {
+                        int64_t ah_17126 = lshr64(acc_17124, (int64_t) 32);
+                        int64_t al_17127 = (int64_t) 4294967295 & acc_17124;
+                        int64_t lol_17128 = mul64(bl_17023, al_17127);
+                        int64_t lolh_17129 = lshr64(lol_17128, (int64_t) 32);
+                        int64_t loll_17130 = (int64_t) 4294967295 & lol_17128;
+                        int64_t loh1_17131 = mul64(bl_17023, ah_17126);
+                        int64_t loh2_17132 = mul64(bh_17022, al_17127);
+                        int64_t x_17133 = lshr64(loh1_17131, (int64_t) 32);
+                        int64_t y_17134 = lshr64(loh2_17132, (int64_t) 32);
+                        int64_t x_17135 = add64(x_17133, y_17134);
+                        int64_t y_17136 = lshr64(lolh_17129, (int64_t) 32);
+                        int64_t lohh_17137 = add64(x_17135, y_17136);
+                        int64_t x_17138 = (int64_t) 4294967295 & loh1_17131;
+                        int64_t y_17139 = (int64_t) 4294967295 & loh2_17132;
+                        int64_t x_17140 = add64(x_17138, y_17139);
+                        int64_t y_17141 = (int64_t) 4294967295 & lolh_17129;
+                        int64_t lohl_17142 = add64(x_17140, y_17141);
+                        int64_t lohlh_17143 = lshr64(lohl_17142, (int64_t) 32);
+                        int64_t lohll_17144 = (int64_t) 4294967295 & lohl_17142;
+                        int64_t x_17145 = mul64(bh_17022, ah_17126);
+                        int64_t x_17146 = add64(lohh_17137, x_17145);
+                        int64_t hi_17147 = add64(lohlh_17143, x_17146);
+                        int64_t x_17148 = shl64(lohll_17144, (int64_t) 32);
+                        int64_t lo_17149 = loll_17130 | x_17148;
+                        int32_t u64_res_17150 = zext_i64_i32(hi_17147);
+                        int64_t u32_res_17151 = zext_i32_i64(u64_res_17150);
+                        int64_t d_17152 = lshr64(hi_17147, (int64_t) 32);
+                        int64_t overflowing_sub_res_17153 = sub64(lo_17149, d_17152);
+                        bool overflowing_sub_res_17154 = ult64(lo_17149, d_17152);
+                        int64_t unsign_arg_17155 = btoi_bool_i64(overflowing_sub_res_17154);
+                        int64_t wrapping_sub_arg_17156 = mul64((int64_t) 4294967295, unsign_arg_17155);
+                        int64_t wrapping_sub_res_17157 = sub64(overflowing_sub_res_17153, wrapping_sub_arg_17156);
+                        int64_t x_17158 = shl64(u32_res_17151, (int64_t) 32);
+                        int64_t tmp2_17159 = sub64(x_17158, u32_res_17151);
+                        int64_t sum_17160 = add64(wrapping_sub_res_17157, tmp2_17159);
+                        bool overflowing_add_res_17161 = ult64(sum_17160, wrapping_sub_res_17157);
+                        int64_t unsign_arg_17162 = btoi_bool_i64(overflowing_add_res_17161);
+                        int64_t wrapping_add_arg_17163 = mul64((int64_t) 4294967295, unsign_arg_17162);
+                        int64_t wrapping_add_res_17164 = add64(sum_17160, wrapping_add_arg_17163);
+                        int64_t loopres_17165 = sub64(exp_17125, (int64_t) 1);
+                        bool loop_cond_17166 = ult64((int64_t) 0, loopres_17165);
+                        bool loop_while_tmp_17556 = loop_cond_17166;
+                        int64_t acc_tmp_17557 = wrapping_add_res_17164;
+                        int64_t exp_tmp_17558 = loopres_17165;
+                        
+                        loop_while_17123 = loop_while_tmp_17556;
+                        acc_17124 = acc_tmp_17557;
+                        exp_17125 = exp_tmp_17558;
+                    }
+                    binop_p_17120 = loop_while_17123;
+                    binop_p_17121 = acc_17124;
+                    binop_p_17122 = exp_17125;
+                    
+                    int64_t ah_16756 = lshr64(redout_17239, (int64_t) 32);
+                    int64_t al_16757 = (int64_t) 4294967295 & redout_17239;
+                    int64_t bh_16758 = lshr64(binop_p_17025, (int64_t) 32);
+                    int64_t bl_16759 = (int64_t) 4294967295 & binop_p_17025;
+                    int64_t lol_16760 = mul64(al_16757, bl_16759);
+                    int64_t lolh_16761 = lshr64(lol_16760, (int64_t) 32);
+                    int64_t loll_16762 = (int64_t) 4294967295 & lol_16760;
+                    int64_t loh1_16763 = mul64(ah_16756, bl_16759);
+                    int64_t loh2_16764 = mul64(al_16757, bh_16758);
+                    int64_t x_16765 = lshr64(loh1_16763, (int64_t) 32);
+                    int64_t y_16766 = lshr64(loh2_16764, (int64_t) 32);
+                    int64_t x_16767 = add64(x_16765, y_16766);
+                    int64_t y_16768 = lshr64(lolh_16761, (int64_t) 32);
+                    int64_t lohh_16769 = add64(x_16767, y_16768);
+                    int64_t x_16770 = (int64_t) 4294967295 & loh1_16763;
+                    int64_t y_16771 = (int64_t) 4294967295 & loh2_16764;
+                    int64_t x_16772 = add64(x_16770, y_16771);
+                    int64_t y_16773 = (int64_t) 4294967295 & lolh_16761;
+                    int64_t lohl_16774 = add64(x_16772, y_16773);
+                    int64_t lohlh_16775 = lshr64(lohl_16774, (int64_t) 32);
+                    int64_t lohll_16776 = (int64_t) 4294967295 & lohl_16774;
+                    int64_t x_16777 = mul64(ah_16756, bh_16758);
+                    int64_t x_16778 = add64(lohh_16769, x_16777);
+                    int64_t hi_16779 = add64(lohlh_16775, x_16778);
+                    int64_t x_16780 = shl64(lohll_16776, (int64_t) 32);
+                    int64_t lo_16781 = loll_16762 | x_16780;
+                    int32_t u64_res_16782 = zext_i64_i32(hi_16779);
+                    int64_t u32_res_16783 = zext_i32_i64(u64_res_16782);
+                    int64_t d_16784 = lshr64(hi_16779, (int64_t) 32);
+                    int64_t overflowing_sub_res_16785 = sub64(lo_16781, d_16784);
+                    bool overflowing_sub_res_16786 = ult64(lo_16781, d_16784);
+                    int64_t unsign_arg_16787 = btoi_bool_i64(overflowing_sub_res_16786);
+                    int64_t wrapping_sub_arg_16788 = mul64((int64_t) 4294967295, unsign_arg_16787);
+                    int64_t wrapping_sub_res_16789 = sub64(overflowing_sub_res_16785, wrapping_sub_arg_16788);
+                    int64_t x_16790 = shl64(u32_res_16783, (int64_t) 32);
+                    int64_t tmp2_16791 = sub64(x_16790, u32_res_16783);
+                    int64_t sum_16792 = add64(wrapping_sub_res_16789, tmp2_16791);
+                    bool overflowing_add_res_16793 = ult64(sum_16792, wrapping_sub_res_16789);
+                    int64_t unsign_arg_16794 = btoi_bool_i64(overflowing_add_res_16793);
+                    int64_t wrapping_add_arg_16795 = mul64((int64_t) 4294967295, unsign_arg_16794);
+                    int64_t wrapping_add_res_16796 = add64(sum_16792, wrapping_add_arg_16795);
+                    int64_t canonicalizze_res_16797 = umod64(wrapping_add_res_16796, (int64_t) -4294967295);
+                    int64_t ah_16798 = lshr64(redout_17240, (int64_t) 32);
+                    int64_t al_16799 = (int64_t) 4294967295 & redout_17240;
+                    int64_t bh_16800 = lshr64(binop_p_17073, (int64_t) 32);
+                    int64_t bl_16801 = (int64_t) 4294967295 & binop_p_17073;
+                    int64_t lol_16802 = mul64(al_16799, bl_16801);
+                    int64_t lolh_16803 = lshr64(lol_16802, (int64_t) 32);
+                    int64_t loll_16804 = (int64_t) 4294967295 & lol_16802;
+                    int64_t loh1_16805 = mul64(ah_16798, bl_16801);
+                    int64_t loh2_16806 = mul64(al_16799, bh_16800);
+                    int64_t x_16807 = lshr64(loh1_16805, (int64_t) 32);
+                    int64_t y_16808 = lshr64(loh2_16806, (int64_t) 32);
+                    int64_t x_16809 = add64(x_16807, y_16808);
+                    int64_t y_16810 = lshr64(lolh_16803, (int64_t) 32);
+                    int64_t lohh_16811 = add64(x_16809, y_16810);
+                    int64_t x_16812 = (int64_t) 4294967295 & loh1_16805;
+                    int64_t y_16813 = (int64_t) 4294967295 & loh2_16806;
+                    int64_t x_16814 = add64(x_16812, y_16813);
+                    int64_t y_16815 = (int64_t) 4294967295 & lolh_16803;
+                    int64_t lohl_16816 = add64(x_16814, y_16815);
+                    int64_t lohlh_16817 = lshr64(lohl_16816, (int64_t) 32);
+                    int64_t lohll_16818 = (int64_t) 4294967295 & lohl_16816;
+                    int64_t x_16819 = mul64(ah_16798, bh_16800);
+                    int64_t x_16820 = add64(lohh_16811, x_16819);
+                    int64_t hi_16821 = add64(lohlh_16817, x_16820);
+                    int64_t x_16822 = shl64(lohll_16818, (int64_t) 32);
+                    int64_t lo_16823 = loll_16804 | x_16822;
+                    int32_t u64_res_16824 = zext_i64_i32(hi_16821);
+                    int64_t u32_res_16825 = zext_i32_i64(u64_res_16824);
+                    int64_t d_16826 = lshr64(hi_16821, (int64_t) 32);
+                    int64_t overflowing_sub_res_16827 = sub64(lo_16823, d_16826);
+                    bool overflowing_sub_res_16828 = ult64(lo_16823, d_16826);
+                    int64_t unsign_arg_16829 = btoi_bool_i64(overflowing_sub_res_16828);
+                    int64_t wrapping_sub_arg_16830 = mul64((int64_t) 4294967295, unsign_arg_16829);
+                    int64_t wrapping_sub_res_16831 = sub64(overflowing_sub_res_16827, wrapping_sub_arg_16830);
+                    int64_t x_16832 = shl64(u32_res_16825, (int64_t) 32);
+                    int64_t tmp2_16833 = sub64(x_16832, u32_res_16825);
+                    int64_t sum_16834 = add64(wrapping_sub_res_16831, tmp2_16833);
+                    bool overflowing_add_res_16835 = ult64(sum_16834, wrapping_sub_res_16831);
+                    int64_t unsign_arg_16836 = btoi_bool_i64(overflowing_add_res_16835);
+                    int64_t wrapping_add_arg_16837 = mul64((int64_t) 4294967295, unsign_arg_16836);
+                    int64_t wrapping_add_res_16838 = add64(sum_16834, wrapping_add_arg_16837);
+                    int64_t canonicalizze_res_16839 = umod64(wrapping_add_res_16838, (int64_t) -4294967295);
+                    int64_t ah_16840 = lshr64(redout_17241, (int64_t) 32);
+                    int64_t al_16841 = (int64_t) 4294967295 & redout_17241;
+                    int64_t bh_16842 = lshr64(binop_p_17121, (int64_t) 32);
+                    int64_t bl_16843 = (int64_t) 4294967295 & binop_p_17121;
+                    int64_t lol_16844 = mul64(al_16841, bl_16843);
+                    int64_t lolh_16845 = lshr64(lol_16844, (int64_t) 32);
+                    int64_t loll_16846 = (int64_t) 4294967295 & lol_16844;
+                    int64_t loh1_16847 = mul64(ah_16840, bl_16843);
+                    int64_t loh2_16848 = mul64(al_16841, bh_16842);
+                    int64_t x_16849 = lshr64(loh1_16847, (int64_t) 32);
+                    int64_t y_16850 = lshr64(loh2_16848, (int64_t) 32);
+                    int64_t x_16851 = add64(x_16849, y_16850);
+                    int64_t y_16852 = lshr64(lolh_16845, (int64_t) 32);
+                    int64_t lohh_16853 = add64(x_16851, y_16852);
+                    int64_t x_16854 = (int64_t) 4294967295 & loh1_16847;
+                    int64_t y_16855 = (int64_t) 4294967295 & loh2_16848;
+                    int64_t x_16856 = add64(x_16854, y_16855);
+                    int64_t y_16857 = (int64_t) 4294967295 & lolh_16845;
+                    int64_t lohl_16858 = add64(x_16856, y_16857);
+                    int64_t lohlh_16859 = lshr64(lohl_16858, (int64_t) 32);
+                    int64_t lohll_16860 = (int64_t) 4294967295 & lohl_16858;
+                    int64_t x_16861 = mul64(ah_16840, bh_16842);
+                    int64_t x_16862 = add64(lohh_16853, x_16861);
+                    int64_t hi_16863 = add64(lohlh_16859, x_16862);
+                    int64_t x_16864 = shl64(lohll_16860, (int64_t) 32);
+                    int64_t lo_16865 = loll_16846 | x_16864;
+                    int32_t u64_res_16866 = zext_i64_i32(hi_16863);
+                    int64_t u32_res_16867 = zext_i32_i64(u64_res_16866);
+                    int64_t d_16868 = lshr64(hi_16863, (int64_t) 32);
+                    int64_t overflowing_sub_res_16869 = sub64(lo_16865, d_16868);
+                    bool overflowing_sub_res_16870 = ult64(lo_16865, d_16868);
+                    int64_t unsign_arg_16871 = btoi_bool_i64(overflowing_sub_res_16870);
+                    int64_t wrapping_sub_arg_16872 = mul64((int64_t) 4294967295, unsign_arg_16871);
+                    int64_t wrapping_sub_res_16873 = sub64(overflowing_sub_res_16869, wrapping_sub_arg_16872);
+                    int64_t x_16874 = shl64(u32_res_16867, (int64_t) 32);
+                    int64_t tmp2_16875 = sub64(x_16874, u32_res_16867);
+                    int64_t sum_16876 = add64(wrapping_sub_res_16873, tmp2_16875);
+                    bool overflowing_add_res_16877 = ult64(sum_16876, wrapping_sub_res_16873);
+                    int64_t unsign_arg_16878 = btoi_bool_i64(overflowing_add_res_16877);
+                    int64_t wrapping_add_arg_16879 = mul64((int64_t) 4294967295, unsign_arg_16878);
+                    int64_t wrapping_add_res_16880 = add64(sum_16876, wrapping_add_arg_16879);
+                    int64_t canonicalizze_res_16881 = umod64(wrapping_add_res_16880, (int64_t) -4294967295);
+                    int64_t redout_tmp_17547 = canonicalizze_res_16797;
+                    int64_t redout_tmp_17548 = canonicalizze_res_16839;
+                    int64_t redout_tmp_17549 = canonicalizze_res_16881;
+                    
+                    redout_17239 = redout_tmp_17547;
+                    redout_17240 = redout_tmp_17548;
+                    redout_17241 = redout_tmp_17549;
+                }
+                defunc_0_f_res_17192 = redout_17239;
+                defunc_0_f_res_17193 = redout_17240;
+                defunc_0_f_res_17194 = redout_17241;
+                
+                int64_t ah_16885 = lshr64(x_16590, (int64_t) 32);
+                int64_t al_16886 = (int64_t) 4294967295 & x_16590;
+                int64_t bh_16887 = lshr64(defunc_0_f_res_17192, (int64_t) 32);
+                int64_t bl_16888 = (int64_t) 4294967295 & defunc_0_f_res_17192;
+                int64_t lol_16889 = mul64(al_16886, bl_16888);
+                int64_t lolh_16890 = lshr64(lol_16889, (int64_t) 32);
+                int64_t loll_16891 = (int64_t) 4294967295 & lol_16889;
+                int64_t loh1_16892 = mul64(ah_16885, bl_16888);
+                int64_t loh2_16893 = mul64(al_16886, bh_16887);
+                int64_t x_16894 = lshr64(loh1_16892, (int64_t) 32);
+                int64_t y_16895 = lshr64(loh2_16893, (int64_t) 32);
+                int64_t x_16896 = add64(x_16894, y_16895);
+                int64_t y_16897 = lshr64(lolh_16890, (int64_t) 32);
+                int64_t lohh_16898 = add64(x_16896, y_16897);
+                int64_t x_16899 = (int64_t) 4294967295 & loh1_16892;
+                int64_t y_16900 = (int64_t) 4294967295 & loh2_16893;
+                int64_t x_16901 = add64(x_16899, y_16900);
+                int64_t y_16902 = (int64_t) 4294967295 & lolh_16890;
+                int64_t lohl_16903 = add64(x_16901, y_16902);
+                int64_t lohlh_16904 = lshr64(lohl_16903, (int64_t) 32);
+                int64_t lohll_16905 = (int64_t) 4294967295 & lohl_16903;
+                int64_t x_16906 = mul64(ah_16885, bh_16887);
+                int64_t x_16907 = add64(lohh_16898, x_16906);
+                int64_t hi_16908 = add64(lohlh_16904, x_16907);
+                int64_t x_16909 = shl64(lohll_16905, (int64_t) 32);
+                int64_t lo_16910 = loll_16891 | x_16909;
+                int32_t u64_res_16911 = zext_i64_i32(hi_16908);
+                int64_t u32_res_16912 = zext_i32_i64(u64_res_16911);
+                int64_t d_16913 = lshr64(hi_16908, (int64_t) 32);
+                int64_t overflowing_sub_res_16914 = sub64(lo_16910, d_16913);
+                bool overflowing_sub_res_16915 = ult64(lo_16910, d_16913);
+                int64_t unsign_arg_16916 = btoi_bool_i64(overflowing_sub_res_16915);
+                int64_t wrapping_sub_arg_16917 = mul64((int64_t) 4294967295, unsign_arg_16916);
+                int64_t wrapping_sub_res_16918 = sub64(overflowing_sub_res_16914, wrapping_sub_arg_16917);
+                int64_t x_16919 = shl64(u32_res_16912, (int64_t) 32);
+                int64_t tmp2_16920 = sub64(x_16919, u32_res_16912);
+                int64_t sum_16921 = add64(wrapping_sub_res_16918, tmp2_16920);
+                bool overflowing_add_res_16922 = ult64(sum_16921, wrapping_sub_res_16918);
+                int64_t unsign_arg_16923 = btoi_bool_i64(overflowing_add_res_16922);
+                int64_t wrapping_add_arg_16924 = mul64((int64_t) 4294967295, unsign_arg_16923);
+                int64_t wrapping_add_res_16925 = add64(sum_16921, wrapping_add_arg_16924);
+                int64_t canonicalizze_res_16926 = umod64(wrapping_add_res_16925, (int64_t) -4294967295);
+                int64_t ah_16927 = lshr64(x_16591, (int64_t) 32);
+                int64_t al_16928 = (int64_t) 4294967295 & x_16591;
+                int64_t bh_16929 = lshr64(defunc_0_f_res_17193, (int64_t) 32);
+                int64_t bl_16930 = (int64_t) 4294967295 & defunc_0_f_res_17193;
+                int64_t lol_16931 = mul64(al_16928, bl_16930);
+                int64_t lolh_16932 = lshr64(lol_16931, (int64_t) 32);
+                int64_t loll_16933 = (int64_t) 4294967295 & lol_16931;
+                int64_t loh1_16934 = mul64(ah_16927, bl_16930);
+                int64_t loh2_16935 = mul64(al_16928, bh_16929);
+                int64_t x_16936 = lshr64(loh1_16934, (int64_t) 32);
+                int64_t y_16937 = lshr64(loh2_16935, (int64_t) 32);
+                int64_t x_16938 = add64(x_16936, y_16937);
+                int64_t y_16939 = lshr64(lolh_16932, (int64_t) 32);
+                int64_t lohh_16940 = add64(x_16938, y_16939);
+                int64_t x_16941 = (int64_t) 4294967295 & loh1_16934;
+                int64_t y_16942 = (int64_t) 4294967295 & loh2_16935;
+                int64_t x_16943 = add64(x_16941, y_16942);
+                int64_t y_16944 = (int64_t) 4294967295 & lolh_16932;
+                int64_t lohl_16945 = add64(x_16943, y_16944);
+                int64_t lohlh_16946 = lshr64(lohl_16945, (int64_t) 32);
+                int64_t lohll_16947 = (int64_t) 4294967295 & lohl_16945;
+                int64_t x_16948 = mul64(ah_16927, bh_16929);
+                int64_t x_16949 = add64(lohh_16940, x_16948);
+                int64_t hi_16950 = add64(lohlh_16946, x_16949);
+                int64_t x_16951 = shl64(lohll_16947, (int64_t) 32);
+                int64_t lo_16952 = loll_16933 | x_16951;
+                int32_t u64_res_16953 = zext_i64_i32(hi_16950);
+                int64_t u32_res_16954 = zext_i32_i64(u64_res_16953);
+                int64_t d_16955 = lshr64(hi_16950, (int64_t) 32);
+                int64_t overflowing_sub_res_16956 = sub64(lo_16952, d_16955);
+                bool overflowing_sub_res_16957 = ult64(lo_16952, d_16955);
+                int64_t unsign_arg_16958 = btoi_bool_i64(overflowing_sub_res_16957);
+                int64_t wrapping_sub_arg_16959 = mul64((int64_t) 4294967295, unsign_arg_16958);
+                int64_t wrapping_sub_res_16960 = sub64(overflowing_sub_res_16956, wrapping_sub_arg_16959);
+                int64_t x_16961 = shl64(u32_res_16954, (int64_t) 32);
+                int64_t tmp2_16962 = sub64(x_16961, u32_res_16954);
+                int64_t sum_16963 = add64(wrapping_sub_res_16960, tmp2_16962);
+                bool overflowing_add_res_16964 = ult64(sum_16963, wrapping_sub_res_16960);
+                int64_t unsign_arg_16965 = btoi_bool_i64(overflowing_add_res_16964);
+                int64_t wrapping_add_arg_16966 = mul64((int64_t) 4294967295, unsign_arg_16965);
+                int64_t wrapping_add_res_16967 = add64(sum_16963, wrapping_add_arg_16966);
+                int64_t canonicalizze_res_16968 = umod64(wrapping_add_res_16967, (int64_t) -4294967295);
+                int64_t ah_16969 = lshr64(x_16592, (int64_t) 32);
+                int64_t al_16970 = (int64_t) 4294967295 & x_16592;
+                int64_t bh_16971 = lshr64(defunc_0_f_res_17194, (int64_t) 32);
+                int64_t bl_16972 = (int64_t) 4294967295 & defunc_0_f_res_17194;
+                int64_t lol_16973 = mul64(al_16970, bl_16972);
+                int64_t lolh_16974 = lshr64(lol_16973, (int64_t) 32);
+                int64_t loll_16975 = (int64_t) 4294967295 & lol_16973;
+                int64_t loh1_16976 = mul64(ah_16969, bl_16972);
+                int64_t loh2_16977 = mul64(al_16970, bh_16971);
+                int64_t x_16978 = lshr64(loh1_16976, (int64_t) 32);
+                int64_t y_16979 = lshr64(loh2_16977, (int64_t) 32);
+                int64_t x_16980 = add64(x_16978, y_16979);
+                int64_t y_16981 = lshr64(lolh_16974, (int64_t) 32);
+                int64_t lohh_16982 = add64(x_16980, y_16981);
+                int64_t x_16983 = (int64_t) 4294967295 & loh1_16976;
+                int64_t y_16984 = (int64_t) 4294967295 & loh2_16977;
+                int64_t x_16985 = add64(x_16983, y_16984);
+                int64_t y_16986 = (int64_t) 4294967295 & lolh_16974;
+                int64_t lohl_16987 = add64(x_16985, y_16986);
+                int64_t lohlh_16988 = lshr64(lohl_16987, (int64_t) 32);
+                int64_t lohll_16989 = (int64_t) 4294967295 & lohl_16987;
+                int64_t x_16990 = mul64(ah_16969, bh_16971);
+                int64_t x_16991 = add64(lohh_16982, x_16990);
+                int64_t hi_16992 = add64(lohlh_16988, x_16991);
+                int64_t x_16993 = shl64(lohll_16989, (int64_t) 32);
+                int64_t lo_16994 = loll_16975 | x_16993;
+                int32_t u64_res_16995 = zext_i64_i32(hi_16992);
+                int64_t u32_res_16996 = zext_i32_i64(u64_res_16995);
+                int64_t d_16997 = lshr64(hi_16992, (int64_t) 32);
+                int64_t overflowing_sub_res_16998 = sub64(lo_16994, d_16997);
+                bool overflowing_sub_res_16999 = ult64(lo_16994, d_16997);
+                int64_t unsign_arg_17000 = btoi_bool_i64(overflowing_sub_res_16999);
+                int64_t wrapping_sub_arg_17001 = mul64((int64_t) 4294967295, unsign_arg_17000);
+                int64_t wrapping_sub_res_17002 = sub64(overflowing_sub_res_16998, wrapping_sub_arg_17001);
+                int64_t x_17003 = shl64(u32_res_16996, (int64_t) 32);
+                int64_t tmp2_17004 = sub64(x_17003, u32_res_16996);
+                int64_t sum_17005 = add64(wrapping_sub_res_17002, tmp2_17004);
+                bool overflowing_add_res_17006 = ult64(sum_17005, wrapping_sub_res_17002);
+                int64_t unsign_arg_17007 = btoi_bool_i64(overflowing_add_res_17006);
+                int64_t wrapping_add_arg_17008 = mul64((int64_t) 4294967295, unsign_arg_17007);
+                int64_t wrapping_add_res_17009 = add64(sum_17005, wrapping_add_arg_17008);
+                int64_t canonicalizze_res_17010 = umod64(wrapping_add_res_17009, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_16454 = add64(canonicalizze_res_16926, redout_17243);
+                int64_t canonicalizze_res_16455 = umod64(canonicalizze_arg_16454, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_16456 = add64(canonicalizze_res_16968, redout_17244);
+                int64_t canonicalizze_res_16457 = umod64(canonicalizze_arg_16456, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_16458 = add64(canonicalizze_res_17010, redout_17245);
+                int64_t canonicalizze_res_16459 = umod64(canonicalizze_arg_16458, (int64_t) -4294967295);
+                int64_t redout_tmp_17544 = canonicalizze_res_16455;
+                int64_t redout_tmp_17545 = canonicalizze_res_16457;
+                int64_t redout_tmp_17546 = canonicalizze_res_16459;
+                
+                redout_17243 = redout_tmp_17544;
+                redout_17244 = redout_tmp_17545;
+                redout_17245 = redout_tmp_17546;
+            }
+            defunc_0_f_res_17195 = redout_17243;
+            defunc_0_f_res_17196 = redout_17244;
+            defunc_0_f_res_17197 = redout_17245;
+            
+            int64_t bh_16463 = lshr64(defunc_0_f_res_17195, (int64_t) 32);
+            int64_t bl_16464 = (int64_t) 4294967295 & defunc_0_f_res_17195;
+            int64_t lol_16465 = mul64(al_15432, bl_16464);
+            int64_t lolh_16466 = lshr64(lol_16465, (int64_t) 32);
+            int64_t loll_16467 = (int64_t) 4294967295 & lol_16465;
+            int64_t loh1_16468 = mul64(ah_15431, bl_16464);
+            int64_t loh2_16469 = mul64(al_15432, bh_16463);
+            int64_t x_16470 = lshr64(loh1_16468, (int64_t) 32);
+            int64_t y_16471 = lshr64(loh2_16469, (int64_t) 32);
+            int64_t x_16472 = add64(x_16470, y_16471);
+            int64_t y_16473 = lshr64(lolh_16466, (int64_t) 32);
+            int64_t lohh_16474 = add64(x_16472, y_16473);
+            int64_t x_16475 = (int64_t) 4294967295 & loh1_16468;
+            int64_t y_16476 = (int64_t) 4294967295 & loh2_16469;
+            int64_t x_16477 = add64(x_16475, y_16476);
+            int64_t y_16478 = (int64_t) 4294967295 & lolh_16466;
+            int64_t lohl_16479 = add64(x_16477, y_16478);
+            int64_t lohlh_16480 = lshr64(lohl_16479, (int64_t) 32);
+            int64_t lohll_16481 = (int64_t) 4294967295 & lohl_16479;
+            int64_t x_16482 = mul64(ah_15431, bh_16463);
+            int64_t x_16483 = add64(lohh_16474, x_16482);
+            int64_t hi_16484 = add64(lohlh_16480, x_16483);
+            int64_t x_16485 = shl64(lohll_16481, (int64_t) 32);
+            int64_t lo_16486 = loll_16467 | x_16485;
+            int32_t u64_res_16487 = zext_i64_i32(hi_16484);
+            int64_t u32_res_16488 = zext_i32_i64(u64_res_16487);
+            int64_t d_16489 = lshr64(hi_16484, (int64_t) 32);
+            int64_t overflowing_sub_res_16490 = sub64(lo_16486, d_16489);
+            bool overflowing_sub_res_16491 = ult64(lo_16486, d_16489);
+            int64_t unsign_arg_16492 = btoi_bool_i64(overflowing_sub_res_16491);
+            int64_t wrapping_sub_arg_16493 = mul64((int64_t) 4294967295, unsign_arg_16492);
+            int64_t wrapping_sub_res_16494 = sub64(overflowing_sub_res_16490, wrapping_sub_arg_16493);
+            int64_t x_16495 = shl64(u32_res_16488, (int64_t) 32);
+            int64_t tmp2_16496 = sub64(x_16495, u32_res_16488);
+            int64_t sum_16497 = add64(wrapping_sub_res_16494, tmp2_16496);
+            bool overflowing_add_res_16498 = ult64(sum_16497, wrapping_sub_res_16494);
+            int64_t unsign_arg_16499 = btoi_bool_i64(overflowing_add_res_16498);
+            int64_t wrapping_add_arg_16500 = mul64((int64_t) 4294967295, unsign_arg_16499);
+            int64_t wrapping_add_res_16501 = add64(sum_16497, wrapping_add_arg_16500);
+            int64_t canonicalizze_res_16502 = umod64(wrapping_add_res_16501, (int64_t) -4294967295);
+            int64_t bh_16503 = lshr64(defunc_0_f_res_17196, (int64_t) 32);
+            int64_t bl_16504 = (int64_t) 4294967295 & defunc_0_f_res_17196;
+            int64_t lol_16505 = mul64(al_15434, bl_16504);
+            int64_t lolh_16506 = lshr64(lol_16505, (int64_t) 32);
+            int64_t loll_16507 = (int64_t) 4294967295 & lol_16505;
+            int64_t loh1_16508 = mul64(ah_15433, bl_16504);
+            int64_t loh2_16509 = mul64(al_15434, bh_16503);
+            int64_t x_16510 = lshr64(loh1_16508, (int64_t) 32);
+            int64_t y_16511 = lshr64(loh2_16509, (int64_t) 32);
+            int64_t x_16512 = add64(x_16510, y_16511);
+            int64_t y_16513 = lshr64(lolh_16506, (int64_t) 32);
+            int64_t lohh_16514 = add64(x_16512, y_16513);
+            int64_t x_16515 = (int64_t) 4294967295 & loh1_16508;
+            int64_t y_16516 = (int64_t) 4294967295 & loh2_16509;
+            int64_t x_16517 = add64(x_16515, y_16516);
+            int64_t y_16518 = (int64_t) 4294967295 & lolh_16506;
+            int64_t lohl_16519 = add64(x_16517, y_16518);
+            int64_t lohlh_16520 = lshr64(lohl_16519, (int64_t) 32);
+            int64_t lohll_16521 = (int64_t) 4294967295 & lohl_16519;
+            int64_t x_16522 = mul64(ah_15433, bh_16503);
+            int64_t x_16523 = add64(lohh_16514, x_16522);
+            int64_t hi_16524 = add64(lohlh_16520, x_16523);
+            int64_t x_16525 = shl64(lohll_16521, (int64_t) 32);
+            int64_t lo_16526 = loll_16507 | x_16525;
+            int32_t u64_res_16527 = zext_i64_i32(hi_16524);
+            int64_t u32_res_16528 = zext_i32_i64(u64_res_16527);
+            int64_t d_16529 = lshr64(hi_16524, (int64_t) 32);
+            int64_t overflowing_sub_res_16530 = sub64(lo_16526, d_16529);
+            bool overflowing_sub_res_16531 = ult64(lo_16526, d_16529);
+            int64_t unsign_arg_16532 = btoi_bool_i64(overflowing_sub_res_16531);
+            int64_t wrapping_sub_arg_16533 = mul64((int64_t) 4294967295, unsign_arg_16532);
+            int64_t wrapping_sub_res_16534 = sub64(overflowing_sub_res_16530, wrapping_sub_arg_16533);
+            int64_t x_16535 = shl64(u32_res_16528, (int64_t) 32);
+            int64_t tmp2_16536 = sub64(x_16535, u32_res_16528);
+            int64_t sum_16537 = add64(wrapping_sub_res_16534, tmp2_16536);
+            bool overflowing_add_res_16538 = ult64(sum_16537, wrapping_sub_res_16534);
+            int64_t unsign_arg_16539 = btoi_bool_i64(overflowing_add_res_16538);
+            int64_t wrapping_add_arg_16540 = mul64((int64_t) 4294967295, unsign_arg_16539);
+            int64_t wrapping_add_res_16541 = add64(sum_16537, wrapping_add_arg_16540);
+            int64_t canonicalizze_res_16542 = umod64(wrapping_add_res_16541, (int64_t) -4294967295);
+            int64_t bh_16543 = lshr64(defunc_0_f_res_17197, (int64_t) 32);
+            int64_t bl_16544 = (int64_t) 4294967295 & defunc_0_f_res_17197;
+            int64_t lol_16545 = mul64(al_15436, bl_16544);
+            int64_t lolh_16546 = lshr64(lol_16545, (int64_t) 32);
+            int64_t loll_16547 = (int64_t) 4294967295 & lol_16545;
+            int64_t loh1_16548 = mul64(ah_15435, bl_16544);
+            int64_t loh2_16549 = mul64(al_15436, bh_16543);
+            int64_t x_16550 = lshr64(loh1_16548, (int64_t) 32);
+            int64_t y_16551 = lshr64(loh2_16549, (int64_t) 32);
+            int64_t x_16552 = add64(x_16550, y_16551);
+            int64_t y_16553 = lshr64(lolh_16546, (int64_t) 32);
+            int64_t lohh_16554 = add64(x_16552, y_16553);
+            int64_t x_16555 = (int64_t) 4294967295 & loh1_16548;
+            int64_t y_16556 = (int64_t) 4294967295 & loh2_16549;
+            int64_t x_16557 = add64(x_16555, y_16556);
+            int64_t y_16558 = (int64_t) 4294967295 & lolh_16546;
+            int64_t lohl_16559 = add64(x_16557, y_16558);
+            int64_t lohlh_16560 = lshr64(lohl_16559, (int64_t) 32);
+            int64_t lohll_16561 = (int64_t) 4294967295 & lohl_16559;
+            int64_t x_16562 = mul64(ah_15435, bh_16543);
+            int64_t x_16563 = add64(lohh_16554, x_16562);
+            int64_t hi_16564 = add64(lohlh_16560, x_16563);
+            int64_t x_16565 = shl64(lohll_16561, (int64_t) 32);
+            int64_t lo_16566 = loll_16547 | x_16565;
+            int32_t u64_res_16567 = zext_i64_i32(hi_16564);
+            int64_t u32_res_16568 = zext_i32_i64(u64_res_16567);
+            int64_t d_16569 = lshr64(hi_16564, (int64_t) 32);
+            int64_t overflowing_sub_res_16570 = sub64(lo_16566, d_16569);
+            bool overflowing_sub_res_16571 = ult64(lo_16566, d_16569);
+            int64_t unsign_arg_16572 = btoi_bool_i64(overflowing_sub_res_16571);
+            int64_t wrapping_sub_arg_16573 = mul64((int64_t) 4294967295, unsign_arg_16572);
+            int64_t wrapping_sub_res_16574 = sub64(overflowing_sub_res_16570, wrapping_sub_arg_16573);
+            int64_t x_16575 = shl64(u32_res_16568, (int64_t) 32);
+            int64_t tmp2_16576 = sub64(x_16575, u32_res_16568);
+            int64_t sum_16577 = add64(wrapping_sub_res_16574, tmp2_16576);
+            bool overflowing_add_res_16578 = ult64(sum_16577, wrapping_sub_res_16574);
+            int64_t unsign_arg_16579 = btoi_bool_i64(overflowing_add_res_16578);
+            int64_t wrapping_add_arg_16580 = mul64((int64_t) 4294967295, unsign_arg_16579);
+            int64_t wrapping_add_res_16581 = add64(sum_16577, wrapping_add_arg_16580);
+            int64_t canonicalizze_res_16582 = umod64(wrapping_add_res_16581, (int64_t) -4294967295);
+            
+            ((int64_t *) mem_17490)[(int64_t) 0] = canonicalizze_res_16502;
+            ((int64_t *) mem_17490)[(int64_t) 1] = canonicalizze_res_16542;
+            ((int64_t *) mem_17490)[(int64_t) 2] = canonicalizze_res_16582;
+            if ((int64_t) 24 > 0)
+                memmove(mem_17422 + (i_17253 * ixfun_arg_17434 + i_17249 * (int64_t) 3) * (int64_t) 8, mem_17490 + (int64_t) 0, (int64_t) 24);
+        }
+    }
+    if (memblock_alloc(ctx, &mem_17525, bytes_17421, "mem_17525")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t i_7361 = 0; i_7361 < nz2080U_7179; i_7361++) {
-        for (int64_t i_7357 = 0; i_7357 < mz2082U_7181; i_7357++) {
-            int32_t defunc_2_reduce_res_7350;
-            int32_t redout_7353 = 0;
-            
-            for (int64_t i_7354 = 0; i_7354 < pz2081U_7180; i_7354++) {
-                int32_t x_7343 = ((int32_t *) xss_mem_7369.mem)[i_7361 * pz2081U_7180 + i_7354];
-                int32_t x_7344 = ((int32_t *) yss_mem_7370.mem)[i_7354 * mz2082U_7181 + i_7357];
-                int32_t defunc_1_f_res_7345 = mul32(x_7343, x_7344);
-                int32_t defunc_1_op_res_7340 = add32(defunc_1_f_res_7345, redout_7353);
-                int32_t redout_tmp_7424 = defunc_1_op_res_7340;
-                
-                redout_7353 = redout_tmp_7424;
-            }
-            defunc_2_reduce_res_7350 = redout_7353;
-            ((int32_t *) mem_7374.mem)[i_7361 * mz2082U_7181 + i_7357] = defunc_2_reduce_res_7350;
-        }
-    }
-    if (memblock_set(ctx, &mem_out_7421, &mem_7374, "mem_7374") != 0)
+    if (n_12238 * m_12239 * (int64_t) 3 * (int64_t) 8 > 0)
+        memmove(mem_17525.mem + (int64_t) 0, mem_17422 + (int64_t) 0, n_12238 * m_12239 * (int64_t) 3 * (int64_t) 8);
+    if (memblock_set(ctx, &mem_out_17532, &mem_17525, "mem_17525") != 0)
         return 1;
-    (*mem_out_p_7425).references = NULL;
-    if (memblock_set(ctx, &*mem_out_p_7425, &mem_out_7421, "mem_out_7421") != 0)
+    (*mem_out_p_17559).references = NULL;
+    if (memblock_set(ctx, &*mem_out_p_17559, &mem_out_17532, "mem_out_17532") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref(ctx, &mem_7374, "mem_7374") != 0)
+        free(mem_17286);
+        free(mem_17290);
+        free(mem_17294);
+        free(mem_17422);
+        free(mem_17437);
+        free(mem_17440);
+        free(mem_17443);
+        free(mem_17490);
+        if (memblock_unref(ctx, &mem_17525, "mem_17525") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_7421, "mem_out_7421") != 0)
+        if (memblock_unref(ctx, &mem_out_17532, "mem_out_17532") != 0)
+            return 1;
+    }
+    return err;
+}
+static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_17568, struct memblock xss_mem_17279, struct memblock yss_mem_17280, int64_t nz2080U_9682, int64_t pz2081U_9683, int64_t mz2082U_9684)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock mem_17284;
+    
+    mem_17284.references = NULL;
+    
+    struct memblock mem_out_17532;
+    
+    mem_out_17532.references = NULL;
+    
+    int64_t binop_x_17281 = nz2080U_9682 * mz2082U_9684;
+    int64_t binop_y_17282 = (int64_t) 4 * binop_x_17281;
+    int64_t bytes_17283 = smax64((int64_t) 0, binop_y_17282);
+    
+    if (memblock_alloc(ctx, &mem_17284, bytes_17283, "mem_17284")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_17217 = 0; i_17217 < nz2080U_9682; i_17217++) {
+        for (int64_t i_17213 = 0; i_17213 < mz2082U_9684; i_17213++) {
+            int32_t defunc_2_reduce_res_14226;
+            int32_t redout_17209 = 0;
+            
+            for (int64_t i_17210 = 0; i_17210 < pz2081U_9683; i_17210++) {
+                int32_t x_14219 = ((int32_t *) xss_mem_17279.mem)[i_17217 * pz2081U_9683 + i_17210];
+                int32_t x_14220 = ((int32_t *) yss_mem_17280.mem)[i_17210 * mz2082U_9684 + i_17213];
+                int32_t defunc_1_f_res_14221 = mul32(x_14219, x_14220);
+                int32_t defunc_1_op_res_12614 = add32(defunc_1_f_res_14221, redout_17209);
+                int32_t redout_tmp_17535 = defunc_1_op_res_12614;
+                
+                redout_17209 = redout_tmp_17535;
+            }
+            defunc_2_reduce_res_14226 = redout_17209;
+            ((int32_t *) mem_17284.mem)[i_17217 * mz2082U_9684 + i_17213] = defunc_2_reduce_res_14226;
+        }
+    }
+    if (memblock_set(ctx, &mem_out_17532, &mem_17284, "mem_17284") != 0)
+        return 1;
+    (*mem_out_p_17568).references = NULL;
+    if (memblock_set(ctx, &*mem_out_p_17568, &mem_out_17532, "mem_out_17532") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref(ctx, &mem_17284, "mem_17284") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_17532, "mem_out_17532") != 0)
             return 1;
     }
     return err;
 }
 
-int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **out0, const struct futhark_i32_2d *in0, const struct futhark_i32_2d *in1)
+int futhark_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_3d *in2, const struct futhark_u64_3d *in3)
 {
-    int64_t nz2080U_7179;
-    int64_t pz2081U_7180;
-    int64_t mz2082U_7181;
+    int64_t n_12238;
+    int64_t m_12239;
+    int64_t p_12240;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_7421;
+    struct memblock mem_out_17532;
     
-    mem_out_7421.references = NULL;
+    mem_out_17532.references = NULL;
     
-    struct memblock yss_mem_7370;
+    struct memblock coefficientss_mem_17282;
     
-    yss_mem_7370.references = NULL;
+    coefficientss_mem_17282.references = NULL;
     
-    struct memblock xss_mem_7369;
+    struct memblock expsss_mem_17281;
     
-    xss_mem_7369.references = NULL;
-    xss_mem_7369 = in0->mem;
-    nz2080U_7179 = in0->shape[0];
-    pz2081U_7180 = in0->shape[1];
-    yss_mem_7370 = in1->mem;
-    pz2081U_7180 = in1->shape[0];
-    mz2082U_7181 = in1->shape[1];
-    if (!((nz2080U_7179 == in0->shape[0] && pz2081U_7180 == in0->shape[1]) && (pz2081U_7180 == in1->shape[0] && mz2082U_7181 == in1->shape[1]))) {
+    expsss_mem_17281.references = NULL;
+    
+    struct memblock eps_mem_17280;
+    
+    eps_mem_17280.references = NULL;
+    
+    struct memblock zzinvs_mem_17279;
+    
+    zzinvs_mem_17279.references = NULL;
+    zzinvs_mem_17279 = in0->mem;
+    n_12238 = in0->shape[0];
+    eps_mem_17280 = in1->mem;
+    n_12238 = in1->shape[0];
+    m_12239 = in1->shape[1];
+    expsss_mem_17281 = in2->mem;
+    m_12239 = in2->shape[0];
+    p_12240 = in2->shape[1];
+    m_12239 = in2->shape[2];
+    coefficientss_mem_17282 = in3->mem;
+    m_12239 = in3->shape[0];
+    p_12240 = in3->shape[1];
+    if (!((n_12238 == in0->shape[0] && (int64_t) 3 == in0->shape[1]) && ((n_12238 == in1->shape[0] && (m_12239 == in1->shape[1] && (int64_t) 3 == in1->shape[2])) && ((m_12239 == in2->shape[0] && (p_12240 == in2->shape[1] && m_12239 == in2->shape[2])) && (m_12239 == in3->shape[0] && (p_12240 == in3->shape[1] && (int64_t) 3 == in3->shape[2])))))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_matmul(ctx, &mem_out_7421, xss_mem_7369, yss_mem_7370, nz2080U_7179, pz2081U_7180, mz2082U_7181);
+        ret = futrts_entry_make_transposed_quotient_codewords_non_opaque(ctx, &mem_out_17532, zzinvs_mem_17279, eps_mem_17280, expsss_mem_17281, coefficientss_mem_17282, n_12238, m_12239, p_12240);
+        if (ret == 0) {
+            assert((*out0 = (struct futhark_u64_3d *) malloc(sizeof(struct futhark_u64_3d))) != NULL);
+            (*out0)->mem = mem_out_17532;
+            (*out0)->shape[0] = n_12238;
+            (*out0)->shape[1] = m_12239;
+            (*out0)->shape[2] = (int64_t) 3;
+        }
+    }
+    lock_unlock(&ctx->lock);
+    return ret;
+}
+int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **out0, const struct futhark_i32_2d *in0, const struct futhark_i32_2d *in1)
+{
+    int64_t nz2080U_9682;
+    int64_t pz2081U_9683;
+    int64_t mz2082U_9684;
+    int ret = 0;
+    
+    lock_lock(&ctx->lock);
+    
+    struct memblock mem_out_17532;
+    
+    mem_out_17532.references = NULL;
+    
+    struct memblock yss_mem_17280;
+    
+    yss_mem_17280.references = NULL;
+    
+    struct memblock xss_mem_17279;
+    
+    xss_mem_17279.references = NULL;
+    xss_mem_17279 = in0->mem;
+    nz2080U_9682 = in0->shape[0];
+    pz2081U_9683 = in0->shape[1];
+    yss_mem_17280 = in1->mem;
+    pz2081U_9683 = in1->shape[0];
+    mz2082U_9684 = in1->shape[1];
+    if (!((nz2080U_9682 == in0->shape[0] && pz2081U_9683 == in0->shape[1]) && (pz2081U_9683 == in1->shape[0] && mz2082U_9684 == in1->shape[1]))) {
+        ret = 1;
+        set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
+    }
+    if (ret == 0) {
+        ret = futrts_entry_matmul(ctx, &mem_out_17532, xss_mem_17279, yss_mem_17280, nz2080U_9682, pz2081U_9683, mz2082U_9684);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i32_2d *) malloc(sizeof(struct futhark_i32_2d))) != NULL);
-            (*out0)->mem = mem_out_7421;
-            (*out0)->shape[0] = nz2080U_7179;
-            (*out0)->shape[1] = mz2082U_7181;
+            (*out0)->mem = mem_out_17532;
+            (*out0)->shape[0] = nz2080U_9682;
+            (*out0)->shape[1] = mz2082U_9684;
         }
     }
     lock_unlock(&ctx->lock);

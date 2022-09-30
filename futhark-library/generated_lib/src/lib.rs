@@ -76,6 +76,13 @@ impl Display for Error {
 impl std::error::Error for Error {}
 
 impl FutharkContext {
+pub fn make_transposed_quotient_codewords_non_opaque(&mut self, in0: Array_u64_2d, in1: Array_u64_3d, in2: Array_u64_3d, in3: Array_u64_3d, ) -> Result<(Array_u64_3d)>
+{
+let ctx = self.ptr();
+unsafe{
+_make_transposed_quotient_codewords_non_opaque(ctx, in0.as_raw_mut(), in1.as_raw_mut(), in2.as_raw_mut(), in3.as_raw_mut(), )
+}}
+
 pub fn matmul(&mut self, in0: Array_i32_2d, in1: Array_i32_2d, ) -> Result<(Array_i32_2d)>
 {
 let ctx = self.ptr();
@@ -83,6 +90,14 @@ unsafe{
 _matmul(ctx, in0.as_raw_mut(), in1.as_raw_mut(), )
 }}
 
+}
+unsafe fn _make_transposed_quotient_codewords_non_opaque(ctx: *mut bindings::futhark_context, in0: *const bindings::futhark_u64_2d, in1: *const bindings::futhark_u64_3d, in2: *const bindings::futhark_u64_3d, in3: *const bindings::futhark_u64_3d, ) -> Result<(Array_u64_3d)> {
+let mut raw_out0 = std::ptr::null_mut();
+
+if bindings::futhark_entry_make_transposed_quotient_codewords_non_opaque(ctx, &mut raw_out0, in0, in1, in2, in3, ) != 0 {
+return Err(FutharkError::new(ctx).into());}
+Ok((Array_u64_3d::from_ptr(ctx, raw_out0)
+))
 }
 unsafe fn _matmul(ctx: *mut bindings::futhark_context, in0: *const bindings::futhark_i32_2d, in1: *const bindings::futhark_i32_2d, ) -> Result<(Array_i32_2d)> {
 let mut raw_out0 = std::ptr::null_mut();

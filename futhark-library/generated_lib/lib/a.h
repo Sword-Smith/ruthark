@@ -37,12 +37,27 @@ int futhark_free_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr)
 int futhark_values_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr, int32_t *data);
 unsigned char *futhark_values_raw_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
 const int64_t *futhark_shape_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
+struct futhark_u64_2d;
+struct futhark_u64_2d *futhark_new_u64_2d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1);
+struct futhark_u64_2d *futhark_new_raw_u64_2d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1);
+int futhark_free_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
+int futhark_values_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr, uint64_t *data);
+unsigned char *futhark_values_raw_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
+const int64_t *futhark_shape_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr);
+struct futhark_u64_3d;
+struct futhark_u64_3d *futhark_new_u64_3d(struct futhark_context *ctx, const uint64_t *data, int64_t dim0, int64_t dim1, int64_t dim2);
+struct futhark_u64_3d *futhark_new_raw_u64_3d(struct futhark_context *ctx, const unsigned char *data, int64_t offset, int64_t dim0, int64_t dim1, int64_t dim2);
+int futhark_free_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
+int futhark_values_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr, uint64_t *data);
+unsigned char *futhark_values_raw_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
+const int64_t *futhark_shape_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
 
 // Opaque values
 
 
 
 // Entry points
+int futhark_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_3d *in2, const struct futhark_u64_3d *in3);
 int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **out0, const struct futhark_i32_2d *in0, const struct futhark_i32_2d *in1);
 
 // Miscellaneous
