@@ -30,12 +30,12 @@ type MPolynomial [p][m] = {coefficients: [p]([m]u64, XFieldElement)}
 
 
 def make_transposed_quotient_codewords
-    [n][m][p]
+    [n][m][p][q]
     ( zinvs:         [n]XFieldElementOpaque)
-    ( eps:           [n][m]XFieldElementOpaque)
-    ( expsss:           [m][p][m]u64)
-    ( coefficientss:    [m][p]XFieldElementOpaque)
-    : [n][m]XFieldElementOpaque =
+    ( eps:           [n]      [m]XFieldElementOpaque)
+    ( expsss:           [p][q][m]u64)
+    ( coefficientss:    [p][q]XFieldElementOpaque)
+    : [n][p]XFieldElementOpaque =
         map2 (\ evaluation_points  z_inv ->
             map2 (\expss coefficients ->
                 XFieldElement.mul z_inv (
@@ -51,12 +51,12 @@ def make_transposed_quotient_codewords
         ) eps zinvs
 
 entry make_transposed_quotient_codewords_non_opaque
-    [n][m][p]
+    [n][m][p][q]
     ( zinvs:         [n]XFieldElement)
-    ( eps:           [n][m]XFieldElement)
-    ( expsss:           [m][p][m]u64)
-    ( coefficientss:    [m][p]XFieldElement)
-    : [n][m]XFieldElement =
+    ( eps:           [n]      [m]XFieldElement)
+    ( expsss:           [p][q][m]u64)
+    ( coefficientss:    [p][q]XFieldElement)
+    : [n][p]XFieldElement =
     let inner_zinvs = map outer_to_inner zinvs
     let inner_eps = map (map outer_to_inner) eps
     let inner_expsss = expsss
