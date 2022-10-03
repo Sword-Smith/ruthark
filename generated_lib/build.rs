@@ -1,5 +1,5 @@
 extern crate cc;
-
+use std::process::Command;
 
 fn main() {
     // Sequential C support

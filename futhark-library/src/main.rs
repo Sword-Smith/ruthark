@@ -1,5 +1,5 @@
 extern crate genfut;
-use genfut::{genfut, Opt};
+use genfut::{genfut, Backend, Opt};
 
 const FUTHARK_SOURCE_FILE: &str = "futhark_source/lib.fut";
 const GENERATED_RUST_MODULE_NAME: &str = "generated_lib";
@@ -12,5 +12,6 @@ fn main() {
         version: "0.1.0".to_string(),
         license: "YOLO".to_string(),
         description: "Futhark matrix multiplication example".to_string(),
+        backend: Backend::Cuda,
     })
 }

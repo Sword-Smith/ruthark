@@ -12,7 +12,7 @@ license = "YOLO"
 cc = "1.0"
 
 [features]
-default = ["sequential_c"]
+default = ["ispc"]
 sequential_c = []
 multicore_c = []
 ispc = []

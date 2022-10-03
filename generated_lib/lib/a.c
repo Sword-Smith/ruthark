@@ -40,9 +40,11 @@ void futhark_context_config_free(struct futhark_context_config *cfg);
 void futhark_context_config_set_debugging(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_profiling(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_logging(struct futhark_context_config *cfg, int flag);
+void futhark_context_config_set_num_threads(struct futhark_context_config *cfg, int n);
 struct futhark_context;
 struct futhark_context *futhark_context_new(struct futhark_context_config *cfg);
 void futhark_context_free(struct futhark_context *ctx);
+int futhark_context_sync(struct futhark_context *ctx);
 int futhark_context_config_set_tuning_param(struct futhark_context_config *cfg, const char *param_name, size_t param_value);
 int futhark_get_tuning_param_count(void);
 const char *futhark_get_tuning_param_name(int);
@@ -80,7 +82,6 @@ int futhark_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_c
 int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **out0, const struct futhark_i32_2d *in0, const struct futhark_i32_2d *in1);
 
 // Miscellaneous
-int futhark_context_sync(struct futhark_context *ctx);
 void futhark_context_config_set_cache_file(struct futhark_context_config *cfg, const char *f);
 char *futhark_context_report(struct futhark_context *ctx);
 char *futhark_context_get_error(struct futhark_context *ctx);
@@ -88,7 +89,7 @@ void futhark_context_set_logging_file(struct futhark_context *ctx, FILE *f);
 void futhark_context_pause_profiling(struct futhark_context *ctx);
 void futhark_context_unpause_profiling(struct futhark_context *ctx);
 int futhark_context_clear_caches(struct futhark_context *ctx);
-#define FUTHARK_BACKEND_c
+#define FUTHARK_BACKEND_ispc
 #define FUTHARK_SUCCESS 0
 #define FUTHARK_PROGRAM_ERROR 2
 #define FUTHARK_OUT_OF_MEMORY 3
@@ -4683,15 +4684,1489 @@ static void set_error(struct futhark_context* ctx, char *error);
 
 static int init_constants(struct futhark_context *);
 static int free_constants(struct futhark_context *);
+struct futhark_mc_task_18448 {
+    struct futhark_context *ctx;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+};
+struct futhark_mc_param_struct_18455 {
+    struct futhark_context *ctx;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+};
+int futhark_mc_loop_ispc_18456(int64_t start, int64_t end, struct futhark_mc_param_struct_18455 *futhark_mc_param_struct_18455_);
+struct futhark_mc_param_struct_18476 {
+    struct futhark_context *ctx;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+};
+struct futhark_mc_task_18485 {
+    struct futhark_context *ctx;
+    int64_t free_q_12354;
+    int64_t free_gtid_15983;
+    unsigned char *free_coefficientss_mem_17026;
+    unsigned char *free_mem_17029;
+    unsigned char *free_mem_17032;
+    unsigned char *free_mem_17035;
+};
+struct futhark_mc_param_struct_18489 {
+    struct futhark_context *ctx;
+    int64_t free_q_12354;
+    int64_t free_gtid_15983;
+    unsigned char *free_coefficientss_mem_17026;
+    unsigned char *free_mem_17029;
+    unsigned char *free_mem_17032;
+    unsigned char *free_mem_17035;
+};
+int futhark_mc_loop_ispc_18490(int64_t start, int64_t end, struct futhark_mc_param_struct_18489 *futhark_mc_param_struct_18489_);
+int futhark_mc_loop_ispc_18477(int64_t start, int64_t end, struct futhark_mc_param_struct_18476 *futhark_mc_param_struct_18476_);
+struct futhark_mc_task_18508 {
+    struct futhark_context *ctx;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    int64_t free_bytes_17096;
+    unsigned char *free_mem_17160;
+};
+struct futhark_mc_param_struct_18517 {
+    struct futhark_context *ctx;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    int64_t free_bytes_17096;
+    unsigned char *free_mem_17160;
+};
+int futhark_mc_loop_ispc_18518(int64_t start, int64_t end, struct futhark_mc_param_struct_18517 *futhark_mc_param_struct_18517_);
+struct futhark_mc_param_struct_18547 {
+    struct futhark_context *ctx;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    unsigned char *free_mem_17160;
+};
+struct futhark_mc_task_18557 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
+};
+struct futhark_mc_param_struct_18562 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
+};
+int futhark_mc_loop_ispc_18563(int64_t start, int64_t end, struct futhark_mc_param_struct_18562 *futhark_mc_param_struct_18562_);
+struct futhark_mc_param_struct_18586 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
+};
+struct futhark_mc_task_18595 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    int64_t free_flat_tid_18037;
+    int64_t free_flat_tid_18182;
+    int64_t *retval_defunc_0_f_res_17401;
+    int64_t *retval_defunc_0_f_res_17402;
+    int64_t *retval_defunc_0_f_res_17403;
+};
+struct futhark_mc_param_struct_18602 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    int64_t free_flat_tid_18182;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18330;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18332;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18334;
+};
+int futhark_mc_loop_ispc_18603(int64_t start, int64_t end, struct futhark_mc_param_struct_18602 *futhark_mc_param_struct_18602_);
+struct futhark_mc_param_struct_18618 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    int64_t free_flat_tid_18037;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18369;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18371;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18373;
+};
+struct futhark_mc_task_18628 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    int64_t free_gtid_17400;
+    int64_t free_gtid_18038;
+    int64_t free_flat_tid_18057;
+    int64_t *retval_defunc_0_f_res_18054;
+    int64_t *retval_defunc_0_f_res_18055;
+    int64_t *retval_defunc_0_f_res_18056;
+};
+struct futhark_mc_param_struct_18635 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    int64_t free_gtid_17400;
+    int64_t free_gtid_18038;
+    int64_t free_flat_tid_18057;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18383;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18385;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18387;
+};
+int futhark_mc_loop_ispc_18636(int64_t start, int64_t end, struct futhark_mc_param_struct_18635 *futhark_mc_param_struct_18635_);
+int futhark_mc_loop_ispc_18619(int64_t start, int64_t end, struct futhark_mc_param_struct_18618 *futhark_mc_param_struct_18618_);
+int futhark_mc_loop_ispc_18587(int64_t start, int64_t end, struct futhark_mc_param_struct_18586 *futhark_mc_param_struct_18586_);
+int futhark_mc_loop_ispc_18548(int64_t start, int64_t end, struct futhark_mc_param_struct_18547 *futhark_mc_param_struct_18547_);
+struct futhark_mc_task_18682 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+struct futhark_mc_param_struct_18687 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+int futhark_mc_loop_ispc_18688(int64_t start, int64_t end, struct futhark_mc_param_struct_18687 *futhark_mc_param_struct_18687_);
+struct futhark_mc_param_struct_18702 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+struct futhark_mc_task_18708 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
+};
+struct futhark_mc_param_struct_18712 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
+};
+int futhark_mc_loop_ispc_18713(int64_t start, int64_t end, struct futhark_mc_param_struct_18712 *futhark_mc_param_struct_18712_);
+struct futhark_mc_param_struct_18720 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
+};
+struct futhark_mc_task_18725 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_gtid_17183;
+    int64_t free_flat_tid_17223;
+    int32_t *retval_defunc_2_reduce_res_17184;
+};
+struct futhark_mc_param_struct_18730 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_gtid_17183;
+    int64_t free_flat_tid_17223;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_17238;
+};
+int futhark_mc_loop_ispc_18731(int64_t start, int64_t end, struct futhark_mc_param_struct_18730 *futhark_mc_param_struct_18730_);
+int futhark_mc_loop_ispc_18721(int64_t start, int64_t end, struct futhark_mc_param_struct_18720 *futhark_mc_param_struct_18720_);
+int futhark_mc_loop_ispc_18703(int64_t start, int64_t end, struct futhark_mc_param_struct_18702 *futhark_mc_param_struct_18702_);
 struct memblock {
     int *references;
     unsigned char *mem;
     int64_t size;
     const char *desc;
 };
+// start of scheduler.h
+
+// First, the API that the generated code will access.  In principle,
+// we could then compile the scheduler separately and link an object
+// file with the generated code.  In practice, we will embed all of
+// this in the generated code.
+
+// Scheduler handle.
+struct scheduler;
+
+// Initialise a scheduler (and start worker threads).
+static int scheduler_init(struct scheduler *scheduler,
+                          int num_workers,
+                          double kappa);
+
+// Shut down a scheduler (and destroy worker threads).
+static int scheduler_destroy(struct scheduler *scheduler);
+
+// Figure out the smallest amount of work that amortises task
+// creation.
+static int determine_kappa(double *kappa);
+
+// How a segop should be scheduled.
+enum scheduling {
+  DYNAMIC,
+  STATIC
+};
+
+// How a given task should be executed.  Filled out by the scheduler
+// and passed to the segop function
+struct scheduler_info {
+  int64_t iter_pr_subtask;
+  int64_t remainder;
+  int nsubtasks;
+  enum scheduling sched;
+  int wake_up_threads;
+
+  int64_t *task_time;
+  int64_t *task_iter;
+};
+
+// A segop function.  This is what you hand the scheduler for
+// execution.
+typedef int (*segop_fn)(void* args,
+                        int64_t iterations,
+                        int tid,
+                        struct scheduler_info info);
+
+// A task for the scheduler to execute.
+struct scheduler_segop {
+  void *args;
+  segop_fn top_level_fn;
+  segop_fn nested_fn;
+  int64_t iterations;
+  enum scheduling sched;
+
+  // Pointers to timer and iter associated with the task
+  int64_t *task_time;
+  int64_t *task_iter;
+
+  // For debugging
+  const char* name;
+};
+
+static inline int scheduler_prepare_task(struct scheduler *scheduler,
+                                         struct scheduler_segop *task);
+
+typedef int (*parloop_fn)(void* args,
+                          int64_t start,
+                          int64_t end,
+                          int subtask_id,
+                          int tid);
+
+// A parallel parloop task.
+struct scheduler_parloop {
+  void* args;
+  parloop_fn fn;
+  int64_t iterations;
+  struct scheduler_info info;
+
+  // For debugging
+  const char* name;
+};
+
+static inline int scheduler_execute_task(struct scheduler *scheduler,
+                                         struct scheduler_parloop *task);
+
+// Then the API implementation.
+
+#include <signal.h>
+
+#if defined(_WIN32)
+#include <windows.h>
+#elif defined(__APPLE__)
+#include <sys/sysctl.h>
+// For getting cpu usage of threads
+#include <mach/mach.h>
+#include <sys/resource.h>
+#elif defined(__linux__)
+#include <sys/sysinfo.h>
+#include <sys/resource.h>
+#include <signal.h>
+#elif defined(__EMSCRIPTEN__)
+#include <emscripten/threading.h>
+#include <sys/sysinfo.h>
+#include <sys/resource.h>
+#include <signal.h>
+#endif
+
+/* Multicore Utility functions */
+
+/* A wrapper for getting rusage on Linux and MacOS */
+/* TODO maybe figure out this for windows */
+static inline int getrusage_thread(struct rusage *rusage)
+{
+  int err = -1;
+#if  defined(__APPLE__)
+    thread_basic_info_data_t info = { 0 };
+    mach_msg_type_number_t info_count = THREAD_BASIC_INFO_COUNT;
+    kern_return_t kern_err;
+
+    kern_err = thread_info(mach_thread_self(),
+                           THREAD_BASIC_INFO,
+                           (thread_info_t)&info,
+                           &info_count);
+    if (kern_err == KERN_SUCCESS) {
+        memset(rusage, 0, sizeof(struct rusage));
+        rusage->ru_utime.tv_sec = info.user_time.seconds;
+        rusage->ru_utime.tv_usec = info.user_time.microseconds;
+        rusage->ru_stime.tv_sec = info.system_time.seconds;
+        rusage->ru_stime.tv_usec = info.system_time.microseconds;
+        err = 0;
+    } else {
+        errno = EINVAL;
+    }
+#elif defined(__linux__) || __EMSCRIPTEN__
+    err = getrusage(RUSAGE_THREAD, rusage);
+#endif
+    return err;
+}
+
+/* returns the number of logical cores */
+static int num_processors()
+{
+#if  defined(_WIN32)
+/* https://docs.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info */
+    SYSTEM_INFO sysinfo;
+    GetSystemInfo(&sysinfo);
+    int ncores = sysinfo.dwNumberOfProcessors;
+    fprintf(stderr, "Found %d cores on your Windows machine\n Is that correct?\n", ncores);
+    return ncores;
+#elif defined(__APPLE__)
+    int ncores;
+    size_t ncores_size = sizeof(ncores);
+    CHECK_ERRNO(sysctlbyname("hw.logicalcpu", &ncores, &ncores_size, NULL, 0),
+                "sysctlbyname (hw.logicalcpu)");
+    return ncores;
+#elif defined(__linux__)
+  return get_nprocs();
+#elif __EMSCRIPTEN__
+  return emscripten_num_logical_cores();
+#else
+  fprintf(stderr, "operating system not recognised\n");
+  return -1;
+#endif
+}
+
+static unsigned int g_seed;
+
+// Used to seed the generator.
+static inline void fast_srand(unsigned int seed) {
+    g_seed = seed;
+}
+
+// Compute a pseudorandom integer.
+// Output value in range [0, 32767]
+static inline unsigned int fast_rand(void) {
+    g_seed = (214013*g_seed+2531011);
+    return (g_seed>>16)&0x7FFF;
+}
+
+struct subtask_queue {
+  int capacity;             // Size of the buffer.
+  int first;                // Index of the start of the ring buffer.
+  int num_used;             // Number of used elements in the buffer.
+  struct subtask **buffer;
+
+  pthread_mutex_t mutex;    // Mutex used for synchronisation.
+  pthread_cond_t cond;      // Condition variable used for synchronisation.
+  int dead;
+
+#if defined(MCPROFILE)
+  /* Profiling fields */
+  uint64_t time_enqueue;
+  uint64_t time_dequeue;
+  uint64_t n_dequeues;
+  uint64_t n_enqueues;
+#endif
+};
+
+/* A subtask that can be executed by a worker */
+struct subtask {
+  /* The parloop function */
+  parloop_fn fn;
+  /* Execution parameters */
+  void* args;
+  int64_t start, end;
+  int id;
+
+  /* Dynamic scheduling parameters */
+  int chunkable;
+  int64_t chunk_size;
+
+  /* Shared variables across subtasks */
+  volatile int *counter; // Counter for ongoing subtasks
+  // Shared task timers and iterators
+  int64_t *task_time;
+  int64_t *task_iter;
+
+  /* For debugging */
+  const char *name;
+};
+
+
+struct worker {
+  pthread_t thread;
+  struct scheduler *scheduler;  /* Reference to the scheduler struct the worker belongs to*/
+  struct subtask_queue q;
+  int dead;
+  int tid;                      /* Just a thread id */
+
+  /* "thread local" time fields used for online algorithm */
+  uint64_t timer;
+  uint64_t total;
+  int nested; /* How nested the current computation is */
+
+  // Profiling fields
+  int output_usage;            /* Whether to dump thread usage */
+  uint64_t time_spent_working; /* Time spent in parloop functions */
+};
+
+static inline void output_worker_usage(struct worker *worker)
+{
+  struct rusage usage;
+  CHECK_ERRNO(getrusage_thread(&usage), "getrusage_thread");
+  struct timeval user_cpu_time = usage.ru_utime;
+  struct timeval sys_cpu_time = usage.ru_stime;
+  fprintf(stderr, "tid: %2d - work time %10llu us - user time: %10llu us - sys: %10llu us\n",
+          worker->tid,
+          (long long unsigned)worker->time_spent_working / 1000,
+          (long long unsigned)(user_cpu_time.tv_sec * 1000000 + user_cpu_time.tv_usec),
+          (long long unsigned)(sys_cpu_time.tv_sec * 1000000 + sys_cpu_time.tv_usec));
+}
+
+/* Doubles the size of the queue */
+static inline int subtask_queue_grow_queue(struct subtask_queue *subtask_queue) {
+
+  int new_capacity = 2 * subtask_queue->capacity;
+#ifdef MCDEBUG
+  fprintf(stderr, "Growing queue to %d\n", subtask_queue->capacity * 2);
+#endif
+
+  struct subtask **new_buffer = calloc(new_capacity, sizeof(struct subtask*));
+  for (int i = 0; i < subtask_queue->num_used; i++) {
+    new_buffer[i] = subtask_queue->buffer[(subtask_queue->first + i) % subtask_queue->capacity];
+  }
+
+  free(subtask_queue->buffer);
+  subtask_queue->buffer = new_buffer;
+  subtask_queue->capacity = new_capacity;
+  subtask_queue->first = 0;
+
+  return 0;
+}
+
+// Initialise a job queue with the given capacity.  The queue starts out
+// empty.  Returns non-zero on error.
+static inline int subtask_queue_init(struct subtask_queue *subtask_queue, int capacity)
+{
+  assert(subtask_queue != NULL);
+  memset(subtask_queue, 0, sizeof(struct subtask_queue));
+
+  subtask_queue->capacity = capacity;
+  subtask_queue->buffer = calloc(capacity, sizeof(struct subtask*));
+  if (subtask_queue->buffer == NULL) {
+    return -1;
+  }
+
+  CHECK_ERRNO(pthread_mutex_init(&subtask_queue->mutex, NULL), "pthread_mutex_init");
+  CHECK_ERRNO(pthread_cond_init(&subtask_queue->cond, NULL), "pthread_cond_init");
+
+  return 0;
+}
+
+// Destroy the job queue.  Blocks until the queue is empty before it
+// is destroyed.
+static inline int subtask_queue_destroy(struct subtask_queue *subtask_queue)
+{
+  assert(subtask_queue != NULL);
+
+  CHECK_ERR(pthread_mutex_lock(&subtask_queue->mutex), "pthread_mutex_lock");
+
+  while (subtask_queue->num_used != 0) {
+    CHECK_ERR(pthread_cond_wait(&subtask_queue->cond, &subtask_queue->mutex), "pthread_cond_wait");
+  }
+
+  // Queue is now empty.  Let's kill it!
+  subtask_queue->dead = 1;
+  free(subtask_queue->buffer);
+  CHECK_ERR(pthread_cond_broadcast(&subtask_queue->cond), "pthread_cond_broadcast");
+  CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+
+  return 0;
+}
+
+static inline void dump_queue(struct worker *worker)
+{
+  struct subtask_queue *subtask_queue = &worker->q;
+  CHECK_ERR(pthread_mutex_lock(&subtask_queue->mutex), "pthread_mutex_lock");
+  for (int i = 0; i < subtask_queue->num_used; i++) {
+    struct subtask * subtask = subtask_queue->buffer[(subtask_queue->first + i) % subtask_queue->capacity];
+    printf("queue tid %d with %d task %s\n", worker->tid, i, subtask->name);
+  }
+  CHECK_ERR(pthread_cond_broadcast(&subtask_queue->cond), "pthread_cond_broadcast");
+  CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+}
+
+// Push an element onto the end of the job queue.  Blocks if the
+// subtask_queue is full (its size is equal to its capacity).  Returns
+// non-zero on error.  It is an error to push a job onto a queue that
+// has been destroyed.
+static inline int subtask_queue_enqueue(struct worker *worker, struct subtask *subtask )
+{
+  assert(worker != NULL);
+  struct subtask_queue *subtask_queue = &worker->q;
+
+#ifdef MCPROFILE
+  uint64_t start = get_wall_time();
+#endif
+
+  CHECK_ERR(pthread_mutex_lock(&subtask_queue->mutex), "pthread_mutex_lock");
+  // Wait until there is room in the subtask_queue.
+  while (subtask_queue->num_used == subtask_queue->capacity && !subtask_queue->dead) {
+    if (subtask_queue->num_used == subtask_queue->capacity) {
+      CHECK_ERR(subtask_queue_grow_queue(subtask_queue), "subtask_queue_grow_queue");
+      continue;
+    }
+    CHECK_ERR(pthread_cond_wait(&subtask_queue->cond, &subtask_queue->mutex), "pthread_cond_wait");
+  }
+
+  if (subtask_queue->dead) {
+    CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+    return -1;
+  }
+
+  // If we made it past the loop, there is room in the subtask_queue.
+  subtask_queue->buffer[(subtask_queue->first + subtask_queue->num_used) % subtask_queue->capacity] = subtask;
+  subtask_queue->num_used++;
+
+#ifdef MCPROFILE
+  uint64_t end = get_wall_time();
+  subtask_queue->time_enqueue += (end - start);
+  subtask_queue->n_enqueues++;
+#endif
+  // Broadcast a reader (if any) that there is now an element.
+  CHECK_ERR(pthread_cond_broadcast(&subtask_queue->cond), "pthread_cond_broadcast");
+  CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+
+  return 0;
+}
+
+
+/* Like subtask_queue_dequeue, but with two differences:
+   1) the subtask is stolen from the __front__ of the queue
+   2) returns immediately if there is no subtasks queued,
+      as we dont' want to block on another workers queue and
+*/
+static inline int subtask_queue_steal(struct worker *worker,
+                                      struct subtask **subtask)
+{
+  struct subtask_queue *subtask_queue = &worker->q;
+  assert(subtask_queue != NULL);
+
+#ifdef MCPROFILE
+  uint64_t start = get_wall_time();
+#endif
+  CHECK_ERR(pthread_mutex_lock(&subtask_queue->mutex), "pthread_mutex_lock");
+
+  if (subtask_queue->num_used == 0) {
+    CHECK_ERR(pthread_cond_broadcast(&subtask_queue->cond), "pthread_cond_broadcast");
+    CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+    return 1;
+  }
+
+  if (subtask_queue->dead) {
+    CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+    return -1;
+  }
+
+  // Tasks gets stolen from the "front"
+  struct subtask *cur_back = subtask_queue->buffer[subtask_queue->first];
+  struct subtask *new_subtask = NULL;
+  int remaining_iter = cur_back->end - cur_back->start;
+  // If subtask is chunkable, we steal half of the iterations
+  if (cur_back->chunkable && remaining_iter > 1) {
+      int64_t half = remaining_iter / 2;
+      new_subtask = malloc(sizeof(struct subtask));
+      *new_subtask = *cur_back;
+      new_subtask->start = cur_back->end - half;
+      cur_back->end = new_subtask->start;
+      __atomic_fetch_add(cur_back->counter, 1, __ATOMIC_RELAXED);
+  } else {
+    new_subtask = cur_back;
+    subtask_queue->num_used--;
+    subtask_queue->first = (subtask_queue->first + 1) % subtask_queue->capacity;
+  }
+  *subtask = new_subtask;
+
+  if (*subtask == NULL) {
+    CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthred_mutex_unlock");
+    return 1;
+  }
+
+#ifdef MCPROFILE
+  uint64_t end = get_wall_time();
+  subtask_queue->time_dequeue += (end - start);
+  subtask_queue->n_dequeues++;
+#endif
+
+  // Broadcast a writer (if any) that there is now room for more.
+  CHECK_ERR(pthread_cond_broadcast(&subtask_queue->cond), "pthread_cond_broadcast");
+  CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+
+  return 0;
+}
+
+
+// Pop an element from the back of the job queue.
+// Optional argument can be provided to block or not
+static inline int subtask_queue_dequeue(struct worker *worker,
+                                        struct subtask **subtask, int blocking)
+{
+  assert(worker != NULL);
+  struct subtask_queue *subtask_queue = &worker->q;
+
+#ifdef MCPROFILE
+  uint64_t start = get_wall_time();
+#endif
+
+  CHECK_ERR(pthread_mutex_lock(&subtask_queue->mutex), "pthread_mutex_lock");
+  if (subtask_queue->num_used == 0 && !blocking) {
+    CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+    return 1;
+  }
+  // Try to steal some work while the subtask_queue is empty
+  while (subtask_queue->num_used == 0 && !subtask_queue->dead) {
+    pthread_cond_wait(&subtask_queue->cond, &subtask_queue->mutex);
+  }
+
+  if (subtask_queue->dead) {
+    CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+    return -1;
+  }
+
+  // dequeue pops from the back
+  *subtask = subtask_queue->buffer[(subtask_queue->first + subtask_queue->num_used - 1) % subtask_queue->capacity];
+  subtask_queue->num_used--;
+
+  if (*subtask == NULL) {
+    assert(!"got NULL ptr");
+    CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthred_mutex_unlock");
+    return -1;
+  }
+
+#ifdef MCPROFILE
+  uint64_t end = get_wall_time();
+  subtask_queue->time_dequeue += (end - start);
+  subtask_queue->n_dequeues++;
+#endif
+
+  // Broadcast a writer (if any) that there is now room for more.
+  CHECK_ERR(pthread_cond_broadcast(&subtask_queue->cond), "pthread_cond_broadcast");
+  CHECK_ERR(pthread_mutex_unlock(&subtask_queue->mutex), "pthread_mutex_unlock");
+
+  return 0;
+}
+
+static inline int subtask_queue_is_empty(struct subtask_queue *subtask_queue)
+{
+  return subtask_queue->num_used == 0;
+}
+
+/* Scheduler definitions */
+
+struct scheduler {
+  struct worker *workers;
+  int num_threads;
+  int minimum_chunk_size;
+
+
+  // If there is work to steal => active_work > 0
+  volatile int active_work;
+
+  // Only one error can be returned at the time now.  Maybe we can
+  // provide a stack like structure for pushing errors onto if we wish
+  // to backpropagte multiple errors
+  volatile int error;
+
+  // kappa time unit in nanoseconds
+  double kappa;
+};
+
+
+// Thread local variable worker struct
+// Note that, accesses to tls variables are expensive
+// Minimize direct references to this variable
+__thread struct worker* worker_local = NULL;
+
+static int64_t total_now(int64_t total, int64_t time) {
+  return total + (get_wall_time_ns() - time);
+}
+
+static int random_other_worker(struct scheduler *scheduler, int my_id) {
+  int my_num_workers = scheduler->num_threads;
+  assert(my_num_workers != 1);
+  int i = fast_rand() % (my_num_workers - 1);
+  if (i >= my_id) {
+    i++;
+  }
+#ifdef MCDEBUG
+  assert(i >= 0);
+  assert(i < my_num_workers);
+  assert(i != my_id);
+#endif
+
+  return i;
+}
+
+static inline int64_t compute_chunk_size(int64_t minimum_chunk_size, double kappa, struct subtask* subtask)
+{
+  double C = (double)*subtask->task_time / (double)*subtask->task_iter;
+  if (C == 0.0F) C += DBL_EPSILON;
+  return smax64((int64_t)(kappa / C), minimum_chunk_size);
+}
+
+/* Takes a chunk from subtask and enqueues the remaining iterations onto the worker's queue */
+/* A no-op if the subtask is not chunkable */
+static inline struct subtask* chunk_subtask(struct worker* worker, struct subtask *subtask)
+{
+  if (subtask->chunkable) {
+    // Do we have information from previous runs avaliable
+    if (*subtask->task_iter > 0) {
+      subtask->chunk_size = compute_chunk_size(worker->scheduler->minimum_chunk_size,
+                                               worker->scheduler->kappa,
+                                               subtask);
+      assert(subtask->chunk_size > 0);
+    }
+    int64_t remaining_iter = subtask->end - subtask->start;
+    assert(remaining_iter > 0);
+    if (remaining_iter > subtask->chunk_size) {
+      struct subtask *new_subtask = malloc(sizeof(struct subtask));
+      *new_subtask = *subtask;
+      // increment the subtask join counter to account for new subtask
+      __atomic_fetch_add(subtask->counter, 1, __ATOMIC_RELAXED);
+      // Update range parameters
+      subtask->end = subtask->start + subtask->chunk_size;
+      new_subtask->start = subtask->end;
+      subtask_queue_enqueue(worker, new_subtask);
+    }
+  }
+  return subtask;
+}
+
+static inline int run_subtask(struct worker* worker, struct subtask* subtask)
+{
+  assert(subtask != NULL);
+  assert(worker != NULL);
+
+  subtask = chunk_subtask(worker, subtask);
+  worker->total = 0;
+  worker->timer = get_wall_time_ns();
+#if defined(MCPROFILE)
+  int64_t start = worker->timer;
+#endif
+  worker->nested++;
+  int err = subtask->fn(subtask->args, subtask->start, subtask->end,
+                        subtask->id,
+                        worker->tid);
+  worker->nested--;
+  // Some error occured during some other subtask
+  // so we just clean-up and return
+  if (worker->scheduler->error != 0) {
+    // Even a failed task counts as finished.
+    __atomic_fetch_sub(subtask->counter, 1, __ATOMIC_RELAXED);
+    free(subtask);
+    return 0;
+  }
+  if (err != 0) {
+    __atomic_store_n(&worker->scheduler->error, err, __ATOMIC_RELAXED);
+  }
+  // Total sequential time spent
+  int64_t time_elapsed = total_now(worker->total, worker->timer);
+#if defined(MCPROFILE)
+  worker->time_spent_working += get_wall_time_ns() - start;
+#endif
+  int64_t iter = subtask->end - subtask->start;
+  // report measurements
+  // These updates should really be done using a single atomic CAS operation
+  __atomic_fetch_add(subtask->task_time, time_elapsed, __ATOMIC_RELAXED);
+  __atomic_fetch_add(subtask->task_iter, iter, __ATOMIC_RELAXED);
+  // We need a fence here, since if the counter is decremented before either
+  // of the two above are updated bad things can happen, e.g. if they are stack-allocated
+  __atomic_thread_fence(__ATOMIC_SEQ_CST);
+  __atomic_fetch_sub(subtask->counter, 1, __ATOMIC_RELAXED);
+  free(subtask);
+  return 0;
+}
+
+
+static inline int is_small(struct scheduler_segop *task, struct scheduler *scheduler, int *nsubtasks)
+{
+  int64_t time = *task->task_time;
+  int64_t iter = *task->task_iter;
+
+  if (task->sched == DYNAMIC || iter == 0) {
+    *nsubtasks = scheduler->num_threads;
+    return 0;
+  }
+
+  // Estimate the constant C
+  double C = (double)time / (double)iter;
+  double cur_task_iter = (double) task->iterations;
+
+  // Returns true if the task is small i.e.
+  // if the number of iterations times C is smaller
+  // than the overhead of subtask creation
+  if (C == 0.0F || C * cur_task_iter < scheduler->kappa) {
+    *nsubtasks = 1;
+    return 1;
+  }
+
+  // Else compute how many subtasks this tasks should create
+  int64_t min_iter_pr_subtask = smax64(scheduler->kappa / C, 1);
+  *nsubtasks = smin64(smax64(task->iterations / min_iter_pr_subtask, 1), scheduler->num_threads);
+
+  return 0;
+}
+
+// TODO make this prettier
+static inline struct subtask* create_subtask(parloop_fn fn,
+                                             void* args,
+                                             const char* name,
+                                             volatile int* counter,
+                                             int64_t *timer,
+                                             int64_t *iter,
+                                             int64_t start, int64_t end,
+                                             int chunkable,
+                                             int64_t chunk_size,
+                                             int id)
+{
+  struct subtask* subtask = malloc(sizeof(struct subtask));
+  if (subtask == NULL) {
+    assert(!"malloc failed in create_subtask");
+    return NULL;
+  }
+  subtask->fn         = fn;
+  subtask->args       = args;
+
+  subtask->counter    = counter;
+  subtask->task_time  = timer;
+  subtask->task_iter  = iter;
+
+  subtask->start      = start;
+  subtask->end        = end;
+  subtask->id         = id;
+  subtask->chunkable  = chunkable;
+  subtask->chunk_size = chunk_size;
+
+  subtask->name       = name;
+  return subtask;
+}
+
+static int dummy_counter = 0;
+static int64_t dummy_timer = 0;
+static int64_t dummy_iter = 0;
+
+static int dummy_fn(void *args, int64_t start, int64_t end, int subtask_id, int tid) {
+  (void)args;
+  (void)start;
+  (void)end;
+  (void)subtask_id;
+  (void)tid;
+  return 0;
+}
+
+// Wake up threads, who are blocking by pushing a dummy task
+// onto their queue
+static inline void wake_up_threads(struct scheduler *scheduler, int start_tid, int end_tid) {
+
+#if defined(MCDEBUG)
+  assert(start_tid >= 1);
+  assert(end_tid <= scheduler->num_threads);
+#endif
+  for (int i = start_tid; i < end_tid; i++) {
+    struct subtask *subtask = create_subtask(dummy_fn, NULL, "dummy_fn",
+                                            &dummy_counter,
+                                            &dummy_timer, &dummy_iter,
+                                            0, 0,
+                                            0, 0,
+                                            0);
+    CHECK_ERR(subtask_queue_enqueue(&scheduler->workers[i], subtask), "subtask_queue_enqueue");
+  }
+}
+
+static inline int is_finished(struct worker *worker) {
+  return worker->dead && subtask_queue_is_empty(&worker->q);
+}
+
+// Try to steal from a random queue
+static inline int steal_from_random_worker(struct worker* worker)
+{
+  int my_id = worker->tid;
+  struct scheduler* scheduler = worker->scheduler;
+  int k = random_other_worker(scheduler, my_id);
+  struct worker *worker_k = &scheduler->workers[k];
+  struct subtask* subtask =  NULL;
+  int retval = subtask_queue_steal(worker_k, &subtask);
+  if (retval == 0) {
+    subtask_queue_enqueue(worker, subtask);
+    return 1;
+  }
+  return 0;
+}
+
+
+static inline void *scheduler_worker(void* args)
+{
+  struct worker *worker = (struct worker*) args;
+  struct scheduler *scheduler = worker->scheduler;
+  worker_local = worker;
+  struct subtask *subtask = NULL;
+
+  while(!is_finished(worker)) {
+    if (!subtask_queue_is_empty(&worker->q)) {
+      int retval = subtask_queue_dequeue(worker, &subtask, 0);
+      if (retval == 0) {
+        assert(subtask != NULL);
+        CHECK_ERR(run_subtask(worker, subtask), "run_subtask");
+      } // else someone stole our work
+
+    } else if (scheduler->active_work) { /* steal */
+      while (!is_finished(worker) && scheduler->active_work) {
+        if (steal_from_random_worker(worker)) {
+          break;
+        }
+      }
+    } else { /* go back to sleep and wait for work */
+      int retval = subtask_queue_dequeue(worker, &subtask, 1);
+      if (retval == 0) {
+        assert(subtask != NULL);
+        CHECK_ERR(run_subtask(worker, subtask), "run_subtask");
+      }
+    }
+  }
+
+  assert(subtask_queue_is_empty(&worker->q));
+#if defined(MCPROFILE)
+  if (worker->output_usage)
+    output_worker_usage(worker);
+#endif
+  return NULL;
+}
+
+
+static inline int scheduler_execute_parloop(struct scheduler *scheduler,
+                                            struct scheduler_parloop *task,
+                                            int64_t *timer)
+{
+
+  struct worker *worker = worker_local;
+
+  struct scheduler_info info = task->info;
+  int64_t iter_pr_subtask = info.iter_pr_subtask;
+  int64_t remainder = info.remainder;
+  int nsubtasks = info.nsubtasks;
+  volatile int join_counter = nsubtasks;
+
+  // Shared timer used to sum up all
+  // sequential work from each subtask
+  int64_t task_timer = 0;
+  int64_t task_iter = 0;
+
+  enum scheduling sched = info.sched;
+  /* If each subtasks should be processed in chunks */
+  int chunkable = sched == STATIC ? 0 : 1;
+  int64_t chunk_size = scheduler->minimum_chunk_size; // The initial chunk size when no info is avaliable
+
+
+  if (info.wake_up_threads || sched == DYNAMIC)
+    __atomic_add_fetch(&scheduler->active_work, nsubtasks, __ATOMIC_RELAXED);
+
+  int64_t start = 0;
+  int64_t end = iter_pr_subtask + (int64_t)(remainder != 0);
+  for (int subtask_id = 0; subtask_id < nsubtasks; subtask_id++) {
+    struct subtask *subtask = create_subtask(task->fn, task->args, task->name,
+                                              &join_counter,
+                                              &task_timer, &task_iter,
+                                              start, end,
+                                              chunkable, chunk_size,
+                                              subtask_id);
+    assert(subtask != NULL);
+    // In most cases we will never have more subtasks than workers,
+    // but there can be exceptions (e.g. the kappa tuning function).
+    struct worker *subtask_worker =
+      worker->nested
+      ? &scheduler->workers[worker->tid]
+      : &scheduler->workers[subtask_id % scheduler->num_threads];
+    CHECK_ERR(subtask_queue_enqueue(subtask_worker, subtask),
+              "subtask_queue_enqueue");
+    // Update range params
+    start = end;
+    end += iter_pr_subtask + ((subtask_id + 1) < remainder);
+  }
+
+  if (info.wake_up_threads) {
+    wake_up_threads(scheduler, nsubtasks, scheduler->num_threads);
+  }
+
+  // Join (wait for subtasks to finish)
+  while(join_counter != 0) {
+    if (!subtask_queue_is_empty(&worker->q)) {
+      struct subtask *subtask = NULL;
+      int err = subtask_queue_dequeue(worker, &subtask, 0);
+      if (err == 0 ) {
+        CHECK_ERR(run_subtask(worker, subtask), "run_subtask");
+      }
+    } else {
+      if (steal_from_random_worker(worker)) {
+        struct subtask *subtask = NULL;
+        int err = subtask_queue_dequeue(worker, &subtask, 0);
+        if (err == 0) {
+          CHECK_ERR(run_subtask(worker, subtask), "run_subtask");
+        }
+      }
+    }
+  }
+
+
+  if (info.wake_up_threads || sched == DYNAMIC) {
+    __atomic_sub_fetch(&scheduler->active_work, nsubtasks, __ATOMIC_RELAXED);
+  }
+
+  // Write back timing results of all sequential work
+  (*timer) += task_timer;
+  return scheduler->error;
+}
+
+
+static inline int scheduler_execute_task(struct scheduler *scheduler,
+                                         struct scheduler_parloop *task)
+{
+
+  struct worker *worker = worker_local;
+
+  int err = 0;
+
+  // How much sequential work was performed by the task
+  int64_t task_timer = 0;
+
+  /* Execute task sequential or parallel based on decision made earlier */
+  if (task->info.nsubtasks == 1) {
+    int64_t start = get_wall_time_ns();
+    err = task->fn(task->args, 0, task->iterations, 0, worker->tid);
+    int64_t end = get_wall_time_ns();
+    task_timer = end - start;
+    worker->time_spent_working += task_timer;
+    // Report time measurements
+    // TODO the update of both of these should really be a single atomic!!
+    __atomic_fetch_add(task->info.task_time, task_timer, __ATOMIC_RELAXED);
+    __atomic_fetch_add(task->info.task_iter, task->iterations, __ATOMIC_RELAXED);
+  } else {
+    // Add "before" time if we already are inside a task
+    int64_t time_before = 0;
+    if (worker->nested > 0) {
+      time_before = total_now(worker->total, worker->timer);
+    }
+
+    err = scheduler_execute_parloop(scheduler, task, &task_timer);
+
+    // Report time measurements
+    // TODO the update of both of these should really be a single atomic!!
+    __atomic_fetch_add(task->info.task_time, task_timer, __ATOMIC_RELAXED);
+    __atomic_fetch_add(task->info.task_iter, task->iterations, __ATOMIC_RELAXED);
+
+    // Update timers to account for new timings
+    worker->total = time_before + task_timer;
+    worker->timer = get_wall_time_ns();
+  }
+
+
+  return err;
+}
+
+/* Decide on how schedule the incoming task i.e. how many subtasks and
+   to run sequential or (potentially nested) parallel code body */
+static inline int scheduler_prepare_task(struct scheduler* scheduler,
+                                         struct scheduler_segop *task)
+{
+  assert(task != NULL);
+
+  struct worker *worker = worker_local;
+  struct scheduler_info info;
+  info.task_time = task->task_time;
+  info.task_iter = task->task_iter;
+
+  int nsubtasks;
+  // Decide if task should be scheduled sequentially
+  if (is_small(task, scheduler, &nsubtasks)) {
+    info.iter_pr_subtask = task->iterations;
+    info.remainder = 0;
+    info.nsubtasks = nsubtasks;
+    return task->top_level_fn(task->args, task->iterations, worker->tid, info);
+  } else {
+    info.iter_pr_subtask = task->iterations / nsubtasks;
+    info.remainder = task->iterations % nsubtasks;
+    info.sched = task->sched;
+    switch (task->sched) {
+    case STATIC:
+      info.nsubtasks = info.iter_pr_subtask == 0 ? info.remainder : ((task->iterations - info.remainder) / info.iter_pr_subtask);
+      break;
+    case DYNAMIC:
+      // As any thread can take any subtasks, we are being safe with using
+      // an upper bound on the number of tasks such that the task allocate enough memory
+      info.nsubtasks = info.iter_pr_subtask == 0 ? info.remainder : nsubtasks;
+      break;
+    default:
+      assert(!"Got unknown scheduling");
+    }
+  }
+
+  info.wake_up_threads = 0;
+  // We only use the nested parallel segop function if we can't exchaust all cores
+  // using the outer most level
+  if (task->nested_fn != NULL && info.nsubtasks < scheduler->num_threads && info.nsubtasks == task->iterations) {
+    if (worker->nested == 0)
+      info.wake_up_threads = 1;
+    return task->nested_fn(task->args, task->iterations, worker->tid, info);
+  }
+
+  return task->top_level_fn(task->args, task->iterations, worker->tid, info);
+}
+
+// Now some code for finding the proper value of kappa on a given
+// machine (the smallest amount of work that amortises the cost of
+// task creation).
+
+struct tuning_struct {
+  int32_t *free_tuning_res;
+  int32_t *array;
+};
+
+// Reduction function over an integer array
+static int tuning_loop(void *args, int64_t start, int64_t end,
+                                     int flat_tid, int tid) {
+  (void)flat_tid;
+  (void)tid;
+
+  int err = 0;
+  struct tuning_struct *tuning_struct = (struct tuning_struct *) args;
+  int32_t *array = tuning_struct->array;
+  int32_t *tuning_res = tuning_struct->free_tuning_res;
+
+  int32_t sum = 0;
+  for (int i = start; i < end; i++) {
+    int32_t y = array[i];
+    sum = add32(sum, y);
+  }
+  *tuning_res = sum;
+  return err;
+}
+
+// The main entry point for the tuning process.  Sets the provided
+// variable ``kappa``.
+static int determine_kappa(double *kappa) {
+  int err = 0;
+
+  int64_t iterations = 100000000;
+  int64_t tuning_time = 0;
+  int64_t tuning_iter = 0;
+
+  int32_t *array = malloc(sizeof(int32_t) * iterations);
+  for (int64_t i = 0; i < iterations; i++) {
+    array[i] = fast_rand();
+  }
+
+  int64_t start_tuning = get_wall_time_ns();
+  /* **************************** */
+  /* Run sequential reduce first' */
+  /* **************************** */
+  int64_t tuning_sequentiual_start = get_wall_time_ns();
+  struct tuning_struct tuning_struct;
+  int32_t tuning_res;
+  tuning_struct.free_tuning_res = &tuning_res;
+  tuning_struct.array = array;
+
+  err = tuning_loop(&tuning_struct, 0, iterations, 0, 0);
+  int64_t tuning_sequentiual_end = get_wall_time_ns();
+  int64_t sequential_elapsed = tuning_sequentiual_end - tuning_sequentiual_start;
+
+  double C = (double)sequential_elapsed / (double)iterations;
+  fprintf(stderr, " Time for sequential run is %lld - Found C %f\n", (long long)sequential_elapsed, C);
+
+  /* ********************** */
+  /* Now run tuning process */
+  /* ********************** */
+  // Setup a scheduler with a single worker
+  struct scheduler scheduler;
+  scheduler.num_threads = 1;
+  scheduler.workers = malloc(sizeof(struct worker));
+  worker_local = &scheduler.workers[0];
+  worker_local->tid = 0;
+  CHECK_ERR(subtask_queue_init(&scheduler.workers[0].q, 1024),
+            "failed to init queue for worker %d\n", 0);
+
+  // Start tuning for kappa
+  double kappa_tune = 1000; // Initial kappa is 1 us
+  double ratio;
+  int64_t time_elapsed;
+  while(1) {
+    int64_t min_iter_pr_subtask = (int64_t) (kappa_tune / C) == 0 ? 1 : (kappa_tune / C);
+    int nsubtasks = iterations / min_iter_pr_subtask;
+    struct scheduler_info info;
+    info.iter_pr_subtask = min_iter_pr_subtask;
+
+    info.nsubtasks = iterations / min_iter_pr_subtask;
+    info.remainder = iterations % min_iter_pr_subtask;
+    info.task_time = &tuning_time;
+    info.task_iter = &tuning_iter;
+    info.sched = STATIC;
+
+    struct scheduler_parloop parloop;
+    parloop.name = "tuning_loop";
+    parloop.fn = tuning_loop;
+    parloop.args = &tuning_struct;
+    parloop.iterations = iterations;
+    parloop.info = info;
+
+    int64_t tuning_chunked_start = get_wall_time_ns();
+    int determine_kappa_err =
+      scheduler_execute_task(&scheduler,
+                             &parloop);
+    assert(determine_kappa_err == 0);
+    int64_t tuning_chunked_end = get_wall_time_ns();
+    time_elapsed =  tuning_chunked_end - tuning_chunked_start;
+
+    ratio = (double)time_elapsed / (double)sequential_elapsed;
+    if (ratio < 1.055) {
+      break;
+    }
+    kappa_tune += 100; // Increase by 100 ns at the time
+    fprintf(stderr, "nsubtask %d - kappa %f - ratio %f\n", nsubtasks, kappa_tune, ratio);
+  }
+
+  int64_t end_tuning = get_wall_time_ns();
+  fprintf(stderr, "tuning took %lld ns and found kappa %f - time %lld - ratio %f\n",
+          (long long)end_tuning - start_tuning,
+          kappa_tune,
+          (long long)time_elapsed,
+          ratio);
+  *kappa = kappa_tune;
+
+  // Clean-up
+  CHECK_ERR(subtask_queue_destroy(&scheduler.workers[0].q), "failed to destroy queue");
+  free(array);
+  free(scheduler.workers);
+  return err;
+}
+
+static int scheduler_init(struct scheduler *scheduler,
+                          int num_workers,
+                          double kappa) {
+#ifdef FUTHARK_BACKEND_ispc
+  int64_t get_gang_size();
+  scheduler->minimum_chunk_size = get_gang_size();
+#else
+  scheduler->minimum_chunk_size = 1;
+#endif
+
+  assert(num_workers > 0);
+
+  scheduler->kappa = kappa;
+  scheduler->num_threads = num_workers;
+  scheduler->active_work = 0;
+  scheduler->error = 0;
+
+  scheduler->workers = calloc(num_workers, sizeof(struct worker));
+
+  const int queue_capacity = 1024;
+
+  worker_local = &scheduler->workers[0];
+  worker_local->tid = 0;
+  worker_local->scheduler = scheduler;
+  CHECK_ERR(subtask_queue_init(&worker_local->q, queue_capacity),
+            "failed to init queue for worker %d\n", 0);
+
+  for (int i = 1; i < num_workers; i++) {
+    struct worker *cur_worker = &scheduler->workers[i];
+    memset(cur_worker, 0, sizeof(struct worker));
+    cur_worker->tid = i;
+    cur_worker->output_usage = 0;
+    cur_worker->scheduler = scheduler;
+    CHECK_ERR(subtask_queue_init(&cur_worker->q, queue_capacity),
+              "failed to init queue for worker %d\n", i);
+
+    CHECK_ERR(pthread_create(&cur_worker->thread,
+                             NULL,
+                             &scheduler_worker,
+                             cur_worker),
+              "Failed to create worker %d\n", i);
+  }
+
+  return 0;
+}
+
+static int scheduler_destroy(struct scheduler *scheduler) {
+  // We assume that this function is called by the thread controlling
+  // the first worker, which is why we treat scheduler->workers[0]
+  // specially here.
+
+  // First mark them all as dead.
+  for (int i = 1; i < scheduler->num_threads; i++) {
+    struct worker *cur_worker = &scheduler->workers[i];
+    cur_worker->dead = 1;
+  }
+
+  // Then destroy their task queues (this will wake up the threads and
+  // make them do their shutdown).
+  for (int i = 1; i < scheduler->num_threads; i++) {
+    struct worker *cur_worker = &scheduler->workers[i];
+    subtask_queue_destroy(&cur_worker->q);
+  }
+
+  // Then actually wait for them to stop.
+  for (int i = 1; i < scheduler->num_threads; i++) {
+    struct worker *cur_worker = &scheduler->workers[i];
+    CHECK_ERR(pthread_join(scheduler->workers[i].thread, NULL), "pthread_join");
+  }
+
+  // And then destroy our own queue.
+  subtask_queue_destroy(&scheduler->workers[0].q);
+
+  free(scheduler->workers);
+
+  return 0;
+}
+
+// End of scheduler.h
+
 struct futhark_context_config {
-    int debugging;
     int in_use;
+    int debugging;
+    int profiling;
+    int num_threads;
     const char *cache_fname;
 };
 struct futhark_context_config *futhark_context_config_new(void)
@@ -4702,7 +6177,9 @@ struct futhark_context_config *futhark_context_config_new(void)
         return NULL;
     cfg->in_use = 0;
     cfg->debugging = 0;
+    cfg->profiling = 0;
     cfg->cache_fname = NULL;
+    cfg->num_threads = 0;
     return cfg;
 }
 void futhark_context_config_free(struct futhark_context_config *cfg)
@@ -4716,8 +6193,7 @@ void futhark_context_config_set_debugging(struct futhark_context_config *cfg, in
 }
 void futhark_context_config_set_profiling(struct futhark_context_config *cfg, int flag)
 {
-    (void) cfg;
-    (void) flag;
+    cfg->profiling = flag;
 }
 void futhark_context_config_set_logging(struct futhark_context_config *cfg, int detail)
 {
@@ -4725,22 +6201,184 @@ void futhark_context_config_set_logging(struct futhark_context_config *cfg, int 
     (void) cfg;
     (void) detail;
 }
+void futhark_context_config_set_num_threads(struct futhark_context_config *cfg, int n)
+{
+    cfg->num_threads = n;
+}
 struct futhark_context {
     struct futhark_context_config *cfg;
+    struct scheduler scheduler;
     int detail_memory;
     int debugging;
     int profiling;
+    int profiling_paused;
     int logging;
     lock_t lock;
     char *error;
     lock_t error_lock;
     FILE *log;
-    int profiling_paused;
+    int total_runs;
+    long total_runtime;
     int64_t peak_mem_usage_default;
     int64_t cur_mem_usage_default;
     struct {
         int dummy;
     } constants;
+    int64_t *futhark_mc_segmap_parloop_18451_total_runtime;
+    int *futhark_mc_segmap_parloop_18451_runs;
+    int64_t *futhark_mc_segmap_parloop_18451_iter;
+    int64_t futhark_mc_segmap_parloop_18451_total_total_runtime;
+    int futhark_mc_segmap_parloop_18451_total_runs;
+    int64_t futhark_mc_segmap_parloop_18451_total_iter;
+    int64_t *futhark_mc_segmap_task_18449_total_runtime;
+    int *futhark_mc_segmap_task_18449_runs;
+    int64_t *futhark_mc_segmap_task_18449_iter;
+    int64_t futhark_mc_segmap_task_18449_total_time;
+    int64_t futhark_mc_segmap_task_18449_total_iter;
+    int64_t *futhark_mc_segmap_parloop_18488_total_runtime;
+    int *futhark_mc_segmap_parloop_18488_runs;
+    int64_t *futhark_mc_segmap_parloop_18488_iter;
+    int64_t futhark_mc_segmap_parloop_18488_total_total_runtime;
+    int futhark_mc_segmap_parloop_18488_total_runs;
+    int64_t futhark_mc_segmap_parloop_18488_total_iter;
+    int64_t *futhark_mc_segmap_task_18486_total_runtime;
+    int *futhark_mc_segmap_task_18486_runs;
+    int64_t *futhark_mc_segmap_task_18486_iter;
+    int64_t futhark_mc_segmap_task_18486_total_time;
+    int64_t futhark_mc_segmap_task_18486_total_iter;
+    int64_t *futhark_mc_segmap_parloop_18472_total_runtime;
+    int *futhark_mc_segmap_parloop_18472_runs;
+    int64_t *futhark_mc_segmap_parloop_18472_iter;
+    int64_t futhark_mc_segmap_parloop_18472_total_total_runtime;
+    int futhark_mc_segmap_parloop_18472_total_runs;
+    int64_t futhark_mc_segmap_parloop_18472_total_iter;
+    int64_t *futhark_mc_segmap_nested_task_18470_total_runtime;
+    int *futhark_mc_segmap_nested_task_18470_runs;
+    int64_t *futhark_mc_segmap_nested_task_18470_iter;
+    int64_t *futhark_mc_segmap_parloop_18511_total_runtime;
+    int *futhark_mc_segmap_parloop_18511_runs;
+    int64_t *futhark_mc_segmap_parloop_18511_iter;
+    int64_t futhark_mc_segmap_parloop_18511_total_total_runtime;
+    int futhark_mc_segmap_parloop_18511_total_runs;
+    int64_t futhark_mc_segmap_parloop_18511_total_iter;
+    int64_t *futhark_mc_segmap_task_18509_total_runtime;
+    int *futhark_mc_segmap_task_18509_runs;
+    int64_t *futhark_mc_segmap_task_18509_iter;
+    int64_t futhark_mc_segmap_task_18509_total_time;
+    int64_t futhark_mc_segmap_task_18509_total_iter;
+    int64_t *futhark_mc_segmap_parloop_18560_total_runtime;
+    int *futhark_mc_segmap_parloop_18560_runs;
+    int64_t *futhark_mc_segmap_parloop_18560_iter;
+    int64_t futhark_mc_segmap_parloop_18560_total_total_runtime;
+    int futhark_mc_segmap_parloop_18560_total_runs;
+    int64_t futhark_mc_segmap_parloop_18560_total_iter;
+    int64_t *futhark_mc_segmap_task_18558_total_runtime;
+    int *futhark_mc_segmap_task_18558_runs;
+    int64_t *futhark_mc_segmap_task_18558_iter;
+    int64_t futhark_mc_segmap_task_18558_total_time;
+    int64_t futhark_mc_segmap_task_18558_total_iter;
+    int64_t *futhark_mc_segred_stage_1_parloop_18601_total_runtime;
+    int *futhark_mc_segred_stage_1_parloop_18601_runs;
+    int64_t *futhark_mc_segred_stage_1_parloop_18601_iter;
+    int64_t futhark_mc_segred_stage_1_parloop_18601_total_total_runtime;
+    int futhark_mc_segred_stage_1_parloop_18601_total_runs;
+    int64_t futhark_mc_segred_stage_1_parloop_18601_total_iter;
+    int64_t *futhark_mc_segred_task_18596_total_runtime;
+    int *futhark_mc_segred_task_18596_runs;
+    int64_t *futhark_mc_segred_task_18596_iter;
+    int64_t futhark_mc_segred_task_18596_total_time;
+    int64_t futhark_mc_segred_task_18596_total_iter;
+    int64_t *futhark_mc_segred_stage_1_parloop_18634_total_runtime;
+    int *futhark_mc_segred_stage_1_parloop_18634_runs;
+    int64_t *futhark_mc_segred_stage_1_parloop_18634_iter;
+    int64_t futhark_mc_segred_stage_1_parloop_18634_total_total_runtime;
+    int futhark_mc_segred_stage_1_parloop_18634_total_runs;
+    int64_t futhark_mc_segred_stage_1_parloop_18634_total_iter;
+    int64_t *futhark_mc_segred_task_18629_total_runtime;
+    int *futhark_mc_segred_task_18629_runs;
+    int64_t *futhark_mc_segred_task_18629_iter;
+    int64_t futhark_mc_segred_task_18629_total_time;
+    int64_t futhark_mc_segred_task_18629_total_iter;
+    int64_t *futhark_mc_segred_stage_1_parloop_18617_total_runtime;
+    int *futhark_mc_segred_stage_1_parloop_18617_runs;
+    int64_t *futhark_mc_segred_stage_1_parloop_18617_iter;
+    int64_t futhark_mc_segred_stage_1_parloop_18617_total_total_runtime;
+    int futhark_mc_segred_stage_1_parloop_18617_total_runs;
+    int64_t futhark_mc_segred_stage_1_parloop_18617_total_iter;
+    int64_t *futhark_mc_segred_nested_task_18612_total_runtime;
+    int *futhark_mc_segred_nested_task_18612_runs;
+    int64_t *futhark_mc_segred_nested_task_18612_iter;
+    int64_t *futhark_mc_segmap_parloop_18584_total_runtime;
+    int *futhark_mc_segmap_parloop_18584_runs;
+    int64_t *futhark_mc_segmap_parloop_18584_iter;
+    int64_t futhark_mc_segmap_parloop_18584_total_total_runtime;
+    int futhark_mc_segmap_parloop_18584_total_runs;
+    int64_t futhark_mc_segmap_parloop_18584_total_iter;
+    int64_t *futhark_mc_segmap_nested_task_18582_total_runtime;
+    int *futhark_mc_segmap_nested_task_18582_runs;
+    int64_t *futhark_mc_segmap_nested_task_18582_iter;
+    int64_t *futhark_mc_segmap_parloop_18545_total_runtime;
+    int *futhark_mc_segmap_parloop_18545_runs;
+    int64_t *futhark_mc_segmap_parloop_18545_iter;
+    int64_t futhark_mc_segmap_parloop_18545_total_total_runtime;
+    int futhark_mc_segmap_parloop_18545_total_runs;
+    int64_t futhark_mc_segmap_parloop_18545_total_iter;
+    int64_t *futhark_mc_segmap_nested_task_18543_total_runtime;
+    int *futhark_mc_segmap_nested_task_18543_runs;
+    int64_t *futhark_mc_segmap_nested_task_18543_iter;
+    int64_t *futhark_mc_segmap_parloop_18685_total_runtime;
+    int *futhark_mc_segmap_parloop_18685_runs;
+    int64_t *futhark_mc_segmap_parloop_18685_iter;
+    int64_t futhark_mc_segmap_parloop_18685_total_total_runtime;
+    int futhark_mc_segmap_parloop_18685_total_runs;
+    int64_t futhark_mc_segmap_parloop_18685_total_iter;
+    int64_t *futhark_mc_segmap_task_18683_total_runtime;
+    int *futhark_mc_segmap_task_18683_runs;
+    int64_t *futhark_mc_segmap_task_18683_iter;
+    int64_t futhark_mc_segmap_task_18683_total_time;
+    int64_t futhark_mc_segmap_task_18683_total_iter;
+    int64_t *futhark_mc_segmap_parloop_18711_total_runtime;
+    int *futhark_mc_segmap_parloop_18711_runs;
+    int64_t *futhark_mc_segmap_parloop_18711_iter;
+    int64_t futhark_mc_segmap_parloop_18711_total_total_runtime;
+    int futhark_mc_segmap_parloop_18711_total_runs;
+    int64_t futhark_mc_segmap_parloop_18711_total_iter;
+    int64_t *futhark_mc_segmap_task_18709_total_runtime;
+    int *futhark_mc_segmap_task_18709_runs;
+    int64_t *futhark_mc_segmap_task_18709_iter;
+    int64_t futhark_mc_segmap_task_18709_total_time;
+    int64_t futhark_mc_segmap_task_18709_total_iter;
+    int64_t *futhark_mc_segred_stage_1_parloop_18729_total_runtime;
+    int *futhark_mc_segred_stage_1_parloop_18729_runs;
+    int64_t *futhark_mc_segred_stage_1_parloop_18729_iter;
+    int64_t futhark_mc_segred_stage_1_parloop_18729_total_total_runtime;
+    int futhark_mc_segred_stage_1_parloop_18729_total_runs;
+    int64_t futhark_mc_segred_stage_1_parloop_18729_total_iter;
+    int64_t *futhark_mc_segred_task_18726_total_runtime;
+    int *futhark_mc_segred_task_18726_runs;
+    int64_t *futhark_mc_segred_task_18726_iter;
+    int64_t futhark_mc_segred_task_18726_total_time;
+    int64_t futhark_mc_segred_task_18726_total_iter;
+    int64_t *futhark_mc_segmap_parloop_18719_total_runtime;
+    int *futhark_mc_segmap_parloop_18719_runs;
+    int64_t *futhark_mc_segmap_parloop_18719_iter;
+    int64_t futhark_mc_segmap_parloop_18719_total_total_runtime;
+    int futhark_mc_segmap_parloop_18719_total_runs;
+    int64_t futhark_mc_segmap_parloop_18719_total_iter;
+    int64_t *futhark_mc_segmap_nested_task_18717_total_runtime;
+    int *futhark_mc_segmap_nested_task_18717_runs;
+    int64_t *futhark_mc_segmap_nested_task_18717_iter;
+    int64_t *futhark_mc_segmap_parloop_18700_total_runtime;
+    int *futhark_mc_segmap_parloop_18700_runs;
+    int64_t *futhark_mc_segmap_parloop_18700_iter;
+    int64_t futhark_mc_segmap_parloop_18700_total_total_runtime;
+    int futhark_mc_segmap_parloop_18700_total_runs;
+    int64_t futhark_mc_segmap_parloop_18700_total_iter;
+    int64_t *futhark_mc_segmap_nested_task_18698_total_runtime;
+    int *futhark_mc_segmap_nested_task_18698_runs;
+    int64_t *futhark_mc_segmap_nested_task_18698_iter;
+    int64_t tuning_timing;
+    int64_t tuning_iter;
 };
 struct futhark_context *futhark_context_new(struct futhark_context_config *cfg)
 {
@@ -4752,22 +6390,279 @@ struct futhark_context *futhark_context_new(struct futhark_context_config *cfg)
         return NULL;
     ctx->cfg = cfg;
     ctx->cfg->in_use = 1;
+    // Initialize rand()
+    fast_srand(time(0));
     ctx->detail_memory = cfg->debugging;
     ctx->debugging = cfg->debugging;
-    ctx->profiling = cfg->debugging;
-    ctx->logging = cfg->debugging;
+    ctx->profiling = cfg->profiling;
+    ctx->profiling_paused = 0;
+    ctx->logging = 0;
     ctx->error = NULL;
     create_lock(&ctx->error_lock);
     ctx->log = stderr;
     create_lock(&ctx->lock);
+    
+    int tune_kappa = 0;
+    double kappa = 5.1f * 1000;
+    
+    if (tune_kappa) {
+        if (determine_kappa(&kappa) != 0)
+            return NULL;
+    }
+    if (scheduler_init(&ctx->scheduler, cfg->num_threads > 0 ? cfg->num_threads : num_processors(), kappa) != 0)
+        return NULL;
     ctx->peak_mem_usage_default = 0;
     ctx->cur_mem_usage_default = 0;
+    ctx->futhark_mc_segmap_parloop_18451_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18451_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18451_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18451_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18451_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18451_total_iter = 0;
+    ctx->futhark_mc_segmap_task_18449_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18449_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18449_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18449_total_time = 0;
+    ctx->futhark_mc_segmap_task_18449_total_iter = 0;
+    ctx->futhark_mc_segmap_parloop_18488_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18488_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18488_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18488_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18488_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18488_total_iter = 0;
+    ctx->futhark_mc_segmap_task_18486_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18486_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18486_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18486_total_time = 0;
+    ctx->futhark_mc_segmap_task_18486_total_iter = 0;
+    ctx->futhark_mc_segmap_parloop_18472_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18472_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18472_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18472_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18472_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18472_total_iter = 0;
+    ctx->futhark_mc_segmap_nested_task_18470_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18470_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18470_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18511_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18511_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18511_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18511_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18511_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18511_total_iter = 0;
+    ctx->futhark_mc_segmap_task_18509_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18509_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18509_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18509_total_time = 0;
+    ctx->futhark_mc_segmap_task_18509_total_iter = 0;
+    ctx->futhark_mc_segmap_parloop_18560_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18560_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18560_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18560_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18560_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18560_total_iter = 0;
+    ctx->futhark_mc_segmap_task_18558_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18558_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18558_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18558_total_time = 0;
+    ctx->futhark_mc_segmap_task_18558_total_iter = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18601_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18601_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18601_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18601_total_total_runtime = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18601_total_iter = 0;
+    ctx->futhark_mc_segred_task_18596_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18596_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18596_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18596_total_time = 0;
+    ctx->futhark_mc_segred_task_18596_total_iter = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18634_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18634_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18634_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18634_total_total_runtime = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18634_total_iter = 0;
+    ctx->futhark_mc_segred_task_18629_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18629_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18629_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18629_total_time = 0;
+    ctx->futhark_mc_segred_task_18629_total_iter = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18617_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18617_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18617_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18617_total_total_runtime = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18617_total_iter = 0;
+    ctx->futhark_mc_segred_nested_task_18612_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_nested_task_18612_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_nested_task_18612_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18584_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18584_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18584_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18584_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18584_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18584_total_iter = 0;
+    ctx->futhark_mc_segmap_nested_task_18582_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18582_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18582_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18545_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18545_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18545_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18545_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18545_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18545_total_iter = 0;
+    ctx->futhark_mc_segmap_nested_task_18543_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18543_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18543_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18685_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18685_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18685_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18685_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18685_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18685_total_iter = 0;
+    ctx->futhark_mc_segmap_task_18683_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18683_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18683_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18683_total_time = 0;
+    ctx->futhark_mc_segmap_task_18683_total_iter = 0;
+    ctx->futhark_mc_segmap_parloop_18711_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18711_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18711_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18711_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18711_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18711_total_iter = 0;
+    ctx->futhark_mc_segmap_task_18709_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18709_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18709_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_task_18709_total_time = 0;
+    ctx->futhark_mc_segmap_task_18709_total_iter = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18729_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18729_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18729_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_stage_1_parloop_18729_total_total_runtime = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs = 0;
+    ctx->futhark_mc_segred_stage_1_parloop_18729_total_iter = 0;
+    ctx->futhark_mc_segred_task_18726_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18726_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18726_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segred_task_18726_total_time = 0;
+    ctx->futhark_mc_segred_task_18726_total_iter = 0;
+    ctx->futhark_mc_segmap_parloop_18719_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18719_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18719_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18719_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18719_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18719_total_iter = 0;
+    ctx->futhark_mc_segmap_nested_task_18717_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18717_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18717_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18700_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18700_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18700_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_parloop_18700_total_total_runtime = 0;
+    ctx->futhark_mc_segmap_parloop_18700_total_runs = 0;
+    ctx->futhark_mc_segmap_parloop_18700_total_iter = 0;
+    ctx->futhark_mc_segmap_nested_task_18698_total_runtime = calloc(sizeof(int64_t), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18698_runs = calloc(sizeof(int), ctx->scheduler.num_threads);
+    ctx->futhark_mc_segmap_nested_task_18698_iter = calloc(sizeof(sizeof(int64_t)), ctx->scheduler.num_threads);
     init_constants(ctx);
     return ctx;
 }
 void futhark_context_free(struct futhark_context *ctx)
 {
+    free(ctx->futhark_mc_segmap_parloop_18451_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18451_runs);
+    free(ctx->futhark_mc_segmap_parloop_18451_iter);
+    free(ctx->futhark_mc_segmap_task_18449_total_runtime);
+    free(ctx->futhark_mc_segmap_task_18449_runs);
+    free(ctx->futhark_mc_segmap_task_18449_iter);
+    free(ctx->futhark_mc_segmap_parloop_18488_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18488_runs);
+    free(ctx->futhark_mc_segmap_parloop_18488_iter);
+    free(ctx->futhark_mc_segmap_task_18486_total_runtime);
+    free(ctx->futhark_mc_segmap_task_18486_runs);
+    free(ctx->futhark_mc_segmap_task_18486_iter);
+    free(ctx->futhark_mc_segmap_parloop_18472_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18472_runs);
+    free(ctx->futhark_mc_segmap_parloop_18472_iter);
+    free(ctx->futhark_mc_segmap_nested_task_18470_total_runtime);
+    free(ctx->futhark_mc_segmap_nested_task_18470_runs);
+    free(ctx->futhark_mc_segmap_nested_task_18470_iter);
+    free(ctx->futhark_mc_segmap_parloop_18511_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18511_runs);
+    free(ctx->futhark_mc_segmap_parloop_18511_iter);
+    free(ctx->futhark_mc_segmap_task_18509_total_runtime);
+    free(ctx->futhark_mc_segmap_task_18509_runs);
+    free(ctx->futhark_mc_segmap_task_18509_iter);
+    free(ctx->futhark_mc_segmap_parloop_18560_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18560_runs);
+    free(ctx->futhark_mc_segmap_parloop_18560_iter);
+    free(ctx->futhark_mc_segmap_task_18558_total_runtime);
+    free(ctx->futhark_mc_segmap_task_18558_runs);
+    free(ctx->futhark_mc_segmap_task_18558_iter);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18601_total_runtime);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18601_runs);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18601_iter);
+    free(ctx->futhark_mc_segred_task_18596_total_runtime);
+    free(ctx->futhark_mc_segred_task_18596_runs);
+    free(ctx->futhark_mc_segred_task_18596_iter);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18634_total_runtime);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18634_runs);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18634_iter);
+    free(ctx->futhark_mc_segred_task_18629_total_runtime);
+    free(ctx->futhark_mc_segred_task_18629_runs);
+    free(ctx->futhark_mc_segred_task_18629_iter);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18617_total_runtime);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18617_runs);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18617_iter);
+    free(ctx->futhark_mc_segred_nested_task_18612_total_runtime);
+    free(ctx->futhark_mc_segred_nested_task_18612_runs);
+    free(ctx->futhark_mc_segred_nested_task_18612_iter);
+    free(ctx->futhark_mc_segmap_parloop_18584_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18584_runs);
+    free(ctx->futhark_mc_segmap_parloop_18584_iter);
+    free(ctx->futhark_mc_segmap_nested_task_18582_total_runtime);
+    free(ctx->futhark_mc_segmap_nested_task_18582_runs);
+    free(ctx->futhark_mc_segmap_nested_task_18582_iter);
+    free(ctx->futhark_mc_segmap_parloop_18545_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18545_runs);
+    free(ctx->futhark_mc_segmap_parloop_18545_iter);
+    free(ctx->futhark_mc_segmap_nested_task_18543_total_runtime);
+    free(ctx->futhark_mc_segmap_nested_task_18543_runs);
+    free(ctx->futhark_mc_segmap_nested_task_18543_iter);
+    free(ctx->futhark_mc_segmap_parloop_18685_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18685_runs);
+    free(ctx->futhark_mc_segmap_parloop_18685_iter);
+    free(ctx->futhark_mc_segmap_task_18683_total_runtime);
+    free(ctx->futhark_mc_segmap_task_18683_runs);
+    free(ctx->futhark_mc_segmap_task_18683_iter);
+    free(ctx->futhark_mc_segmap_parloop_18711_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18711_runs);
+    free(ctx->futhark_mc_segmap_parloop_18711_iter);
+    free(ctx->futhark_mc_segmap_task_18709_total_runtime);
+    free(ctx->futhark_mc_segmap_task_18709_runs);
+    free(ctx->futhark_mc_segmap_task_18709_iter);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18729_total_runtime);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18729_runs);
+    free(ctx->futhark_mc_segred_stage_1_parloop_18729_iter);
+    free(ctx->futhark_mc_segred_task_18726_total_runtime);
+    free(ctx->futhark_mc_segred_task_18726_runs);
+    free(ctx->futhark_mc_segred_task_18726_iter);
+    free(ctx->futhark_mc_segmap_parloop_18719_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18719_runs);
+    free(ctx->futhark_mc_segmap_parloop_18719_iter);
+    free(ctx->futhark_mc_segmap_nested_task_18717_total_runtime);
+    free(ctx->futhark_mc_segmap_nested_task_18717_runs);
+    free(ctx->futhark_mc_segmap_nested_task_18717_iter);
+    free(ctx->futhark_mc_segmap_parloop_18700_total_runtime);
+    free(ctx->futhark_mc_segmap_parloop_18700_runs);
+    free(ctx->futhark_mc_segmap_parloop_18700_iter);
+    free(ctx->futhark_mc_segmap_nested_task_18698_total_runtime);
+    free(ctx->futhark_mc_segmap_nested_task_18698_runs);
+    free(ctx->futhark_mc_segmap_nested_task_18698_iter);
     free_constants(ctx);
+    (void) scheduler_destroy(&ctx->scheduler);
     free_lock(&ctx->lock);
     ctx->cfg->in_use = 0;
     free(ctx);
@@ -4875,7 +6770,113 @@ char *futhark_context_report(struct futhark_context *ctx)
     
     str_builder_init(&builder);
     { }
-    if (ctx->profiling) { }
+    if (ctx->profiling) {
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18451          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18451_runs[i], (long) ctx->futhark_mc_segmap_parloop_18451_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18451_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18451_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18451_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18451_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18451_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18451_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18451_iter[i], (long) ctx->futhark_mc_segmap_parloop_18451_iter[i] / (ctx->futhark_mc_segmap_parloop_18451_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18451_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18451_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18451_total_runs, (long) ctx->futhark_mc_segmap_parloop_18451_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18451_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18451_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18451_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18451_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18451_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18451_total_iter), (long) ctx->futhark_mc_segmap_parloop_18451_total_iter, (long) ctx->futhark_mc_segmap_parloop_18451_total_iter / (ctx->futhark_mc_segmap_parloop_18451_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18451_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18451_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18451_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18488          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18488_runs[i], (long) ctx->futhark_mc_segmap_parloop_18488_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18488_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18488_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18488_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18488_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18488_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18488_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18488_iter[i], (long) ctx->futhark_mc_segmap_parloop_18488_iter[i] / (ctx->futhark_mc_segmap_parloop_18488_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18488_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18488_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18488_total_runs, (long) ctx->futhark_mc_segmap_parloop_18488_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18488_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18488_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18488_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18488_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18488_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18488_total_iter), (long) ctx->futhark_mc_segmap_parloop_18488_total_iter, (long) ctx->futhark_mc_segmap_parloop_18488_total_iter / (ctx->futhark_mc_segmap_parloop_18488_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18488_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18488_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18488_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_task_18486             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_task_18486_runs[i], (long) ctx->futhark_mc_segmap_task_18486_total_runtime[i] / (ctx->futhark_mc_segmap_task_18486_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18486_runs[i] : 1), (long) ctx->futhark_mc_segmap_task_18486_total_runtime[i], (double) ctx->futhark_mc_segmap_task_18486_total_runtime[i] / (ctx->futhark_mc_segmap_task_18486_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_task_18486_iter[i]), (long) ctx->futhark_mc_segmap_task_18486_iter[i], (long) ctx->futhark_mc_segmap_task_18486_iter[i] / (ctx->futhark_mc_segmap_task_18486_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18486_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18472          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18472_runs[i], (long) ctx->futhark_mc_segmap_parloop_18472_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18472_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18472_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18472_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18472_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18472_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18472_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18472_iter[i], (long) ctx->futhark_mc_segmap_parloop_18472_iter[i] / (ctx->futhark_mc_segmap_parloop_18472_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18472_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18472_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18472_total_runs, (long) ctx->futhark_mc_segmap_parloop_18472_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18472_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18472_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18472_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18472_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18472_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18472_total_iter), (long) ctx->futhark_mc_segmap_parloop_18472_total_iter, (long) ctx->futhark_mc_segmap_parloop_18472_total_iter / (ctx->futhark_mc_segmap_parloop_18472_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18472_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18472_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18472_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_task_18449             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_task_18449_runs[i], (long) ctx->futhark_mc_segmap_task_18449_total_runtime[i] / (ctx->futhark_mc_segmap_task_18449_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18449_runs[i] : 1), (long) ctx->futhark_mc_segmap_task_18449_total_runtime[i], (double) ctx->futhark_mc_segmap_task_18449_total_runtime[i] / (ctx->futhark_mc_segmap_task_18449_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_task_18449_iter[i]), (long) ctx->futhark_mc_segmap_task_18449_iter[i], (long) ctx->futhark_mc_segmap_task_18449_iter[i] / (ctx->futhark_mc_segmap_task_18449_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18449_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_nested_task_18470      ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_nested_task_18470_runs[i], (long) ctx->futhark_mc_segmap_nested_task_18470_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18470_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18470_runs[i] : 1), (long) ctx->futhark_mc_segmap_nested_task_18470_total_runtime[i], (double) ctx->futhark_mc_segmap_nested_task_18470_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18470_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_nested_task_18470_iter[i]), (long) ctx->futhark_mc_segmap_nested_task_18470_iter[i], (long) ctx->futhark_mc_segmap_nested_task_18470_iter[i] / (ctx->futhark_mc_segmap_nested_task_18470_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18470_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18511          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18511_runs[i], (long) ctx->futhark_mc_segmap_parloop_18511_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18511_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18511_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18511_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18511_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18511_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18511_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18511_iter[i], (long) ctx->futhark_mc_segmap_parloop_18511_iter[i] / (ctx->futhark_mc_segmap_parloop_18511_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18511_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18511_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18511_total_runs, (long) ctx->futhark_mc_segmap_parloop_18511_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18511_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18511_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18511_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18511_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18511_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18511_total_iter), (long) ctx->futhark_mc_segmap_parloop_18511_total_iter, (long) ctx->futhark_mc_segmap_parloop_18511_total_iter / (ctx->futhark_mc_segmap_parloop_18511_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18511_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18511_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18511_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18560          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18560_runs[i], (long) ctx->futhark_mc_segmap_parloop_18560_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18560_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18560_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18560_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18560_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18560_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18560_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18560_iter[i], (long) ctx->futhark_mc_segmap_parloop_18560_iter[i] / (ctx->futhark_mc_segmap_parloop_18560_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18560_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18560_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18560_total_runs, (long) ctx->futhark_mc_segmap_parloop_18560_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18560_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18560_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18560_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18560_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18560_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18560_total_iter), (long) ctx->futhark_mc_segmap_parloop_18560_total_iter, (long) ctx->futhark_mc_segmap_parloop_18560_total_iter / (ctx->futhark_mc_segmap_parloop_18560_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18560_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18560_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18560_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_stage_1_parloop_18601  ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_stage_1_parloop_18601_runs[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18601_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18601_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18601_runs[i] : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18601_total_runtime[i], (double) ctx->futhark_mc_segred_stage_1_parloop_18601_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18601_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18601_iter[i]), (long) ctx->futhark_mc_segred_stage_1_parloop_18601_iter[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18601_iter[i] / (ctx->futhark_mc_segred_stage_1_parloop_18601_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18601_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segred_stage_1_parloop_18601_total ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs, (long) ctx->futhark_mc_segred_stage_1_parloop_18601_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18601_total_total_runtime, (double) ctx->futhark_mc_segred_stage_1_parloop_18601_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18601_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18601_total_iter), (long) ctx->futhark_mc_segred_stage_1_parloop_18601_total_iter, (long) ctx->futhark_mc_segred_stage_1_parloop_18601_total_iter / (ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segred_stage_1_parloop_18601_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_stage_1_parloop_18634  ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_stage_1_parloop_18634_runs[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18634_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18634_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18634_runs[i] : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18634_total_runtime[i], (double) ctx->futhark_mc_segred_stage_1_parloop_18634_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18634_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18634_iter[i]), (long) ctx->futhark_mc_segred_stage_1_parloop_18634_iter[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18634_iter[i] / (ctx->futhark_mc_segred_stage_1_parloop_18634_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18634_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segred_stage_1_parloop_18634_total ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs, (long) ctx->futhark_mc_segred_stage_1_parloop_18634_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18634_total_total_runtime, (double) ctx->futhark_mc_segred_stage_1_parloop_18634_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18634_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18634_total_iter), (long) ctx->futhark_mc_segred_stage_1_parloop_18634_total_iter, (long) ctx->futhark_mc_segred_stage_1_parloop_18634_total_iter / (ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segred_stage_1_parloop_18634_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_task_18629             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_task_18629_runs[i], (long) ctx->futhark_mc_segred_task_18629_total_runtime[i] / (ctx->futhark_mc_segred_task_18629_runs[i] != 0 ? ctx->futhark_mc_segred_task_18629_runs[i] : 1), (long) ctx->futhark_mc_segred_task_18629_total_runtime[i], (double) ctx->futhark_mc_segred_task_18629_total_runtime[i] / (ctx->futhark_mc_segred_task_18629_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_task_18629_iter[i]), (long) ctx->futhark_mc_segred_task_18629_iter[i], (long) ctx->futhark_mc_segred_task_18629_iter[i] / (ctx->futhark_mc_segred_task_18629_runs[i] != 0 ? ctx->futhark_mc_segred_task_18629_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_stage_1_parloop_18617  ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_stage_1_parloop_18617_runs[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18617_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18617_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18617_runs[i] : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18617_total_runtime[i], (double) ctx->futhark_mc_segred_stage_1_parloop_18617_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18617_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18617_iter[i]), (long) ctx->futhark_mc_segred_stage_1_parloop_18617_iter[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18617_iter[i] / (ctx->futhark_mc_segred_stage_1_parloop_18617_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18617_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segred_stage_1_parloop_18617_total ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs, (long) ctx->futhark_mc_segred_stage_1_parloop_18617_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18617_total_total_runtime, (double) ctx->futhark_mc_segred_stage_1_parloop_18617_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18617_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18617_total_iter), (long) ctx->futhark_mc_segred_stage_1_parloop_18617_total_iter, (long) ctx->futhark_mc_segred_stage_1_parloop_18617_total_iter / (ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segred_stage_1_parloop_18617_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_task_18596             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_task_18596_runs[i], (long) ctx->futhark_mc_segred_task_18596_total_runtime[i] / (ctx->futhark_mc_segred_task_18596_runs[i] != 0 ? ctx->futhark_mc_segred_task_18596_runs[i] : 1), (long) ctx->futhark_mc_segred_task_18596_total_runtime[i], (double) ctx->futhark_mc_segred_task_18596_total_runtime[i] / (ctx->futhark_mc_segred_task_18596_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_task_18596_iter[i]), (long) ctx->futhark_mc_segred_task_18596_iter[i], (long) ctx->futhark_mc_segred_task_18596_iter[i] / (ctx->futhark_mc_segred_task_18596_runs[i] != 0 ? ctx->futhark_mc_segred_task_18596_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_nested_task_18612      ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_nested_task_18612_runs[i], (long) ctx->futhark_mc_segred_nested_task_18612_total_runtime[i] / (ctx->futhark_mc_segred_nested_task_18612_runs[i] != 0 ? ctx->futhark_mc_segred_nested_task_18612_runs[i] : 1), (long) ctx->futhark_mc_segred_nested_task_18612_total_runtime[i], (double) ctx->futhark_mc_segred_nested_task_18612_total_runtime[i] / (ctx->futhark_mc_segred_nested_task_18612_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_nested_task_18612_iter[i]), (long) ctx->futhark_mc_segred_nested_task_18612_iter[i], (long) ctx->futhark_mc_segred_nested_task_18612_iter[i] / (ctx->futhark_mc_segred_nested_task_18612_runs[i] != 0 ? ctx->futhark_mc_segred_nested_task_18612_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18584          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18584_runs[i], (long) ctx->futhark_mc_segmap_parloop_18584_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18584_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18584_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18584_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18584_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18584_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18584_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18584_iter[i], (long) ctx->futhark_mc_segmap_parloop_18584_iter[i] / (ctx->futhark_mc_segmap_parloop_18584_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18584_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18584_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18584_total_runs, (long) ctx->futhark_mc_segmap_parloop_18584_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18584_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18584_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18584_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18584_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18584_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18584_total_iter), (long) ctx->futhark_mc_segmap_parloop_18584_total_iter, (long) ctx->futhark_mc_segmap_parloop_18584_total_iter / (ctx->futhark_mc_segmap_parloop_18584_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18584_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18584_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18584_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_task_18558             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_task_18558_runs[i], (long) ctx->futhark_mc_segmap_task_18558_total_runtime[i] / (ctx->futhark_mc_segmap_task_18558_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18558_runs[i] : 1), (long) ctx->futhark_mc_segmap_task_18558_total_runtime[i], (double) ctx->futhark_mc_segmap_task_18558_total_runtime[i] / (ctx->futhark_mc_segmap_task_18558_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_task_18558_iter[i]), (long) ctx->futhark_mc_segmap_task_18558_iter[i], (long) ctx->futhark_mc_segmap_task_18558_iter[i] / (ctx->futhark_mc_segmap_task_18558_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18558_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_nested_task_18582      ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_nested_task_18582_runs[i], (long) ctx->futhark_mc_segmap_nested_task_18582_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18582_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18582_runs[i] : 1), (long) ctx->futhark_mc_segmap_nested_task_18582_total_runtime[i], (double) ctx->futhark_mc_segmap_nested_task_18582_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18582_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_nested_task_18582_iter[i]), (long) ctx->futhark_mc_segmap_nested_task_18582_iter[i], (long) ctx->futhark_mc_segmap_nested_task_18582_iter[i] / (ctx->futhark_mc_segmap_nested_task_18582_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18582_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18545          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18545_runs[i], (long) ctx->futhark_mc_segmap_parloop_18545_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18545_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18545_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18545_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18545_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18545_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18545_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18545_iter[i], (long) ctx->futhark_mc_segmap_parloop_18545_iter[i] / (ctx->futhark_mc_segmap_parloop_18545_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18545_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18545_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18545_total_runs, (long) ctx->futhark_mc_segmap_parloop_18545_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18545_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18545_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18545_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18545_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18545_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18545_total_iter), (long) ctx->futhark_mc_segmap_parloop_18545_total_iter, (long) ctx->futhark_mc_segmap_parloop_18545_total_iter / (ctx->futhark_mc_segmap_parloop_18545_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18545_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18545_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18545_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_task_18509             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_task_18509_runs[i], (long) ctx->futhark_mc_segmap_task_18509_total_runtime[i] / (ctx->futhark_mc_segmap_task_18509_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18509_runs[i] : 1), (long) ctx->futhark_mc_segmap_task_18509_total_runtime[i], (double) ctx->futhark_mc_segmap_task_18509_total_runtime[i] / (ctx->futhark_mc_segmap_task_18509_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_task_18509_iter[i]), (long) ctx->futhark_mc_segmap_task_18509_iter[i], (long) ctx->futhark_mc_segmap_task_18509_iter[i] / (ctx->futhark_mc_segmap_task_18509_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18509_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_nested_task_18543      ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_nested_task_18543_runs[i], (long) ctx->futhark_mc_segmap_nested_task_18543_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18543_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18543_runs[i] : 1), (long) ctx->futhark_mc_segmap_nested_task_18543_total_runtime[i], (double) ctx->futhark_mc_segmap_nested_task_18543_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18543_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_nested_task_18543_iter[i]), (long) ctx->futhark_mc_segmap_nested_task_18543_iter[i], (long) ctx->futhark_mc_segmap_nested_task_18543_iter[i] / (ctx->futhark_mc_segmap_nested_task_18543_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18543_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18685          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18685_runs[i], (long) ctx->futhark_mc_segmap_parloop_18685_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18685_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18685_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18685_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18685_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18685_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18685_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18685_iter[i], (long) ctx->futhark_mc_segmap_parloop_18685_iter[i] / (ctx->futhark_mc_segmap_parloop_18685_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18685_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18685_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18685_total_runs, (long) ctx->futhark_mc_segmap_parloop_18685_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18685_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18685_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18685_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18685_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18685_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18685_total_iter), (long) ctx->futhark_mc_segmap_parloop_18685_total_iter, (long) ctx->futhark_mc_segmap_parloop_18685_total_iter / (ctx->futhark_mc_segmap_parloop_18685_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18685_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18685_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18685_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18711          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18711_runs[i], (long) ctx->futhark_mc_segmap_parloop_18711_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18711_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18711_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18711_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18711_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18711_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18711_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18711_iter[i], (long) ctx->futhark_mc_segmap_parloop_18711_iter[i] / (ctx->futhark_mc_segmap_parloop_18711_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18711_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18711_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18711_total_runs, (long) ctx->futhark_mc_segmap_parloop_18711_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18711_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18711_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18711_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18711_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18711_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18711_total_iter), (long) ctx->futhark_mc_segmap_parloop_18711_total_iter, (long) ctx->futhark_mc_segmap_parloop_18711_total_iter / (ctx->futhark_mc_segmap_parloop_18711_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18711_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18711_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18711_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_stage_1_parloop_18729  ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_stage_1_parloop_18729_runs[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18729_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18729_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18729_runs[i] : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18729_total_runtime[i], (double) ctx->futhark_mc_segred_stage_1_parloop_18729_total_runtime[i] / (ctx->futhark_mc_segred_stage_1_parloop_18729_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18729_iter[i]), (long) ctx->futhark_mc_segred_stage_1_parloop_18729_iter[i], (long) ctx->futhark_mc_segred_stage_1_parloop_18729_iter[i] / (ctx->futhark_mc_segred_stage_1_parloop_18729_runs[i] != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18729_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segred_stage_1_parloop_18729_total ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs, (long) ctx->futhark_mc_segred_stage_1_parloop_18729_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs : 1), (long) ctx->futhark_mc_segred_stage_1_parloop_18729_total_total_runtime, (double) ctx->futhark_mc_segred_stage_1_parloop_18729_total_total_runtime / (ctx->futhark_mc_segred_stage_1_parloop_18729_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segred_stage_1_parloop_18729_total_iter), (long) ctx->futhark_mc_segred_stage_1_parloop_18729_total_iter, (long) ctx->futhark_mc_segred_stage_1_parloop_18729_total_iter / (ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs != 0 ? ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segred_stage_1_parloop_18729_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segred_task_18726             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segred_task_18726_runs[i], (long) ctx->futhark_mc_segred_task_18726_total_runtime[i] / (ctx->futhark_mc_segred_task_18726_runs[i] != 0 ? ctx->futhark_mc_segred_task_18726_runs[i] : 1), (long) ctx->futhark_mc_segred_task_18726_total_runtime[i], (double) ctx->futhark_mc_segred_task_18726_total_runtime[i] / (ctx->futhark_mc_segred_task_18726_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segred_task_18726_iter[i]), (long) ctx->futhark_mc_segred_task_18726_iter[i], (long) ctx->futhark_mc_segred_task_18726_iter[i] / (ctx->futhark_mc_segred_task_18726_runs[i] != 0 ? ctx->futhark_mc_segred_task_18726_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18719          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18719_runs[i], (long) ctx->futhark_mc_segmap_parloop_18719_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18719_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18719_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18719_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18719_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18719_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18719_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18719_iter[i], (long) ctx->futhark_mc_segmap_parloop_18719_iter[i] / (ctx->futhark_mc_segmap_parloop_18719_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18719_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18719_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18719_total_runs, (long) ctx->futhark_mc_segmap_parloop_18719_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18719_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18719_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18719_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18719_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18719_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18719_total_iter), (long) ctx->futhark_mc_segmap_parloop_18719_total_iter, (long) ctx->futhark_mc_segmap_parloop_18719_total_iter / (ctx->futhark_mc_segmap_parloop_18719_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18719_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18719_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18719_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_task_18709             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_task_18709_runs[i], (long) ctx->futhark_mc_segmap_task_18709_total_runtime[i] / (ctx->futhark_mc_segmap_task_18709_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18709_runs[i] : 1), (long) ctx->futhark_mc_segmap_task_18709_total_runtime[i], (double) ctx->futhark_mc_segmap_task_18709_total_runtime[i] / (ctx->futhark_mc_segmap_task_18709_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_task_18709_iter[i]), (long) ctx->futhark_mc_segmap_task_18709_iter[i], (long) ctx->futhark_mc_segmap_task_18709_iter[i] / (ctx->futhark_mc_segmap_task_18709_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18709_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_nested_task_18717      ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_nested_task_18717_runs[i], (long) ctx->futhark_mc_segmap_nested_task_18717_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18717_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18717_runs[i] : 1), (long) ctx->futhark_mc_segmap_nested_task_18717_total_runtime[i], (double) ctx->futhark_mc_segmap_nested_task_18717_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18717_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_nested_task_18717_iter[i]), (long) ctx->futhark_mc_segmap_nested_task_18717_iter[i], (long) ctx->futhark_mc_segmap_nested_task_18717_iter[i] / (ctx->futhark_mc_segmap_nested_task_18717_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18717_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_parloop_18700          ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_parloop_18700_runs[i], (long) ctx->futhark_mc_segmap_parloop_18700_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18700_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18700_runs[i] : 1), (long) ctx->futhark_mc_segmap_parloop_18700_total_runtime[i], (double) ctx->futhark_mc_segmap_parloop_18700_total_runtime[i] / (ctx->futhark_mc_segmap_parloop_18700_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18700_iter[i]), (long) ctx->futhark_mc_segmap_parloop_18700_iter[i], (long) ctx->futhark_mc_segmap_parloop_18700_iter[i] / (ctx->futhark_mc_segmap_parloop_18700_runs[i] != 0 ? ctx->futhark_mc_segmap_parloop_18700_runs[i] : 1));
+        fprintf(ctx->log, "         futhark_mc_segmap_parloop_18700_total    ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", ctx->futhark_mc_segmap_parloop_18700_total_runs, (long) ctx->futhark_mc_segmap_parloop_18700_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18700_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18700_total_runs : 1), (long) ctx->futhark_mc_segmap_parloop_18700_total_total_runtime, (double) ctx->futhark_mc_segmap_parloop_18700_total_total_runtime / (ctx->futhark_mc_segmap_parloop_18700_total_iter == 0 ? 1 : (double) ctx->futhark_mc_segmap_parloop_18700_total_iter), (long) ctx->futhark_mc_segmap_parloop_18700_total_iter, (long) ctx->futhark_mc_segmap_parloop_18700_total_iter / (ctx->futhark_mc_segmap_parloop_18700_total_runs != 0 ? ctx->futhark_mc_segmap_parloop_18700_total_runs : 1));
+        ctx->total_runtime += ctx->futhark_mc_segmap_parloop_18700_total_total_runtime;
+        ctx->total_runs += ctx->futhark_mc_segmap_parloop_18700_total_runs;
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_task_18683             ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_task_18683_runs[i], (long) ctx->futhark_mc_segmap_task_18683_total_runtime[i] / (ctx->futhark_mc_segmap_task_18683_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18683_runs[i] : 1), (long) ctx->futhark_mc_segmap_task_18683_total_runtime[i], (double) ctx->futhark_mc_segmap_task_18683_total_runtime[i] / (ctx->futhark_mc_segmap_task_18683_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_task_18683_iter[i]), (long) ctx->futhark_mc_segmap_task_18683_iter[i], (long) ctx->futhark_mc_segmap_task_18683_iter[i] / (ctx->futhark_mc_segmap_task_18683_runs[i] != 0 ? ctx->futhark_mc_segmap_task_18683_runs[i] : 1));
+        for (int i = 0; i < ctx->scheduler.num_threads; i++)
+            fprintf(ctx->log, "tid %2d - futhark_mc_segmap_nested_task_18698      ran %10d times; avg: %10ldus; total: %10ldus; time pr. iter %9.6f; iters %9ld; avg %ld\n", i, ctx->futhark_mc_segmap_nested_task_18698_runs[i], (long) ctx->futhark_mc_segmap_nested_task_18698_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18698_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18698_runs[i] : 1), (long) ctx->futhark_mc_segmap_nested_task_18698_total_runtime[i], (double) ctx->futhark_mc_segmap_nested_task_18698_total_runtime[i] / (ctx->futhark_mc_segmap_nested_task_18698_iter[i] == 0 ? 1 : (double) ctx->futhark_mc_segmap_nested_task_18698_iter[i]), (long) ctx->futhark_mc_segmap_nested_task_18698_iter[i], (long) ctx->futhark_mc_segmap_nested_task_18698_iter[i] / (ctx->futhark_mc_segmap_nested_task_18698_runs[i] != 0 ? ctx->futhark_mc_segmap_nested_task_18698_runs[i] : 1));
+    }
     return builder.str;
 }
 char *futhark_context_get_error(struct futhark_context *ctx)
@@ -4900,6 +6901,7 @@ void futhark_context_unpause_profiling(struct futhark_context *ctx)
 int futhark_context_clear_caches(struct futhark_context *ctx)
 {
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     ctx->peak_mem_usage_default = 0;
     lock_unlock(&ctx->lock);
     return ctx->error != NULL;
@@ -4947,8 +6949,8 @@ static int lexical_realloc(struct futhark_context *ctx,
 
 // End of context.h
 
-static int futrts_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct memblock *mem_out_p_16277, struct memblock zzinvs_mem_15998, struct memblock eps_mem_15999, struct memblock expsss_mem_16000, struct memblock coefficientss_mem_16001, int64_t n_12351, int64_t m_12352, int64_t p_12353, int64_t q_12354);
-static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_16286, struct memblock xss_mem_15998, struct memblock yss_mem_15999, int64_t nz2080U_9828, int64_t pz2081U_9829, int64_t mz2082U_9830);
+static int futrts_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct memblock *mem_out_p_18444, struct memblock zzinvs_mem_17023, struct memblock eps_mem_17024, struct memblock expsss_mem_17025, struct memblock coefficientss_mem_17026, int64_t n_12351, int64_t m_12352, int64_t p_12353, int64_t q_12354);
+static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_18681, struct memblock xss_mem_17023, struct memblock yss_mem_17024, int64_t nz2080U_9828, int64_t pz2081U_9829, int64_t mz2082U_9830);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -4965,6 +6967,3157 @@ static int free_constants(struct futhark_context *ctx)
     (void) ctx;
     return 0;
 }
+struct futhark_mc_segmap_parloop_struct_18450 {
+    struct futhark_context *ctx;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+};
+char *futhark_mc_strlit_shim_18460()
+{
+    return "coefficientss_mem_17026";
+}
+char *futhark_mc_strlit_shim_18461()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18462()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18463()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18466()
+{
+    return "coefficientss_mem_17026";
+}
+char *futhark_mc_strlit_shim_18467()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18468()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18469()
+{
+    return "mem_17086";
+}
+static int futhark_mc_segmap_parloop_18451(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18450 *futhark_mc_segmap_parloop_struct_18450 = (struct futhark_mc_segmap_parloop_struct_18450 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18450->ctx;
+    uint64_t futhark_mc_segmap_parloop_18451_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18451_start = get_wall_time();
+    
+    int64_t p_12353 = futhark_mc_segmap_parloop_struct_18450->free_p_12353;
+    int64_t q_12354 = futhark_mc_segmap_parloop_struct_18450->free_q_12354;
+    struct memblock coefficientss_mem_17026 = {.desc ="coefficientss_mem_17026", .mem =futhark_mc_segmap_parloop_struct_18450->free_coefficientss_mem_17026, .size =0, .references =NULL};
+    int64_t bytes_17028 = futhark_mc_segmap_parloop_struct_18450->free_bytes_17028;
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segmap_parloop_struct_18450->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segmap_parloop_struct_18450->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segmap_parloop_struct_18450->free_mem_17086, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17038_cached_sizze_18452 = 0;
+    unsigned char *mem_17038 = NULL;
+    int64_t mem_17041_cached_sizze_18453 = 0;
+    unsigned char *mem_17041 = NULL;
+    int64_t mem_17044_cached_sizze_18454 = 0;
+    unsigned char *mem_17044 = NULL;
+    int64_t flat_tid_15976;
+    
+    flat_tid_15976 = subtask_id;
+    
+    struct futhark_mc_param_struct_18455 futhark_mc_param_struct_18455_;
+    
+    futhark_mc_param_struct_18455_.ctx = ctx;
+    futhark_mc_param_struct_18455_.free_p_12353 = p_12353;
+    futhark_mc_param_struct_18455_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18455_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+    futhark_mc_param_struct_18455_.free_bytes_17028 = bytes_17028;
+    futhark_mc_param_struct_18455_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18455_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18455_.free_mem_17086 = mem_17086.mem;
+    err = futhark_mc_loop_ispc_18456(start, end, &futhark_mc_param_struct_18455_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17038);
+        free(mem_17041);
+        free(mem_17044);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18451_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18451_end - futhark_mc_segmap_parloop_18451_start;
+        
+        ctx->futhark_mc_segmap_parloop_18451_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18451_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18451_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_task_18449(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18448 *futhark_mc_task_18448 = (struct futhark_mc_task_18448 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18448->ctx;
+    uint64_t futhark_mc_segmap_task_18449_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_task_18449_start = get_wall_time();
+    
+    int64_t p_12353 = futhark_mc_task_18448->free_p_12353;
+    int64_t q_12354 = futhark_mc_task_18448->free_q_12354;
+    struct memblock coefficientss_mem_17026 = {.desc ="coefficientss_mem_17026", .mem =futhark_mc_task_18448->free_coefficientss_mem_17026, .size =0, .references =NULL};
+    int64_t bytes_17028 = futhark_mc_task_18448->free_bytes_17028;
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18448->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18448->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18448->free_mem_17086, .size =0, .references =NULL};
+    int32_t nsubtasks_17162;
+    
+    nsubtasks_17162 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18450 futhark_mc_segmap_parloop_struct_18450_;
+    
+    futhark_mc_segmap_parloop_struct_18450_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18450_.free_p_12353 = p_12353;
+    futhark_mc_segmap_parloop_struct_18450_.free_q_12354 = q_12354;
+    futhark_mc_segmap_parloop_struct_18450_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+    futhark_mc_segmap_parloop_struct_18450_.free_bytes_17028 = bytes_17028;
+    futhark_mc_segmap_parloop_struct_18450_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segmap_parloop_struct_18450_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segmap_parloop_struct_18450_.free_mem_17086 = mem_17086.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18451_task;
+    
+    futhark_mc_segmap_parloop_18451_task.name = "futhark_mc_segmap_parloop_18451";
+    futhark_mc_segmap_parloop_18451_task.fn = futhark_mc_segmap_parloop_18451;
+    futhark_mc_segmap_parloop_18451_task.args = &futhark_mc_segmap_parloop_struct_18450_;
+    futhark_mc_segmap_parloop_18451_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18451_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18451_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18451_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18451_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18451_task);
+    
+    if (futhark_mc_segmap_parloop_18451_err != 0) {
+        err = futhark_mc_segmap_parloop_18451_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18451_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18451_total_end - futhark_mc_segmap_parloop_18451_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18451_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18451_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18451_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_task_18449_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_task_18449_end - futhark_mc_segmap_task_18449_start;
+        
+        ctx->futhark_mc_segmap_task_18449_runs[tid]++;
+        ctx->futhark_mc_segmap_task_18449_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_task_18449_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+struct futhark_mc_segmap_parloop_struct_18471 {
+    struct futhark_context *ctx;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+};
+char *futhark_mc_strlit_shim_18478()
+{
+    return "coefficientss_mem_17026";
+}
+char *futhark_mc_strlit_shim_18479()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18480()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18481()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18482()
+{
+    return "mem_17029";
+}
+char *futhark_mc_strlit_shim_18483()
+{
+    return "mem_17032";
+}
+char *futhark_mc_strlit_shim_18484()
+{
+    return "mem_17035";
+}
+struct futhark_mc_segmap_parloop_struct_18487 {
+    struct futhark_context *ctx;
+    int64_t free_q_12354;
+    int64_t free_gtid_15983;
+    unsigned char *free_coefficientss_mem_17026;
+    unsigned char *free_mem_17029;
+    unsigned char *free_mem_17032;
+    unsigned char *free_mem_17035;
+};
+char *futhark_mc_strlit_shim_18491()
+{
+    return "coefficientss_mem_17026";
+}
+char *futhark_mc_strlit_shim_18492()
+{
+    return "mem_17029";
+}
+char *futhark_mc_strlit_shim_18493()
+{
+    return "mem_17032";
+}
+char *futhark_mc_strlit_shim_18494()
+{
+    return "mem_17035";
+}
+static int futhark_mc_segmap_parloop_18488(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18487 *futhark_mc_segmap_parloop_struct_18487 = (struct futhark_mc_segmap_parloop_struct_18487 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18487->ctx;
+    uint64_t futhark_mc_segmap_parloop_18488_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18488_start = get_wall_time();
+    
+    int64_t q_12354 = futhark_mc_segmap_parloop_struct_18487->free_q_12354;
+    int64_t gtid_15983 = futhark_mc_segmap_parloop_struct_18487->free_gtid_15983;
+    struct memblock coefficientss_mem_17026 = {.desc ="coefficientss_mem_17026", .mem =futhark_mc_segmap_parloop_struct_18487->free_coefficientss_mem_17026, .size =0, .references =NULL};
+    struct memblock mem_17029 = {.desc ="mem_17029", .mem =futhark_mc_segmap_parloop_struct_18487->free_mem_17029, .size =0, .references =NULL};
+    struct memblock mem_17032 = {.desc ="mem_17032", .mem =futhark_mc_segmap_parloop_struct_18487->free_mem_17032, .size =0, .references =NULL};
+    struct memblock mem_17035 = {.desc ="mem_17035", .mem =futhark_mc_segmap_parloop_struct_18487->free_mem_17035, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t flat_tid_17183;
+    
+    flat_tid_17183 = subtask_id;
+    
+    struct futhark_mc_param_struct_18489 futhark_mc_param_struct_18489_;
+    
+    futhark_mc_param_struct_18489_.ctx = ctx;
+    futhark_mc_param_struct_18489_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18489_.free_gtid_15983 = gtid_15983;
+    futhark_mc_param_struct_18489_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+    futhark_mc_param_struct_18489_.free_mem_17029 = mem_17029.mem;
+    futhark_mc_param_struct_18489_.free_mem_17032 = mem_17032.mem;
+    futhark_mc_param_struct_18489_.free_mem_17035 = mem_17035.mem;
+    err = futhark_mc_loop_ispc_18490(start, end, &futhark_mc_param_struct_18489_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18488_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18488_end - futhark_mc_segmap_parloop_18488_start;
+        
+        ctx->futhark_mc_segmap_parloop_18488_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18488_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18488_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_task_18486(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18485 *futhark_mc_task_18485 = (struct futhark_mc_task_18485 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18485->ctx;
+    uint64_t futhark_mc_segmap_task_18486_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_task_18486_start = get_wall_time();
+    
+    int64_t q_12354 = futhark_mc_task_18485->free_q_12354;
+    int64_t gtid_15983 = futhark_mc_task_18485->free_gtid_15983;
+    struct memblock coefficientss_mem_17026 = {.desc ="coefficientss_mem_17026", .mem =futhark_mc_task_18485->free_coefficientss_mem_17026, .size =0, .references =NULL};
+    struct memblock mem_17029 = {.desc ="mem_17029", .mem =futhark_mc_task_18485->free_mem_17029, .size =0, .references =NULL};
+    struct memblock mem_17032 = {.desc ="mem_17032", .mem =futhark_mc_task_18485->free_mem_17032, .size =0, .references =NULL};
+    struct memblock mem_17035 = {.desc ="mem_17035", .mem =futhark_mc_task_18485->free_mem_17035, .size =0, .references =NULL};
+    int32_t nsubtasks_17194;
+    
+    nsubtasks_17194 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18487 futhark_mc_segmap_parloop_struct_18487_;
+    
+    futhark_mc_segmap_parloop_struct_18487_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18487_.free_q_12354 = q_12354;
+    futhark_mc_segmap_parloop_struct_18487_.free_gtid_15983 = gtid_15983;
+    futhark_mc_segmap_parloop_struct_18487_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+    futhark_mc_segmap_parloop_struct_18487_.free_mem_17029 = mem_17029.mem;
+    futhark_mc_segmap_parloop_struct_18487_.free_mem_17032 = mem_17032.mem;
+    futhark_mc_segmap_parloop_struct_18487_.free_mem_17035 = mem_17035.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18488_task;
+    
+    futhark_mc_segmap_parloop_18488_task.name = "futhark_mc_segmap_parloop_18488";
+    futhark_mc_segmap_parloop_18488_task.fn = futhark_mc_segmap_parloop_18488;
+    futhark_mc_segmap_parloop_18488_task.args = &futhark_mc_segmap_parloop_struct_18487_;
+    futhark_mc_segmap_parloop_18488_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18488_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18488_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18488_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18488_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18488_task);
+    
+    if (futhark_mc_segmap_parloop_18488_err != 0) {
+        err = futhark_mc_segmap_parloop_18488_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18488_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18488_total_end - futhark_mc_segmap_parloop_18488_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18488_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18488_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18488_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_task_18486_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_task_18486_end - futhark_mc_segmap_task_18486_start;
+        
+        ctx->futhark_mc_segmap_task_18486_runs[tid]++;
+        ctx->futhark_mc_segmap_task_18486_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_task_18486_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+int futhark_mc_schedule_shim_18495(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18485_task;
+    
+    futhark_mc_task_18485_task.args = args;
+    futhark_mc_task_18485_task.top_level_fn = futhark_mc_segmap_task_18486;
+    futhark_mc_task_18485_task.name = "futhark_mc_segmap_task_18486";
+    futhark_mc_task_18485_task.iterations = iterations;
+    futhark_mc_task_18485_task.task_time = &ctx->futhark_mc_segmap_task_18486_total_time;
+    futhark_mc_task_18485_task.task_iter = &ctx->futhark_mc_segmap_task_18486_total_iter;
+    futhark_mc_task_18485_task.sched = STATIC;
+    futhark_mc_task_18485_task.nested_fn = NULL;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18485_task);
+}
+char *futhark_mc_strlit_shim_18499()
+{
+    return "coefficientss_mem_17026";
+}
+char *futhark_mc_strlit_shim_18500()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18501()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18502()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18503()
+{
+    return "mem_17035";
+}
+char *futhark_mc_strlit_shim_18504()
+{
+    return "mem_17032";
+}
+char *futhark_mc_strlit_shim_18505()
+{
+    return "mem_17029";
+}
+static int futhark_mc_segmap_parloop_18472(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18471 *futhark_mc_segmap_parloop_struct_18471 = (struct futhark_mc_segmap_parloop_struct_18471 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18471->ctx;
+    uint64_t futhark_mc_segmap_parloop_18472_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18472_start = get_wall_time();
+    
+    int64_t p_12353 = futhark_mc_segmap_parloop_struct_18471->free_p_12353;
+    int64_t q_12354 = futhark_mc_segmap_parloop_struct_18471->free_q_12354;
+    struct memblock coefficientss_mem_17026 = {.desc ="coefficientss_mem_17026", .mem =futhark_mc_segmap_parloop_struct_18471->free_coefficientss_mem_17026, .size =0, .references =NULL};
+    int64_t bytes_17028 = futhark_mc_segmap_parloop_struct_18471->free_bytes_17028;
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segmap_parloop_struct_18471->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segmap_parloop_struct_18471->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segmap_parloop_struct_18471->free_mem_17086, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17029_cached_sizze_18473 = 0;
+    unsigned char *mem_17029 = NULL;
+    int64_t mem_17032_cached_sizze_18474 = 0;
+    unsigned char *mem_17032 = NULL;
+    int64_t mem_17035_cached_sizze_18475 = 0;
+    unsigned char *mem_17035 = NULL;
+    int64_t flat_tid_15982;
+    
+    flat_tid_15982 = subtask_id;
+    
+    struct futhark_mc_param_struct_18476 futhark_mc_param_struct_18476_;
+    
+    futhark_mc_param_struct_18476_.ctx = ctx;
+    futhark_mc_param_struct_18476_.free_p_12353 = p_12353;
+    futhark_mc_param_struct_18476_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18476_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+    futhark_mc_param_struct_18476_.free_bytes_17028 = bytes_17028;
+    futhark_mc_param_struct_18476_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18476_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18476_.free_mem_17086 = mem_17086.mem;
+    err = futhark_mc_loop_ispc_18477(start, end, &futhark_mc_param_struct_18476_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17029);
+        free(mem_17032);
+        free(mem_17035);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18472_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18472_end - futhark_mc_segmap_parloop_18472_start;
+        
+        ctx->futhark_mc_segmap_parloop_18472_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18472_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18472_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_nested_task_18470(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18448 *futhark_mc_task_18448 = (struct futhark_mc_task_18448 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18448->ctx;
+    uint64_t futhark_mc_segmap_nested_task_18470_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_nested_task_18470_start = get_wall_time();
+    
+    int64_t p_12353 = futhark_mc_task_18448->free_p_12353;
+    int64_t q_12354 = futhark_mc_task_18448->free_q_12354;
+    struct memblock coefficientss_mem_17026 = {.desc ="coefficientss_mem_17026", .mem =futhark_mc_task_18448->free_coefficientss_mem_17026, .size =0, .references =NULL};
+    int64_t bytes_17028 = futhark_mc_task_18448->free_bytes_17028;
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18448->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18448->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18448->free_mem_17086, .size =0, .references =NULL};
+    int32_t nsubtasks_17182;
+    
+    nsubtasks_17182 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18471 futhark_mc_segmap_parloop_struct_18471_;
+    
+    futhark_mc_segmap_parloop_struct_18471_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18471_.free_p_12353 = p_12353;
+    futhark_mc_segmap_parloop_struct_18471_.free_q_12354 = q_12354;
+    futhark_mc_segmap_parloop_struct_18471_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+    futhark_mc_segmap_parloop_struct_18471_.free_bytes_17028 = bytes_17028;
+    futhark_mc_segmap_parloop_struct_18471_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segmap_parloop_struct_18471_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segmap_parloop_struct_18471_.free_mem_17086 = mem_17086.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18472_task;
+    
+    futhark_mc_segmap_parloop_18472_task.name = "futhark_mc_segmap_parloop_18472";
+    futhark_mc_segmap_parloop_18472_task.fn = futhark_mc_segmap_parloop_18472;
+    futhark_mc_segmap_parloop_18472_task.args = &futhark_mc_segmap_parloop_struct_18471_;
+    futhark_mc_segmap_parloop_18472_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18472_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18472_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18472_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18472_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18472_task);
+    
+    if (futhark_mc_segmap_parloop_18472_err != 0) {
+        err = futhark_mc_segmap_parloop_18472_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18472_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18472_total_end - futhark_mc_segmap_parloop_18472_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18472_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18472_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18472_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_nested_task_18470_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_nested_task_18470_end - futhark_mc_segmap_nested_task_18470_start;
+        
+        ctx->futhark_mc_segmap_nested_task_18470_runs[tid]++;
+        ctx->futhark_mc_segmap_nested_task_18470_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_nested_task_18470_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+int futhark_mc_schedule_shim_18506(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18448_task;
+    
+    futhark_mc_task_18448_task.args = args;
+    futhark_mc_task_18448_task.top_level_fn = futhark_mc_segmap_task_18449;
+    futhark_mc_task_18448_task.name = "futhark_mc_segmap_task_18449";
+    futhark_mc_task_18448_task.iterations = iterations;
+    futhark_mc_task_18448_task.task_time = &ctx->futhark_mc_segmap_task_18449_total_time;
+    futhark_mc_task_18448_task.task_iter = &ctx->futhark_mc_segmap_task_18449_total_iter;
+    futhark_mc_task_18448_task.sched = STATIC;
+    futhark_mc_task_18448_task.nested_fn = futhark_mc_segmap_nested_task_18470;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18448_task);
+}
+struct futhark_mc_segmap_parloop_struct_18510 {
+    struct futhark_context *ctx;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    int64_t free_bytes_17096;
+    unsigned char *free_mem_17160;
+};
+char *futhark_mc_strlit_shim_18524()
+{
+    return "zinvs_mem_17023";
+}
+char *futhark_mc_strlit_shim_18525()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18526()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18527()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18528()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18529()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18530()
+{
+    return "mem_17160";
+}
+char *futhark_mc_strlit_shim_18536()
+{
+    return "zinvs_mem_17023";
+}
+char *futhark_mc_strlit_shim_18537()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18538()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18539()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18540()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18541()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18542()
+{
+    return "mem_17160";
+}
+static int futhark_mc_segmap_parloop_18511(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18510 *futhark_mc_segmap_parloop_struct_18510 = (struct futhark_mc_segmap_parloop_struct_18510 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18510->ctx;
+    uint64_t futhark_mc_segmap_parloop_18511_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18511_start = get_wall_time();
+    
+    int64_t n_12351 = futhark_mc_segmap_parloop_struct_18510->free_n_12351;
+    int64_t m_12352 = futhark_mc_segmap_parloop_struct_18510->free_m_12352;
+    int64_t p_12353 = futhark_mc_segmap_parloop_struct_18510->free_p_12353;
+    int64_t q_12354 = futhark_mc_segmap_parloop_struct_18510->free_q_12354;
+    struct memblock zzinvs_mem_17023 = {.desc ="zinvs_mem_17023", .mem =futhark_mc_segmap_parloop_struct_18510->free_zzinvs_mem_17023, .size =0, .references =NULL};
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18510->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_segmap_parloop_struct_18510->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segmap_parloop_struct_18510->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segmap_parloop_struct_18510->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segmap_parloop_struct_18510->free_mem_17086, .size =0, .references =NULL};
+    int64_t bytes_17093 = futhark_mc_segmap_parloop_struct_18510->free_bytes_17093;
+    int64_t bytes_17096 = futhark_mc_segmap_parloop_struct_18510->free_bytes_17096;
+    struct memblock mem_17160 = {.desc ="mem_17160", .mem =futhark_mc_segmap_parloop_struct_18510->free_mem_17160, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17097_cached_sizze_18512 = 0;
+    unsigned char *mem_17097 = NULL;
+    int64_t mem_17100_cached_sizze_18513 = 0;
+    unsigned char *mem_17100 = NULL;
+    int64_t mem_17103_cached_sizze_18514 = 0;
+    unsigned char *mem_17103 = NULL;
+    int64_t mem_17137_cached_sizze_18515 = 0;
+    unsigned char *mem_17137 = NULL;
+    int64_t mem_17147_cached_sizze_18516 = 0;
+    unsigned char *mem_17147 = NULL;
+    int64_t flat_tid_15994;
+    
+    flat_tid_15994 = subtask_id;
+    
+    struct futhark_mc_param_struct_18517 futhark_mc_param_struct_18517_;
+    
+    futhark_mc_param_struct_18517_.ctx = ctx;
+    futhark_mc_param_struct_18517_.free_n_12351 = n_12351;
+    futhark_mc_param_struct_18517_.free_m_12352 = m_12352;
+    futhark_mc_param_struct_18517_.free_p_12353 = p_12353;
+    futhark_mc_param_struct_18517_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18517_.free_zzinvs_mem_17023 = zzinvs_mem_17023.mem;
+    futhark_mc_param_struct_18517_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_param_struct_18517_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_param_struct_18517_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18517_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18517_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_param_struct_18517_.free_bytes_17093 = bytes_17093;
+    futhark_mc_param_struct_18517_.free_bytes_17096 = bytes_17096;
+    futhark_mc_param_struct_18517_.free_mem_17160 = mem_17160.mem;
+    err = futhark_mc_loop_ispc_18518(start, end, &futhark_mc_param_struct_18517_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17097);
+        free(mem_17100);
+        free(mem_17103);
+        free(mem_17137);
+        free(mem_17147);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18511_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18511_end - futhark_mc_segmap_parloop_18511_start;
+        
+        ctx->futhark_mc_segmap_parloop_18511_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18511_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18511_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_task_18509(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18508 *futhark_mc_task_18508 = (struct futhark_mc_task_18508 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18508->ctx;
+    uint64_t futhark_mc_segmap_task_18509_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_task_18509_start = get_wall_time();
+    
+    int64_t n_12351 = futhark_mc_task_18508->free_n_12351;
+    int64_t m_12352 = futhark_mc_task_18508->free_m_12352;
+    int64_t p_12353 = futhark_mc_task_18508->free_p_12353;
+    int64_t q_12354 = futhark_mc_task_18508->free_q_12354;
+    struct memblock zzinvs_mem_17023 = {.desc ="zinvs_mem_17023", .mem =futhark_mc_task_18508->free_zzinvs_mem_17023, .size =0, .references =NULL};
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_task_18508->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_task_18508->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18508->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18508->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18508->free_mem_17086, .size =0, .references =NULL};
+    int64_t bytes_17093 = futhark_mc_task_18508->free_bytes_17093;
+    int64_t bytes_17096 = futhark_mc_task_18508->free_bytes_17096;
+    struct memblock mem_17160 = {.desc ="mem_17160", .mem =futhark_mc_task_18508->free_mem_17160, .size =0, .references =NULL};
+    int32_t nsubtasks_17201;
+    
+    nsubtasks_17201 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18510 futhark_mc_segmap_parloop_struct_18510_;
+    
+    futhark_mc_segmap_parloop_struct_18510_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18510_.free_n_12351 = n_12351;
+    futhark_mc_segmap_parloop_struct_18510_.free_m_12352 = m_12352;
+    futhark_mc_segmap_parloop_struct_18510_.free_p_12353 = p_12353;
+    futhark_mc_segmap_parloop_struct_18510_.free_q_12354 = q_12354;
+    futhark_mc_segmap_parloop_struct_18510_.free_zzinvs_mem_17023 = zzinvs_mem_17023.mem;
+    futhark_mc_segmap_parloop_struct_18510_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18510_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_segmap_parloop_struct_18510_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segmap_parloop_struct_18510_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segmap_parloop_struct_18510_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_segmap_parloop_struct_18510_.free_bytes_17093 = bytes_17093;
+    futhark_mc_segmap_parloop_struct_18510_.free_bytes_17096 = bytes_17096;
+    futhark_mc_segmap_parloop_struct_18510_.free_mem_17160 = mem_17160.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18511_task;
+    
+    futhark_mc_segmap_parloop_18511_task.name = "futhark_mc_segmap_parloop_18511";
+    futhark_mc_segmap_parloop_18511_task.fn = futhark_mc_segmap_parloop_18511;
+    futhark_mc_segmap_parloop_18511_task.args = &futhark_mc_segmap_parloop_struct_18510_;
+    futhark_mc_segmap_parloop_18511_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18511_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18511_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18511_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18511_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18511_task);
+    
+    if (futhark_mc_segmap_parloop_18511_err != 0) {
+        err = futhark_mc_segmap_parloop_18511_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18511_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18511_total_end - futhark_mc_segmap_parloop_18511_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18511_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18511_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18511_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_task_18509_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_task_18509_end - futhark_mc_segmap_task_18509_start;
+        
+        ctx->futhark_mc_segmap_task_18509_runs[tid]++;
+        ctx->futhark_mc_segmap_task_18509_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_task_18509_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+struct futhark_mc_segmap_parloop_struct_18544 {
+    struct futhark_context *ctx;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    unsigned char *free_mem_17160;
+};
+char *futhark_mc_strlit_shim_18549()
+{
+    return "zinvs_mem_17023";
+}
+char *futhark_mc_strlit_shim_18550()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18551()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18552()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18553()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18554()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18555()
+{
+    return "mem_17160";
+}
+char *futhark_mc_strlit_shim_18556()
+{
+    return "mem_17094";
+}
+struct futhark_mc_segmap_parloop_struct_18559 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
+};
+char *futhark_mc_strlit_shim_18565()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18566()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18567()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18568()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18569()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18570()
+{
+    return "mem_17094";
+}
+char *futhark_mc_strlit_shim_18576()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18577()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18578()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18579()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18580()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18581()
+{
+    return "mem_17094";
+}
+static int futhark_mc_segmap_parloop_18560(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18559 *futhark_mc_segmap_parloop_struct_18559 = (struct futhark_mc_segmap_parloop_struct_18559 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18559->ctx;
+    uint64_t futhark_mc_segmap_parloop_18560_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18560_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_segmap_parloop_struct_18559->free_m_12352;
+    int64_t p_12353 = futhark_mc_segmap_parloop_struct_18559->free_p_12353;
+    int64_t q_12354 = futhark_mc_segmap_parloop_struct_18559->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_segmap_parloop_struct_18559->free_gtid_16475;
+    int64_t defunc_0_f_res_16478 = futhark_mc_segmap_parloop_struct_18559->free_defunc_0_f_res_16478;
+    int64_t defunc_0_f_res_16479 = futhark_mc_segmap_parloop_struct_18559->free_defunc_0_f_res_16479;
+    int64_t defunc_0_f_res_16480 = futhark_mc_segmap_parloop_struct_18559->free_defunc_0_f_res_16480;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18559->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_segmap_parloop_struct_18559->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segmap_parloop_struct_18559->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segmap_parloop_struct_18559->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segmap_parloop_struct_18559->free_mem_17086, .size =0, .references =NULL};
+    struct memblock mem_17094 = {.desc ="mem_17094", .mem =futhark_mc_segmap_parloop_struct_18559->free_mem_17094, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17870_cached_sizze_18561 = 0;
+    unsigned char *mem_17870 = NULL;
+    int64_t flat_tid_17710;
+    
+    flat_tid_17710 = subtask_id;
+    
+    struct futhark_mc_param_struct_18562 futhark_mc_param_struct_18562_;
+    
+    futhark_mc_param_struct_18562_.ctx = ctx;
+    futhark_mc_param_struct_18562_.free_m_12352 = m_12352;
+    futhark_mc_param_struct_18562_.free_p_12353 = p_12353;
+    futhark_mc_param_struct_18562_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18562_.free_gtid_16475 = gtid_16475;
+    futhark_mc_param_struct_18562_.free_defunc_0_f_res_16478 = defunc_0_f_res_16478;
+    futhark_mc_param_struct_18562_.free_defunc_0_f_res_16479 = defunc_0_f_res_16479;
+    futhark_mc_param_struct_18562_.free_defunc_0_f_res_16480 = defunc_0_f_res_16480;
+    futhark_mc_param_struct_18562_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_param_struct_18562_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_param_struct_18562_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18562_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18562_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_param_struct_18562_.free_mem_17094 = mem_17094.mem;
+    err = futhark_mc_loop_ispc_18563(start, end, &futhark_mc_param_struct_18562_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17870);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18560_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18560_end - futhark_mc_segmap_parloop_18560_start;
+        
+        ctx->futhark_mc_segmap_parloop_18560_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18560_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18560_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_task_18558(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18557 *futhark_mc_task_18557 = (struct futhark_mc_task_18557 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18557->ctx;
+    uint64_t futhark_mc_segmap_task_18558_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_task_18558_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_task_18557->free_m_12352;
+    int64_t p_12353 = futhark_mc_task_18557->free_p_12353;
+    int64_t q_12354 = futhark_mc_task_18557->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_task_18557->free_gtid_16475;
+    int64_t defunc_0_f_res_16478 = futhark_mc_task_18557->free_defunc_0_f_res_16478;
+    int64_t defunc_0_f_res_16479 = futhark_mc_task_18557->free_defunc_0_f_res_16479;
+    int64_t defunc_0_f_res_16480 = futhark_mc_task_18557->free_defunc_0_f_res_16480;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_task_18557->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_task_18557->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18557->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18557->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18557->free_mem_17086, .size =0, .references =NULL};
+    struct memblock mem_17094 = {.desc ="mem_17094", .mem =futhark_mc_task_18557->free_mem_17094, .size =0, .references =NULL};
+    int32_t nsubtasks_17878;
+    
+    nsubtasks_17878 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18559 futhark_mc_segmap_parloop_struct_18559_;
+    
+    futhark_mc_segmap_parloop_struct_18559_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18559_.free_m_12352 = m_12352;
+    futhark_mc_segmap_parloop_struct_18559_.free_p_12353 = p_12353;
+    futhark_mc_segmap_parloop_struct_18559_.free_q_12354 = q_12354;
+    futhark_mc_segmap_parloop_struct_18559_.free_gtid_16475 = gtid_16475;
+    futhark_mc_segmap_parloop_struct_18559_.free_defunc_0_f_res_16478 = defunc_0_f_res_16478;
+    futhark_mc_segmap_parloop_struct_18559_.free_defunc_0_f_res_16479 = defunc_0_f_res_16479;
+    futhark_mc_segmap_parloop_struct_18559_.free_defunc_0_f_res_16480 = defunc_0_f_res_16480;
+    futhark_mc_segmap_parloop_struct_18559_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18559_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_segmap_parloop_struct_18559_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segmap_parloop_struct_18559_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segmap_parloop_struct_18559_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_segmap_parloop_struct_18559_.free_mem_17094 = mem_17094.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18560_task;
+    
+    futhark_mc_segmap_parloop_18560_task.name = "futhark_mc_segmap_parloop_18560";
+    futhark_mc_segmap_parloop_18560_task.fn = futhark_mc_segmap_parloop_18560;
+    futhark_mc_segmap_parloop_18560_task.args = &futhark_mc_segmap_parloop_struct_18559_;
+    futhark_mc_segmap_parloop_18560_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18560_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18560_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18560_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18560_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18560_task);
+    
+    if (futhark_mc_segmap_parloop_18560_err != 0) {
+        err = futhark_mc_segmap_parloop_18560_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18560_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18560_total_end - futhark_mc_segmap_parloop_18560_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18560_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18560_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18560_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_task_18558_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_task_18558_end - futhark_mc_segmap_task_18558_start;
+        
+        ctx->futhark_mc_segmap_task_18558_runs[tid]++;
+        ctx->futhark_mc_segmap_task_18558_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_task_18558_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+struct futhark_mc_segmap_parloop_struct_18583 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
+};
+char *futhark_mc_strlit_shim_18589()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18590()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18591()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18592()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18593()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18594()
+{
+    return "mem_17094";
+}
+struct futhark_mc_segred_stage_1_parloop_struct_18600 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18330;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18332;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18334;
+};
+char *futhark_mc_strlit_shim_18604()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18605()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18606()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18607()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18608()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18609()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18330";
+}
+char *futhark_mc_strlit_shim_18610()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18332";
+}
+char *futhark_mc_strlit_shim_18611()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18334";
+}
+static int futhark_mc_segred_stage_1_parloop_18601(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segred_stage_1_parloop_struct_18600 *futhark_mc_segred_stage_1_parloop_struct_18600 = (struct futhark_mc_segred_stage_1_parloop_struct_18600 *) args;
+    struct futhark_context *ctx = futhark_mc_segred_stage_1_parloop_struct_18600->ctx;
+    uint64_t futhark_mc_segred_stage_1_parloop_18601_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18601_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_segred_stage_1_parloop_struct_18600->free_m_12352;
+    int64_t q_12354 = futhark_mc_segred_stage_1_parloop_struct_18600->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_segred_stage_1_parloop_struct_18600->free_gtid_16475;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_mem_17086, .size =0, .references =NULL};
+    int64_t gtid_17400 = futhark_mc_segred_stage_1_parloop_struct_18600->free_gtid_17400;
+    struct memblock reduce_stage_1_tid_res_arr_mem_18330 = {.desc ="reduce_stage_1_tid_res_arr_mem_18330", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_reduce_stage_1_tid_res_arr_mem_18330, .size =0, .references =NULL};
+    struct memblock reduce_stage_1_tid_res_arr_mem_18332 = {.desc ="reduce_stage_1_tid_res_arr_mem_18332", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_reduce_stage_1_tid_res_arr_mem_18332, .size =0, .references =NULL};
+    struct memblock reduce_stage_1_tid_res_arr_mem_18334 = {.desc ="reduce_stage_1_tid_res_arr_mem_18334", .mem =futhark_mc_segred_stage_1_parloop_struct_18600->free_reduce_stage_1_tid_res_arr_mem_18334, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t flat_tid_18182;
+    
+    flat_tid_18182 = subtask_id;
+    
+    struct futhark_mc_param_struct_18602 futhark_mc_param_struct_18602_;
+    
+    futhark_mc_param_struct_18602_.ctx = ctx;
+    futhark_mc_param_struct_18602_.free_m_12352 = m_12352;
+    futhark_mc_param_struct_18602_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18602_.free_gtid_16475 = gtid_16475;
+    futhark_mc_param_struct_18602_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_param_struct_18602_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_param_struct_18602_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18602_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18602_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_param_struct_18602_.free_gtid_17400 = gtid_17400;
+    futhark_mc_param_struct_18602_.free_flat_tid_18182 = flat_tid_18182;
+    futhark_mc_param_struct_18602_.free_reduce_stage_1_tid_res_arr_mem_18330 = reduce_stage_1_tid_res_arr_mem_18330.mem;
+    futhark_mc_param_struct_18602_.free_reduce_stage_1_tid_res_arr_mem_18332 = reduce_stage_1_tid_res_arr_mem_18332.mem;
+    futhark_mc_param_struct_18602_.free_reduce_stage_1_tid_res_arr_mem_18334 = reduce_stage_1_tid_res_arr_mem_18334.mem;
+    err = futhark_mc_loop_ispc_18603(start, end, &futhark_mc_param_struct_18602_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18601_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18601_end - futhark_mc_segred_stage_1_parloop_18601_start;
+        
+        ctx->futhark_mc_segred_stage_1_parloop_18601_runs[tid]++;
+        ctx->futhark_mc_segred_stage_1_parloop_18601_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_stage_1_parloop_18601_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segred_task_18596(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18595 *futhark_mc_task_18595 = (struct futhark_mc_task_18595 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18595->ctx;
+    uint64_t futhark_mc_segred_task_18596_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_task_18596_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_task_18595->free_m_12352;
+    int64_t q_12354 = futhark_mc_task_18595->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_task_18595->free_gtid_16475;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_task_18595->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_task_18595->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18595->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18595->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18595->free_mem_17086, .size =0, .references =NULL};
+    int64_t gtid_17400 = futhark_mc_task_18595->free_gtid_17400;
+    int64_t flat_tid_18037 = futhark_mc_task_18595->free_flat_tid_18037;
+    int64_t flat_tid_18182 = futhark_mc_task_18595->free_flat_tid_18182;
+    int64_t defunc_0_f_res_17401 = *futhark_mc_task_18595->retval_defunc_0_f_res_17401;
+    int64_t defunc_0_f_res_17402 = *futhark_mc_task_18595->retval_defunc_0_f_res_17402;
+    int64_t defunc_0_f_res_17403 = *futhark_mc_task_18595->retval_defunc_0_f_res_17403;
+    int64_t reduce_stage_1_tid_res_arr_mem_18330_cached_sizze_18597 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18330 = NULL;
+    int64_t reduce_stage_1_tid_res_arr_mem_18332_cached_sizze_18598 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18332 = NULL;
+    int64_t reduce_stage_1_tid_res_arr_mem_18334_cached_sizze_18599 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18334 = NULL;
+    int32_t nsubtasks_18329;
+    
+    nsubtasks_18329 = info.nsubtasks;
+    if (reduce_stage_1_tid_res_arr_mem_18330_cached_sizze_18597 < (int64_t) 8 * nsubtasks_18329) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18330, &reduce_stage_1_tid_res_arr_mem_18330_cached_sizze_18597, (int64_t) 8 * nsubtasks_18329);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (reduce_stage_1_tid_res_arr_mem_18332_cached_sizze_18598 < (int64_t) 8 * nsubtasks_18329) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18332, &reduce_stage_1_tid_res_arr_mem_18332_cached_sizze_18598, (int64_t) 8 * nsubtasks_18329);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (reduce_stage_1_tid_res_arr_mem_18334_cached_sizze_18599 < (int64_t) 8 * nsubtasks_18329) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18334, &reduce_stage_1_tid_res_arr_mem_18334_cached_sizze_18599, (int64_t) 8 * nsubtasks_18329);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    
+    struct futhark_mc_segred_stage_1_parloop_struct_18600 futhark_mc_segred_stage_1_parloop_struct_18600_;
+    
+    futhark_mc_segred_stage_1_parloop_struct_18600_.ctx = ctx;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_m_12352 = m_12352;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_q_12354 = q_12354;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_gtid_16475 = gtid_16475;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_gtid_17400 = gtid_17400;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_reduce_stage_1_tid_res_arr_mem_18330 = reduce_stage_1_tid_res_arr_mem_18330;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_reduce_stage_1_tid_res_arr_mem_18332 = reduce_stage_1_tid_res_arr_mem_18332;
+    futhark_mc_segred_stage_1_parloop_struct_18600_.free_reduce_stage_1_tid_res_arr_mem_18334 = reduce_stage_1_tid_res_arr_mem_18334;
+    
+    struct scheduler_parloop futhark_mc_segred_stage_1_parloop_18601_task;
+    
+    futhark_mc_segred_stage_1_parloop_18601_task.name = "futhark_mc_segred_stage_1_parloop_18601";
+    futhark_mc_segred_stage_1_parloop_18601_task.fn = futhark_mc_segred_stage_1_parloop_18601;
+    futhark_mc_segred_stage_1_parloop_18601_task.args = &futhark_mc_segred_stage_1_parloop_struct_18600_;
+    futhark_mc_segred_stage_1_parloop_18601_task.iterations = iterations;
+    futhark_mc_segred_stage_1_parloop_18601_task.info = info;
+    
+    uint64_t futhark_mc_segred_stage_1_parloop_18601_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18601_total_start = get_wall_time();
+    
+    int futhark_mc_segred_stage_1_parloop_18601_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segred_stage_1_parloop_18601_task);
+    
+    if (futhark_mc_segred_stage_1_parloop_18601_err != 0) {
+        err = futhark_mc_segred_stage_1_parloop_18601_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18601_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18601_total_end - futhark_mc_segred_stage_1_parloop_18601_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18601_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18601_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18601_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    // neutral-initialise the output
+    {
+        defunc_0_f_res_17401 = (int64_t) 0;
+        defunc_0_f_res_17402 = (int64_t) 0;
+        defunc_0_f_res_17403 = (int64_t) 0;
+    }
+    
+    int64_t x_18355;
+    int64_t x_18356;
+    int64_t x_18357;
+    int64_t x_18358;
+    int64_t x_18359;
+    int64_t x_18360;
+    
+    for (int32_t i_18367 = 0; i_18367 < nsubtasks_18329; i_18367++) {
+        flat_tid_18182 = i_18367;
+        // Apply main thread reduction
+        {
+            // load acc params
+            {
+                x_18355 = defunc_0_f_res_17401;
+                x_18356 = defunc_0_f_res_17402;
+                x_18357 = defunc_0_f_res_17403;
+            }
+            // load next params
+            {
+                x_18358 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18330)[flat_tid_18182];
+                x_18359 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18332)[flat_tid_18182];
+                x_18360 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18334)[flat_tid_18182];
+            }
+            // red body
+            {
+                int64_t canonicalizze_arg_18361 = add64(x_18355, x_18358);
+                int64_t canonicalizze_res_18362 = umod64(canonicalizze_arg_18361, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_18363 = add64(x_18356, x_18359);
+                int64_t canonicalizze_res_18364 = umod64(canonicalizze_arg_18363, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_18365 = add64(x_18357, x_18360);
+                int64_t canonicalizze_res_18366 = umod64(canonicalizze_arg_18365, (int64_t) -4294967295);
+                
+                defunc_0_f_res_17401 = canonicalizze_res_18362;
+                defunc_0_f_res_17402 = canonicalizze_res_18364;
+                defunc_0_f_res_17403 = canonicalizze_res_18366;
+            }
+        }
+    }
+    
+  cleanup:
+    {
+        free(reduce_stage_1_tid_res_arr_mem_18330);
+        free(reduce_stage_1_tid_res_arr_mem_18332);
+        free(reduce_stage_1_tid_res_arr_mem_18334);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_task_18596_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_task_18596_end - futhark_mc_segred_task_18596_start;
+        
+        ctx->futhark_mc_segred_task_18596_runs[tid]++;
+        ctx->futhark_mc_segred_task_18596_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_task_18596_iter[tid] += iterations;
+    }
+    if (err == 0) {
+        *futhark_mc_task_18595->retval_defunc_0_f_res_17401 = defunc_0_f_res_17401;
+        *futhark_mc_task_18595->retval_defunc_0_f_res_17402 = defunc_0_f_res_17402;
+        *futhark_mc_task_18595->retval_defunc_0_f_res_17403 = defunc_0_f_res_17403;
+    }
+    return err;
+}
+struct futhark_mc_segred_stage_1_parloop_struct_18616 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18369;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18371;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18373;
+};
+char *futhark_mc_strlit_shim_18620()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18621()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18622()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18623()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18624()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18625()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18369";
+}
+char *futhark_mc_strlit_shim_18626()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18371";
+}
+char *futhark_mc_strlit_shim_18627()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18373";
+}
+struct futhark_mc_segred_stage_1_parloop_struct_18633 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    int64_t free_gtid_17400;
+    int64_t free_gtid_18038;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18383;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18385;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18387;
+};
+char *futhark_mc_strlit_shim_18637()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18638()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18639()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18383";
+}
+char *futhark_mc_strlit_shim_18640()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18385";
+}
+char *futhark_mc_strlit_shim_18641()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18387";
+}
+static int futhark_mc_segred_stage_1_parloop_18634(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segred_stage_1_parloop_struct_18633 *futhark_mc_segred_stage_1_parloop_struct_18633 = (struct futhark_mc_segred_stage_1_parloop_struct_18633 *) args;
+    struct futhark_context *ctx = futhark_mc_segred_stage_1_parloop_struct_18633->ctx;
+    uint64_t futhark_mc_segred_stage_1_parloop_18634_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18634_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_segred_stage_1_parloop_struct_18633->free_m_12352;
+    int64_t q_12354 = futhark_mc_segred_stage_1_parloop_struct_18633->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_segred_stage_1_parloop_struct_18633->free_gtid_16475;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_segred_stage_1_parloop_struct_18633->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_segred_stage_1_parloop_struct_18633->free_expsss_mem_17025, .size =0, .references =NULL};
+    int64_t gtid_17400 = futhark_mc_segred_stage_1_parloop_struct_18633->free_gtid_17400;
+    int64_t gtid_18038 = futhark_mc_segred_stage_1_parloop_struct_18633->free_gtid_18038;
+    struct memblock reduce_stage_1_tid_res_arr_mem_18383 = {.desc ="reduce_stage_1_tid_res_arr_mem_18383", .mem =futhark_mc_segred_stage_1_parloop_struct_18633->free_reduce_stage_1_tid_res_arr_mem_18383, .size =0, .references =NULL};
+    struct memblock reduce_stage_1_tid_res_arr_mem_18385 = {.desc ="reduce_stage_1_tid_res_arr_mem_18385", .mem =futhark_mc_segred_stage_1_parloop_struct_18633->free_reduce_stage_1_tid_res_arr_mem_18385, .size =0, .references =NULL};
+    struct memblock reduce_stage_1_tid_res_arr_mem_18387 = {.desc ="reduce_stage_1_tid_res_arr_mem_18387", .mem =futhark_mc_segred_stage_1_parloop_struct_18633->free_reduce_stage_1_tid_res_arr_mem_18387, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t flat_tid_18057;
+    
+    flat_tid_18057 = subtask_id;
+    
+    struct futhark_mc_param_struct_18635 futhark_mc_param_struct_18635_;
+    
+    futhark_mc_param_struct_18635_.ctx = ctx;
+    futhark_mc_param_struct_18635_.free_m_12352 = m_12352;
+    futhark_mc_param_struct_18635_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18635_.free_gtid_16475 = gtid_16475;
+    futhark_mc_param_struct_18635_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_param_struct_18635_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_param_struct_18635_.free_gtid_17400 = gtid_17400;
+    futhark_mc_param_struct_18635_.free_gtid_18038 = gtid_18038;
+    futhark_mc_param_struct_18635_.free_flat_tid_18057 = flat_tid_18057;
+    futhark_mc_param_struct_18635_.free_reduce_stage_1_tid_res_arr_mem_18383 = reduce_stage_1_tid_res_arr_mem_18383.mem;
+    futhark_mc_param_struct_18635_.free_reduce_stage_1_tid_res_arr_mem_18385 = reduce_stage_1_tid_res_arr_mem_18385.mem;
+    futhark_mc_param_struct_18635_.free_reduce_stage_1_tid_res_arr_mem_18387 = reduce_stage_1_tid_res_arr_mem_18387.mem;
+    err = futhark_mc_loop_ispc_18636(start, end, &futhark_mc_param_struct_18635_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18634_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18634_end - futhark_mc_segred_stage_1_parloop_18634_start;
+        
+        ctx->futhark_mc_segred_stage_1_parloop_18634_runs[tid]++;
+        ctx->futhark_mc_segred_stage_1_parloop_18634_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_stage_1_parloop_18634_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segred_task_18629(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18628 *futhark_mc_task_18628 = (struct futhark_mc_task_18628 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18628->ctx;
+    uint64_t futhark_mc_segred_task_18629_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_task_18629_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_task_18628->free_m_12352;
+    int64_t q_12354 = futhark_mc_task_18628->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_task_18628->free_gtid_16475;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_task_18628->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_task_18628->free_expsss_mem_17025, .size =0, .references =NULL};
+    int64_t gtid_17400 = futhark_mc_task_18628->free_gtid_17400;
+    int64_t gtid_18038 = futhark_mc_task_18628->free_gtid_18038;
+    int64_t flat_tid_18057 = futhark_mc_task_18628->free_flat_tid_18057;
+    int64_t defunc_0_f_res_18054 = *futhark_mc_task_18628->retval_defunc_0_f_res_18054;
+    int64_t defunc_0_f_res_18055 = *futhark_mc_task_18628->retval_defunc_0_f_res_18055;
+    int64_t defunc_0_f_res_18056 = *futhark_mc_task_18628->retval_defunc_0_f_res_18056;
+    int64_t reduce_stage_1_tid_res_arr_mem_18383_cached_sizze_18630 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18383 = NULL;
+    int64_t reduce_stage_1_tid_res_arr_mem_18385_cached_sizze_18631 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18385 = NULL;
+    int64_t reduce_stage_1_tid_res_arr_mem_18387_cached_sizze_18632 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18387 = NULL;
+    int32_t nsubtasks_18382;
+    
+    nsubtasks_18382 = info.nsubtasks;
+    if (reduce_stage_1_tid_res_arr_mem_18383_cached_sizze_18630 < (int64_t) 8 * nsubtasks_18382) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18383, &reduce_stage_1_tid_res_arr_mem_18383_cached_sizze_18630, (int64_t) 8 * nsubtasks_18382);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (reduce_stage_1_tid_res_arr_mem_18385_cached_sizze_18631 < (int64_t) 8 * nsubtasks_18382) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18385, &reduce_stage_1_tid_res_arr_mem_18385_cached_sizze_18631, (int64_t) 8 * nsubtasks_18382);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (reduce_stage_1_tid_res_arr_mem_18387_cached_sizze_18632 < (int64_t) 8 * nsubtasks_18382) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18387, &reduce_stage_1_tid_res_arr_mem_18387_cached_sizze_18632, (int64_t) 8 * nsubtasks_18382);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    
+    struct futhark_mc_segred_stage_1_parloop_struct_18633 futhark_mc_segred_stage_1_parloop_struct_18633_;
+    
+    futhark_mc_segred_stage_1_parloop_struct_18633_.ctx = ctx;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_m_12352 = m_12352;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_q_12354 = q_12354;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_gtid_16475 = gtid_16475;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_gtid_17400 = gtid_17400;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_gtid_18038 = gtid_18038;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_reduce_stage_1_tid_res_arr_mem_18383 = reduce_stage_1_tid_res_arr_mem_18383;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_reduce_stage_1_tid_res_arr_mem_18385 = reduce_stage_1_tid_res_arr_mem_18385;
+    futhark_mc_segred_stage_1_parloop_struct_18633_.free_reduce_stage_1_tid_res_arr_mem_18387 = reduce_stage_1_tid_res_arr_mem_18387;
+    
+    struct scheduler_parloop futhark_mc_segred_stage_1_parloop_18634_task;
+    
+    futhark_mc_segred_stage_1_parloop_18634_task.name = "futhark_mc_segred_stage_1_parloop_18634";
+    futhark_mc_segred_stage_1_parloop_18634_task.fn = futhark_mc_segred_stage_1_parloop_18634;
+    futhark_mc_segred_stage_1_parloop_18634_task.args = &futhark_mc_segred_stage_1_parloop_struct_18633_;
+    futhark_mc_segred_stage_1_parloop_18634_task.iterations = iterations;
+    futhark_mc_segred_stage_1_parloop_18634_task.info = info;
+    
+    uint64_t futhark_mc_segred_stage_1_parloop_18634_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18634_total_start = get_wall_time();
+    
+    int futhark_mc_segred_stage_1_parloop_18634_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segred_stage_1_parloop_18634_task);
+    
+    if (futhark_mc_segred_stage_1_parloop_18634_err != 0) {
+        err = futhark_mc_segred_stage_1_parloop_18634_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18634_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18634_total_end - futhark_mc_segred_stage_1_parloop_18634_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18634_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18634_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18634_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    // neutral-initialise the output
+    {
+        defunc_0_f_res_18054 = (int64_t) 1;
+        defunc_0_f_res_18055 = (int64_t) 0;
+        defunc_0_f_res_18056 = (int64_t) 0;
+    }
+    
+    int64_t x_18405;
+    int64_t x_18406;
+    int64_t x_18407;
+    int64_t x_18408;
+    int64_t x_18409;
+    int64_t x_18410;
+    
+    for (int32_t i_18429 = 0; i_18429 < nsubtasks_18382; i_18429++) {
+        flat_tid_18057 = i_18429;
+        // Apply main thread reduction
+        {
+            // load acc params
+            {
+                x_18405 = defunc_0_f_res_18054;
+                x_18406 = defunc_0_f_res_18055;
+                x_18407 = defunc_0_f_res_18056;
+            }
+            // load next params
+            {
+                x_18408 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18383)[flat_tid_18057];
+                x_18409 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18385)[flat_tid_18057];
+                x_18410 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18387)[flat_tid_18057];
+            }
+            // red body
+            {
+                int64_t x_18411 = mul64(x_18405, x_18408);
+                int64_t y_18412 = mul64(x_18407, x_18409);
+                int64_t x_18413 = sub64(x_18411, y_18412);
+                int64_t y_18414 = mul64(x_18406, x_18410);
+                int64_t defunc_1_op_res_18415 = sub64(x_18413, y_18414);
+                int64_t x_18416 = mul64(x_18406, x_18408);
+                int64_t y_18417 = mul64(x_18405, x_18409);
+                int64_t x_18418 = add64(x_18416, y_18417);
+                int64_t y_18419 = mul64(x_18407, x_18410);
+                int64_t x_18420 = sub64(x_18418, y_18419);
+                int64_t x_18421 = add64(y_18412, x_18420);
+                int64_t defunc_1_op_res_18422 = add64(y_18414, x_18421);
+                int64_t x_18423 = mul64(x_18407, x_18408);
+                int64_t y_18424 = mul64(x_18406, x_18409);
+                int64_t x_18425 = add64(x_18423, y_18424);
+                int64_t y_18426 = mul64(x_18405, x_18410);
+                int64_t x_18427 = add64(x_18425, y_18426);
+                int64_t defunc_1_op_res_18428 = add64(y_18419, x_18427);
+                
+                defunc_0_f_res_18054 = defunc_1_op_res_18415;
+                defunc_0_f_res_18055 = defunc_1_op_res_18422;
+                defunc_0_f_res_18056 = defunc_1_op_res_18428;
+            }
+        }
+    }
+    
+  cleanup:
+    {
+        free(reduce_stage_1_tid_res_arr_mem_18383);
+        free(reduce_stage_1_tid_res_arr_mem_18385);
+        free(reduce_stage_1_tid_res_arr_mem_18387);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_task_18629_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_task_18629_end - futhark_mc_segred_task_18629_start;
+        
+        ctx->futhark_mc_segred_task_18629_runs[tid]++;
+        ctx->futhark_mc_segred_task_18629_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_task_18629_iter[tid] += iterations;
+    }
+    if (err == 0) {
+        *futhark_mc_task_18628->retval_defunc_0_f_res_18054 = defunc_0_f_res_18054;
+        *futhark_mc_task_18628->retval_defunc_0_f_res_18055 = defunc_0_f_res_18055;
+        *futhark_mc_task_18628->retval_defunc_0_f_res_18056 = defunc_0_f_res_18056;
+    }
+    return err;
+}
+int futhark_mc_schedule_shim_18642(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18628_task;
+    
+    futhark_mc_task_18628_task.args = args;
+    futhark_mc_task_18628_task.top_level_fn = futhark_mc_segred_task_18629;
+    futhark_mc_task_18628_task.name = "futhark_mc_segred_task_18629";
+    futhark_mc_task_18628_task.iterations = iterations;
+    futhark_mc_task_18628_task.task_time = &ctx->futhark_mc_segred_task_18629_total_time;
+    futhark_mc_task_18628_task.task_iter = &ctx->futhark_mc_segred_task_18629_total_iter;
+    futhark_mc_task_18628_task.sched = STATIC;
+    futhark_mc_task_18628_task.nested_fn = NULL;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18628_task);
+}
+char *futhark_mc_strlit_shim_18646()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18647()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18648()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18649()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18650()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18651()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18369";
+}
+char *futhark_mc_strlit_shim_18652()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18371";
+}
+char *futhark_mc_strlit_shim_18653()
+{
+    return "reduce_stage_1_tid_res_arr_mem_18373";
+}
+static int futhark_mc_segred_stage_1_parloop_18617(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segred_stage_1_parloop_struct_18616 *futhark_mc_segred_stage_1_parloop_struct_18616 = (struct futhark_mc_segred_stage_1_parloop_struct_18616 *) args;
+    struct futhark_context *ctx = futhark_mc_segred_stage_1_parloop_struct_18616->ctx;
+    uint64_t futhark_mc_segred_stage_1_parloop_18617_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18617_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_segred_stage_1_parloop_struct_18616->free_m_12352;
+    int64_t q_12354 = futhark_mc_segred_stage_1_parloop_struct_18616->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_segred_stage_1_parloop_struct_18616->free_gtid_16475;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_mem_17086, .size =0, .references =NULL};
+    int64_t gtid_17400 = futhark_mc_segred_stage_1_parloop_struct_18616->free_gtid_17400;
+    struct memblock reduce_stage_1_tid_res_arr_mem_18369 = {.desc ="reduce_stage_1_tid_res_arr_mem_18369", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_reduce_stage_1_tid_res_arr_mem_18369, .size =0, .references =NULL};
+    struct memblock reduce_stage_1_tid_res_arr_mem_18371 = {.desc ="reduce_stage_1_tid_res_arr_mem_18371", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_reduce_stage_1_tid_res_arr_mem_18371, .size =0, .references =NULL};
+    struct memblock reduce_stage_1_tid_res_arr_mem_18373 = {.desc ="reduce_stage_1_tid_res_arr_mem_18373", .mem =futhark_mc_segred_stage_1_parloop_struct_18616->free_reduce_stage_1_tid_res_arr_mem_18373, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t flat_tid_18037;
+    
+    flat_tid_18037 = subtask_id;
+    
+    struct futhark_mc_param_struct_18618 futhark_mc_param_struct_18618_;
+    
+    futhark_mc_param_struct_18618_.ctx = ctx;
+    futhark_mc_param_struct_18618_.free_m_12352 = m_12352;
+    futhark_mc_param_struct_18618_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18618_.free_gtid_16475 = gtid_16475;
+    futhark_mc_param_struct_18618_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_param_struct_18618_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_param_struct_18618_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18618_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18618_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_param_struct_18618_.free_gtid_17400 = gtid_17400;
+    futhark_mc_param_struct_18618_.free_flat_tid_18037 = flat_tid_18037;
+    futhark_mc_param_struct_18618_.free_reduce_stage_1_tid_res_arr_mem_18369 = reduce_stage_1_tid_res_arr_mem_18369.mem;
+    futhark_mc_param_struct_18618_.free_reduce_stage_1_tid_res_arr_mem_18371 = reduce_stage_1_tid_res_arr_mem_18371.mem;
+    futhark_mc_param_struct_18618_.free_reduce_stage_1_tid_res_arr_mem_18373 = reduce_stage_1_tid_res_arr_mem_18373.mem;
+    err = futhark_mc_loop_ispc_18619(start, end, &futhark_mc_param_struct_18618_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18617_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18617_end - futhark_mc_segred_stage_1_parloop_18617_start;
+        
+        ctx->futhark_mc_segred_stage_1_parloop_18617_runs[tid]++;
+        ctx->futhark_mc_segred_stage_1_parloop_18617_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_stage_1_parloop_18617_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segred_nested_task_18612(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18595 *futhark_mc_task_18595 = (struct futhark_mc_task_18595 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18595->ctx;
+    uint64_t futhark_mc_segred_nested_task_18612_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_nested_task_18612_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_task_18595->free_m_12352;
+    int64_t q_12354 = futhark_mc_task_18595->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_task_18595->free_gtid_16475;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_task_18595->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_task_18595->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18595->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18595->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18595->free_mem_17086, .size =0, .references =NULL};
+    int64_t gtid_17400 = futhark_mc_task_18595->free_gtid_17400;
+    int64_t flat_tid_18037 = futhark_mc_task_18595->free_flat_tid_18037;
+    int64_t flat_tid_18182 = futhark_mc_task_18595->free_flat_tid_18182;
+    int64_t defunc_0_f_res_17401 = *futhark_mc_task_18595->retval_defunc_0_f_res_17401;
+    int64_t defunc_0_f_res_17402 = *futhark_mc_task_18595->retval_defunc_0_f_res_17402;
+    int64_t defunc_0_f_res_17403 = *futhark_mc_task_18595->retval_defunc_0_f_res_17403;
+    int64_t reduce_stage_1_tid_res_arr_mem_18369_cached_sizze_18613 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18369 = NULL;
+    int64_t reduce_stage_1_tid_res_arr_mem_18371_cached_sizze_18614 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18371 = NULL;
+    int64_t reduce_stage_1_tid_res_arr_mem_18373_cached_sizze_18615 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_18373 = NULL;
+    int32_t nsubtasks_18368;
+    
+    nsubtasks_18368 = info.nsubtasks;
+    if (reduce_stage_1_tid_res_arr_mem_18369_cached_sizze_18613 < (int64_t) 8 * nsubtasks_18368) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18369, &reduce_stage_1_tid_res_arr_mem_18369_cached_sizze_18613, (int64_t) 8 * nsubtasks_18368);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (reduce_stage_1_tid_res_arr_mem_18371_cached_sizze_18614 < (int64_t) 8 * nsubtasks_18368) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18371, &reduce_stage_1_tid_res_arr_mem_18371_cached_sizze_18614, (int64_t) 8 * nsubtasks_18368);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (reduce_stage_1_tid_res_arr_mem_18373_cached_sizze_18615 < (int64_t) 8 * nsubtasks_18368) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_18373, &reduce_stage_1_tid_res_arr_mem_18373_cached_sizze_18615, (int64_t) 8 * nsubtasks_18368);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    
+    struct futhark_mc_segred_stage_1_parloop_struct_18616 futhark_mc_segred_stage_1_parloop_struct_18616_;
+    
+    futhark_mc_segred_stage_1_parloop_struct_18616_.ctx = ctx;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_m_12352 = m_12352;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_q_12354 = q_12354;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_gtid_16475 = gtid_16475;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_gtid_17400 = gtid_17400;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_reduce_stage_1_tid_res_arr_mem_18369 = reduce_stage_1_tid_res_arr_mem_18369;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_reduce_stage_1_tid_res_arr_mem_18371 = reduce_stage_1_tid_res_arr_mem_18371;
+    futhark_mc_segred_stage_1_parloop_struct_18616_.free_reduce_stage_1_tid_res_arr_mem_18373 = reduce_stage_1_tid_res_arr_mem_18373;
+    
+    struct scheduler_parloop futhark_mc_segred_stage_1_parloop_18617_task;
+    
+    futhark_mc_segred_stage_1_parloop_18617_task.name = "futhark_mc_segred_stage_1_parloop_18617";
+    futhark_mc_segred_stage_1_parloop_18617_task.fn = futhark_mc_segred_stage_1_parloop_18617;
+    futhark_mc_segred_stage_1_parloop_18617_task.args = &futhark_mc_segred_stage_1_parloop_struct_18616_;
+    futhark_mc_segred_stage_1_parloop_18617_task.iterations = iterations;
+    futhark_mc_segred_stage_1_parloop_18617_task.info = info;
+    
+    uint64_t futhark_mc_segred_stage_1_parloop_18617_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18617_total_start = get_wall_time();
+    
+    int futhark_mc_segred_stage_1_parloop_18617_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segred_stage_1_parloop_18617_task);
+    
+    if (futhark_mc_segred_stage_1_parloop_18617_err != 0) {
+        err = futhark_mc_segred_stage_1_parloop_18617_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18617_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18617_total_end - futhark_mc_segred_stage_1_parloop_18617_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18617_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18617_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18617_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    // neutral-initialise the output
+    {
+        defunc_0_f_res_17401 = (int64_t) 0;
+        defunc_0_f_res_17402 = (int64_t) 0;
+        defunc_0_f_res_17403 = (int64_t) 0;
+    }
+    
+    int64_t x_18431;
+    int64_t x_18432;
+    int64_t x_18433;
+    int64_t x_18434;
+    int64_t x_18435;
+    int64_t x_18436;
+    
+    for (int32_t i_18443 = 0; i_18443 < nsubtasks_18368; i_18443++) {
+        flat_tid_18037 = i_18443;
+        // Apply main thread reduction
+        {
+            // load acc params
+            {
+                x_18431 = defunc_0_f_res_17401;
+                x_18432 = defunc_0_f_res_17402;
+                x_18433 = defunc_0_f_res_17403;
+            }
+            // load next params
+            {
+                x_18434 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18369)[flat_tid_18037];
+                x_18435 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18371)[flat_tid_18037];
+                x_18436 = ((int64_t *) reduce_stage_1_tid_res_arr_mem_18373)[flat_tid_18037];
+            }
+            // red body
+            {
+                int64_t canonicalizze_arg_18437 = add64(x_18431, x_18434);
+                int64_t canonicalizze_res_18438 = umod64(canonicalizze_arg_18437, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_18439 = add64(x_18432, x_18435);
+                int64_t canonicalizze_res_18440 = umod64(canonicalizze_arg_18439, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_18441 = add64(x_18433, x_18436);
+                int64_t canonicalizze_res_18442 = umod64(canonicalizze_arg_18441, (int64_t) -4294967295);
+                
+                defunc_0_f_res_17401 = canonicalizze_res_18438;
+                defunc_0_f_res_17402 = canonicalizze_res_18440;
+                defunc_0_f_res_17403 = canonicalizze_res_18442;
+            }
+        }
+    }
+    
+  cleanup:
+    {
+        free(reduce_stage_1_tid_res_arr_mem_18369);
+        free(reduce_stage_1_tid_res_arr_mem_18371);
+        free(reduce_stage_1_tid_res_arr_mem_18373);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_nested_task_18612_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_nested_task_18612_end - futhark_mc_segred_nested_task_18612_start;
+        
+        ctx->futhark_mc_segred_nested_task_18612_runs[tid]++;
+        ctx->futhark_mc_segred_nested_task_18612_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_nested_task_18612_iter[tid] += iterations;
+    }
+    if (err == 0) {
+        *futhark_mc_task_18595->retval_defunc_0_f_res_17401 = defunc_0_f_res_17401;
+        *futhark_mc_task_18595->retval_defunc_0_f_res_17402 = defunc_0_f_res_17402;
+        *futhark_mc_task_18595->retval_defunc_0_f_res_17403 = defunc_0_f_res_17403;
+    }
+    return err;
+}
+int futhark_mc_schedule_shim_18654(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18595_task;
+    
+    futhark_mc_task_18595_task.args = args;
+    futhark_mc_task_18595_task.top_level_fn = futhark_mc_segred_task_18596;
+    futhark_mc_task_18595_task.name = "futhark_mc_segred_task_18596";
+    futhark_mc_task_18595_task.iterations = iterations;
+    futhark_mc_task_18595_task.task_time = &ctx->futhark_mc_segred_task_18596_total_time;
+    futhark_mc_task_18595_task.task_iter = &ctx->futhark_mc_segred_task_18596_total_iter;
+    futhark_mc_task_18595_task.sched = STATIC;
+    futhark_mc_task_18595_task.nested_fn = futhark_mc_segred_nested_task_18612;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18595_task);
+}
+char *futhark_mc_strlit_shim_18661()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18662()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18663()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18664()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18665()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18666()
+{
+    return "mem_17094";
+}
+static int futhark_mc_segmap_parloop_18584(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18583 *futhark_mc_segmap_parloop_struct_18583 = (struct futhark_mc_segmap_parloop_struct_18583 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18583->ctx;
+    uint64_t futhark_mc_segmap_parloop_18584_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18584_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_segmap_parloop_struct_18583->free_m_12352;
+    int64_t p_12353 = futhark_mc_segmap_parloop_struct_18583->free_p_12353;
+    int64_t q_12354 = futhark_mc_segmap_parloop_struct_18583->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_segmap_parloop_struct_18583->free_gtid_16475;
+    int64_t defunc_0_f_res_16478 = futhark_mc_segmap_parloop_struct_18583->free_defunc_0_f_res_16478;
+    int64_t defunc_0_f_res_16479 = futhark_mc_segmap_parloop_struct_18583->free_defunc_0_f_res_16479;
+    int64_t defunc_0_f_res_16480 = futhark_mc_segmap_parloop_struct_18583->free_defunc_0_f_res_16480;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18583->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_segmap_parloop_struct_18583->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segmap_parloop_struct_18583->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segmap_parloop_struct_18583->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segmap_parloop_struct_18583->free_mem_17086, .size =0, .references =NULL};
+    struct memblock mem_17094 = {.desc ="mem_17094", .mem =futhark_mc_segmap_parloop_struct_18583->free_mem_17094, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17708_cached_sizze_18585 = 0;
+    unsigned char *mem_17708 = NULL;
+    int64_t flat_tid_17399;
+    
+    flat_tid_17399 = subtask_id;
+    
+    struct futhark_mc_param_struct_18586 futhark_mc_param_struct_18586_;
+    
+    futhark_mc_param_struct_18586_.ctx = ctx;
+    futhark_mc_param_struct_18586_.free_m_12352 = m_12352;
+    futhark_mc_param_struct_18586_.free_p_12353 = p_12353;
+    futhark_mc_param_struct_18586_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18586_.free_gtid_16475 = gtid_16475;
+    futhark_mc_param_struct_18586_.free_defunc_0_f_res_16478 = defunc_0_f_res_16478;
+    futhark_mc_param_struct_18586_.free_defunc_0_f_res_16479 = defunc_0_f_res_16479;
+    futhark_mc_param_struct_18586_.free_defunc_0_f_res_16480 = defunc_0_f_res_16480;
+    futhark_mc_param_struct_18586_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_param_struct_18586_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_param_struct_18586_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18586_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18586_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_param_struct_18586_.free_mem_17094 = mem_17094.mem;
+    err = futhark_mc_loop_ispc_18587(start, end, &futhark_mc_param_struct_18586_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17708);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18584_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18584_end - futhark_mc_segmap_parloop_18584_start;
+        
+        ctx->futhark_mc_segmap_parloop_18584_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18584_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18584_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_nested_task_18582(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18557 *futhark_mc_task_18557 = (struct futhark_mc_task_18557 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18557->ctx;
+    uint64_t futhark_mc_segmap_nested_task_18582_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_nested_task_18582_start = get_wall_time();
+    
+    int64_t m_12352 = futhark_mc_task_18557->free_m_12352;
+    int64_t p_12353 = futhark_mc_task_18557->free_p_12353;
+    int64_t q_12354 = futhark_mc_task_18557->free_q_12354;
+    int64_t gtid_16475 = futhark_mc_task_18557->free_gtid_16475;
+    int64_t defunc_0_f_res_16478 = futhark_mc_task_18557->free_defunc_0_f_res_16478;
+    int64_t defunc_0_f_res_16479 = futhark_mc_task_18557->free_defunc_0_f_res_16479;
+    int64_t defunc_0_f_res_16480 = futhark_mc_task_18557->free_defunc_0_f_res_16480;
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_task_18557->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_task_18557->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18557->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18557->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18557->free_mem_17086, .size =0, .references =NULL};
+    struct memblock mem_17094 = {.desc ="mem_17094", .mem =futhark_mc_task_18557->free_mem_17094, .size =0, .references =NULL};
+    int32_t nsubtasks_18036;
+    
+    nsubtasks_18036 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18583 futhark_mc_segmap_parloop_struct_18583_;
+    
+    futhark_mc_segmap_parloop_struct_18583_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18583_.free_m_12352 = m_12352;
+    futhark_mc_segmap_parloop_struct_18583_.free_p_12353 = p_12353;
+    futhark_mc_segmap_parloop_struct_18583_.free_q_12354 = q_12354;
+    futhark_mc_segmap_parloop_struct_18583_.free_gtid_16475 = gtid_16475;
+    futhark_mc_segmap_parloop_struct_18583_.free_defunc_0_f_res_16478 = defunc_0_f_res_16478;
+    futhark_mc_segmap_parloop_struct_18583_.free_defunc_0_f_res_16479 = defunc_0_f_res_16479;
+    futhark_mc_segmap_parloop_struct_18583_.free_defunc_0_f_res_16480 = defunc_0_f_res_16480;
+    futhark_mc_segmap_parloop_struct_18583_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18583_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_segmap_parloop_struct_18583_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segmap_parloop_struct_18583_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segmap_parloop_struct_18583_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_segmap_parloop_struct_18583_.free_mem_17094 = mem_17094.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18584_task;
+    
+    futhark_mc_segmap_parloop_18584_task.name = "futhark_mc_segmap_parloop_18584";
+    futhark_mc_segmap_parloop_18584_task.fn = futhark_mc_segmap_parloop_18584;
+    futhark_mc_segmap_parloop_18584_task.args = &futhark_mc_segmap_parloop_struct_18583_;
+    futhark_mc_segmap_parloop_18584_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18584_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18584_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18584_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18584_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18584_task);
+    
+    if (futhark_mc_segmap_parloop_18584_err != 0) {
+        err = futhark_mc_segmap_parloop_18584_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18584_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18584_total_end - futhark_mc_segmap_parloop_18584_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18584_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18584_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18584_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_nested_task_18582_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_nested_task_18582_end - futhark_mc_segmap_nested_task_18582_start;
+        
+        ctx->futhark_mc_segmap_nested_task_18582_runs[tid]++;
+        ctx->futhark_mc_segmap_nested_task_18582_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_nested_task_18582_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+int futhark_mc_schedule_shim_18667(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18557_task;
+    
+    futhark_mc_task_18557_task.args = args;
+    futhark_mc_task_18557_task.top_level_fn = futhark_mc_segmap_task_18558;
+    futhark_mc_task_18557_task.name = "futhark_mc_segmap_task_18558";
+    futhark_mc_task_18557_task.iterations = iterations;
+    futhark_mc_task_18557_task.task_time = &ctx->futhark_mc_segmap_task_18558_total_time;
+    futhark_mc_task_18557_task.task_iter = &ctx->futhark_mc_segmap_task_18558_total_iter;
+    futhark_mc_task_18557_task.sched = DYNAMIC;
+    futhark_mc_task_18557_task.nested_fn = futhark_mc_segmap_nested_task_18582;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18557_task);
+}
+char *futhark_mc_strlit_shim_18671()
+{
+    return "zinvs_mem_17023";
+}
+char *futhark_mc_strlit_shim_18672()
+{
+    return "eps_mem_17024";
+}
+char *futhark_mc_strlit_shim_18673()
+{
+    return "expsss_mem_17025";
+}
+char *futhark_mc_strlit_shim_18674()
+{
+    return "mem_17078";
+}
+char *futhark_mc_strlit_shim_18675()
+{
+    return "mem_17082";
+}
+char *futhark_mc_strlit_shim_18676()
+{
+    return "mem_17086";
+}
+char *futhark_mc_strlit_shim_18677()
+{
+    return "mem_17160";
+}
+char *futhark_mc_strlit_shim_18678()
+{
+    return "mem_17094";
+}
+static int futhark_mc_segmap_parloop_18545(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18544 *futhark_mc_segmap_parloop_struct_18544 = (struct futhark_mc_segmap_parloop_struct_18544 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18544->ctx;
+    uint64_t futhark_mc_segmap_parloop_18545_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18545_start = get_wall_time();
+    
+    int64_t n_12351 = futhark_mc_segmap_parloop_struct_18544->free_n_12351;
+    int64_t m_12352 = futhark_mc_segmap_parloop_struct_18544->free_m_12352;
+    int64_t p_12353 = futhark_mc_segmap_parloop_struct_18544->free_p_12353;
+    int64_t q_12354 = futhark_mc_segmap_parloop_struct_18544->free_q_12354;
+    struct memblock zzinvs_mem_17023 = {.desc ="zinvs_mem_17023", .mem =futhark_mc_segmap_parloop_struct_18544->free_zzinvs_mem_17023, .size =0, .references =NULL};
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18544->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_segmap_parloop_struct_18544->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_segmap_parloop_struct_18544->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_segmap_parloop_struct_18544->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_segmap_parloop_struct_18544->free_mem_17086, .size =0, .references =NULL};
+    int64_t bytes_17093 = futhark_mc_segmap_parloop_struct_18544->free_bytes_17093;
+    struct memblock mem_17160 = {.desc ="mem_17160", .mem =futhark_mc_segmap_parloop_struct_18544->free_mem_17160, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17094_cached_sizze_18546 = 0;
+    unsigned char *mem_17094 = NULL;
+    int64_t flat_tid_16474;
+    
+    flat_tid_16474 = subtask_id;
+    
+    struct futhark_mc_param_struct_18547 futhark_mc_param_struct_18547_;
+    
+    futhark_mc_param_struct_18547_.ctx = ctx;
+    futhark_mc_param_struct_18547_.free_n_12351 = n_12351;
+    futhark_mc_param_struct_18547_.free_m_12352 = m_12352;
+    futhark_mc_param_struct_18547_.free_p_12353 = p_12353;
+    futhark_mc_param_struct_18547_.free_q_12354 = q_12354;
+    futhark_mc_param_struct_18547_.free_zzinvs_mem_17023 = zzinvs_mem_17023.mem;
+    futhark_mc_param_struct_18547_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_param_struct_18547_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_param_struct_18547_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_param_struct_18547_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_param_struct_18547_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_param_struct_18547_.free_bytes_17093 = bytes_17093;
+    futhark_mc_param_struct_18547_.free_mem_17160 = mem_17160.mem;
+    err = futhark_mc_loop_ispc_18548(start, end, &futhark_mc_param_struct_18547_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17094);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18545_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18545_end - futhark_mc_segmap_parloop_18545_start;
+        
+        ctx->futhark_mc_segmap_parloop_18545_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18545_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18545_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_nested_task_18543(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18508 *futhark_mc_task_18508 = (struct futhark_mc_task_18508 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18508->ctx;
+    uint64_t futhark_mc_segmap_nested_task_18543_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_nested_task_18543_start = get_wall_time();
+    
+    int64_t n_12351 = futhark_mc_task_18508->free_n_12351;
+    int64_t m_12352 = futhark_mc_task_18508->free_m_12352;
+    int64_t p_12353 = futhark_mc_task_18508->free_p_12353;
+    int64_t q_12354 = futhark_mc_task_18508->free_q_12354;
+    struct memblock zzinvs_mem_17023 = {.desc ="zinvs_mem_17023", .mem =futhark_mc_task_18508->free_zzinvs_mem_17023, .size =0, .references =NULL};
+    struct memblock eps_mem_17024 = {.desc ="eps_mem_17024", .mem =futhark_mc_task_18508->free_eps_mem_17024, .size =0, .references =NULL};
+    struct memblock expsss_mem_17025 = {.desc ="expsss_mem_17025", .mem =futhark_mc_task_18508->free_expsss_mem_17025, .size =0, .references =NULL};
+    struct memblock mem_17078 = {.desc ="mem_17078", .mem =futhark_mc_task_18508->free_mem_17078, .size =0, .references =NULL};
+    struct memblock mem_17082 = {.desc ="mem_17082", .mem =futhark_mc_task_18508->free_mem_17082, .size =0, .references =NULL};
+    struct memblock mem_17086 = {.desc ="mem_17086", .mem =futhark_mc_task_18508->free_mem_17086, .size =0, .references =NULL};
+    int64_t bytes_17093 = futhark_mc_task_18508->free_bytes_17093;
+    int64_t bytes_17096 = futhark_mc_task_18508->free_bytes_17096;
+    struct memblock mem_17160 = {.desc ="mem_17160", .mem =futhark_mc_task_18508->free_mem_17160, .size =0, .references =NULL};
+    int32_t nsubtasks_17398;
+    
+    nsubtasks_17398 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18544 futhark_mc_segmap_parloop_struct_18544_;
+    
+    futhark_mc_segmap_parloop_struct_18544_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18544_.free_n_12351 = n_12351;
+    futhark_mc_segmap_parloop_struct_18544_.free_m_12352 = m_12352;
+    futhark_mc_segmap_parloop_struct_18544_.free_p_12353 = p_12353;
+    futhark_mc_segmap_parloop_struct_18544_.free_q_12354 = q_12354;
+    futhark_mc_segmap_parloop_struct_18544_.free_zzinvs_mem_17023 = zzinvs_mem_17023.mem;
+    futhark_mc_segmap_parloop_struct_18544_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18544_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_segmap_parloop_struct_18544_.free_mem_17078 = mem_17078.mem;
+    futhark_mc_segmap_parloop_struct_18544_.free_mem_17082 = mem_17082.mem;
+    futhark_mc_segmap_parloop_struct_18544_.free_mem_17086 = mem_17086.mem;
+    futhark_mc_segmap_parloop_struct_18544_.free_bytes_17093 = bytes_17093;
+    futhark_mc_segmap_parloop_struct_18544_.free_mem_17160 = mem_17160.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18545_task;
+    
+    futhark_mc_segmap_parloop_18545_task.name = "futhark_mc_segmap_parloop_18545";
+    futhark_mc_segmap_parloop_18545_task.fn = futhark_mc_segmap_parloop_18545;
+    futhark_mc_segmap_parloop_18545_task.args = &futhark_mc_segmap_parloop_struct_18544_;
+    futhark_mc_segmap_parloop_18545_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18545_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18545_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18545_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18545_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18545_task);
+    
+    if (futhark_mc_segmap_parloop_18545_err != 0) {
+        err = futhark_mc_segmap_parloop_18545_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18545_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18545_total_end - futhark_mc_segmap_parloop_18545_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18545_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18545_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18545_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_nested_task_18543_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_nested_task_18543_end - futhark_mc_segmap_nested_task_18543_start;
+        
+        ctx->futhark_mc_segmap_nested_task_18543_runs[tid]++;
+        ctx->futhark_mc_segmap_nested_task_18543_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_nested_task_18543_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+int futhark_mc_schedule_shim_18679(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18508_task;
+    
+    futhark_mc_task_18508_task.args = args;
+    futhark_mc_task_18508_task.top_level_fn = futhark_mc_segmap_task_18509;
+    futhark_mc_task_18508_task.name = "futhark_mc_segmap_task_18509";
+    futhark_mc_task_18508_task.iterations = iterations;
+    futhark_mc_task_18508_task.task_time = &ctx->futhark_mc_segmap_task_18509_total_time;
+    futhark_mc_task_18508_task.task_iter = &ctx->futhark_mc_segmap_task_18509_total_iter;
+    futhark_mc_task_18508_task.sched = DYNAMIC;
+    futhark_mc_task_18508_task.nested_fn = futhark_mc_segmap_nested_task_18543;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18508_task);
+}
+struct futhark_mc_segmap_parloop_struct_18684 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+char *futhark_mc_strlit_shim_18690()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18691()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18692()
+{
+    return "mem_17044";
+}
+char *futhark_mc_strlit_shim_18695()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18696()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18697()
+{
+    return "mem_17044";
+}
+static int futhark_mc_segmap_parloop_18685(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18684 *futhark_mc_segmap_parloop_struct_18684 = (struct futhark_mc_segmap_parloop_struct_18684 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18684->ctx;
+    uint64_t futhark_mc_segmap_parloop_18685_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18685_start = get_wall_time();
+    
+    int64_t nz2080U_9828 = futhark_mc_segmap_parloop_struct_18684->free_nz2080U_9828;
+    int64_t pz2081U_9829 = futhark_mc_segmap_parloop_struct_18684->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_segmap_parloop_struct_18684->free_mz2082U_9830;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_segmap_parloop_struct_18684->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18684->free_yss_mem_17024, .size =0, .references =NULL};
+    int64_t bytes_17026 = futhark_mc_segmap_parloop_struct_18684->free_bytes_17026;
+    struct memblock mem_17044 = {.desc ="mem_17044", .mem =futhark_mc_segmap_parloop_struct_18684->free_mem_17044, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17030_cached_sizze_18686 = 0;
+    unsigned char *mem_17030 = NULL;
+    int64_t flat_tid_15928;
+    
+    flat_tid_15928 = subtask_id;
+    
+    struct futhark_mc_param_struct_18687 futhark_mc_param_struct_18687_;
+    
+    futhark_mc_param_struct_18687_.ctx = ctx;
+    futhark_mc_param_struct_18687_.free_nz2080U_9828 = nz2080U_9828;
+    futhark_mc_param_struct_18687_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_param_struct_18687_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_param_struct_18687_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_param_struct_18687_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_param_struct_18687_.free_bytes_17026 = bytes_17026;
+    futhark_mc_param_struct_18687_.free_mem_17044 = mem_17044.mem;
+    err = futhark_mc_loop_ispc_18688(start, end, &futhark_mc_param_struct_18687_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17030);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18685_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18685_end - futhark_mc_segmap_parloop_18685_start;
+        
+        ctx->futhark_mc_segmap_parloop_18685_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18685_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18685_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_task_18683(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18682 *futhark_mc_task_18682 = (struct futhark_mc_task_18682 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18682->ctx;
+    uint64_t futhark_mc_segmap_task_18683_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_task_18683_start = get_wall_time();
+    
+    int64_t nz2080U_9828 = futhark_mc_task_18682->free_nz2080U_9828;
+    int64_t pz2081U_9829 = futhark_mc_task_18682->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_task_18682->free_mz2082U_9830;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_task_18682->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_task_18682->free_yss_mem_17024, .size =0, .references =NULL};
+    int64_t bytes_17026 = futhark_mc_task_18682->free_bytes_17026;
+    struct memblock mem_17044 = {.desc ="mem_17044", .mem =futhark_mc_task_18682->free_mem_17044, .size =0, .references =NULL};
+    int32_t nsubtasks_17162;
+    
+    nsubtasks_17162 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18684 futhark_mc_segmap_parloop_struct_18684_;
+    
+    futhark_mc_segmap_parloop_struct_18684_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18684_.free_nz2080U_9828 = nz2080U_9828;
+    futhark_mc_segmap_parloop_struct_18684_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_segmap_parloop_struct_18684_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_segmap_parloop_struct_18684_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_segmap_parloop_struct_18684_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18684_.free_bytes_17026 = bytes_17026;
+    futhark_mc_segmap_parloop_struct_18684_.free_mem_17044 = mem_17044.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18685_task;
+    
+    futhark_mc_segmap_parloop_18685_task.name = "futhark_mc_segmap_parloop_18685";
+    futhark_mc_segmap_parloop_18685_task.fn = futhark_mc_segmap_parloop_18685;
+    futhark_mc_segmap_parloop_18685_task.args = &futhark_mc_segmap_parloop_struct_18684_;
+    futhark_mc_segmap_parloop_18685_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18685_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18685_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18685_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18685_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18685_task);
+    
+    if (futhark_mc_segmap_parloop_18685_err != 0) {
+        err = futhark_mc_segmap_parloop_18685_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18685_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18685_total_end - futhark_mc_segmap_parloop_18685_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18685_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18685_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18685_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_task_18683_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_task_18683_end - futhark_mc_segmap_task_18683_start;
+        
+        ctx->futhark_mc_segmap_task_18683_runs[tid]++;
+        ctx->futhark_mc_segmap_task_18683_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_task_18683_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+struct futhark_mc_segmap_parloop_struct_18699 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+char *futhark_mc_strlit_shim_18704()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18705()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18706()
+{
+    return "mem_17044";
+}
+char *futhark_mc_strlit_shim_18707()
+{
+    return "mem_17027";
+}
+struct futhark_mc_segmap_parloop_struct_18710 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
+};
+char *futhark_mc_strlit_shim_18714()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18715()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18716()
+{
+    return "mem_17027";
+}
+static int futhark_mc_segmap_parloop_18711(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18710 *futhark_mc_segmap_parloop_struct_18710 = (struct futhark_mc_segmap_parloop_struct_18710 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18710->ctx;
+    uint64_t futhark_mc_segmap_parloop_18711_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18711_start = get_wall_time();
+    
+    int64_t pz2081U_9829 = futhark_mc_segmap_parloop_struct_18710->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_segmap_parloop_struct_18710->free_mz2082U_9830;
+    int64_t gtid_15951 = futhark_mc_segmap_parloop_struct_18710->free_gtid_15951;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_segmap_parloop_struct_18710->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18710->free_yss_mem_17024, .size =0, .references =NULL};
+    struct memblock mem_17027 = {.desc ="mem_17027", .mem =futhark_mc_segmap_parloop_struct_18710->free_mem_17027, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t flat_tid_17193;
+    
+    flat_tid_17193 = subtask_id;
+    
+    struct futhark_mc_param_struct_18712 futhark_mc_param_struct_18712_;
+    
+    futhark_mc_param_struct_18712_.ctx = ctx;
+    futhark_mc_param_struct_18712_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_param_struct_18712_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_param_struct_18712_.free_gtid_15951 = gtid_15951;
+    futhark_mc_param_struct_18712_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_param_struct_18712_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_param_struct_18712_.free_mem_17027 = mem_17027.mem;
+    err = futhark_mc_loop_ispc_18713(start, end, &futhark_mc_param_struct_18712_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18711_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18711_end - futhark_mc_segmap_parloop_18711_start;
+        
+        ctx->futhark_mc_segmap_parloop_18711_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18711_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18711_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_task_18709(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18708 *futhark_mc_task_18708 = (struct futhark_mc_task_18708 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18708->ctx;
+    uint64_t futhark_mc_segmap_task_18709_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_task_18709_start = get_wall_time();
+    
+    int64_t pz2081U_9829 = futhark_mc_task_18708->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_task_18708->free_mz2082U_9830;
+    int64_t gtid_15951 = futhark_mc_task_18708->free_gtid_15951;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_task_18708->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_task_18708->free_yss_mem_17024, .size =0, .references =NULL};
+    struct memblock mem_17027 = {.desc ="mem_17027", .mem =futhark_mc_task_18708->free_mem_17027, .size =0, .references =NULL};
+    int32_t nsubtasks_17208;
+    
+    nsubtasks_17208 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18710 futhark_mc_segmap_parloop_struct_18710_;
+    
+    futhark_mc_segmap_parloop_struct_18710_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18710_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_segmap_parloop_struct_18710_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_segmap_parloop_struct_18710_.free_gtid_15951 = gtid_15951;
+    futhark_mc_segmap_parloop_struct_18710_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_segmap_parloop_struct_18710_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18710_.free_mem_17027 = mem_17027.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18711_task;
+    
+    futhark_mc_segmap_parloop_18711_task.name = "futhark_mc_segmap_parloop_18711";
+    futhark_mc_segmap_parloop_18711_task.fn = futhark_mc_segmap_parloop_18711;
+    futhark_mc_segmap_parloop_18711_task.args = &futhark_mc_segmap_parloop_struct_18710_;
+    futhark_mc_segmap_parloop_18711_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18711_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18711_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18711_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18711_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18711_task);
+    
+    if (futhark_mc_segmap_parloop_18711_err != 0) {
+        err = futhark_mc_segmap_parloop_18711_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18711_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18711_total_end - futhark_mc_segmap_parloop_18711_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18711_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18711_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18711_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_task_18709_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_task_18709_end - futhark_mc_segmap_task_18709_start;
+        
+        ctx->futhark_mc_segmap_task_18709_runs[tid]++;
+        ctx->futhark_mc_segmap_task_18709_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_task_18709_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+struct futhark_mc_segmap_parloop_struct_18718 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
+};
+char *futhark_mc_strlit_shim_18722()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18723()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18724()
+{
+    return "mem_17027";
+}
+struct futhark_mc_segred_stage_1_parloop_struct_18728 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_gtid_17183;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_17238;
+};
+char *futhark_mc_strlit_shim_18732()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18733()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18734()
+{
+    return "reduce_stage_1_tid_res_arr_mem_17238";
+}
+static int futhark_mc_segred_stage_1_parloop_18729(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segred_stage_1_parloop_struct_18728 *futhark_mc_segred_stage_1_parloop_struct_18728 = (struct futhark_mc_segred_stage_1_parloop_struct_18728 *) args;
+    struct futhark_context *ctx = futhark_mc_segred_stage_1_parloop_struct_18728->ctx;
+    uint64_t futhark_mc_segred_stage_1_parloop_18729_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18729_start = get_wall_time();
+    
+    int64_t pz2081U_9829 = futhark_mc_segred_stage_1_parloop_struct_18728->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_segred_stage_1_parloop_struct_18728->free_mz2082U_9830;
+    int64_t gtid_15951 = futhark_mc_segred_stage_1_parloop_struct_18728->free_gtid_15951;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_segred_stage_1_parloop_struct_18728->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_segred_stage_1_parloop_struct_18728->free_yss_mem_17024, .size =0, .references =NULL};
+    int64_t gtid_17183 = futhark_mc_segred_stage_1_parloop_struct_18728->free_gtid_17183;
+    struct memblock reduce_stage_1_tid_res_arr_mem_17238 = {.desc ="reduce_stage_1_tid_res_arr_mem_17238", .mem =futhark_mc_segred_stage_1_parloop_struct_18728->free_reduce_stage_1_tid_res_arr_mem_17238, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t flat_tid_17223;
+    
+    flat_tid_17223 = subtask_id;
+    
+    struct futhark_mc_param_struct_18730 futhark_mc_param_struct_18730_;
+    
+    futhark_mc_param_struct_18730_.ctx = ctx;
+    futhark_mc_param_struct_18730_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_param_struct_18730_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_param_struct_18730_.free_gtid_15951 = gtid_15951;
+    futhark_mc_param_struct_18730_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_param_struct_18730_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_param_struct_18730_.free_gtid_17183 = gtid_17183;
+    futhark_mc_param_struct_18730_.free_flat_tid_17223 = flat_tid_17223;
+    futhark_mc_param_struct_18730_.free_reduce_stage_1_tid_res_arr_mem_17238 = reduce_stage_1_tid_res_arr_mem_17238.mem;
+    err = futhark_mc_loop_ispc_18731(start, end, &futhark_mc_param_struct_18730_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18729_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18729_end - futhark_mc_segred_stage_1_parloop_18729_start;
+        
+        ctx->futhark_mc_segred_stage_1_parloop_18729_runs[tid]++;
+        ctx->futhark_mc_segred_stage_1_parloop_18729_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_stage_1_parloop_18729_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segred_task_18726(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18725 *futhark_mc_task_18725 = (struct futhark_mc_task_18725 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18725->ctx;
+    uint64_t futhark_mc_segred_task_18726_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_task_18726_start = get_wall_time();
+    
+    int64_t pz2081U_9829 = futhark_mc_task_18725->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_task_18725->free_mz2082U_9830;
+    int64_t gtid_15951 = futhark_mc_task_18725->free_gtid_15951;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_task_18725->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_task_18725->free_yss_mem_17024, .size =0, .references =NULL};
+    int64_t gtid_17183 = futhark_mc_task_18725->free_gtid_17183;
+    int64_t flat_tid_17223 = futhark_mc_task_18725->free_flat_tid_17223;
+    int32_t defunc_2_reduce_res_17184 = *futhark_mc_task_18725->retval_defunc_2_reduce_res_17184;
+    int64_t reduce_stage_1_tid_res_arr_mem_17238_cached_sizze_18727 = 0;
+    unsigned char *reduce_stage_1_tid_res_arr_mem_17238 = NULL;
+    int32_t nsubtasks_17237;
+    
+    nsubtasks_17237 = info.nsubtasks;
+    if (reduce_stage_1_tid_res_arr_mem_17238_cached_sizze_18727 < (int64_t) 4 * nsubtasks_17237) {
+        err = lexical_realloc(ctx, &reduce_stage_1_tid_res_arr_mem_17238, &reduce_stage_1_tid_res_arr_mem_17238_cached_sizze_18727, (int64_t) 4 * nsubtasks_17237);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    
+    struct futhark_mc_segred_stage_1_parloop_struct_18728 futhark_mc_segred_stage_1_parloop_struct_18728_;
+    
+    futhark_mc_segred_stage_1_parloop_struct_18728_.ctx = ctx;
+    futhark_mc_segred_stage_1_parloop_struct_18728_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_segred_stage_1_parloop_struct_18728_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_segred_stage_1_parloop_struct_18728_.free_gtid_15951 = gtid_15951;
+    futhark_mc_segred_stage_1_parloop_struct_18728_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18728_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_segred_stage_1_parloop_struct_18728_.free_gtid_17183 = gtid_17183;
+    futhark_mc_segred_stage_1_parloop_struct_18728_.free_reduce_stage_1_tid_res_arr_mem_17238 = reduce_stage_1_tid_res_arr_mem_17238;
+    
+    struct scheduler_parloop futhark_mc_segred_stage_1_parloop_18729_task;
+    
+    futhark_mc_segred_stage_1_parloop_18729_task.name = "futhark_mc_segred_stage_1_parloop_18729";
+    futhark_mc_segred_stage_1_parloop_18729_task.fn = futhark_mc_segred_stage_1_parloop_18729;
+    futhark_mc_segred_stage_1_parloop_18729_task.args = &futhark_mc_segred_stage_1_parloop_struct_18728_;
+    futhark_mc_segred_stage_1_parloop_18729_task.iterations = iterations;
+    futhark_mc_segred_stage_1_parloop_18729_task.info = info;
+    
+    uint64_t futhark_mc_segred_stage_1_parloop_18729_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segred_stage_1_parloop_18729_total_start = get_wall_time();
+    
+    int futhark_mc_segred_stage_1_parloop_18729_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segred_stage_1_parloop_18729_task);
+    
+    if (futhark_mc_segred_stage_1_parloop_18729_err != 0) {
+        err = futhark_mc_segred_stage_1_parloop_18729_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_stage_1_parloop_18729_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_stage_1_parloop_18729_total_end - futhark_mc_segred_stage_1_parloop_18729_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18729_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18729_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segred_stage_1_parloop_18729_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    // neutral-initialise the output
+    {
+        defunc_2_reduce_res_17184 = 0;
+    }
+    
+    int32_t x_17250;
+    int32_t x_17251;
+    
+    for (int32_t i_17253 = 0; i_17253 < nsubtasks_17237; i_17253++) {
+        flat_tid_17223 = i_17253;
+        // Apply main thread reduction
+        {
+            // load acc params
+            {
+                x_17250 = defunc_2_reduce_res_17184;
+            }
+            // load next params
+            {
+                x_17251 = ((int32_t *) reduce_stage_1_tid_res_arr_mem_17238)[flat_tid_17223];
+            }
+            // red body
+            {
+                int32_t defunc_1_op_res_17252 = add32(x_17250, x_17251);
+                
+                defunc_2_reduce_res_17184 = defunc_1_op_res_17252;
+            }
+        }
+    }
+    
+  cleanup:
+    {
+        free(reduce_stage_1_tid_res_arr_mem_17238);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segred_task_18726_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segred_task_18726_end - futhark_mc_segred_task_18726_start;
+        
+        ctx->futhark_mc_segred_task_18726_runs[tid]++;
+        ctx->futhark_mc_segred_task_18726_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segred_task_18726_iter[tid] += iterations;
+    }
+    if (err == 0) {
+        *futhark_mc_task_18725->retval_defunc_2_reduce_res_17184 = defunc_2_reduce_res_17184;
+    }
+    return err;
+}
+int futhark_mc_schedule_shim_18735(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18725_task;
+    
+    futhark_mc_task_18725_task.args = args;
+    futhark_mc_task_18725_task.top_level_fn = futhark_mc_segred_task_18726;
+    futhark_mc_task_18725_task.name = "futhark_mc_segred_task_18726";
+    futhark_mc_task_18725_task.iterations = iterations;
+    futhark_mc_task_18725_task.task_time = &ctx->futhark_mc_segred_task_18726_total_time;
+    futhark_mc_task_18725_task.task_iter = &ctx->futhark_mc_segred_task_18726_total_iter;
+    futhark_mc_task_18725_task.sched = STATIC;
+    futhark_mc_task_18725_task.nested_fn = NULL;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18725_task);
+}
+char *futhark_mc_strlit_shim_18739()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18740()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18741()
+{
+    return "mem_17027";
+}
+static int futhark_mc_segmap_parloop_18719(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18718 *futhark_mc_segmap_parloop_struct_18718 = (struct futhark_mc_segmap_parloop_struct_18718 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18718->ctx;
+    uint64_t futhark_mc_segmap_parloop_18719_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18719_start = get_wall_time();
+    
+    int64_t pz2081U_9829 = futhark_mc_segmap_parloop_struct_18718->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_segmap_parloop_struct_18718->free_mz2082U_9830;
+    int64_t gtid_15951 = futhark_mc_segmap_parloop_struct_18718->free_gtid_15951;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_segmap_parloop_struct_18718->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18718->free_yss_mem_17024, .size =0, .references =NULL};
+    struct memblock mem_17027 = {.desc ="mem_17027", .mem =futhark_mc_segmap_parloop_struct_18718->free_mem_17027, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t flat_tid_17182;
+    
+    flat_tid_17182 = subtask_id;
+    
+    struct futhark_mc_param_struct_18720 futhark_mc_param_struct_18720_;
+    
+    futhark_mc_param_struct_18720_.ctx = ctx;
+    futhark_mc_param_struct_18720_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_param_struct_18720_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_param_struct_18720_.free_gtid_15951 = gtid_15951;
+    futhark_mc_param_struct_18720_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_param_struct_18720_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_param_struct_18720_.free_mem_17027 = mem_17027.mem;
+    err = futhark_mc_loop_ispc_18721(start, end, &futhark_mc_param_struct_18720_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18719_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18719_end - futhark_mc_segmap_parloop_18719_start;
+        
+        ctx->futhark_mc_segmap_parloop_18719_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18719_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18719_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_nested_task_18717(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18708 *futhark_mc_task_18708 = (struct futhark_mc_task_18708 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18708->ctx;
+    uint64_t futhark_mc_segmap_nested_task_18717_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_nested_task_18717_start = get_wall_time();
+    
+    int64_t pz2081U_9829 = futhark_mc_task_18708->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_task_18708->free_mz2082U_9830;
+    int64_t gtid_15951 = futhark_mc_task_18708->free_gtid_15951;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_task_18708->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_task_18708->free_yss_mem_17024, .size =0, .references =NULL};
+    struct memblock mem_17027 = {.desc ="mem_17027", .mem =futhark_mc_task_18708->free_mem_17027, .size =0, .references =NULL};
+    int32_t nsubtasks_17222;
+    
+    nsubtasks_17222 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18718 futhark_mc_segmap_parloop_struct_18718_;
+    
+    futhark_mc_segmap_parloop_struct_18718_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18718_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_segmap_parloop_struct_18718_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_segmap_parloop_struct_18718_.free_gtid_15951 = gtid_15951;
+    futhark_mc_segmap_parloop_struct_18718_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_segmap_parloop_struct_18718_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18718_.free_mem_17027 = mem_17027.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18719_task;
+    
+    futhark_mc_segmap_parloop_18719_task.name = "futhark_mc_segmap_parloop_18719";
+    futhark_mc_segmap_parloop_18719_task.fn = futhark_mc_segmap_parloop_18719;
+    futhark_mc_segmap_parloop_18719_task.args = &futhark_mc_segmap_parloop_struct_18718_;
+    futhark_mc_segmap_parloop_18719_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18719_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18719_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18719_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18719_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18719_task);
+    
+    if (futhark_mc_segmap_parloop_18719_err != 0) {
+        err = futhark_mc_segmap_parloop_18719_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18719_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18719_total_end - futhark_mc_segmap_parloop_18719_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18719_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18719_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18719_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_nested_task_18717_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_nested_task_18717_end - futhark_mc_segmap_nested_task_18717_start;
+        
+        ctx->futhark_mc_segmap_nested_task_18717_runs[tid]++;
+        ctx->futhark_mc_segmap_nested_task_18717_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_nested_task_18717_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+int futhark_mc_schedule_shim_18742(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18708_task;
+    
+    futhark_mc_task_18708_task.args = args;
+    futhark_mc_task_18708_task.top_level_fn = futhark_mc_segmap_task_18709;
+    futhark_mc_task_18708_task.name = "futhark_mc_segmap_task_18709";
+    futhark_mc_task_18708_task.iterations = iterations;
+    futhark_mc_task_18708_task.task_time = &ctx->futhark_mc_segmap_task_18709_total_time;
+    futhark_mc_task_18708_task.task_iter = &ctx->futhark_mc_segmap_task_18709_total_iter;
+    futhark_mc_task_18708_task.sched = STATIC;
+    futhark_mc_task_18708_task.nested_fn = futhark_mc_segmap_nested_task_18717;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18708_task);
+}
+char *futhark_mc_strlit_shim_18746()
+{
+    return "xss_mem_17023";
+}
+char *futhark_mc_strlit_shim_18747()
+{
+    return "yss_mem_17024";
+}
+char *futhark_mc_strlit_shim_18748()
+{
+    return "mem_17044";
+}
+char *futhark_mc_strlit_shim_18749()
+{
+    return "mem_17027";
+}
+static int futhark_mc_segmap_parloop_18700(void *args, int64_t start, int64_t end, int subtask_id, int tid)
+{
+    int err = 0;
+    struct futhark_mc_segmap_parloop_struct_18699 *futhark_mc_segmap_parloop_struct_18699 = (struct futhark_mc_segmap_parloop_struct_18699 *) args;
+    struct futhark_context *ctx = futhark_mc_segmap_parloop_struct_18699->ctx;
+    uint64_t futhark_mc_segmap_parloop_18700_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18700_start = get_wall_time();
+    
+    int64_t nz2080U_9828 = futhark_mc_segmap_parloop_struct_18699->free_nz2080U_9828;
+    int64_t pz2081U_9829 = futhark_mc_segmap_parloop_struct_18699->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_segmap_parloop_struct_18699->free_mz2082U_9830;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_segmap_parloop_struct_18699->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_segmap_parloop_struct_18699->free_yss_mem_17024, .size =0, .references =NULL};
+    int64_t bytes_17026 = futhark_mc_segmap_parloop_struct_18699->free_bytes_17026;
+    struct memblock mem_17044 = {.desc ="mem_17044", .mem =futhark_mc_segmap_parloop_struct_18699->free_mem_17044, .size =0, .references =NULL};
+    int64_t iterations = end - start;
+    int64_t mem_17027_cached_sizze_18701 = 0;
+    unsigned char *mem_17027 = NULL;
+    int64_t flat_tid_15950;
+    
+    flat_tid_15950 = subtask_id;
+    
+    struct futhark_mc_param_struct_18702 futhark_mc_param_struct_18702_;
+    
+    futhark_mc_param_struct_18702_.ctx = ctx;
+    futhark_mc_param_struct_18702_.free_nz2080U_9828 = nz2080U_9828;
+    futhark_mc_param_struct_18702_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_param_struct_18702_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_param_struct_18702_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_param_struct_18702_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_param_struct_18702_.free_bytes_17026 = bytes_17026;
+    futhark_mc_param_struct_18702_.free_mem_17044 = mem_17044.mem;
+    err = futhark_mc_loop_ispc_18703(start, end, &futhark_mc_param_struct_18702_);
+    if (err != 0)
+        goto cleanup;
+    
+  cleanup:
+    {
+        free(mem_17027);
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18700_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18700_end - futhark_mc_segmap_parloop_18700_start;
+        
+        ctx->futhark_mc_segmap_parloop_18700_runs[tid]++;
+        ctx->futhark_mc_segmap_parloop_18700_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_parloop_18700_iter[tid] += iterations;
+    }
+    return err;
+}
+int futhark_mc_segmap_nested_task_18698(void *args, int64_t iterations, int tid, struct scheduler_info info)
+{
+    int err = 0;
+    int subtask_id = tid;
+    struct futhark_mc_task_18682 *futhark_mc_task_18682 = (struct futhark_mc_task_18682 *) args;
+    struct futhark_context *ctx = futhark_mc_task_18682->ctx;
+    uint64_t futhark_mc_segmap_nested_task_18698_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_nested_task_18698_start = get_wall_time();
+    
+    int64_t nz2080U_9828 = futhark_mc_task_18682->free_nz2080U_9828;
+    int64_t pz2081U_9829 = futhark_mc_task_18682->free_pz2081U_9829;
+    int64_t mz2082U_9830 = futhark_mc_task_18682->free_mz2082U_9830;
+    struct memblock xss_mem_17023 = {.desc ="xss_mem_17023", .mem =futhark_mc_task_18682->free_xss_mem_17023, .size =0, .references =NULL};
+    struct memblock yss_mem_17024 = {.desc ="yss_mem_17024", .mem =futhark_mc_task_18682->free_yss_mem_17024, .size =0, .references =NULL};
+    int64_t bytes_17026 = futhark_mc_task_18682->free_bytes_17026;
+    struct memblock mem_17044 = {.desc ="mem_17044", .mem =futhark_mc_task_18682->free_mem_17044, .size =0, .references =NULL};
+    int32_t nsubtasks_17181;
+    
+    nsubtasks_17181 = info.nsubtasks;
+    
+    struct futhark_mc_segmap_parloop_struct_18699 futhark_mc_segmap_parloop_struct_18699_;
+    
+    futhark_mc_segmap_parloop_struct_18699_.ctx = ctx;
+    futhark_mc_segmap_parloop_struct_18699_.free_nz2080U_9828 = nz2080U_9828;
+    futhark_mc_segmap_parloop_struct_18699_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_segmap_parloop_struct_18699_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_segmap_parloop_struct_18699_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_segmap_parloop_struct_18699_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_segmap_parloop_struct_18699_.free_bytes_17026 = bytes_17026;
+    futhark_mc_segmap_parloop_struct_18699_.free_mem_17044 = mem_17044.mem;
+    
+    struct scheduler_parloop futhark_mc_segmap_parloop_18700_task;
+    
+    futhark_mc_segmap_parloop_18700_task.name = "futhark_mc_segmap_parloop_18700";
+    futhark_mc_segmap_parloop_18700_task.fn = futhark_mc_segmap_parloop_18700;
+    futhark_mc_segmap_parloop_18700_task.args = &futhark_mc_segmap_parloop_struct_18699_;
+    futhark_mc_segmap_parloop_18700_task.iterations = iterations;
+    futhark_mc_segmap_parloop_18700_task.info = info;
+    
+    uint64_t futhark_mc_segmap_parloop_18700_total_start = 0;
+    
+    if (ctx->profiling && !ctx->profiling_paused)
+        futhark_mc_segmap_parloop_18700_total_start = get_wall_time();
+    
+    int futhark_mc_segmap_parloop_18700_err = scheduler_execute_task(&ctx->scheduler, &futhark_mc_segmap_parloop_18700_task);
+    
+    if (futhark_mc_segmap_parloop_18700_err != 0) {
+        err = futhark_mc_segmap_parloop_18700_err;
+        goto cleanup;
+    }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_parloop_18700_total_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_parloop_18700_total_end - futhark_mc_segmap_parloop_18700_total_start;
+        
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18700_total_runs, 1, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18700_total_total_runtime, elapsed, __ATOMIC_RELAXED);
+        __atomic_fetch_add(&ctx->futhark_mc_segmap_parloop_18700_total_iter, iterations, __ATOMIC_RELAXED);
+    }
+    
+  cleanup:
+    { }
+    if (ctx->profiling && !ctx->profiling_paused) {
+        uint64_t futhark_mc_segmap_nested_task_18698_end = get_wall_time();
+        uint64_t elapsed = futhark_mc_segmap_nested_task_18698_end - futhark_mc_segmap_nested_task_18698_start;
+        
+        ctx->futhark_mc_segmap_nested_task_18698_runs[tid]++;
+        ctx->futhark_mc_segmap_nested_task_18698_total_runtime[tid] += elapsed;
+        ctx->futhark_mc_segmap_nested_task_18698_iter[tid] += iterations;
+    }
+    if (err == 0) { }
+    return err;
+}
+int futhark_mc_schedule_shim_18750(struct futhark_context *ctx, void *args, int64_t iterations)
+{
+    struct scheduler_segop futhark_mc_task_18682_task;
+    
+    futhark_mc_task_18682_task.args = args;
+    futhark_mc_task_18682_task.top_level_fn = futhark_mc_segmap_task_18683;
+    futhark_mc_task_18682_task.name = "futhark_mc_segmap_task_18683";
+    futhark_mc_task_18682_task.iterations = iterations;
+    futhark_mc_task_18682_task.task_time = &ctx->futhark_mc_segmap_task_18683_total_time;
+    futhark_mc_task_18682_task.task_iter = &ctx->futhark_mc_segmap_task_18683_total_iter;
+    futhark_mc_task_18682_task.sched = STATIC;
+    futhark_mc_task_18682_task.nested_fn = futhark_mc_segmap_nested_task_18698;
+    return scheduler_prepare_task(&ctx->scheduler, &futhark_mc_task_18682_task);
+}
 struct futhark_u64_2d {
     struct memblock mem;
     int64_t shape[2];
@@ -4977,6 +10130,7 @@ struct futhark_u64_2d *futhark_new_u64_2d(struct futhark_context *ctx, const uin
     if (arr == NULL)
         return bad;
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     arr->mem.references = NULL;
     if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 8, "arr->mem"))
         return NULL;
@@ -4995,6 +10149,7 @@ struct futhark_u64_2d *futhark_new_raw_u64_2d(struct futhark_context *ctx, const
     if (arr == NULL)
         return bad;
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     arr->mem.references = NULL;
     if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 8, "arr->mem"))
         return NULL;
@@ -5008,6 +10163,7 @@ struct futhark_u64_2d *futhark_new_raw_u64_2d(struct futhark_context *ctx, const
 int futhark_free_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr)
 {
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
         return 1;
     lock_unlock(&ctx->lock);
@@ -5017,6 +10173,7 @@ int futhark_free_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr)
 int futhark_values_u64_2d(struct futhark_context *ctx, struct futhark_u64_2d *arr, uint64_t *data)
 {
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     if ((size_t) (arr->shape[0] * arr->shape[1]) * 8 > 0)
         memmove(data + 0, arr->mem.mem + 0, (size_t) (arr->shape[0] * arr->shape[1]) * 8);
     lock_unlock(&ctx->lock);
@@ -5044,6 +10201,7 @@ struct futhark_u64_3d *futhark_new_u64_3d(struct futhark_context *ctx, const uin
     if (arr == NULL)
         return bad;
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     arr->mem.references = NULL;
     if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * dim2 * 8, "arr->mem"))
         return NULL;
@@ -5063,6 +10221,7 @@ struct futhark_u64_3d *futhark_new_raw_u64_3d(struct futhark_context *ctx, const
     if (arr == NULL)
         return bad;
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     arr->mem.references = NULL;
     if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * dim2 * 8, "arr->mem"))
         return NULL;
@@ -5077,6 +10236,7 @@ struct futhark_u64_3d *futhark_new_raw_u64_3d(struct futhark_context *ctx, const
 int futhark_free_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr)
 {
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
         return 1;
     lock_unlock(&ctx->lock);
@@ -5086,6 +10246,7 @@ int futhark_free_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr)
 int futhark_values_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr, uint64_t *data)
 {
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     if ((size_t) (arr->shape[0] * arr->shape[1] * arr->shape[2]) * 8 > 0)
         memmove(data + 0, arr->mem.mem + 0, (size_t) (arr->shape[0] * arr->shape[1] * arr->shape[2]) * 8);
     lock_unlock(&ctx->lock);
@@ -5113,6 +10274,7 @@ struct futhark_i32_2d *futhark_new_i32_2d(struct futhark_context *ctx, const int
     if (arr == NULL)
         return bad;
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     arr->mem.references = NULL;
     if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 4, "arr->mem"))
         return NULL;
@@ -5131,6 +10293,7 @@ struct futhark_i32_2d *futhark_new_raw_i32_2d(struct futhark_context *ctx, const
     if (arr == NULL)
         return bad;
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     arr->mem.references = NULL;
     if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 4, "arr->mem"))
         return NULL;
@@ -5144,6 +10307,7 @@ struct futhark_i32_2d *futhark_new_raw_i32_2d(struct futhark_context *ctx, const
 int futhark_free_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr)
 {
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
         return 1;
     lock_unlock(&ctx->lock);
@@ -5153,6 +10317,7 @@ int futhark_free_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr)
 int futhark_values_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr, int32_t *data)
 {
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     if ((size_t) (arr->shape[0] * arr->shape[1]) * 4 > 0)
         memmove(data + 0, arr->mem.mem + 0, (size_t) (arr->shape[0] * arr->shape[1]) * 4);
     lock_unlock(&ctx->lock);
@@ -5169,450 +10334,201 @@ const int64_t *futhark_shape_i32_2d(struct futhark_context *ctx, struct futhark_
     return arr->shape;
 }
 
-static int futrts_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct memblock *mem_out_p_16277, struct memblock zzinvs_mem_15998, struct memblock eps_mem_15999, struct memblock expsss_mem_16000, struct memblock coefficientss_mem_16001, int64_t n_12351, int64_t m_12352, int64_t p_12353, int64_t q_12354)
+static int futrts_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_context *ctx, struct memblock *mem_out_p_18444, struct memblock zzinvs_mem_17023, struct memblock eps_mem_17024, struct memblock expsss_mem_17025, struct memblock coefficientss_mem_17026, int64_t n_12351, int64_t m_12352, int64_t p_12353, int64_t q_12354)
 {
     (void) ctx;
     
     int err = 0;
-    int64_t mem_16005_cached_sizze_16278 = 0;
-    unsigned char *mem_16005 = NULL;
-    int64_t mem_16009_cached_sizze_16279 = 0;
-    unsigned char *mem_16009 = NULL;
-    int64_t mem_16013_cached_sizze_16280 = 0;
-    unsigned char *mem_16013 = NULL;
-    int64_t mem_16141_cached_sizze_16281 = 0;
-    unsigned char *mem_16141 = NULL;
-    int64_t mem_16156_cached_sizze_16282 = 0;
-    unsigned char *mem_16156 = NULL;
-    int64_t mem_16159_cached_sizze_16283 = 0;
-    unsigned char *mem_16159 = NULL;
-    int64_t mem_16162_cached_sizze_16284 = 0;
-    unsigned char *mem_16162 = NULL;
-    int64_t mem_16209_cached_sizze_16285 = 0;
-    unsigned char *mem_16209 = NULL;
-    struct memblock mem_16244;
+    int64_t mem_17078_cached_sizze_18445 = 0;
+    unsigned char *mem_17078 = NULL;
+    int64_t mem_17082_cached_sizze_18446 = 0;
+    unsigned char *mem_17082 = NULL;
+    int64_t mem_17086_cached_sizze_18447 = 0;
+    unsigned char *mem_17086 = NULL;
+    struct memblock mem_17160;
     
-    mem_16244.references = NULL;
+    mem_17160.references = NULL;
     
-    struct memblock mem_out_16251;
+    struct memblock mem_out_17161;
     
-    mem_out_16251.references = NULL;
+    mem_out_17161.references = NULL;
     
-    int64_t binop_x_16002 = p_12353 * q_12354;
-    int64_t binop_y_16003 = (int64_t) 8 * binop_x_16002;
-    int64_t bytes_16004 = smax64((int64_t) 0, binop_y_16003);
+    int64_t binop_x_17075 = p_12353 * q_12354;
+    int64_t binop_y_17076 = (int64_t) 8 * binop_x_17075;
+    int64_t bytes_17077 = smax64((int64_t) 0, binop_y_17076);
     
-    if (mem_16005_cached_sizze_16278 < bytes_16004) {
-        err = lexical_realloc(ctx, &mem_16005, &mem_16005_cached_sizze_16278, bytes_16004);
+    if (mem_17078_cached_sizze_18445 < bytes_17077) {
+        err = lexical_realloc(ctx, &mem_17078, &mem_17078_cached_sizze_18445, bytes_17077);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
-    if (mem_16009_cached_sizze_16279 < bytes_16004) {
-        err = lexical_realloc(ctx, &mem_16009, &mem_16009_cached_sizze_16279, bytes_16004);
+    if (mem_17082_cached_sizze_18446 < bytes_17077) {
+        err = lexical_realloc(ctx, &mem_17082, &mem_17082_cached_sizze_18446, bytes_17077);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
-    if (mem_16013_cached_sizze_16280 < bytes_16004) {
-        err = lexical_realloc(ctx, &mem_16013, &mem_16013_cached_sizze_16280, bytes_16004);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int64_t i_15944 = 0; i_15944 < p_12353; i_15944++) {
-        for (int64_t i_15934 = 0; i_15934 < q_12354; i_15934++) {
-            int64_t defunc_0_f_res_14362 = ((int64_t *) coefficientss_mem_16001.mem)[i_15944 * ((int64_t) 3 * q_12354) + i_15934 * (int64_t) 3];
-            int64_t defunc_0_f_res_14363 = ((int64_t *) coefficientss_mem_16001.mem)[i_15944 * ((int64_t) 3 * q_12354) + i_15934 * (int64_t) 3 + (int64_t) 1];
-            int64_t defunc_0_f_res_14364 = ((int64_t *) coefficientss_mem_16001.mem)[i_15944 * ((int64_t) 3 * q_12354) + i_15934 * (int64_t) 3 + (int64_t) 2];
-            
-            ((int64_t *) mem_16005)[i_15944 * q_12354 + i_15934] = defunc_0_f_res_14362;
-            ((int64_t *) mem_16009)[i_15944 * q_12354 + i_15934] = defunc_0_f_res_14363;
-            ((int64_t *) mem_16013)[i_15944 * q_12354 + i_15934] = defunc_0_f_res_14364;
-        }
-    }
-    
-    int64_t binop_x_16137 = n_12351 * p_12353;
-    int64_t binop_y_16139 = (int64_t) 24 * binop_x_16137;
-    int64_t bytes_16140 = smax64((int64_t) 0, binop_y_16139);
-    
-    if (mem_16141_cached_sizze_16281 < bytes_16140) {
-        err = lexical_realloc(ctx, &mem_16141, &mem_16141_cached_sizze_16281, bytes_16140);
+    if (mem_17086_cached_sizze_18447 < bytes_17077) {
+        err = lexical_realloc(ctx, &mem_17086, &mem_17086_cached_sizze_18447, bytes_17077);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     
-    int64_t ixfun_arg_16153 = (int64_t) 3 * p_12353;
-    int64_t binop_y_16154 = (int64_t) 8 * m_12352;
-    int64_t bytes_16155 = smax64((int64_t) 0, binop_y_16154);
+    int64_t binop_y_17027 = (int64_t) 8 * q_12354;
+    int64_t bytes_17028 = smax64((int64_t) 0, binop_y_17027);
+    int64_t flat_tid_15976 = (int64_t) 0;
+    int64_t flat_tid_15982 = (int64_t) 0;
+    struct futhark_mc_task_18448 futhark_mc_task_18448_;
     
-    if (mem_16156_cached_sizze_16282 < bytes_16155) {
-        err = lexical_realloc(ctx, &mem_16156, &mem_16156_cached_sizze_16282, bytes_16155);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_16159_cached_sizze_16283 < bytes_16155) {
-        err = lexical_realloc(ctx, &mem_16159, &mem_16159_cached_sizze_16283, bytes_16155);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_16162_cached_sizze_16284 < bytes_16155) {
-        err = lexical_realloc(ctx, &mem_16162, &mem_16162_cached_sizze_16284, bytes_16155);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_16209_cached_sizze_16285 < (int64_t) 24) {
-        err = lexical_realloc(ctx, &mem_16209, &mem_16209_cached_sizze_16285, (int64_t) 24);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int64_t i_15972 = 0; i_15972 < n_12351; i_15972++) {
-        int64_t defunc_0_f_res_15098 = ((int64_t *) zzinvs_mem_15998.mem)[i_15972 * (int64_t) 3];
-        int64_t defunc_0_f_res_15099 = ((int64_t *) zzinvs_mem_15998.mem)[i_15972 * (int64_t) 3 + (int64_t) 1];
-        int64_t defunc_0_f_res_15100 = ((int64_t *) zzinvs_mem_15998.mem)[i_15972 * (int64_t) 3 + (int64_t) 2];
-        
-        for (int64_t i_15954 = 0; i_15954 < m_12352; i_15954++) {
-            int64_t defunc_0_f_res_15108 = ((int64_t *) eps_mem_15999.mem)[i_15972 * ((int64_t) 3 * m_12352) + i_15954 * (int64_t) 3];
-            int64_t defunc_0_f_res_15109 = ((int64_t *) eps_mem_15999.mem)[i_15972 * ((int64_t) 3 * m_12352) + i_15954 * (int64_t) 3 + (int64_t) 1];
-            int64_t defunc_0_f_res_15110 = ((int64_t *) eps_mem_15999.mem)[i_15972 * ((int64_t) 3 * m_12352) + i_15954 * (int64_t) 3 + (int64_t) 2];
-            
-            ((int64_t *) mem_16156)[i_15954] = defunc_0_f_res_15108;
-            ((int64_t *) mem_16159)[i_15954] = defunc_0_f_res_15109;
-            ((int64_t *) mem_16162)[i_15954] = defunc_0_f_res_15110;
-        }
-        for (int64_t i_15968 = 0; i_15968 < p_12353; i_15968++) {
-            int64_t defunc_0_f_res_15914;
-            int64_t defunc_0_f_res_15915;
-            int64_t defunc_0_f_res_15916;
-            int64_t redout_15962;
-            int64_t redout_15963;
-            int64_t redout_15964;
-            
-            redout_15962 = (int64_t) 0;
-            redout_15963 = (int64_t) 0;
-            redout_15964 = (int64_t) 0;
-            for (int64_t i_15965 = 0; i_15965 < q_12354; i_15965++) {
-                int64_t x_15493 = ((int64_t *) mem_16005)[i_15968 * q_12354 + i_15965];
-                int64_t x_15494 = ((int64_t *) mem_16009)[i_15968 * q_12354 + i_15965];
-                int64_t x_15495 = ((int64_t *) mem_16013)[i_15968 * q_12354 + i_15965];
-                int64_t defunc_0_f_res_15911;
-                int64_t defunc_0_f_res_15912;
-                int64_t defunc_0_f_res_15913;
-                int64_t redout_15958;
-                int64_t redout_15959;
-                int64_t redout_15960;
-                
-                redout_15958 = (int64_t) 1;
-                redout_15959 = (int64_t) 0;
-                redout_15960 = (int64_t) 0;
-                for (int64_t i_15961 = 0; i_15961 < m_12352; i_15961++) {
-                    int64_t x_15635 = ((int64_t *) expsss_mem_16000.mem)[i_15968 * (m_12352 * q_12354) + i_15965 * m_12352 + i_15961];
-                    int64_t x_15636 = ((int64_t *) mem_16156)[i_15961];
-                    int64_t x_15637 = ((int64_t *) mem_16159)[i_15961];
-                    int64_t x_15638 = ((int64_t *) mem_16162)[i_15961];
-                    bool loop_cond_15639 = ult64((int64_t) 0, x_15635);
-                    bool mod_pow_u64_res_15640;
-                    int64_t mod_pow_u64_res_15641;
-                    int64_t mod_pow_u64_res_15642;
-                    int64_t mod_pow_u64_res_15643;
-                    int64_t mod_pow_u64_res_15644;
-                    int64_t mod_pow_u64_res_15645;
-                    int64_t mod_pow_u64_res_15646;
-                    int64_t mod_pow_u64_res_15647;
-                    bool loop_while_15648;
-                    int64_t x_15649;
-                    int64_t x_15650;
-                    int64_t x_15651;
-                    int64_t i_15652;
-                    int64_t result_15653;
-                    int64_t result_15654;
-                    int64_t result_15655;
-                    
-                    loop_while_15648 = loop_cond_15639;
-                    x_15649 = x_15636;
-                    x_15650 = x_15637;
-                    x_15651 = x_15638;
-                    i_15652 = x_15635;
-                    result_15653 = (int64_t) 1;
-                    result_15654 = (int64_t) 0;
-                    result_15655 = (int64_t) 0;
-                    while (loop_while_15648) {
-                        int64_t x_15656 = umod64(i_15652, (int64_t) 2);
-                        bool cond_15657 = x_15656 == (int64_t) 1;
-                        int64_t loopres_15658;
-                        int64_t loopres_15659;
-                        int64_t loopres_15660;
-                        int64_t loopres_15661;
-                        int64_t loopres_15662;
-                        int64_t loopres_15663;
-                        int64_t loopres_15664;
-                        
-                        if (cond_15657 == 1) {
-                            int64_t x_15877 = mul64(x_15649, x_15649);
-                            int64_t y_15878 = mul64(x_15650, x_15651);
-                            int64_t x_15879 = sub64(x_15877, y_15878);
-                            int64_t mul_res_15880 = sub64(x_15879, y_15878);
-                            int64_t x_15881 = mul64(x_15649, x_15650);
-                            int64_t x_15882 = add64(x_15881, x_15881);
-                            int64_t y_15883 = mul64(x_15651, x_15651);
-                            int64_t x_15884 = sub64(x_15882, y_15883);
-                            int64_t x_15885 = add64(y_15878, x_15884);
-                            int64_t mul_res_15886 = add64(y_15878, x_15885);
-                            int64_t x_15887 = mul64(x_15649, x_15651);
-                            int64_t y_15888 = mul64(x_15650, x_15650);
-                            int64_t x_15889 = add64(x_15887, y_15888);
-                            int64_t x_15890 = add64(x_15887, x_15889);
-                            int64_t mul_res_15891 = add64(y_15883, x_15890);
-                            int64_t loopres_t_res_15892 = lshr64(i_15652, (int64_t) 1);
-                            int64_t x_15893 = mul64(x_15649, result_15653);
-                            int64_t y_15894 = mul64(x_15651, result_15654);
-                            int64_t x_15895 = sub64(x_15893, y_15894);
-                            int64_t y_15896 = mul64(x_15650, result_15655);
-                            int64_t mul_res_15897 = sub64(x_15895, y_15896);
-                            int64_t x_15898 = mul64(x_15650, result_15653);
-                            int64_t y_15899 = mul64(x_15649, result_15654);
-                            int64_t x_15900 = add64(x_15898, y_15899);
-                            int64_t y_15901 = mul64(x_15651, result_15655);
-                            int64_t x_15902 = sub64(x_15900, y_15901);
-                            int64_t x_15903 = add64(y_15894, x_15902);
-                            int64_t mul_res_15904 = add64(y_15896, x_15903);
-                            int64_t x_15905 = mul64(x_15651, result_15653);
-                            int64_t y_15906 = mul64(x_15650, result_15654);
-                            int64_t x_15907 = add64(x_15905, y_15906);
-                            int64_t y_15908 = mul64(x_15649, result_15655);
-                            int64_t x_15909 = add64(x_15907, y_15908);
-                            int64_t mul_res_15910 = add64(y_15901, x_15909);
-                            
-                            loopres_15658 = mul_res_15880;
-                            loopres_15659 = mul_res_15886;
-                            loopres_15660 = mul_res_15891;
-                            loopres_15661 = loopres_t_res_15892;
-                            loopres_15662 = mul_res_15897;
-                            loopres_15663 = mul_res_15904;
-                            loopres_15664 = mul_res_15910;
-                        } else {
-                            int64_t x_15699 = mul64(x_15649, x_15649);
-                            int64_t y_15700 = mul64(x_15650, x_15651);
-                            int64_t x_15701 = sub64(x_15699, y_15700);
-                            int64_t mul_res_15702 = sub64(x_15701, y_15700);
-                            int64_t x_15703 = mul64(x_15649, x_15650);
-                            int64_t x_15704 = add64(x_15703, x_15703);
-                            int64_t y_15705 = mul64(x_15651, x_15651);
-                            int64_t x_15706 = sub64(x_15704, y_15705);
-                            int64_t x_15707 = add64(y_15700, x_15706);
-                            int64_t mul_res_15708 = add64(y_15700, x_15707);
-                            int64_t x_15709 = mul64(x_15649, x_15651);
-                            int64_t y_15710 = mul64(x_15650, x_15650);
-                            int64_t x_15711 = add64(x_15709, y_15710);
-                            int64_t x_15712 = add64(x_15709, x_15711);
-                            int64_t mul_res_15713 = add64(y_15705, x_15712);
-                            int64_t loopres_f_res_15714 = lshr64(i_15652, (int64_t) 1);
-                            
-                            loopres_15658 = mul_res_15702;
-                            loopres_15659 = mul_res_15708;
-                            loopres_15660 = mul_res_15713;
-                            loopres_15661 = loopres_f_res_15714;
-                            loopres_15662 = result_15653;
-                            loopres_15663 = result_15654;
-                            loopres_15664 = result_15655;
-                        }
-                        
-                        bool loop_cond_15715 = ult64((int64_t) 0, loopres_15661);
-                        bool loop_while_tmp_16269 = loop_cond_15715;
-                        int64_t x_tmp_16270 = loopres_15658;
-                        int64_t x_tmp_16271 = loopres_15659;
-                        int64_t x_tmp_16272 = loopres_15660;
-                        int64_t i_tmp_16273 = loopres_15661;
-                        int64_t result_tmp_16274 = loopres_15662;
-                        int64_t result_tmp_16275 = loopres_15663;
-                        int64_t result_tmp_16276 = loopres_15664;
-                        
-                        loop_while_15648 = loop_while_tmp_16269;
-                        x_15649 = x_tmp_16270;
-                        x_15650 = x_tmp_16271;
-                        x_15651 = x_tmp_16272;
-                        i_15652 = i_tmp_16273;
-                        result_15653 = result_tmp_16274;
-                        result_15654 = result_tmp_16275;
-                        result_15655 = result_tmp_16276;
-                    }
-                    mod_pow_u64_res_15640 = loop_while_15648;
-                    mod_pow_u64_res_15641 = x_15649;
-                    mod_pow_u64_res_15642 = x_15650;
-                    mod_pow_u64_res_15643 = x_15651;
-                    mod_pow_u64_res_15644 = i_15652;
-                    mod_pow_u64_res_15645 = result_15653;
-                    mod_pow_u64_res_15646 = result_15654;
-                    mod_pow_u64_res_15647 = result_15655;
-                    
-                    int64_t x_15590 = mul64(mod_pow_u64_res_15645, redout_15958);
-                    int64_t y_15591 = mul64(mod_pow_u64_res_15646, redout_15960);
-                    int64_t x_15592 = sub64(x_15590, y_15591);
-                    int64_t y_15593 = mul64(mod_pow_u64_res_15647, redout_15959);
-                    int64_t defunc_1_op_res_15594 = sub64(x_15592, y_15593);
-                    int64_t x_15595 = mul64(mod_pow_u64_res_15645, redout_15959);
-                    int64_t y_15596 = mul64(mod_pow_u64_res_15646, redout_15958);
-                    int64_t x_15597 = add64(x_15595, y_15596);
-                    int64_t y_15598 = mul64(mod_pow_u64_res_15647, redout_15960);
-                    int64_t x_15599 = sub64(x_15597, y_15598);
-                    int64_t x_15600 = add64(y_15591, x_15599);
-                    int64_t defunc_1_op_res_15601 = add64(y_15593, x_15600);
-                    int64_t x_15602 = mul64(mod_pow_u64_res_15645, redout_15960);
-                    int64_t y_15603 = mul64(mod_pow_u64_res_15646, redout_15959);
-                    int64_t x_15604 = add64(x_15602, y_15603);
-                    int64_t y_15605 = mul64(mod_pow_u64_res_15647, redout_15958);
-                    int64_t x_15606 = add64(x_15604, y_15605);
-                    int64_t defunc_1_op_res_15607 = add64(y_15598, x_15606);
-                    int64_t redout_tmp_16266 = defunc_1_op_res_15594;
-                    int64_t redout_tmp_16267 = defunc_1_op_res_15601;
-                    int64_t redout_tmp_16268 = defunc_1_op_res_15607;
-                    
-                    redout_15958 = redout_tmp_16266;
-                    redout_15959 = redout_tmp_16267;
-                    redout_15960 = redout_tmp_16268;
-                }
-                defunc_0_f_res_15911 = redout_15958;
-                defunc_0_f_res_15912 = redout_15959;
-                defunc_0_f_res_15913 = redout_15960;
-                
-                int64_t x_15611 = mul64(x_15493, defunc_0_f_res_15911);
-                int64_t y_15612 = mul64(x_15495, defunc_0_f_res_15912);
-                int64_t x_15613 = sub64(x_15611, y_15612);
-                int64_t y_15614 = mul64(x_15494, defunc_0_f_res_15913);
-                int64_t mul_res_15615 = sub64(x_15613, y_15614);
-                int64_t x_15616 = mul64(x_15494, defunc_0_f_res_15911);
-                int64_t y_15617 = mul64(x_15493, defunc_0_f_res_15912);
-                int64_t x_15618 = add64(x_15616, y_15617);
-                int64_t y_15619 = mul64(x_15495, defunc_0_f_res_15913);
-                int64_t x_15620 = sub64(x_15618, y_15619);
-                int64_t x_15621 = add64(y_15612, x_15620);
-                int64_t mul_res_15622 = add64(y_15614, x_15621);
-                int64_t x_15623 = mul64(x_15495, defunc_0_f_res_15911);
-                int64_t y_15624 = mul64(x_15494, defunc_0_f_res_15912);
-                int64_t x_15625 = add64(x_15623, y_15624);
-                int64_t y_15626 = mul64(x_15493, defunc_0_f_res_15913);
-                int64_t x_15627 = add64(x_15625, y_15626);
-                int64_t mul_res_15628 = add64(y_15619, x_15627);
-                int64_t canonicalizze_arg_15459 = add64(mul_res_15615, redout_15962);
-                int64_t canonicalizze_res_15460 = umod64(canonicalizze_arg_15459, (int64_t) -4294967295);
-                int64_t canonicalizze_arg_15461 = add64(mul_res_15622, redout_15963);
-                int64_t canonicalizze_res_15462 = umod64(canonicalizze_arg_15461, (int64_t) -4294967295);
-                int64_t canonicalizze_arg_15463 = add64(mul_res_15628, redout_15964);
-                int64_t canonicalizze_res_15464 = umod64(canonicalizze_arg_15463, (int64_t) -4294967295);
-                int64_t redout_tmp_16263 = canonicalizze_res_15460;
-                int64_t redout_tmp_16264 = canonicalizze_res_15462;
-                int64_t redout_tmp_16265 = canonicalizze_res_15464;
-                
-                redout_15962 = redout_tmp_16263;
-                redout_15963 = redout_tmp_16264;
-                redout_15964 = redout_tmp_16265;
-            }
-            defunc_0_f_res_15914 = redout_15962;
-            defunc_0_f_res_15915 = redout_15963;
-            defunc_0_f_res_15916 = redout_15964;
-            
-            int64_t x_15468 = mul64(defunc_0_f_res_15098, defunc_0_f_res_15914);
-            int64_t y_15469 = mul64(defunc_0_f_res_15100, defunc_0_f_res_15915);
-            int64_t x_15470 = sub64(x_15468, y_15469);
-            int64_t y_15471 = mul64(defunc_0_f_res_15099, defunc_0_f_res_15916);
-            int64_t mul_res_15472 = sub64(x_15470, y_15471);
-            int64_t x_15473 = mul64(defunc_0_f_res_15099, defunc_0_f_res_15914);
-            int64_t y_15474 = mul64(defunc_0_f_res_15098, defunc_0_f_res_15915);
-            int64_t x_15475 = add64(x_15473, y_15474);
-            int64_t y_15476 = mul64(defunc_0_f_res_15100, defunc_0_f_res_15916);
-            int64_t x_15477 = sub64(x_15475, y_15476);
-            int64_t x_15478 = add64(y_15469, x_15477);
-            int64_t mul_res_15479 = add64(y_15471, x_15478);
-            int64_t x_15480 = mul64(defunc_0_f_res_15100, defunc_0_f_res_15914);
-            int64_t y_15481 = mul64(defunc_0_f_res_15099, defunc_0_f_res_15915);
-            int64_t x_15482 = add64(x_15480, y_15481);
-            int64_t y_15483 = mul64(defunc_0_f_res_15098, defunc_0_f_res_15916);
-            int64_t x_15484 = add64(x_15482, y_15483);
-            int64_t mul_res_15485 = add64(y_15476, x_15484);
-            
-            ((int64_t *) mem_16209)[(int64_t) 0] = mul_res_15472;
-            ((int64_t *) mem_16209)[(int64_t) 1] = mul_res_15479;
-            ((int64_t *) mem_16209)[(int64_t) 2] = mul_res_15485;
-            if ((int64_t) 24 > 0)
-                memmove(mem_16141 + (i_15972 * ixfun_arg_16153 + i_15968 * (int64_t) 3) * (int64_t) 8, mem_16209 + (int64_t) 0, (int64_t) 24);
-        }
-    }
-    if (memblock_alloc(ctx, &mem_16244, bytes_16140, "mem_16244")) {
+    futhark_mc_task_18448_.ctx = ctx;
+    futhark_mc_task_18448_.free_p_12353 = p_12353;
+    futhark_mc_task_18448_.free_q_12354 = q_12354;
+    futhark_mc_task_18448_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+    futhark_mc_task_18448_.free_bytes_17028 = bytes_17028;
+    futhark_mc_task_18448_.free_mem_17078 = mem_17078;
+    futhark_mc_task_18448_.free_mem_17082 = mem_17082;
+    futhark_mc_task_18448_.free_mem_17086 = mem_17086;
+    #if ISPC
+    
+    uniform struct futhark_mc_task_18448 aos_18507[programCount];
+    
+    aos_18507[programIndex] = futhark_mc_task_18448_;
+    foreach_active (i)
+    if (err == 0)
+        err = futhark_mc_schedule_shim_18506(ctx, &aos_18507[i], extract(p_12353, i));
+    if (err != 0)
+        unmasked { return err; }
+    #else
+    err = futhark_mc_schedule_shim_18506(ctx, &futhark_mc_task_18448_, p_12353);
+    if (err != 0)
+        goto cleanup;
+    #endif
+    
+    int64_t binop_x_17156 = n_12351 * p_12353;
+    int64_t binop_y_17158 = (int64_t) 24 * binop_x_17156;
+    int64_t bytes_17159 = smax64((int64_t) 0, binop_y_17158);
+    
+    if (memblock_alloc(ctx, &mem_17160, bytes_17159, "mem_17160")) {
         err = 1;
         goto cleanup;
     }
-    if (n_12351 * p_12353 * (int64_t) 3 * (int64_t) 8 > 0)
-        memmove(mem_16244.mem + (int64_t) 0, mem_16141 + (int64_t) 0, n_12351 * p_12353 * (int64_t) 3 * (int64_t) 8);
-    if (memblock_set(ctx, &mem_out_16251, &mem_16244, "mem_16244") != 0)
+    
+    int64_t binop_y_17092 = (int64_t) 24 * p_12353;
+    int64_t bytes_17093 = smax64((int64_t) 0, binop_y_17092);
+    int64_t binop_y_17095 = (int64_t) 8 * m_12352;
+    int64_t bytes_17096 = smax64((int64_t) 0, binop_y_17095);
+    int64_t flat_tid_15994 = (int64_t) 0;
+    int64_t flat_tid_16474 = (int64_t) 0;
+    struct futhark_mc_task_18508 futhark_mc_task_18508_;
+    
+    futhark_mc_task_18508_.ctx = ctx;
+    futhark_mc_task_18508_.free_n_12351 = n_12351;
+    futhark_mc_task_18508_.free_m_12352 = m_12352;
+    futhark_mc_task_18508_.free_p_12353 = p_12353;
+    futhark_mc_task_18508_.free_q_12354 = q_12354;
+    futhark_mc_task_18508_.free_zzinvs_mem_17023 = zzinvs_mem_17023.mem;
+    futhark_mc_task_18508_.free_eps_mem_17024 = eps_mem_17024.mem;
+    futhark_mc_task_18508_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+    futhark_mc_task_18508_.free_mem_17078 = mem_17078;
+    futhark_mc_task_18508_.free_mem_17082 = mem_17082;
+    futhark_mc_task_18508_.free_mem_17086 = mem_17086;
+    futhark_mc_task_18508_.free_bytes_17093 = bytes_17093;
+    futhark_mc_task_18508_.free_bytes_17096 = bytes_17096;
+    futhark_mc_task_18508_.free_mem_17160 = mem_17160.mem;
+    #if ISPC
+    
+    uniform struct futhark_mc_task_18508 aos_18680[programCount];
+    
+    aos_18680[programIndex] = futhark_mc_task_18508_;
+    foreach_active (i)
+    if (err == 0)
+        err = futhark_mc_schedule_shim_18679(ctx, &aos_18680[i], extract(n_12351, i));
+    if (err != 0)
+        unmasked { return err; }
+    #else
+    err = futhark_mc_schedule_shim_18679(ctx, &futhark_mc_task_18508_, n_12351);
+    if (err != 0)
+        goto cleanup;
+    #endif
+    if (memblock_set(ctx, &mem_out_17161, &mem_17160, "mem_17160") != 0)
         return 1;
-    (*mem_out_p_16277).references = NULL;
-    if (memblock_set(ctx, &*mem_out_p_16277, &mem_out_16251, "mem_out_16251") != 0)
+    (*mem_out_p_18444).references = NULL;
+    if (memblock_set(ctx, &*mem_out_p_18444, &mem_out_17161, "mem_out_17161") != 0)
         return 1;
     
   cleanup:
     {
-        free(mem_16005);
-        free(mem_16009);
-        free(mem_16013);
-        free(mem_16141);
-        free(mem_16156);
-        free(mem_16159);
-        free(mem_16162);
-        free(mem_16209);
-        if (memblock_unref(ctx, &mem_16244, "mem_16244") != 0)
+        free(mem_17078);
+        free(mem_17082);
+        free(mem_17086);
+        if (memblock_unref(ctx, &mem_17160, "mem_17160") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_16251, "mem_out_16251") != 0)
+        if (memblock_unref(ctx, &mem_out_17161, "mem_out_17161") != 0)
             return 1;
     }
     return err;
 }
-static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_16286, struct memblock xss_mem_15998, struct memblock yss_mem_15999, int64_t nz2080U_9828, int64_t pz2081U_9829, int64_t mz2082U_9830)
+static int futrts_entry_matmul(struct futhark_context *ctx, struct memblock *mem_out_p_18681, struct memblock xss_mem_17023, struct memblock yss_mem_17024, int64_t nz2080U_9828, int64_t pz2081U_9829, int64_t mz2082U_9830)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock mem_16003;
+    struct memblock mem_17044;
     
-    mem_16003.references = NULL;
+    mem_17044.references = NULL;
     
-    struct memblock mem_out_16251;
+    struct memblock mem_out_17161;
     
-    mem_out_16251.references = NULL;
+    mem_out_17161.references = NULL;
     
-    int64_t binop_x_16000 = nz2080U_9828 * mz2082U_9830;
-    int64_t binop_y_16001 = (int64_t) 4 * binop_x_16000;
-    int64_t bytes_16002 = smax64((int64_t) 0, binop_y_16001);
+    int64_t binop_x_17041 = nz2080U_9828 * mz2082U_9830;
+    int64_t binop_y_17042 = (int64_t) 4 * binop_x_17041;
+    int64_t bytes_17043 = smax64((int64_t) 0, binop_y_17042);
     
-    if (memblock_alloc(ctx, &mem_16003, bytes_16002, "mem_16003")) {
+    if (memblock_alloc(ctx, &mem_17044, bytes_17043, "mem_17044")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t i_15936 = 0; i_15936 < nz2080U_9828; i_15936++) {
-        for (int64_t i_15932 = 0; i_15932 < mz2082U_9830; i_15932++) {
-            int32_t defunc_2_reduce_res_14695;
-            int32_t redout_15928 = 0;
-            
-            for (int64_t i_15929 = 0; i_15929 < pz2081U_9829; i_15929++) {
-                int32_t x_14688 = ((int32_t *) xss_mem_15998.mem)[i_15936 * pz2081U_9829 + i_15929];
-                int32_t x_14689 = ((int32_t *) yss_mem_15999.mem)[i_15929 * mz2082U_9830 + i_15932];
-                int32_t defunc_1_f_res_14690 = mul32(x_14688, x_14689);
-                int32_t defunc_1_op_res_13034 = add32(defunc_1_f_res_14690, redout_15928);
-                int32_t redout_tmp_16254 = defunc_1_op_res_13034;
-                
-                redout_15928 = redout_tmp_16254;
-            }
-            defunc_2_reduce_res_14695 = redout_15928;
-            ((int32_t *) mem_16003.mem)[i_15936 * mz2082U_9830 + i_15932] = defunc_2_reduce_res_14695;
-        }
-    }
-    if (memblock_set(ctx, &mem_out_16251, &mem_16003, "mem_16003") != 0)
+    
+    int64_t binop_y_17025 = (int64_t) 4 * mz2082U_9830;
+    int64_t bytes_17026 = smax64((int64_t) 0, binop_y_17025);
+    int64_t flat_tid_15928 = (int64_t) 0;
+    int64_t flat_tid_15950 = (int64_t) 0;
+    struct futhark_mc_task_18682 futhark_mc_task_18682_;
+    
+    futhark_mc_task_18682_.ctx = ctx;
+    futhark_mc_task_18682_.free_nz2080U_9828 = nz2080U_9828;
+    futhark_mc_task_18682_.free_pz2081U_9829 = pz2081U_9829;
+    futhark_mc_task_18682_.free_mz2082U_9830 = mz2082U_9830;
+    futhark_mc_task_18682_.free_xss_mem_17023 = xss_mem_17023.mem;
+    futhark_mc_task_18682_.free_yss_mem_17024 = yss_mem_17024.mem;
+    futhark_mc_task_18682_.free_bytes_17026 = bytes_17026;
+    futhark_mc_task_18682_.free_mem_17044 = mem_17044.mem;
+    #if ISPC
+    
+    uniform struct futhark_mc_task_18682 aos_18751[programCount];
+    
+    aos_18751[programIndex] = futhark_mc_task_18682_;
+    foreach_active (i)
+    if (err == 0)
+        err = futhark_mc_schedule_shim_18750(ctx, &aos_18751[i], extract(nz2080U_9828, i));
+    if (err != 0)
+        unmasked { return err; }
+    #else
+    err = futhark_mc_schedule_shim_18750(ctx, &futhark_mc_task_18682_, nz2080U_9828);
+    if (err != 0)
+        goto cleanup;
+    #endif
+    if (memblock_set(ctx, &mem_out_17161, &mem_17044, "mem_17044") != 0)
         return 1;
-    (*mem_out_p_16286).references = NULL;
-    if (memblock_set(ctx, &*mem_out_p_16286, &mem_out_16251, "mem_out_16251") != 0)
+    (*mem_out_p_18681).references = NULL;
+    if (memblock_set(ctx, &*mem_out_p_18681, &mem_out_17161, "mem_out_17161") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref(ctx, &mem_16003, "mem_16003") != 0)
+        if (memblock_unref(ctx, &mem_17044, "mem_17044") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_16251, "mem_out_16251") != 0)
+        if (memblock_unref(ctx, &mem_out_17161, "mem_out_17161") != 0)
             return 1;
     }
     return err;
@@ -5627,36 +10543,37 @@ int futhark_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_c
     int ret = 0;
     
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     
-    struct memblock mem_out_16251;
+    struct memblock mem_out_17161;
     
-    mem_out_16251.references = NULL;
+    mem_out_17161.references = NULL;
     
-    struct memblock coefficientss_mem_16001;
+    struct memblock coefficientss_mem_17026;
     
-    coefficientss_mem_16001.references = NULL;
+    coefficientss_mem_17026.references = NULL;
     
-    struct memblock expsss_mem_16000;
+    struct memblock expsss_mem_17025;
     
-    expsss_mem_16000.references = NULL;
+    expsss_mem_17025.references = NULL;
     
-    struct memblock eps_mem_15999;
+    struct memblock eps_mem_17024;
     
-    eps_mem_15999.references = NULL;
+    eps_mem_17024.references = NULL;
     
-    struct memblock zzinvs_mem_15998;
+    struct memblock zzinvs_mem_17023;
     
-    zzinvs_mem_15998.references = NULL;
-    zzinvs_mem_15998 = in0->mem;
+    zzinvs_mem_17023.references = NULL;
+    zzinvs_mem_17023 = in0->mem;
     n_12351 = in0->shape[0];
-    eps_mem_15999 = in1->mem;
+    eps_mem_17024 = in1->mem;
     n_12351 = in1->shape[0];
     m_12352 = in1->shape[1];
-    expsss_mem_16000 = in2->mem;
+    expsss_mem_17025 = in2->mem;
     p_12353 = in2->shape[0];
     q_12354 = in2->shape[1];
     m_12352 = in2->shape[2];
-    coefficientss_mem_16001 = in3->mem;
+    coefficientss_mem_17026 = in3->mem;
     p_12353 = in3->shape[0];
     q_12354 = in3->shape[1];
     if (!((n_12351 == in0->shape[0] && (int64_t) 3 == in0->shape[1]) && ((n_12351 == in1->shape[0] && (m_12352 == in1->shape[1] && (int64_t) 3 == in1->shape[2])) && ((p_12353 == in2->shape[0] && (q_12354 == in2->shape[1] && m_12352 == in2->shape[2])) && (p_12353 == in3->shape[0] && (q_12354 == in3->shape[1] && (int64_t) 3 == in3->shape[2])))))) {
@@ -5664,10 +10581,10 @@ int futhark_entry_make_transposed_quotient_codewords_non_opaque(struct futhark_c
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_make_transposed_quotient_codewords_non_opaque(ctx, &mem_out_16251, zzinvs_mem_15998, eps_mem_15999, expsss_mem_16000, coefficientss_mem_16001, n_12351, m_12352, p_12353, q_12354);
+        ret = futrts_entry_make_transposed_quotient_codewords_non_opaque(ctx, &mem_out_17161, zzinvs_mem_17023, eps_mem_17024, expsss_mem_17025, coefficientss_mem_17026, n_12351, m_12352, p_12353, q_12354);
         if (ret == 0) {
             assert((*out0 = (struct futhark_u64_3d *) malloc(sizeof(struct futhark_u64_3d))) != NULL);
-            (*out0)->mem = mem_out_16251;
+            (*out0)->mem = mem_out_17161;
             (*out0)->shape[0] = n_12351;
             (*out0)->shape[1] = p_12353;
             (*out0)->shape[2] = (int64_t) 3;
@@ -5684,22 +10601,23 @@ int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **ou
     int ret = 0;
     
     lock_lock(&ctx->lock);
+    worker_local = &ctx->scheduler.workers[0];
     
-    struct memblock mem_out_16251;
+    struct memblock mem_out_17161;
     
-    mem_out_16251.references = NULL;
+    mem_out_17161.references = NULL;
     
-    struct memblock yss_mem_15999;
+    struct memblock yss_mem_17024;
     
-    yss_mem_15999.references = NULL;
+    yss_mem_17024.references = NULL;
     
-    struct memblock xss_mem_15998;
+    struct memblock xss_mem_17023;
     
-    xss_mem_15998.references = NULL;
-    xss_mem_15998 = in0->mem;
+    xss_mem_17023.references = NULL;
+    xss_mem_17023 = in0->mem;
     nz2080U_9828 = in0->shape[0];
     pz2081U_9829 = in0->shape[1];
-    yss_mem_15999 = in1->mem;
+    yss_mem_17024 = in1->mem;
     pz2081U_9829 = in1->shape[0];
     mz2082U_9830 = in1->shape[1];
     if (!((nz2080U_9828 == in0->shape[0] && pz2081U_9829 == in0->shape[1]) && (pz2081U_9829 == in1->shape[0] && mz2082U_9830 == in1->shape[1]))) {
@@ -5707,10 +10625,10 @@ int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **ou
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_matmul(ctx, &mem_out_16251, xss_mem_15998, yss_mem_15999, nz2080U_9828, pz2081U_9829, mz2082U_9830);
+        ret = futrts_entry_matmul(ctx, &mem_out_17161, xss_mem_17023, yss_mem_17024, nz2080U_9828, pz2081U_9829, mz2082U_9830);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i32_2d *) malloc(sizeof(struct futhark_i32_2d))) != NULL);
-            (*out0)->mem = mem_out_16251;
+            (*out0)->mem = mem_out_17161;
             (*out0)->shape[0] = nz2080U_9828;
             (*out0)->shape[1] = mz2082U_9830;
         }
