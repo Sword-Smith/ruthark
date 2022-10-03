@@ -6091,2043 +6091,1680 @@ memmove_sized(64)
 
 // End of ispc_util.h.
 
-struct futhark_mc_task_18431 {
+struct futhark_mc_task_18448 {
     struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    unsigned char *free_coefficientss_mem_17009;
-    int64_t free_bytes_17011;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
 };
-struct futhark_mc_param_struct_18438 {
+struct futhark_mc_param_struct_18455 {
     struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    unsigned char *free_coefficientss_mem_17009;
-    int64_t free_bytes_17011;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18443();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18444();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18445();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18446();
-struct futhark_mc_mem_struct_18447 {
-    varying unsigned char *uniform mem_17021;
-    varying size_t mem_17021_cached_sizze_18440;
-    varying unsigned char *uniform mem_17024;
-    varying size_t mem_17024_cached_sizze_18441;
-    varying unsigned char *uniform mem_17027;
-    varying size_t mem_17027_cached_sizze_18442;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18449();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18450();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18451();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18452();
-static unmasked inline uniform int futhark_mc_inner_ispc_18448(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18438 *uniform futhark_mc_param_struct_18438_, uniform struct futhark_mc_mem_struct_18447 *uniform futhark_mc_mem_struct_18447_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18438_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18438_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18438_->free_p_12335;
-    uniform struct memblock coefficientss_mem_17009;
-    
-    coefficientss_mem_17009.desc = futhark_mc_strlit_shim_18449();
-    coefficientss_mem_17009.mem = futhark_mc_param_struct_18438_->free_coefficientss_mem_17009;
-    coefficientss_mem_17009.size = 0;
-    coefficientss_mem_17009.references = NULL;
-    
-    uniform int64_t bytes_17011 = futhark_mc_param_struct_18438_->free_bytes_17011;
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18450();
-    mem_17061.mem = futhark_mc_param_struct_18438_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18451();
-    mem_17065.mem = futhark_mc_param_struct_18438_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18452();
-    mem_17069.mem = futhark_mc_param_struct_18438_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    varying unsigned char *uniform mem_17021 = futhark_mc_mem_struct_18447_->mem_17021;
-    size_t mem_17021_cached_sizze_18440 = futhark_mc_mem_struct_18447_->mem_17021_cached_sizze_18440;
-    varying unsigned char *uniform mem_17024 = futhark_mc_mem_struct_18447_->mem_17024;
-    size_t mem_17024_cached_sizze_18441 = futhark_mc_mem_struct_18447_->mem_17024_cached_sizze_18441;
-    varying unsigned char *uniform mem_17027 = futhark_mc_mem_struct_18447_->mem_17027;
-    size_t mem_17027_cached_sizze_18442 = futhark_mc_mem_struct_18447_->mem_17027_cached_sizze_18442;
-    uniform int err = 0;
-    uniform int64_t start_17156;
-    uniform int64_t end_17157;
-    
-    start_17156 = start;
-    end_17157 = end;
-    
-    uniform int64_t n_17158 = end_17157 - start_17156;
-    
-    if (mem_17021_cached_sizze_18440 < bytes_17011) {
-        err = lexical_realloc(ctx, &mem_17021, &mem_17021_cached_sizze_18440, bytes_17011);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    if (mem_17024_cached_sizze_18441 < bytes_17011) {
-        err = lexical_realloc(ctx, &mem_17024, &mem_17024_cached_sizze_18441, bytes_17011);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    if (mem_17027_cached_sizze_18442 < bytes_17011) {
-        err = lexical_realloc(ctx, &mem_17027, &mem_17027_cached_sizze_18442, bytes_17011);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    foreach (SegMap_i_17159 = start_17156 ... start_17156 + n_17158)
-    {
-        uniform int64_t slice_17160 = m_12334;
-        int64_t gtid_15960 = SegMap_i_17159;
-        int64_t remnant_17161 = SegMap_i_17159 - gtid_15960;
-        
-        for (uniform int64_t i_17146 = 0; i_17146 < p_12335; i_17146++) {
-            int64_t defunc_0_f_res_17150;
-            
-            defunc_0_f_res_17150 = ((int64_t *) coefficientss_mem_17009.mem)[gtid_15960 * ((int64_t) 3 * p_12335) + i_17146 * (int64_t) 3];
-            
-            int64_t defunc_0_f_res_17151;
-            
-            defunc_0_f_res_17151 = ((int64_t *) coefficientss_mem_17009.mem)[gtid_15960 * ((int64_t) 3 * p_12335) + i_17146 * (int64_t) 3 + (int64_t) 1];
-            
-            int64_t defunc_0_f_res_17152;
-            
-            defunc_0_f_res_17152 = ((int64_t *) coefficientss_mem_17009.mem)[gtid_15960 * ((int64_t) 3 * p_12335) + i_17146 * (int64_t) 3 + (int64_t) 2];
-            ((varying int64_t *) mem_17021)[i_17146] = defunc_0_f_res_17150;
-            ((varying int64_t *) mem_17024)[i_17146] = defunc_0_f_res_17151;
-            ((varying int64_t *) mem_17027)[i_17146] = defunc_0_f_res_17152;
-        }
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove_64(mem_17061.mem + gtid_15960 * p_12335 * (int64_t) 8, mem_17021 + (int64_t) 0, extract(p_12335 * (int64_t) 8, 0));
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove_64(mem_17065.mem + gtid_15960 * p_12335 * (int64_t) 8, mem_17024 + (int64_t) 0, extract(p_12335 * (int64_t) 8, 0));
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove_64(mem_17069.mem + gtid_15960 * p_12335 * (int64_t) 8, mem_17027 + (int64_t) 0, extract(p_12335 * (int64_t) 8, 0));
-    }
-    futhark_mc_mem_struct_18447_->mem_17021 = mem_17021;
-    futhark_mc_mem_struct_18447_->mem_17021_cached_sizze_18440 = mem_17021_cached_sizze_18440;
-    futhark_mc_mem_struct_18447_->mem_17024 = mem_17024;
-    futhark_mc_mem_struct_18447_->mem_17024_cached_sizze_18441 = mem_17024_cached_sizze_18441;
-    futhark_mc_mem_struct_18447_->mem_17027 = mem_17027;
-    futhark_mc_mem_struct_18447_->mem_17027_cached_sizze_18442 = mem_17027_cached_sizze_18442;
-    return err;
-}
-export uniform int futhark_mc_loop_ispc_18439(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18438 *uniform futhark_mc_param_struct_18438_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18438_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18438_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18438_->free_p_12335;
-    uniform struct memblock coefficientss_mem_17009;
-    
-    coefficientss_mem_17009.desc = futhark_mc_strlit_shim_18443();
-    coefficientss_mem_17009.mem = futhark_mc_param_struct_18438_->free_coefficientss_mem_17009;
-    coefficientss_mem_17009.size = 0;
-    coefficientss_mem_17009.references = NULL;
-    
-    uniform int64_t bytes_17011 = futhark_mc_param_struct_18438_->free_bytes_17011;
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18444();
-    mem_17061.mem = futhark_mc_param_struct_18438_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18445();
-    mem_17065.mem = futhark_mc_param_struct_18438_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18446();
-    mem_17069.mem = futhark_mc_param_struct_18438_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    size_t mem_17021_cached_sizze_18440 = 0;
-    varying unsigned char *uniform mem_17021 = NULL;
-    size_t mem_17024_cached_sizze_18441 = 0;
-    varying unsigned char *uniform mem_17024 = NULL;
-    size_t mem_17027_cached_sizze_18442 = 0;
-    varying unsigned char *uniform mem_17027 = NULL;
-    uniform struct futhark_mc_mem_struct_18447 futhark_mc_mem_struct_18447_;
-    
-    futhark_mc_mem_struct_18447_.mem_17021 = mem_17021;
-    futhark_mc_mem_struct_18447_.mem_17021_cached_sizze_18440 = mem_17021_cached_sizze_18440;
-    futhark_mc_mem_struct_18447_.mem_17024 = mem_17024;
-    futhark_mc_mem_struct_18447_.mem_17024_cached_sizze_18441 = mem_17024_cached_sizze_18441;
-    futhark_mc_mem_struct_18447_.mem_17027 = mem_17027;
-    futhark_mc_mem_struct_18447_.mem_17027_cached_sizze_18442 = mem_17027_cached_sizze_18442;
-    
-    uniform int err = futhark_mc_inner_ispc_18448(start, end, futhark_mc_param_struct_18438_, &futhark_mc_mem_struct_18447_);
-    
-    mem_17021 = futhark_mc_mem_struct_18447_.mem_17021;
-    mem_17021_cached_sizze_18440 = futhark_mc_mem_struct_18447_.mem_17021_cached_sizze_18440;
-    mem_17024 = futhark_mc_mem_struct_18447_.mem_17024;
-    mem_17024_cached_sizze_18441 = futhark_mc_mem_struct_18447_.mem_17024_cached_sizze_18441;
-    mem_17027 = futhark_mc_mem_struct_18447_.mem_17027;
-    mem_17027_cached_sizze_18442 = futhark_mc_mem_struct_18447_.mem_17027_cached_sizze_18442;
-    
-  cleanup:
-    {
-        free(mem_17021);
-        free(mem_17024);
-        free(mem_17027);
-    }
-    return err;
-}
-struct futhark_mc_param_struct_18459 {
-    struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    unsigned char *free_coefficientss_mem_17009;
-    int64_t free_bytes_17011;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18460();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18461();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18462();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18463();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18464();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18465();
+struct futhark_mc_mem_struct_18464 {
+    varying unsigned char *uniform mem_17038;
+    varying size_t mem_17038_cached_sizze_18457;
+    varying unsigned char *uniform mem_17041;
+    varying size_t mem_17041_cached_sizze_18458;
+    varying unsigned char *uniform mem_17044;
+    varying size_t mem_17044_cached_sizze_18459;
+};
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18466();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18467();
-struct futhark_mc_task_18468 {
-    struct futhark_context *ctx;
-    int64_t free_p_12335;
-    int64_t free_gtid_15966;
-    unsigned char *free_coefficientss_mem_17009;
-    unsigned char *free_mem_17012;
-    unsigned char *free_mem_17015;
-    unsigned char *free_mem_17018;
-};
-struct futhark_mc_param_struct_18472 {
-    struct futhark_context *ctx;
-    int64_t free_p_12335;
-    int64_t free_gtid_15966;
-    unsigned char *free_coefficientss_mem_17009;
-    unsigned char *free_mem_17012;
-    unsigned char *free_mem_17015;
-    unsigned char *free_mem_17018;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18474();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18475();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18476();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18477();
-export uniform int futhark_mc_loop_ispc_18473(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18472 *uniform futhark_mc_param_struct_18472_)
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18468();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18469();
+static unmasked inline uniform int futhark_mc_inner_ispc_18465(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18455 *uniform futhark_mc_param_struct_18455_, uniform struct futhark_mc_mem_struct_18464 *uniform futhark_mc_mem_struct_18464_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18472_->ctx;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18472_->free_p_12335;
-    uniform int64_t gtid_15966 = futhark_mc_param_struct_18472_->free_gtid_15966;
-    uniform struct memblock coefficientss_mem_17009;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18455_->ctx;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18455_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18455_->free_q_12354;
+    uniform struct memblock coefficientss_mem_17026;
     
-    coefficientss_mem_17009.desc = futhark_mc_strlit_shim_18474();
-    coefficientss_mem_17009.mem = futhark_mc_param_struct_18472_->free_coefficientss_mem_17009;
-    coefficientss_mem_17009.size = 0;
-    coefficientss_mem_17009.references = NULL;
+    coefficientss_mem_17026.desc = futhark_mc_strlit_shim_18466();
+    coefficientss_mem_17026.mem = futhark_mc_param_struct_18455_->free_coefficientss_mem_17026;
+    coefficientss_mem_17026.size = 0;
+    coefficientss_mem_17026.references = NULL;
     
-    uniform struct memblock mem_17012;
+    uniform int64_t bytes_17028 = futhark_mc_param_struct_18455_->free_bytes_17028;
+    uniform struct memblock mem_17078;
     
-    mem_17012.desc = futhark_mc_strlit_shim_18475();
-    mem_17012.mem = futhark_mc_param_struct_18472_->free_mem_17012;
-    mem_17012.size = 0;
-    mem_17012.references = NULL;
+    mem_17078.desc = futhark_mc_strlit_shim_18467();
+    mem_17078.mem = futhark_mc_param_struct_18455_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
     
-    uniform struct memblock mem_17015;
+    uniform struct memblock mem_17082;
     
-    mem_17015.desc = futhark_mc_strlit_shim_18476();
-    mem_17015.mem = futhark_mc_param_struct_18472_->free_mem_17015;
-    mem_17015.size = 0;
-    mem_17015.references = NULL;
+    mem_17082.desc = futhark_mc_strlit_shim_18468();
+    mem_17082.mem = futhark_mc_param_struct_18455_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
     
-    uniform struct memblock mem_17018;
+    uniform struct memblock mem_17086;
     
-    mem_17018.desc = futhark_mc_strlit_shim_18477();
-    mem_17018.mem = futhark_mc_param_struct_18472_->free_mem_17018;
-    mem_17018.size = 0;
-    mem_17018.references = NULL;
+    mem_17086.desc = futhark_mc_strlit_shim_18469();
+    mem_17086.mem = futhark_mc_param_struct_18455_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    varying unsigned char *uniform mem_17038 = futhark_mc_mem_struct_18464_->mem_17038;
+    size_t mem_17038_cached_sizze_18457 = futhark_mc_mem_struct_18464_->mem_17038_cached_sizze_18457;
+    varying unsigned char *uniform mem_17041 = futhark_mc_mem_struct_18464_->mem_17041;
+    size_t mem_17041_cached_sizze_18458 = futhark_mc_mem_struct_18464_->mem_17041_cached_sizze_18458;
+    varying unsigned char *uniform mem_17044 = futhark_mc_mem_struct_18464_->mem_17044;
+    size_t mem_17044_cached_sizze_18459 = futhark_mc_mem_struct_18464_->mem_17044_cached_sizze_18459;
+    uniform int err = 0;
+    uniform int64_t start_17173;
+    uniform int64_t end_17174;
+    
+    start_17173 = start;
+    end_17174 = end;
+    
+    uniform int64_t n_17175 = end_17174 - start_17173;
+    
+    if (mem_17038_cached_sizze_18457 < bytes_17028) {
+        err = lexical_realloc(ctx, &mem_17038, &mem_17038_cached_sizze_18457, bytes_17028);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    if (mem_17041_cached_sizze_18458 < bytes_17028) {
+        err = lexical_realloc(ctx, &mem_17041, &mem_17041_cached_sizze_18458, bytes_17028);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    if (mem_17044_cached_sizze_18459 < bytes_17028) {
+        err = lexical_realloc(ctx, &mem_17044, &mem_17044_cached_sizze_18459, bytes_17028);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    foreach (SegMap_i_17176 = start_17173 ... start_17173 + n_17175)
+    {
+        uniform int64_t slice_17177 = p_12353;
+        int64_t gtid_15977 = SegMap_i_17176;
+        int64_t remnant_17178 = SegMap_i_17176 - gtid_15977;
+        
+        for (uniform int64_t i_17163 = 0; i_17163 < q_12354; i_17163++) {
+            int64_t defunc_0_f_res_17167;
+            
+            defunc_0_f_res_17167 = ((int64_t *) coefficientss_mem_17026.mem)[gtid_15977 * ((int64_t) 3 * q_12354) + i_17163 * (int64_t) 3];
+            
+            int64_t defunc_0_f_res_17168;
+            
+            defunc_0_f_res_17168 = ((int64_t *) coefficientss_mem_17026.mem)[gtid_15977 * ((int64_t) 3 * q_12354) + i_17163 * (int64_t) 3 + (int64_t) 1];
+            
+            int64_t defunc_0_f_res_17169;
+            
+            defunc_0_f_res_17169 = ((int64_t *) coefficientss_mem_17026.mem)[gtid_15977 * ((int64_t) 3 * q_12354) + i_17163 * (int64_t) 3 + (int64_t) 2];
+            ((varying int64_t *) mem_17038)[i_17163] = defunc_0_f_res_17167;
+            ((varying int64_t *) mem_17041)[i_17163] = defunc_0_f_res_17168;
+            ((varying int64_t *) mem_17044)[i_17163] = defunc_0_f_res_17169;
+        }
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove_64(mem_17078.mem + gtid_15977 * q_12354 * (int64_t) 8, mem_17038 + (int64_t) 0, extract(q_12354 * (int64_t) 8, 0));
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove_64(mem_17082.mem + gtid_15977 * q_12354 * (int64_t) 8, mem_17041 + (int64_t) 0, extract(q_12354 * (int64_t) 8, 0));
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove_64(mem_17086.mem + gtid_15977 * q_12354 * (int64_t) 8, mem_17044 + (int64_t) 0, extract(q_12354 * (int64_t) 8, 0));
+    }
+    futhark_mc_mem_struct_18464_->mem_17038 = mem_17038;
+    futhark_mc_mem_struct_18464_->mem_17038_cached_sizze_18457 = mem_17038_cached_sizze_18457;
+    futhark_mc_mem_struct_18464_->mem_17041 = mem_17041;
+    futhark_mc_mem_struct_18464_->mem_17041_cached_sizze_18458 = mem_17041_cached_sizze_18458;
+    futhark_mc_mem_struct_18464_->mem_17044 = mem_17044;
+    futhark_mc_mem_struct_18464_->mem_17044_cached_sizze_18459 = mem_17044_cached_sizze_18459;
+    return err;
+}
+export uniform int futhark_mc_loop_ispc_18456(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18455 *uniform futhark_mc_param_struct_18455_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18455_->ctx;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18455_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18455_->free_q_12354;
+    uniform struct memblock coefficientss_mem_17026;
+    
+    coefficientss_mem_17026.desc = futhark_mc_strlit_shim_18460();
+    coefficientss_mem_17026.mem = futhark_mc_param_struct_18455_->free_coefficientss_mem_17026;
+    coefficientss_mem_17026.size = 0;
+    coefficientss_mem_17026.references = NULL;
+    
+    uniform int64_t bytes_17028 = futhark_mc_param_struct_18455_->free_bytes_17028;
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18461();
+    mem_17078.mem = futhark_mc_param_struct_18455_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18462();
+    mem_17082.mem = futhark_mc_param_struct_18455_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18463();
+    mem_17086.mem = futhark_mc_param_struct_18455_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    size_t mem_17038_cached_sizze_18457 = 0;
+    varying unsigned char *uniform mem_17038 = NULL;
+    size_t mem_17041_cached_sizze_18458 = 0;
+    varying unsigned char *uniform mem_17041 = NULL;
+    size_t mem_17044_cached_sizze_18459 = 0;
+    varying unsigned char *uniform mem_17044 = NULL;
+    uniform struct futhark_mc_mem_struct_18464 futhark_mc_mem_struct_18464_;
+    
+    futhark_mc_mem_struct_18464_.mem_17038 = mem_17038;
+    futhark_mc_mem_struct_18464_.mem_17038_cached_sizze_18457 = mem_17038_cached_sizze_18457;
+    futhark_mc_mem_struct_18464_.mem_17041 = mem_17041;
+    futhark_mc_mem_struct_18464_.mem_17041_cached_sizze_18458 = mem_17041_cached_sizze_18458;
+    futhark_mc_mem_struct_18464_.mem_17044 = mem_17044;
+    futhark_mc_mem_struct_18464_.mem_17044_cached_sizze_18459 = mem_17044_cached_sizze_18459;
+    
+    uniform int err = futhark_mc_inner_ispc_18465(start, end, futhark_mc_param_struct_18455_, &futhark_mc_mem_struct_18464_);
+    
+    mem_17038 = futhark_mc_mem_struct_18464_.mem_17038;
+    mem_17038_cached_sizze_18457 = futhark_mc_mem_struct_18464_.mem_17038_cached_sizze_18457;
+    mem_17041 = futhark_mc_mem_struct_18464_.mem_17041;
+    mem_17041_cached_sizze_18458 = futhark_mc_mem_struct_18464_.mem_17041_cached_sizze_18458;
+    mem_17044 = futhark_mc_mem_struct_18464_.mem_17044;
+    mem_17044_cached_sizze_18459 = futhark_mc_mem_struct_18464_.mem_17044_cached_sizze_18459;
+    
+  cleanup:
+    {
+        free(mem_17038);
+        free(mem_17041);
+        free(mem_17044);
+    }
+    return err;
+}
+struct futhark_mc_param_struct_18476 {
+    struct futhark_context *ctx;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_coefficientss_mem_17026;
+    int64_t free_bytes_17028;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18478();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18479();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18480();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18481();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18482();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18483();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18484();
+struct futhark_mc_task_18485 {
+    struct futhark_context *ctx;
+    int64_t free_q_12354;
+    int64_t free_gtid_15983;
+    unsigned char *free_coefficientss_mem_17026;
+    unsigned char *free_mem_17029;
+    unsigned char *free_mem_17032;
+    unsigned char *free_mem_17035;
+};
+struct futhark_mc_param_struct_18489 {
+    struct futhark_context *ctx;
+    int64_t free_q_12354;
+    int64_t free_gtid_15983;
+    unsigned char *free_coefficientss_mem_17026;
+    unsigned char *free_mem_17029;
+    unsigned char *free_mem_17032;
+    unsigned char *free_mem_17035;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18491();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18492();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18493();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18494();
+export uniform int futhark_mc_loop_ispc_18490(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18489 *uniform futhark_mc_param_struct_18489_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18489_->ctx;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18489_->free_q_12354;
+    uniform int64_t gtid_15983 = futhark_mc_param_struct_18489_->free_gtid_15983;
+    uniform struct memblock coefficientss_mem_17026;
+    
+    coefficientss_mem_17026.desc = futhark_mc_strlit_shim_18491();
+    coefficientss_mem_17026.mem = futhark_mc_param_struct_18489_->free_coefficientss_mem_17026;
+    coefficientss_mem_17026.size = 0;
+    coefficientss_mem_17026.references = NULL;
+    
+    uniform struct memblock mem_17029;
+    
+    mem_17029.desc = futhark_mc_strlit_shim_18492();
+    mem_17029.mem = futhark_mc_param_struct_18489_->free_mem_17029;
+    mem_17029.size = 0;
+    mem_17029.references = NULL;
+    
+    uniform struct memblock mem_17032;
+    
+    mem_17032.desc = futhark_mc_strlit_shim_18493();
+    mem_17032.mem = futhark_mc_param_struct_18489_->free_mem_17032;
+    mem_17032.size = 0;
+    mem_17032.references = NULL;
+    
+    uniform struct memblock mem_17035;
+    
+    mem_17035.desc = futhark_mc_strlit_shim_18494();
+    mem_17035.mem = futhark_mc_param_struct_18489_->free_mem_17035;
+    mem_17035.size = 0;
+    mem_17035.references = NULL;
     
     uniform int err = 0;
-    uniform int64_t start_17178;
-    uniform int64_t end_17179;
+    uniform int64_t start_17195;
+    uniform int64_t end_17196;
     
-    start_17178 = start;
-    end_17179 = end;
+    start_17195 = start;
+    end_17196 = end;
     
-    uniform int64_t n_17180 = end_17179 - start_17178;
+    uniform int64_t n_17197 = end_17196 - start_17195;
     
-    foreach (SegMap_i_17181 = start_17178 ... start_17178 + n_17180)
+    foreach (SegMap_i_17198 = start_17195 ... start_17195 + n_17197)
     {
-        uniform int64_t slice_17182 = p_12335;
-        int64_t gtid_17167 = SegMap_i_17181;
-        int64_t remnant_17183 = SegMap_i_17181 - gtid_17167;
-        int64_t defunc_0_f_res_17168;
+        uniform int64_t slice_17199 = q_12354;
+        int64_t gtid_17184 = SegMap_i_17198;
+        int64_t remnant_17200 = SegMap_i_17198 - gtid_17184;
+        int64_t defunc_0_f_res_17185;
         
-        defunc_0_f_res_17168 = ((int64_t *) coefficientss_mem_17009.mem)[gtid_15966 * ((int64_t) 3 * p_12335) + gtid_17167 * (int64_t) 3];
+        defunc_0_f_res_17185 = ((int64_t *) coefficientss_mem_17026.mem)[gtid_15983 * ((int64_t) 3 * q_12354) + gtid_17184 * (int64_t) 3];
         
-        int64_t defunc_0_f_res_17169;
+        int64_t defunc_0_f_res_17186;
         
-        defunc_0_f_res_17169 = ((int64_t *) coefficientss_mem_17009.mem)[gtid_15966 * ((int64_t) 3 * p_12335) + gtid_17167 * (int64_t) 3 + (int64_t) 1];
+        defunc_0_f_res_17186 = ((int64_t *) coefficientss_mem_17026.mem)[gtid_15983 * ((int64_t) 3 * q_12354) + gtid_17184 * (int64_t) 3 + (int64_t) 1];
         
-        int64_t defunc_0_f_res_17170;
+        int64_t defunc_0_f_res_17187;
         
-        defunc_0_f_res_17170 = ((int64_t *) coefficientss_mem_17009.mem)[gtid_15966 * ((int64_t) 3 * p_12335) + gtid_17167 * (int64_t) 3 + (int64_t) 2];
-        ((int64_t *) mem_17012.mem)[gtid_17167] = defunc_0_f_res_17168;
-        ((int64_t *) mem_17015.mem)[gtid_17167] = defunc_0_f_res_17169;
-        ((int64_t *) mem_17018.mem)[gtid_17167] = defunc_0_f_res_17170;
+        defunc_0_f_res_17187 = ((int64_t *) coefficientss_mem_17026.mem)[gtid_15983 * ((int64_t) 3 * q_12354) + gtid_17184 * (int64_t) 3 + (int64_t) 2];
+        ((int64_t *) mem_17029.mem)[gtid_17184] = defunc_0_f_res_17185;
+        ((int64_t *) mem_17032.mem)[gtid_17184] = defunc_0_f_res_17186;
+        ((int64_t *) mem_17035.mem)[gtid_17184] = defunc_0_f_res_17187;
     }
     
   cleanup:
     { }
     return err;
 }
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18478(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18468 *uniform args, uniform int iterations);
-struct futhark_mc_mem_struct_18480 {
-    varying struct memblock *uniform mem_17018;
-    varying struct memblock *uniform mem_17015;
-    varying struct memblock *uniform mem_17012;
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18495(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18485 *uniform args, uniform int iterations);
+struct futhark_mc_mem_struct_18497 {
+    varying struct memblock *uniform mem_17035;
+    varying struct memblock *uniform mem_17032;
+    varying struct memblock *uniform mem_17029;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18482();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18483();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18484();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18485();
-static unmasked inline uniform int futhark_mc_inner_ispc_18481(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18459 *uniform futhark_mc_param_struct_18459_, uniform struct futhark_mc_mem_struct_18480 *uniform futhark_mc_mem_struct_18480_)
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18499();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18500();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18501();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18502();
+static unmasked inline uniform int futhark_mc_inner_ispc_18498(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18476 *uniform futhark_mc_param_struct_18476_, uniform struct futhark_mc_mem_struct_18497 *uniform futhark_mc_mem_struct_18497_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18459_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18459_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18459_->free_p_12335;
-    uniform struct memblock coefficientss_mem_17009;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18476_->ctx;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18476_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18476_->free_q_12354;
+    uniform struct memblock coefficientss_mem_17026;
     
-    coefficientss_mem_17009.desc = futhark_mc_strlit_shim_18482();
-    coefficientss_mem_17009.mem = futhark_mc_param_struct_18459_->free_coefficientss_mem_17009;
-    coefficientss_mem_17009.size = 0;
-    coefficientss_mem_17009.references = NULL;
+    coefficientss_mem_17026.desc = futhark_mc_strlit_shim_18499();
+    coefficientss_mem_17026.mem = futhark_mc_param_struct_18476_->free_coefficientss_mem_17026;
+    coefficientss_mem_17026.size = 0;
+    coefficientss_mem_17026.references = NULL;
     
-    uniform int64_t bytes_17011 = futhark_mc_param_struct_18459_->free_bytes_17011;
-    uniform struct memblock mem_17061;
+    uniform int64_t bytes_17028 = futhark_mc_param_struct_18476_->free_bytes_17028;
+    uniform struct memblock mem_17078;
     
-    mem_17061.desc = futhark_mc_strlit_shim_18483();
-    mem_17061.mem = futhark_mc_param_struct_18459_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
+    mem_17078.desc = futhark_mc_strlit_shim_18500();
+    mem_17078.mem = futhark_mc_param_struct_18476_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
     
-    uniform struct memblock mem_17065;
+    uniform struct memblock mem_17082;
     
-    mem_17065.desc = futhark_mc_strlit_shim_18484();
-    mem_17065.mem = futhark_mc_param_struct_18459_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
+    mem_17082.desc = futhark_mc_strlit_shim_18501();
+    mem_17082.mem = futhark_mc_param_struct_18476_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
     
-    uniform struct memblock mem_17069;
+    uniform struct memblock mem_17086;
     
-    mem_17069.desc = futhark_mc_strlit_shim_18485();
-    mem_17069.mem = futhark_mc_param_struct_18459_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
+    mem_17086.desc = futhark_mc_strlit_shim_18502();
+    mem_17086.mem = futhark_mc_param_struct_18476_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
     
-    struct memblock mem_17018 = *futhark_mc_mem_struct_18480_->mem_17018;
-    struct memblock mem_17015 = *futhark_mc_mem_struct_18480_->mem_17015;
-    struct memblock mem_17012 = *futhark_mc_mem_struct_18480_->mem_17012;
+    struct memblock mem_17035 = *futhark_mc_mem_struct_18497_->mem_17035;
+    struct memblock mem_17032 = *futhark_mc_mem_struct_18497_->mem_17032;
+    struct memblock mem_17029 = *futhark_mc_mem_struct_18497_->mem_17029;
     uniform int err = 0;
-    uniform int64_t start_17171;
-    uniform int64_t end_17172;
+    uniform int64_t start_17188;
+    uniform int64_t end_17189;
     
-    start_17171 = start;
-    end_17172 = end;
+    start_17188 = start;
+    end_17189 = end;
     
-    uniform int64_t n_17173 = end_17172 - start_17171;
+    uniform int64_t n_17190 = end_17189 - start_17188;
     
-    if (memblock_alloc(ctx, &mem_17012, bytes_17011, futhark_mc_strlit_shim_18465()))
+    if (memblock_alloc(ctx, &mem_17029, bytes_17028, futhark_mc_strlit_shim_18482()))
         unmasked { return 1; }
-    if (memblock_alloc(ctx, &mem_17015, bytes_17011, futhark_mc_strlit_shim_18466()))
+    if (memblock_alloc(ctx, &mem_17032, bytes_17028, futhark_mc_strlit_shim_18483()))
         unmasked { return 1; }
-    if (memblock_alloc(ctx, &mem_17018, bytes_17011, futhark_mc_strlit_shim_18467()))
+    if (memblock_alloc(ctx, &mem_17035, bytes_17028, futhark_mc_strlit_shim_18484()))
         unmasked { return 1; }
-    for (uniform int64_t i = 0; i < (start_17171 + n_17173 - start_17171) / programCount; i++) {
-        int64_t SegMap_i_17174 = start_17171 + programIndex + i * programCount;
-        uniform int64_t slice_17175 = m_12334;
-        int64_t gtid_15966 = SegMap_i_17174;
-        int64_t remnant_17176 = SegMap_i_17174 - gtid_15966;
-        uniform int64_t flat_tid_17166 = (int64_t) 0;
-        struct futhark_mc_task_18468 futhark_mc_task_18468_;
+    for (uniform int64_t i = 0; i < (start_17188 + n_17190 - start_17188) / programCount; i++) {
+        int64_t SegMap_i_17191 = start_17188 + programIndex + i * programCount;
+        uniform int64_t slice_17192 = p_12353;
+        int64_t gtid_15983 = SegMap_i_17191;
+        int64_t remnant_17193 = SegMap_i_17191 - gtid_15983;
+        uniform int64_t flat_tid_17183 = (int64_t) 0;
+        struct futhark_mc_task_18485 futhark_mc_task_18485_;
         
-        futhark_mc_task_18468_.ctx = ctx;
-        futhark_mc_task_18468_.free_p_12335 = p_12335;
-        futhark_mc_task_18468_.free_gtid_15966 = gtid_15966;
-        futhark_mc_task_18468_.free_coefficientss_mem_17009 = coefficientss_mem_17009.mem;
-        futhark_mc_task_18468_.free_mem_17012 = mem_17012.mem;
-        futhark_mc_task_18468_.free_mem_17015 = mem_17015.mem;
-        futhark_mc_task_18468_.free_mem_17018 = mem_17018.mem;
+        futhark_mc_task_18485_.ctx = ctx;
+        futhark_mc_task_18485_.free_q_12354 = q_12354;
+        futhark_mc_task_18485_.free_gtid_15983 = gtid_15983;
+        futhark_mc_task_18485_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+        futhark_mc_task_18485_.free_mem_17029 = mem_17029.mem;
+        futhark_mc_task_18485_.free_mem_17032 = mem_17032.mem;
+        futhark_mc_task_18485_.free_mem_17035 = mem_17035.mem;
         #if ISPC
         
-        uniform struct futhark_mc_task_18468 aos_18479[programCount];
+        uniform struct futhark_mc_task_18485 aos_18496[programCount];
         
-        aos_18479[programIndex] = futhark_mc_task_18468_;
+        aos_18496[programIndex] = futhark_mc_task_18485_;
         foreach_active (i)
         if (err == 0)
-            err = futhark_mc_schedule_shim_18478(ctx, &aos_18479[i], extract(p_12335, i));
+            err = futhark_mc_schedule_shim_18495(ctx, &aos_18496[i], extract(q_12354, i));
         if (err != 0)
             unmasked { return err; }
         #else
-        err = futhark_mc_schedule_shim_18478(ctx, &futhark_mc_task_18468_, p_12335);
+        err = futhark_mc_schedule_shim_18495(ctx, &futhark_mc_task_18485_, q_12354);
         if (err != 0)
             goto cleanup;
         #endif
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove(mem_17061.mem + gtid_15966 * p_12335 * (int64_t) 8, mem_17012.mem + (int64_t) 0, p_12335 * (int64_t) 8);
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove(mem_17065.mem + gtid_15966 * p_12335 * (int64_t) 8, mem_17015.mem + (int64_t) 0, p_12335 * (int64_t) 8);
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove(mem_17069.mem + gtid_15966 * p_12335 * (int64_t) 8, mem_17018.mem + (int64_t) 0, p_12335 * (int64_t) 8);
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove(mem_17078.mem + gtid_15983 * q_12354 * (int64_t) 8, mem_17029.mem + (int64_t) 0, q_12354 * (int64_t) 8);
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove(mem_17082.mem + gtid_15983 * q_12354 * (int64_t) 8, mem_17032.mem + (int64_t) 0, q_12354 * (int64_t) 8);
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove(mem_17086.mem + gtid_15983 * q_12354 * (int64_t) 8, mem_17035.mem + (int64_t) 0, q_12354 * (int64_t) 8);
     }
-    if (programIndex < (start_17171 + n_17173 - start_17171) % programCount) {
-        int64_t SegMap_i_17174 = start_17171 + programIndex + (start_17171 + n_17173 - start_17171) / programCount * programCount;
-        uniform int64_t slice_17175 = m_12334;
-        int64_t gtid_15966 = SegMap_i_17174;
-        int64_t remnant_17176 = SegMap_i_17174 - gtid_15966;
-        uniform int64_t flat_tid_17166 = (int64_t) 0;
-        struct futhark_mc_task_18468 futhark_mc_task_18468_;
+    if (programIndex < (start_17188 + n_17190 - start_17188) % programCount) {
+        int64_t SegMap_i_17191 = start_17188 + programIndex + (start_17188 + n_17190 - start_17188) / programCount * programCount;
+        uniform int64_t slice_17192 = p_12353;
+        int64_t gtid_15983 = SegMap_i_17191;
+        int64_t remnant_17193 = SegMap_i_17191 - gtid_15983;
+        uniform int64_t flat_tid_17183 = (int64_t) 0;
+        struct futhark_mc_task_18485 futhark_mc_task_18485_;
         
-        futhark_mc_task_18468_.ctx = ctx;
-        futhark_mc_task_18468_.free_p_12335 = p_12335;
-        futhark_mc_task_18468_.free_gtid_15966 = gtid_15966;
-        futhark_mc_task_18468_.free_coefficientss_mem_17009 = coefficientss_mem_17009.mem;
-        futhark_mc_task_18468_.free_mem_17012 = mem_17012.mem;
-        futhark_mc_task_18468_.free_mem_17015 = mem_17015.mem;
-        futhark_mc_task_18468_.free_mem_17018 = mem_17018.mem;
+        futhark_mc_task_18485_.ctx = ctx;
+        futhark_mc_task_18485_.free_q_12354 = q_12354;
+        futhark_mc_task_18485_.free_gtid_15983 = gtid_15983;
+        futhark_mc_task_18485_.free_coefficientss_mem_17026 = coefficientss_mem_17026.mem;
+        futhark_mc_task_18485_.free_mem_17029 = mem_17029.mem;
+        futhark_mc_task_18485_.free_mem_17032 = mem_17032.mem;
+        futhark_mc_task_18485_.free_mem_17035 = mem_17035.mem;
         #if ISPC
         
-        uniform struct futhark_mc_task_18468 aos_18479[programCount];
+        uniform struct futhark_mc_task_18485 aos_18496[programCount];
         
-        aos_18479[programIndex] = futhark_mc_task_18468_;
+        aos_18496[programIndex] = futhark_mc_task_18485_;
         foreach_active (i)
         if (err == 0)
-            err = futhark_mc_schedule_shim_18478(ctx, &aos_18479[i], extract(p_12335, i));
+            err = futhark_mc_schedule_shim_18495(ctx, &aos_18496[i], extract(q_12354, i));
         if (err != 0)
             unmasked { return err; }
         #else
-        err = futhark_mc_schedule_shim_18478(ctx, &futhark_mc_task_18468_, p_12335);
+        err = futhark_mc_schedule_shim_18495(ctx, &futhark_mc_task_18485_, q_12354);
         if (err != 0)
             goto cleanup;
         #endif
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove(mem_17061.mem + gtid_15966 * p_12335 * (int64_t) 8, mem_17012.mem + (int64_t) 0, p_12335 * (int64_t) 8);
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove(mem_17065.mem + gtid_15966 * p_12335 * (int64_t) 8, mem_17015.mem + (int64_t) 0, p_12335 * (int64_t) 8);
-        if (p_12335 * (int64_t) 8 > 0)
-            memmove(mem_17069.mem + gtid_15966 * p_12335 * (int64_t) 8, mem_17018.mem + (int64_t) 0, p_12335 * (int64_t) 8);
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove(mem_17078.mem + gtid_15983 * q_12354 * (int64_t) 8, mem_17029.mem + (int64_t) 0, q_12354 * (int64_t) 8);
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove(mem_17082.mem + gtid_15983 * q_12354 * (int64_t) 8, mem_17032.mem + (int64_t) 0, q_12354 * (int64_t) 8);
+        if (q_12354 * (int64_t) 8 > 0)
+            memmove(mem_17086.mem + gtid_15983 * q_12354 * (int64_t) 8, mem_17035.mem + (int64_t) 0, q_12354 * (int64_t) 8);
     }
-    *futhark_mc_mem_struct_18480_->mem_17018 = mem_17018;
-    *futhark_mc_mem_struct_18480_->mem_17015 = mem_17015;
-    *futhark_mc_mem_struct_18480_->mem_17012 = mem_17012;
+    *futhark_mc_mem_struct_18497_->mem_17035 = mem_17035;
+    *futhark_mc_mem_struct_18497_->mem_17032 = mem_17032;
+    *futhark_mc_mem_struct_18497_->mem_17029 = mem_17029;
     return err;
 }
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18486();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18487();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18488();
-export uniform int futhark_mc_loop_ispc_18460(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18459 *uniform futhark_mc_param_struct_18459_)
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18503();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18504();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18505();
+export uniform int futhark_mc_loop_ispc_18477(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18476 *uniform futhark_mc_param_struct_18476_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18459_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18459_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18459_->free_p_12335;
-    uniform struct memblock coefficientss_mem_17009;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18476_->ctx;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18476_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18476_->free_q_12354;
+    uniform struct memblock coefficientss_mem_17026;
     
-    coefficientss_mem_17009.desc = futhark_mc_strlit_shim_18461();
-    coefficientss_mem_17009.mem = futhark_mc_param_struct_18459_->free_coefficientss_mem_17009;
-    coefficientss_mem_17009.size = 0;
-    coefficientss_mem_17009.references = NULL;
+    coefficientss_mem_17026.desc = futhark_mc_strlit_shim_18478();
+    coefficientss_mem_17026.mem = futhark_mc_param_struct_18476_->free_coefficientss_mem_17026;
+    coefficientss_mem_17026.size = 0;
+    coefficientss_mem_17026.references = NULL;
     
-    uniform int64_t bytes_17011 = futhark_mc_param_struct_18459_->free_bytes_17011;
-    uniform struct memblock mem_17061;
+    uniform int64_t bytes_17028 = futhark_mc_param_struct_18476_->free_bytes_17028;
+    uniform struct memblock mem_17078;
     
-    mem_17061.desc = futhark_mc_strlit_shim_18462();
-    mem_17061.mem = futhark_mc_param_struct_18459_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
+    mem_17078.desc = futhark_mc_strlit_shim_18479();
+    mem_17078.mem = futhark_mc_param_struct_18476_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
     
-    uniform struct memblock mem_17065;
+    uniform struct memblock mem_17082;
     
-    mem_17065.desc = futhark_mc_strlit_shim_18463();
-    mem_17065.mem = futhark_mc_param_struct_18459_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
+    mem_17082.desc = futhark_mc_strlit_shim_18480();
+    mem_17082.mem = futhark_mc_param_struct_18476_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
     
-    uniform struct memblock mem_17069;
+    uniform struct memblock mem_17086;
     
-    mem_17069.desc = futhark_mc_strlit_shim_18464();
-    mem_17069.mem = futhark_mc_param_struct_18459_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
+    mem_17086.desc = futhark_mc_strlit_shim_18481();
+    mem_17086.mem = futhark_mc_param_struct_18476_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
     
-    struct memblock mem_17018;
+    struct memblock mem_17035;
     
-    mem_17018.references = NULL;
+    mem_17035.references = NULL;
     
-    struct memblock mem_17015;
+    struct memblock mem_17032;
     
-    mem_17015.references = NULL;
+    mem_17032.references = NULL;
     
-    struct memblock mem_17012;
+    struct memblock mem_17029;
     
-    mem_17012.references = NULL;
+    mem_17029.references = NULL;
     
-    uniform struct futhark_mc_mem_struct_18480 futhark_mc_mem_struct_18480_;
+    uniform struct futhark_mc_mem_struct_18497 futhark_mc_mem_struct_18497_;
     
-    futhark_mc_mem_struct_18480_.mem_17018 = &mem_17018;
-    futhark_mc_mem_struct_18480_.mem_17015 = &mem_17015;
-    futhark_mc_mem_struct_18480_.mem_17012 = &mem_17012;
+    futhark_mc_mem_struct_18497_.mem_17035 = &mem_17035;
+    futhark_mc_mem_struct_18497_.mem_17032 = &mem_17032;
+    futhark_mc_mem_struct_18497_.mem_17029 = &mem_17029;
     
-    uniform int err = futhark_mc_inner_ispc_18481(start, end, futhark_mc_param_struct_18459_, &futhark_mc_mem_struct_18480_);
+    uniform int err = futhark_mc_inner_ispc_18498(start, end, futhark_mc_param_struct_18476_, &futhark_mc_mem_struct_18497_);
     
-    mem_17018 = *futhark_mc_mem_struct_18480_.mem_17018;
-    mem_17015 = *futhark_mc_mem_struct_18480_.mem_17015;
-    mem_17012 = *futhark_mc_mem_struct_18480_.mem_17012;
+    mem_17035 = *futhark_mc_mem_struct_18497_.mem_17035;
+    mem_17032 = *futhark_mc_mem_struct_18497_.mem_17032;
+    mem_17029 = *futhark_mc_mem_struct_18497_.mem_17029;
     
   cleanup:
     {
-        if (memblock_unref(ctx, &mem_17018, futhark_mc_strlit_shim_18486()) != 0)
+        if (memblock_unref(ctx, &mem_17035, futhark_mc_strlit_shim_18503()) != 0)
             unmasked { return 1; }
-        if (memblock_unref(ctx, &mem_17015, futhark_mc_strlit_shim_18487()) != 0)
+        if (memblock_unref(ctx, &mem_17032, futhark_mc_strlit_shim_18504()) != 0)
             unmasked { return 1; }
-        if (memblock_unref(ctx, &mem_17012, futhark_mc_strlit_shim_18488()) != 0)
+        if (memblock_unref(ctx, &mem_17029, futhark_mc_strlit_shim_18505()) != 0)
             unmasked { return 1; }
     }
     return err;
 }
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18489(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18431 *uniform args, uniform int iterations);
-struct futhark_mc_task_18491 {
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18506(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18448 *uniform args, uniform int iterations);
+struct futhark_mc_task_18508 {
     struct futhark_context *ctx;
-    int64_t free_n_12333;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    unsigned char *free_zzinvs_mem_17006;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    int64_t free_bytes_17076;
-    int64_t free_bytes_17079;
-    unsigned char *free_mem_17143;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    int64_t free_bytes_17096;
+    unsigned char *free_mem_17160;
 };
-struct futhark_mc_param_struct_18500 {
+struct futhark_mc_param_struct_18517 {
     struct futhark_context *ctx;
-    int64_t free_n_12333;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    unsigned char *free_zzinvs_mem_17006;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    int64_t free_bytes_17076;
-    int64_t free_bytes_17079;
-    unsigned char *free_mem_17143;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    int64_t free_bytes_17096;
+    unsigned char *free_mem_17160;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18507();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18508();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18509();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18510();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18511();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18512();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18513();
-struct futhark_mc_mem_struct_18517 {
-    varying unsigned char *uniform mem_17080;
-    varying size_t mem_17080_cached_sizze_18502;
-    varying unsigned char *uniform mem_17083;
-    varying size_t mem_17083_cached_sizze_18503;
-    varying unsigned char *uniform mem_17086;
-    varying size_t mem_17086_cached_sizze_18504;
-    varying unsigned char *uniform mem_17120;
-    varying size_t mem_17120_cached_sizze_18505;
-    varying unsigned char *uniform mem_17130;
-    varying size_t mem_17130_cached_sizze_18506;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18519();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18520();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18521();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18522();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18523();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18524();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18525();
-static unmasked inline uniform int futhark_mc_inner_ispc_18518(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18500 *uniform futhark_mc_param_struct_18500_, uniform struct futhark_mc_mem_struct_18517 *uniform futhark_mc_mem_struct_18517_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18500_->ctx;
-    uniform int64_t n_12333 = futhark_mc_param_struct_18500_->free_n_12333;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18500_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18500_->free_p_12335;
-    uniform struct memblock zzinvs_mem_17006;
-    
-    zzinvs_mem_17006.desc = futhark_mc_strlit_shim_18519();
-    zzinvs_mem_17006.mem = futhark_mc_param_struct_18500_->free_zzinvs_mem_17006;
-    zzinvs_mem_17006.size = 0;
-    zzinvs_mem_17006.references = NULL;
-    
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18520();
-    eps_mem_17007.mem = futhark_mc_param_struct_18500_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18521();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18500_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18522();
-    mem_17061.mem = futhark_mc_param_struct_18500_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18523();
-    mem_17065.mem = futhark_mc_param_struct_18500_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18524();
-    mem_17069.mem = futhark_mc_param_struct_18500_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform int64_t bytes_17076 = futhark_mc_param_struct_18500_->free_bytes_17076;
-    uniform int64_t bytes_17079 = futhark_mc_param_struct_18500_->free_bytes_17079;
-    uniform struct memblock mem_17143;
-    
-    mem_17143.desc = futhark_mc_strlit_shim_18525();
-    mem_17143.mem = futhark_mc_param_struct_18500_->free_mem_17143;
-    mem_17143.size = 0;
-    mem_17143.references = NULL;
-    
-    varying unsigned char *uniform mem_17080 = futhark_mc_mem_struct_18517_->mem_17080;
-    size_t mem_17080_cached_sizze_18502 = futhark_mc_mem_struct_18517_->mem_17080_cached_sizze_18502;
-    varying unsigned char *uniform mem_17083 = futhark_mc_mem_struct_18517_->mem_17083;
-    size_t mem_17083_cached_sizze_18503 = futhark_mc_mem_struct_18517_->mem_17083_cached_sizze_18503;
-    varying unsigned char *uniform mem_17086 = futhark_mc_mem_struct_18517_->mem_17086;
-    size_t mem_17086_cached_sizze_18504 = futhark_mc_mem_struct_18517_->mem_17086_cached_sizze_18504;
-    varying unsigned char *uniform mem_17120 = futhark_mc_mem_struct_18517_->mem_17120;
-    size_t mem_17120_cached_sizze_18505 = futhark_mc_mem_struct_18517_->mem_17120_cached_sizze_18505;
-    varying unsigned char *uniform mem_17130 = futhark_mc_mem_struct_18517_->mem_17130;
-    size_t mem_17130_cached_sizze_18506 = futhark_mc_mem_struct_18517_->mem_17130_cached_sizze_18506;
-    uniform int err = 0;
-    uniform int64_t start_17357;
-    uniform int64_t end_17358;
-    
-    start_17357 = start;
-    end_17358 = end;
-    
-    uniform int64_t n_17359 = end_17358 - start_17357;
-    
-    if (mem_17080_cached_sizze_18502 < bytes_17079) {
-        err = lexical_realloc(ctx, &mem_17080, &mem_17080_cached_sizze_18502, bytes_17079);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    if (mem_17083_cached_sizze_18503 < bytes_17079) {
-        err = lexical_realloc(ctx, &mem_17083, &mem_17083_cached_sizze_18503, bytes_17079);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    if (mem_17086_cached_sizze_18504 < bytes_17079) {
-        err = lexical_realloc(ctx, &mem_17086, &mem_17086_cached_sizze_18504, bytes_17079);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    if (mem_17120_cached_sizze_18505 < bytes_17076) {
-        err = lexical_realloc(ctx, &mem_17120, &mem_17120_cached_sizze_18505, bytes_17076);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    if (mem_17130_cached_sizze_18506 < (int64_t) 24) {
-        err = lexical_realloc(ctx, &mem_17130, &mem_17130_cached_sizze_18506, (int64_t) 24);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    foreach (SegMap_i_17360 = start_17357 ... start_17357 + n_17359)
-    {
-        uniform int64_t slice_17361 = n_12333;
-        int64_t gtid_15978 = SegMap_i_17360;
-        int64_t remnant_17362 = SegMap_i_17360 - gtid_15978;
-        int64_t defunc_0_f_res_15081;
-        
-        defunc_0_f_res_15081 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_15978 * (int64_t) 3];
-        
-        int64_t defunc_0_f_res_15082;
-        
-        defunc_0_f_res_15082 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_15978 * (int64_t) 3 + (int64_t) 1];
-        
-        int64_t defunc_0_f_res_15083;
-        
-        defunc_0_f_res_15083 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_15978 * (int64_t) 3 + (int64_t) 2];
-        for (uniform int64_t i_17185 = 0; i_17185 < m_12334; i_17185++) {
-            int64_t defunc_0_f_res_17189;
-            
-            defunc_0_f_res_17189 = ((int64_t *) eps_mem_17007.mem)[gtid_15978 * ((int64_t) 3 * m_12334) + i_17185 * (int64_t) 3];
-            
-            int64_t defunc_0_f_res_17190;
-            
-            defunc_0_f_res_17190 = ((int64_t *) eps_mem_17007.mem)[gtid_15978 * ((int64_t) 3 * m_12334) + i_17185 * (int64_t) 3 + (int64_t) 1];
-            
-            int64_t defunc_0_f_res_17191;
-            
-            defunc_0_f_res_17191 = ((int64_t *) eps_mem_17007.mem)[gtid_15978 * ((int64_t) 3 * m_12334) + i_17185 * (int64_t) 3 + (int64_t) 2];
-            ((varying int64_t *) mem_17080)[i_17185] = defunc_0_f_res_17189;
-            ((varying int64_t *) mem_17083)[i_17185] = defunc_0_f_res_17190;
-            ((varying int64_t *) mem_17086)[i_17185] = defunc_0_f_res_17191;
-        }
-        for (uniform int64_t i_17195 = 0; i_17195 < m_12334; i_17195++) {
-            int64_t defunc_0_f_res_17197;
-            int64_t defunc_0_f_res_17198;
-            int64_t defunc_0_f_res_17199;
-            int64_t redout_17201;
-            int64_t redout_17202;
-            int64_t redout_17203;
-            
-            redout_17201 = (int64_t) 0;
-            redout_17202 = (int64_t) 0;
-            redout_17203 = (int64_t) 0;
-            for (uniform int64_t i_17200 = 0; i_17200 < p_12335; i_17200++) {
-                uniform int64_t x_17204;
-                
-                x_17204 = ((int64_t *) mem_17061.mem)[i_17195 * p_12335 + i_17200];
-                
-                uniform int64_t x_17205;
-                
-                x_17205 = ((int64_t *) mem_17065.mem)[i_17195 * p_12335 + i_17200];
-                
-                uniform int64_t x_17206;
-                
-                x_17206 = ((int64_t *) mem_17069.mem)[i_17195 * p_12335 + i_17200];
-                
-                int64_t defunc_0_f_res_17207;
-                int64_t defunc_0_f_res_17208;
-                int64_t defunc_0_f_res_17209;
-                int64_t redout_17211;
-                int64_t redout_17212;
-                int64_t redout_17213;
-                
-                redout_17211 = (int64_t) 1;
-                redout_17212 = (int64_t) 0;
-                redout_17213 = (int64_t) 0;
-                for (uniform int64_t i_17210 = 0; i_17210 < m_12334; i_17210++) {
-                    uniform int64_t x_17214;
-                    
-                    x_17214 = ((int64_t *) expsss_mem_17008.mem)[i_17195 * (m_12334 * p_12335) + i_17200 * m_12334 + i_17210];
-                    
-                    int64_t x_17215;
-                    
-                    x_17215 = ((varying int64_t *) mem_17080)[i_17210];
-                    
-                    int64_t x_17216;
-                    
-                    x_17216 = ((varying int64_t *) mem_17083)[i_17210];
-                    
-                    int64_t x_17217;
-                    
-                    x_17217 = ((varying int64_t *) mem_17086)[i_17210];
-                    
-                    uniform bool loop_cond_17218 = ult64((int64_t) 0, x_17214);
-                    uniform bool mod_pow_u64_res_17219;
-                    int64_t mod_pow_u64_res_17220;
-                    int64_t mod_pow_u64_res_17221;
-                    int64_t mod_pow_u64_res_17222;
-                    uniform int64_t mod_pow_u64_res_17223;
-                    int64_t mod_pow_u64_res_17224;
-                    int64_t mod_pow_u64_res_17225;
-                    int64_t mod_pow_u64_res_17226;
-                    uniform bool loop_while_17227;
-                    int64_t x_17228;
-                    int64_t x_17229;
-                    int64_t x_17230;
-                    uniform int64_t i_17231;
-                    int64_t result_17232;
-                    int64_t result_17233;
-                    int64_t result_17234;
-                    
-                    loop_while_17227 = loop_cond_17218;
-                    x_17228 = x_17215;
-                    x_17229 = x_17216;
-                    x_17230 = x_17217;
-                    i_17231 = x_17214;
-                    result_17232 = (int64_t) 1;
-                    result_17233 = (int64_t) 0;
-                    result_17234 = (int64_t) 0;
-                    while (loop_while_17227) {
-                        uniform int64_t x_17235 = umod64(i_17231, (int64_t) 2);
-                        uniform bool cond_17236 = x_17235 == (int64_t) 1;
-                        int64_t loopres_17237;
-                        int64_t loopres_17238;
-                        int64_t loopres_17239;
-                        uniform int64_t loopres_17240;
-                        int64_t loopres_17241;
-                        int64_t loopres_17242;
-                        int64_t loopres_17243;
-                        
-                        if (cond_17236 == 1) {
-                            int64_t x_17244 = mul64(x_17228, x_17228);
-                            int64_t y_17245 = mul64(x_17229, x_17230);
-                            int64_t x_17246 = sub64(x_17244, y_17245);
-                            int64_t mul_res_17247 = sub64(x_17246, y_17245);
-                            int64_t x_17248 = mul64(x_17228, x_17229);
-                            int64_t x_17249 = add64(x_17248, x_17248);
-                            int64_t y_17250 = mul64(x_17230, x_17230);
-                            int64_t x_17251 = sub64(x_17249, y_17250);
-                            int64_t x_17252 = add64(y_17245, x_17251);
-                            int64_t mul_res_17253 = add64(y_17245, x_17252);
-                            int64_t x_17254 = mul64(x_17228, x_17230);
-                            int64_t y_17255 = mul64(x_17229, x_17229);
-                            int64_t x_17256 = add64(x_17254, y_17255);
-                            int64_t x_17257 = add64(x_17254, x_17256);
-                            int64_t mul_res_17258 = add64(y_17250, x_17257);
-                            uniform int64_t loopres_t_res_17259 = lshr64(i_17231, (int64_t) 1);
-                            int64_t x_17260 = mul64(x_17228, result_17232);
-                            int64_t y_17261 = mul64(x_17230, result_17233);
-                            int64_t x_17262 = sub64(x_17260, y_17261);
-                            int64_t y_17263 = mul64(x_17229, result_17234);
-                            int64_t mul_res_17264 = sub64(x_17262, y_17263);
-                            int64_t x_17265 = mul64(x_17229, result_17232);
-                            int64_t y_17266 = mul64(x_17228, result_17233);
-                            int64_t x_17267 = add64(x_17265, y_17266);
-                            int64_t y_17268 = mul64(x_17230, result_17234);
-                            int64_t x_17269 = sub64(x_17267, y_17268);
-                            int64_t x_17270 = add64(y_17261, x_17269);
-                            int64_t mul_res_17271 = add64(y_17263, x_17270);
-                            int64_t x_17272 = mul64(x_17230, result_17232);
-                            int64_t y_17273 = mul64(x_17229, result_17233);
-                            int64_t x_17274 = add64(x_17272, y_17273);
-                            int64_t y_17275 = mul64(x_17228, result_17234);
-                            int64_t x_17276 = add64(x_17274, y_17275);
-                            int64_t mul_res_17277 = add64(y_17268, x_17276);
-                            
-                            loopres_17237 = mul_res_17247;
-                            loopres_17238 = mul_res_17253;
-                            loopres_17239 = mul_res_17258;
-                            loopres_17240 = loopres_t_res_17259;
-                            loopres_17241 = mul_res_17264;
-                            loopres_17242 = mul_res_17271;
-                            loopres_17243 = mul_res_17277;
-                        } else {
-                            int64_t x_17278 = mul64(x_17228, x_17228);
-                            int64_t y_17279 = mul64(x_17229, x_17230);
-                            int64_t x_17280 = sub64(x_17278, y_17279);
-                            int64_t mul_res_17281 = sub64(x_17280, y_17279);
-                            int64_t x_17282 = mul64(x_17228, x_17229);
-                            int64_t x_17283 = add64(x_17282, x_17282);
-                            int64_t y_17284 = mul64(x_17230, x_17230);
-                            int64_t x_17285 = sub64(x_17283, y_17284);
-                            int64_t x_17286 = add64(y_17279, x_17285);
-                            int64_t mul_res_17287 = add64(y_17279, x_17286);
-                            int64_t x_17288 = mul64(x_17228, x_17230);
-                            int64_t y_17289 = mul64(x_17229, x_17229);
-                            int64_t x_17290 = add64(x_17288, y_17289);
-                            int64_t x_17291 = add64(x_17288, x_17290);
-                            int64_t mul_res_17292 = add64(y_17284, x_17291);
-                            uniform int64_t loopres_f_res_17293 = lshr64(i_17231, (int64_t) 1);
-                            
-                            loopres_17237 = mul_res_17281;
-                            loopres_17238 = mul_res_17287;
-                            loopres_17239 = mul_res_17292;
-                            loopres_17240 = loopres_f_res_17293;
-                            loopres_17241 = result_17232;
-                            loopres_17242 = result_17233;
-                            loopres_17243 = result_17234;
-                        }
-                        
-                        uniform bool loop_cond_17294 = ult64((int64_t) 0, loopres_17240);
-                        uniform bool loop_while_tmp_17373 = loop_cond_17294;
-                        int64_t x_tmp_17374 = loopres_17237;
-                        int64_t x_tmp_17375 = loopres_17238;
-                        int64_t x_tmp_17376 = loopres_17239;
-                        uniform int64_t i_tmp_17377 = loopres_17240;
-                        int64_t result_tmp_17378 = loopres_17241;
-                        int64_t result_tmp_17379 = loopres_17242;
-                        int64_t result_tmp_17380 = loopres_17243;
-                        
-                        loop_while_17227 = loop_while_tmp_17373;
-                        x_17228 = x_tmp_17374;
-                        x_17229 = x_tmp_17375;
-                        x_17230 = x_tmp_17376;
-                        i_17231 = i_tmp_17377;
-                        result_17232 = result_tmp_17378;
-                        result_17233 = result_tmp_17379;
-                        result_17234 = result_tmp_17380;
-                    }
-                    mod_pow_u64_res_17219 = loop_while_17227;
-                    mod_pow_u64_res_17220 = x_17228;
-                    mod_pow_u64_res_17221 = x_17229;
-                    mod_pow_u64_res_17222 = x_17230;
-                    mod_pow_u64_res_17223 = i_17231;
-                    mod_pow_u64_res_17224 = result_17232;
-                    mod_pow_u64_res_17225 = result_17233;
-                    mod_pow_u64_res_17226 = result_17234;
-                    
-                    int64_t x_17295 = mul64(mod_pow_u64_res_17224, redout_17211);
-                    int64_t y_17296 = mul64(mod_pow_u64_res_17225, redout_17213);
-                    int64_t x_17297 = sub64(x_17295, y_17296);
-                    int64_t y_17298 = mul64(mod_pow_u64_res_17226, redout_17212);
-                    int64_t defunc_1_op_res_17299 = sub64(x_17297, y_17298);
-                    int64_t x_17300 = mul64(mod_pow_u64_res_17224, redout_17212);
-                    int64_t y_17301 = mul64(mod_pow_u64_res_17225, redout_17211);
-                    int64_t x_17302 = add64(x_17300, y_17301);
-                    int64_t y_17303 = mul64(mod_pow_u64_res_17226, redout_17213);
-                    int64_t x_17304 = sub64(x_17302, y_17303);
-                    int64_t x_17305 = add64(y_17296, x_17304);
-                    int64_t defunc_1_op_res_17306 = add64(y_17298, x_17305);
-                    int64_t x_17307 = mul64(mod_pow_u64_res_17224, redout_17213);
-                    int64_t y_17308 = mul64(mod_pow_u64_res_17225, redout_17212);
-                    int64_t x_17309 = add64(x_17307, y_17308);
-                    int64_t y_17310 = mul64(mod_pow_u64_res_17226, redout_17211);
-                    int64_t x_17311 = add64(x_17309, y_17310);
-                    int64_t defunc_1_op_res_17312 = add64(y_17303, x_17311);
-                    int64_t redout_tmp_17370 = defunc_1_op_res_17299;
-                    int64_t redout_tmp_17371 = defunc_1_op_res_17306;
-                    int64_t redout_tmp_17372 = defunc_1_op_res_17312;
-                    
-                    redout_17211 = redout_tmp_17370;
-                    redout_17212 = redout_tmp_17371;
-                    redout_17213 = redout_tmp_17372;
-                }
-                defunc_0_f_res_17207 = redout_17211;
-                defunc_0_f_res_17208 = redout_17212;
-                defunc_0_f_res_17209 = redout_17213;
-                
-                int64_t x_17313 = mul64(x_17204, defunc_0_f_res_17207);
-                int64_t y_17314 = mul64(x_17206, defunc_0_f_res_17208);
-                int64_t x_17315 = sub64(x_17313, y_17314);
-                int64_t y_17316 = mul64(x_17205, defunc_0_f_res_17209);
-                int64_t mul_res_17317 = sub64(x_17315, y_17316);
-                int64_t x_17318 = mul64(x_17205, defunc_0_f_res_17207);
-                int64_t y_17319 = mul64(x_17204, defunc_0_f_res_17208);
-                int64_t x_17320 = add64(x_17318, y_17319);
-                int64_t y_17321 = mul64(x_17206, defunc_0_f_res_17209);
-                int64_t x_17322 = sub64(x_17320, y_17321);
-                int64_t x_17323 = add64(y_17314, x_17322);
-                int64_t mul_res_17324 = add64(y_17316, x_17323);
-                int64_t x_17325 = mul64(x_17206, defunc_0_f_res_17207);
-                int64_t y_17326 = mul64(x_17205, defunc_0_f_res_17208);
-                int64_t x_17327 = add64(x_17325, y_17326);
-                int64_t y_17328 = mul64(x_17204, defunc_0_f_res_17209);
-                int64_t x_17329 = add64(x_17327, y_17328);
-                int64_t mul_res_17330 = add64(y_17321, x_17329);
-                int64_t canonicalizze_arg_17331 = add64(mul_res_17317, redout_17201);
-                int64_t canonicalizze_res_17332 = umod64(canonicalizze_arg_17331, (int64_t) -4294967295);
-                int64_t canonicalizze_arg_17333 = add64(mul_res_17324, redout_17202);
-                int64_t canonicalizze_res_17334 = umod64(canonicalizze_arg_17333, (int64_t) -4294967295);
-                int64_t canonicalizze_arg_17335 = add64(mul_res_17330, redout_17203);
-                int64_t canonicalizze_res_17336 = umod64(canonicalizze_arg_17335, (int64_t) -4294967295);
-                int64_t redout_tmp_17367 = canonicalizze_res_17332;
-                int64_t redout_tmp_17368 = canonicalizze_res_17334;
-                int64_t redout_tmp_17369 = canonicalizze_res_17336;
-                
-                redout_17201 = redout_tmp_17367;
-                redout_17202 = redout_tmp_17368;
-                redout_17203 = redout_tmp_17369;
-            }
-            defunc_0_f_res_17197 = redout_17201;
-            defunc_0_f_res_17198 = redout_17202;
-            defunc_0_f_res_17199 = redout_17203;
-            
-            int64_t x_17337 = mul64(defunc_0_f_res_15081, defunc_0_f_res_17197);
-            int64_t y_17338 = mul64(defunc_0_f_res_15083, defunc_0_f_res_17198);
-            int64_t x_17339 = sub64(x_17337, y_17338);
-            int64_t y_17340 = mul64(defunc_0_f_res_15082, defunc_0_f_res_17199);
-            int64_t mul_res_17341 = sub64(x_17339, y_17340);
-            int64_t x_17342 = mul64(defunc_0_f_res_15082, defunc_0_f_res_17197);
-            int64_t y_17343 = mul64(defunc_0_f_res_15081, defunc_0_f_res_17198);
-            int64_t x_17344 = add64(x_17342, y_17343);
-            int64_t y_17345 = mul64(defunc_0_f_res_15083, defunc_0_f_res_17199);
-            int64_t x_17346 = sub64(x_17344, y_17345);
-            int64_t x_17347 = add64(y_17338, x_17346);
-            int64_t mul_res_17348 = add64(y_17340, x_17347);
-            int64_t x_17349 = mul64(defunc_0_f_res_15083, defunc_0_f_res_17197);
-            int64_t y_17350 = mul64(defunc_0_f_res_15082, defunc_0_f_res_17198);
-            int64_t x_17351 = add64(x_17349, y_17350);
-            int64_t y_17352 = mul64(defunc_0_f_res_15081, defunc_0_f_res_17199);
-            int64_t x_17353 = add64(x_17351, y_17352);
-            int64_t mul_res_17354 = add64(y_17345, x_17353);
-            uniform int64_t tmp_idx_18514 = (int64_t) 0;
-            
-            ((varying int64_t *) mem_17130)[tmp_idx_18514] = mul_res_17341;
-            
-            uniform int64_t tmp_idx_18515 = (int64_t) 1;
-            
-            ((varying int64_t *) mem_17130)[tmp_idx_18515] = mul_res_17348;
-            
-            uniform int64_t tmp_idx_18516 = (int64_t) 2;
-            
-            ((varying int64_t *) mem_17130)[tmp_idx_18516] = mul_res_17354;
-            if ((int64_t) 24 > 0)
-                memmove_64(mem_17120 + i_17195 * (int64_t) 3 * (int64_t) 8, mem_17130 + (int64_t) 0, extract((int64_t) 24, 0));
-        }
-        if (m_12334 * (int64_t) 3 * (int64_t) 8 > 0)
-            memmove_64(mem_17143.mem + gtid_15978 * ((int64_t) 3 * m_12334) * (int64_t) 8, mem_17120 + (int64_t) 0, extract(m_12334 * (int64_t) 3 * (int64_t) 8, 0));
-    }
-    futhark_mc_mem_struct_18517_->mem_17080 = mem_17080;
-    futhark_mc_mem_struct_18517_->mem_17080_cached_sizze_18502 = mem_17080_cached_sizze_18502;
-    futhark_mc_mem_struct_18517_->mem_17083 = mem_17083;
-    futhark_mc_mem_struct_18517_->mem_17083_cached_sizze_18503 = mem_17083_cached_sizze_18503;
-    futhark_mc_mem_struct_18517_->mem_17086 = mem_17086;
-    futhark_mc_mem_struct_18517_->mem_17086_cached_sizze_18504 = mem_17086_cached_sizze_18504;
-    futhark_mc_mem_struct_18517_->mem_17120 = mem_17120;
-    futhark_mc_mem_struct_18517_->mem_17120_cached_sizze_18505 = mem_17120_cached_sizze_18505;
-    futhark_mc_mem_struct_18517_->mem_17130 = mem_17130;
-    futhark_mc_mem_struct_18517_->mem_17130_cached_sizze_18506 = mem_17130_cached_sizze_18506;
-    return err;
-}
-export uniform int futhark_mc_loop_ispc_18501(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18500 *uniform futhark_mc_param_struct_18500_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18500_->ctx;
-    uniform int64_t n_12333 = futhark_mc_param_struct_18500_->free_n_12333;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18500_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18500_->free_p_12335;
-    uniform struct memblock zzinvs_mem_17006;
-    
-    zzinvs_mem_17006.desc = futhark_mc_strlit_shim_18507();
-    zzinvs_mem_17006.mem = futhark_mc_param_struct_18500_->free_zzinvs_mem_17006;
-    zzinvs_mem_17006.size = 0;
-    zzinvs_mem_17006.references = NULL;
-    
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18508();
-    eps_mem_17007.mem = futhark_mc_param_struct_18500_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18509();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18500_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18510();
-    mem_17061.mem = futhark_mc_param_struct_18500_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18511();
-    mem_17065.mem = futhark_mc_param_struct_18500_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18512();
-    mem_17069.mem = futhark_mc_param_struct_18500_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform int64_t bytes_17076 = futhark_mc_param_struct_18500_->free_bytes_17076;
-    uniform int64_t bytes_17079 = futhark_mc_param_struct_18500_->free_bytes_17079;
-    uniform struct memblock mem_17143;
-    
-    mem_17143.desc = futhark_mc_strlit_shim_18513();
-    mem_17143.mem = futhark_mc_param_struct_18500_->free_mem_17143;
-    mem_17143.size = 0;
-    mem_17143.references = NULL;
-    
-    size_t mem_17080_cached_sizze_18502 = 0;
-    varying unsigned char *uniform mem_17080 = NULL;
-    size_t mem_17083_cached_sizze_18503 = 0;
-    varying unsigned char *uniform mem_17083 = NULL;
-    size_t mem_17086_cached_sizze_18504 = 0;
-    varying unsigned char *uniform mem_17086 = NULL;
-    size_t mem_17120_cached_sizze_18505 = 0;
-    varying unsigned char *uniform mem_17120 = NULL;
-    size_t mem_17130_cached_sizze_18506 = 0;
-    varying unsigned char *uniform mem_17130 = NULL;
-    uniform struct futhark_mc_mem_struct_18517 futhark_mc_mem_struct_18517_;
-    
-    futhark_mc_mem_struct_18517_.mem_17080 = mem_17080;
-    futhark_mc_mem_struct_18517_.mem_17080_cached_sizze_18502 = mem_17080_cached_sizze_18502;
-    futhark_mc_mem_struct_18517_.mem_17083 = mem_17083;
-    futhark_mc_mem_struct_18517_.mem_17083_cached_sizze_18503 = mem_17083_cached_sizze_18503;
-    futhark_mc_mem_struct_18517_.mem_17086 = mem_17086;
-    futhark_mc_mem_struct_18517_.mem_17086_cached_sizze_18504 = mem_17086_cached_sizze_18504;
-    futhark_mc_mem_struct_18517_.mem_17120 = mem_17120;
-    futhark_mc_mem_struct_18517_.mem_17120_cached_sizze_18505 = mem_17120_cached_sizze_18505;
-    futhark_mc_mem_struct_18517_.mem_17130 = mem_17130;
-    futhark_mc_mem_struct_18517_.mem_17130_cached_sizze_18506 = mem_17130_cached_sizze_18506;
-    
-    uniform int err = futhark_mc_inner_ispc_18518(start, end, futhark_mc_param_struct_18500_, &futhark_mc_mem_struct_18517_);
-    
-    mem_17080 = futhark_mc_mem_struct_18517_.mem_17080;
-    mem_17080_cached_sizze_18502 = futhark_mc_mem_struct_18517_.mem_17080_cached_sizze_18502;
-    mem_17083 = futhark_mc_mem_struct_18517_.mem_17083;
-    mem_17083_cached_sizze_18503 = futhark_mc_mem_struct_18517_.mem_17083_cached_sizze_18503;
-    mem_17086 = futhark_mc_mem_struct_18517_.mem_17086;
-    mem_17086_cached_sizze_18504 = futhark_mc_mem_struct_18517_.mem_17086_cached_sizze_18504;
-    mem_17120 = futhark_mc_mem_struct_18517_.mem_17120;
-    mem_17120_cached_sizze_18505 = futhark_mc_mem_struct_18517_.mem_17120_cached_sizze_18505;
-    mem_17130 = futhark_mc_mem_struct_18517_.mem_17130;
-    mem_17130_cached_sizze_18506 = futhark_mc_mem_struct_18517_.mem_17130_cached_sizze_18506;
-    
-  cleanup:
-    {
-        free(mem_17080);
-        free(mem_17083);
-        free(mem_17086);
-        free(mem_17120);
-        free(mem_17130);
-    }
-    return err;
-}
-struct futhark_mc_param_struct_18530 {
-    struct futhark_context *ctx;
-    int64_t free_n_12333;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    unsigned char *free_zzinvs_mem_17006;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    int64_t free_bytes_17076;
-    unsigned char *free_mem_17143;
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18526();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18527();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18528();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18529();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18530();
+struct futhark_mc_mem_struct_18534 {
+    varying unsigned char *uniform mem_17097;
+    varying size_t mem_17097_cached_sizze_18519;
+    varying unsigned char *uniform mem_17100;
+    varying size_t mem_17100_cached_sizze_18520;
+    varying unsigned char *uniform mem_17103;
+    varying size_t mem_17103_cached_sizze_18521;
+    varying unsigned char *uniform mem_17137;
+    varying size_t mem_17137_cached_sizze_18522;
+    varying unsigned char *uniform mem_17147;
+    varying size_t mem_17147_cached_sizze_18523;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18532();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18533();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18534();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18535();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18536();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18537();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18538();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18539();
-struct futhark_mc_task_18540 {
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18540();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18541();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18542();
+static unmasked inline uniform int futhark_mc_inner_ispc_18535(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18517 *uniform futhark_mc_param_struct_18517_, uniform struct futhark_mc_mem_struct_18534 *uniform futhark_mc_mem_struct_18534_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18517_->ctx;
+    uniform int64_t n_12351 = futhark_mc_param_struct_18517_->free_n_12351;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18517_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18517_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18517_->free_q_12354;
+    uniform struct memblock zzinvs_mem_17023;
+    
+    zzinvs_mem_17023.desc = futhark_mc_strlit_shim_18536();
+    zzinvs_mem_17023.mem = futhark_mc_param_struct_18517_->free_zzinvs_mem_17023;
+    zzinvs_mem_17023.size = 0;
+    zzinvs_mem_17023.references = NULL;
+    
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18537();
+    eps_mem_17024.mem = futhark_mc_param_struct_18517_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18538();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18517_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18539();
+    mem_17078.mem = futhark_mc_param_struct_18517_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18540();
+    mem_17082.mem = futhark_mc_param_struct_18517_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18541();
+    mem_17086.mem = futhark_mc_param_struct_18517_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform int64_t bytes_17093 = futhark_mc_param_struct_18517_->free_bytes_17093;
+    uniform int64_t bytes_17096 = futhark_mc_param_struct_18517_->free_bytes_17096;
+    uniform struct memblock mem_17160;
+    
+    mem_17160.desc = futhark_mc_strlit_shim_18542();
+    mem_17160.mem = futhark_mc_param_struct_18517_->free_mem_17160;
+    mem_17160.size = 0;
+    mem_17160.references = NULL;
+    
+    varying unsigned char *uniform mem_17097 = futhark_mc_mem_struct_18534_->mem_17097;
+    size_t mem_17097_cached_sizze_18519 = futhark_mc_mem_struct_18534_->mem_17097_cached_sizze_18519;
+    varying unsigned char *uniform mem_17100 = futhark_mc_mem_struct_18534_->mem_17100;
+    size_t mem_17100_cached_sizze_18520 = futhark_mc_mem_struct_18534_->mem_17100_cached_sizze_18520;
+    varying unsigned char *uniform mem_17103 = futhark_mc_mem_struct_18534_->mem_17103;
+    size_t mem_17103_cached_sizze_18521 = futhark_mc_mem_struct_18534_->mem_17103_cached_sizze_18521;
+    varying unsigned char *uniform mem_17137 = futhark_mc_mem_struct_18534_->mem_17137;
+    size_t mem_17137_cached_sizze_18522 = futhark_mc_mem_struct_18534_->mem_17137_cached_sizze_18522;
+    varying unsigned char *uniform mem_17147 = futhark_mc_mem_struct_18534_->mem_17147;
+    size_t mem_17147_cached_sizze_18523 = futhark_mc_mem_struct_18534_->mem_17147_cached_sizze_18523;
+    uniform int err = 0;
+    uniform int64_t start_17374;
+    uniform int64_t end_17375;
+    
+    start_17374 = start;
+    end_17375 = end;
+    
+    uniform int64_t n_17376 = end_17375 - start_17374;
+    
+    if (mem_17097_cached_sizze_18519 < bytes_17096) {
+        err = lexical_realloc(ctx, &mem_17097, &mem_17097_cached_sizze_18519, bytes_17096);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    if (mem_17100_cached_sizze_18520 < bytes_17096) {
+        err = lexical_realloc(ctx, &mem_17100, &mem_17100_cached_sizze_18520, bytes_17096);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    if (mem_17103_cached_sizze_18521 < bytes_17096) {
+        err = lexical_realloc(ctx, &mem_17103, &mem_17103_cached_sizze_18521, bytes_17096);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    if (mem_17137_cached_sizze_18522 < bytes_17093) {
+        err = lexical_realloc(ctx, &mem_17137, &mem_17137_cached_sizze_18522, bytes_17093);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    if (mem_17147_cached_sizze_18523 < (int64_t) 24) {
+        err = lexical_realloc(ctx, &mem_17147, &mem_17147_cached_sizze_18523, (int64_t) 24);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    foreach (SegMap_i_17377 = start_17374 ... start_17374 + n_17376)
+    {
+        uniform int64_t slice_17378 = n_12351;
+        int64_t gtid_15995 = SegMap_i_17377;
+        int64_t remnant_17379 = SegMap_i_17377 - gtid_15995;
+        int64_t defunc_0_f_res_15098;
+        
+        defunc_0_f_res_15098 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_15995 * (int64_t) 3];
+        
+        int64_t defunc_0_f_res_15099;
+        
+        defunc_0_f_res_15099 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_15995 * (int64_t) 3 + (int64_t) 1];
+        
+        int64_t defunc_0_f_res_15100;
+        
+        defunc_0_f_res_15100 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_15995 * (int64_t) 3 + (int64_t) 2];
+        for (uniform int64_t i_17202 = 0; i_17202 < m_12352; i_17202++) {
+            int64_t defunc_0_f_res_17206;
+            
+            defunc_0_f_res_17206 = ((int64_t *) eps_mem_17024.mem)[gtid_15995 * ((int64_t) 3 * m_12352) + i_17202 * (int64_t) 3];
+            
+            int64_t defunc_0_f_res_17207;
+            
+            defunc_0_f_res_17207 = ((int64_t *) eps_mem_17024.mem)[gtid_15995 * ((int64_t) 3 * m_12352) + i_17202 * (int64_t) 3 + (int64_t) 1];
+            
+            int64_t defunc_0_f_res_17208;
+            
+            defunc_0_f_res_17208 = ((int64_t *) eps_mem_17024.mem)[gtid_15995 * ((int64_t) 3 * m_12352) + i_17202 * (int64_t) 3 + (int64_t) 2];
+            ((varying int64_t *) mem_17097)[i_17202] = defunc_0_f_res_17206;
+            ((varying int64_t *) mem_17100)[i_17202] = defunc_0_f_res_17207;
+            ((varying int64_t *) mem_17103)[i_17202] = defunc_0_f_res_17208;
+        }
+        for (uniform int64_t i_17212 = 0; i_17212 < p_12353; i_17212++) {
+            int64_t defunc_0_f_res_17214;
+            int64_t defunc_0_f_res_17215;
+            int64_t defunc_0_f_res_17216;
+            int64_t redout_17218;
+            int64_t redout_17219;
+            int64_t redout_17220;
+            
+            redout_17218 = (int64_t) 0;
+            redout_17219 = (int64_t) 0;
+            redout_17220 = (int64_t) 0;
+            for (uniform int64_t i_17217 = 0; i_17217 < q_12354; i_17217++) {
+                uniform int64_t x_17221;
+                
+                x_17221 = ((int64_t *) mem_17078.mem)[i_17212 * q_12354 + i_17217];
+                
+                uniform int64_t x_17222;
+                
+                x_17222 = ((int64_t *) mem_17082.mem)[i_17212 * q_12354 + i_17217];
+                
+                uniform int64_t x_17223;
+                
+                x_17223 = ((int64_t *) mem_17086.mem)[i_17212 * q_12354 + i_17217];
+                
+                int64_t defunc_0_f_res_17224;
+                int64_t defunc_0_f_res_17225;
+                int64_t defunc_0_f_res_17226;
+                int64_t redout_17228;
+                int64_t redout_17229;
+                int64_t redout_17230;
+                
+                redout_17228 = (int64_t) 1;
+                redout_17229 = (int64_t) 0;
+                redout_17230 = (int64_t) 0;
+                for (uniform int64_t i_17227 = 0; i_17227 < m_12352; i_17227++) {
+                    uniform int64_t x_17231;
+                    
+                    x_17231 = ((int64_t *) expsss_mem_17025.mem)[i_17212 * (m_12352 * q_12354) + i_17217 * m_12352 + i_17227];
+                    
+                    int64_t x_17232;
+                    
+                    x_17232 = ((varying int64_t *) mem_17097)[i_17227];
+                    
+                    int64_t x_17233;
+                    
+                    x_17233 = ((varying int64_t *) mem_17100)[i_17227];
+                    
+                    int64_t x_17234;
+                    
+                    x_17234 = ((varying int64_t *) mem_17103)[i_17227];
+                    
+                    uniform bool loop_cond_17235 = ult64((int64_t) 0, x_17231);
+                    uniform bool mod_pow_u64_res_17236;
+                    int64_t mod_pow_u64_res_17237;
+                    int64_t mod_pow_u64_res_17238;
+                    int64_t mod_pow_u64_res_17239;
+                    uniform int64_t mod_pow_u64_res_17240;
+                    int64_t mod_pow_u64_res_17241;
+                    int64_t mod_pow_u64_res_17242;
+                    int64_t mod_pow_u64_res_17243;
+                    uniform bool loop_while_17244;
+                    int64_t x_17245;
+                    int64_t x_17246;
+                    int64_t x_17247;
+                    uniform int64_t i_17248;
+                    int64_t result_17249;
+                    int64_t result_17250;
+                    int64_t result_17251;
+                    
+                    loop_while_17244 = loop_cond_17235;
+                    x_17245 = x_17232;
+                    x_17246 = x_17233;
+                    x_17247 = x_17234;
+                    i_17248 = x_17231;
+                    result_17249 = (int64_t) 1;
+                    result_17250 = (int64_t) 0;
+                    result_17251 = (int64_t) 0;
+                    while (loop_while_17244) {
+                        uniform int64_t x_17252 = umod64(i_17248, (int64_t) 2);
+                        uniform bool cond_17253 = x_17252 == (int64_t) 1;
+                        int64_t loopres_17254;
+                        int64_t loopres_17255;
+                        int64_t loopres_17256;
+                        uniform int64_t loopres_17257;
+                        int64_t loopres_17258;
+                        int64_t loopres_17259;
+                        int64_t loopres_17260;
+                        
+                        if (cond_17253 == 1) {
+                            int64_t x_17261 = mul64(x_17245, x_17245);
+                            int64_t y_17262 = mul64(x_17246, x_17247);
+                            int64_t x_17263 = sub64(x_17261, y_17262);
+                            int64_t mul_res_17264 = sub64(x_17263, y_17262);
+                            int64_t x_17265 = mul64(x_17245, x_17246);
+                            int64_t x_17266 = add64(x_17265, x_17265);
+                            int64_t y_17267 = mul64(x_17247, x_17247);
+                            int64_t x_17268 = sub64(x_17266, y_17267);
+                            int64_t x_17269 = add64(y_17262, x_17268);
+                            int64_t mul_res_17270 = add64(y_17262, x_17269);
+                            int64_t x_17271 = mul64(x_17245, x_17247);
+                            int64_t y_17272 = mul64(x_17246, x_17246);
+                            int64_t x_17273 = add64(x_17271, y_17272);
+                            int64_t x_17274 = add64(x_17271, x_17273);
+                            int64_t mul_res_17275 = add64(y_17267, x_17274);
+                            uniform int64_t loopres_t_res_17276 = lshr64(i_17248, (int64_t) 1);
+                            int64_t x_17277 = mul64(x_17245, result_17249);
+                            int64_t y_17278 = mul64(x_17247, result_17250);
+                            int64_t x_17279 = sub64(x_17277, y_17278);
+                            int64_t y_17280 = mul64(x_17246, result_17251);
+                            int64_t mul_res_17281 = sub64(x_17279, y_17280);
+                            int64_t x_17282 = mul64(x_17246, result_17249);
+                            int64_t y_17283 = mul64(x_17245, result_17250);
+                            int64_t x_17284 = add64(x_17282, y_17283);
+                            int64_t y_17285 = mul64(x_17247, result_17251);
+                            int64_t x_17286 = sub64(x_17284, y_17285);
+                            int64_t x_17287 = add64(y_17278, x_17286);
+                            int64_t mul_res_17288 = add64(y_17280, x_17287);
+                            int64_t x_17289 = mul64(x_17247, result_17249);
+                            int64_t y_17290 = mul64(x_17246, result_17250);
+                            int64_t x_17291 = add64(x_17289, y_17290);
+                            int64_t y_17292 = mul64(x_17245, result_17251);
+                            int64_t x_17293 = add64(x_17291, y_17292);
+                            int64_t mul_res_17294 = add64(y_17285, x_17293);
+                            
+                            loopres_17254 = mul_res_17264;
+                            loopres_17255 = mul_res_17270;
+                            loopres_17256 = mul_res_17275;
+                            loopres_17257 = loopres_t_res_17276;
+                            loopres_17258 = mul_res_17281;
+                            loopres_17259 = mul_res_17288;
+                            loopres_17260 = mul_res_17294;
+                        } else {
+                            int64_t x_17295 = mul64(x_17245, x_17245);
+                            int64_t y_17296 = mul64(x_17246, x_17247);
+                            int64_t x_17297 = sub64(x_17295, y_17296);
+                            int64_t mul_res_17298 = sub64(x_17297, y_17296);
+                            int64_t x_17299 = mul64(x_17245, x_17246);
+                            int64_t x_17300 = add64(x_17299, x_17299);
+                            int64_t y_17301 = mul64(x_17247, x_17247);
+                            int64_t x_17302 = sub64(x_17300, y_17301);
+                            int64_t x_17303 = add64(y_17296, x_17302);
+                            int64_t mul_res_17304 = add64(y_17296, x_17303);
+                            int64_t x_17305 = mul64(x_17245, x_17247);
+                            int64_t y_17306 = mul64(x_17246, x_17246);
+                            int64_t x_17307 = add64(x_17305, y_17306);
+                            int64_t x_17308 = add64(x_17305, x_17307);
+                            int64_t mul_res_17309 = add64(y_17301, x_17308);
+                            uniform int64_t loopres_f_res_17310 = lshr64(i_17248, (int64_t) 1);
+                            
+                            loopres_17254 = mul_res_17298;
+                            loopres_17255 = mul_res_17304;
+                            loopres_17256 = mul_res_17309;
+                            loopres_17257 = loopres_f_res_17310;
+                            loopres_17258 = result_17249;
+                            loopres_17259 = result_17250;
+                            loopres_17260 = result_17251;
+                        }
+                        
+                        uniform bool loop_cond_17311 = ult64((int64_t) 0, loopres_17257);
+                        uniform bool loop_while_tmp_17390 = loop_cond_17311;
+                        int64_t x_tmp_17391 = loopres_17254;
+                        int64_t x_tmp_17392 = loopres_17255;
+                        int64_t x_tmp_17393 = loopres_17256;
+                        uniform int64_t i_tmp_17394 = loopres_17257;
+                        int64_t result_tmp_17395 = loopres_17258;
+                        int64_t result_tmp_17396 = loopres_17259;
+                        int64_t result_tmp_17397 = loopres_17260;
+                        
+                        loop_while_17244 = loop_while_tmp_17390;
+                        x_17245 = x_tmp_17391;
+                        x_17246 = x_tmp_17392;
+                        x_17247 = x_tmp_17393;
+                        i_17248 = i_tmp_17394;
+                        result_17249 = result_tmp_17395;
+                        result_17250 = result_tmp_17396;
+                        result_17251 = result_tmp_17397;
+                    }
+                    mod_pow_u64_res_17236 = loop_while_17244;
+                    mod_pow_u64_res_17237 = x_17245;
+                    mod_pow_u64_res_17238 = x_17246;
+                    mod_pow_u64_res_17239 = x_17247;
+                    mod_pow_u64_res_17240 = i_17248;
+                    mod_pow_u64_res_17241 = result_17249;
+                    mod_pow_u64_res_17242 = result_17250;
+                    mod_pow_u64_res_17243 = result_17251;
+                    
+                    int64_t x_17312 = mul64(mod_pow_u64_res_17241, redout_17228);
+                    int64_t y_17313 = mul64(mod_pow_u64_res_17242, redout_17230);
+                    int64_t x_17314 = sub64(x_17312, y_17313);
+                    int64_t y_17315 = mul64(mod_pow_u64_res_17243, redout_17229);
+                    int64_t defunc_1_op_res_17316 = sub64(x_17314, y_17315);
+                    int64_t x_17317 = mul64(mod_pow_u64_res_17241, redout_17229);
+                    int64_t y_17318 = mul64(mod_pow_u64_res_17242, redout_17228);
+                    int64_t x_17319 = add64(x_17317, y_17318);
+                    int64_t y_17320 = mul64(mod_pow_u64_res_17243, redout_17230);
+                    int64_t x_17321 = sub64(x_17319, y_17320);
+                    int64_t x_17322 = add64(y_17313, x_17321);
+                    int64_t defunc_1_op_res_17323 = add64(y_17315, x_17322);
+                    int64_t x_17324 = mul64(mod_pow_u64_res_17241, redout_17230);
+                    int64_t y_17325 = mul64(mod_pow_u64_res_17242, redout_17229);
+                    int64_t x_17326 = add64(x_17324, y_17325);
+                    int64_t y_17327 = mul64(mod_pow_u64_res_17243, redout_17228);
+                    int64_t x_17328 = add64(x_17326, y_17327);
+                    int64_t defunc_1_op_res_17329 = add64(y_17320, x_17328);
+                    int64_t redout_tmp_17387 = defunc_1_op_res_17316;
+                    int64_t redout_tmp_17388 = defunc_1_op_res_17323;
+                    int64_t redout_tmp_17389 = defunc_1_op_res_17329;
+                    
+                    redout_17228 = redout_tmp_17387;
+                    redout_17229 = redout_tmp_17388;
+                    redout_17230 = redout_tmp_17389;
+                }
+                defunc_0_f_res_17224 = redout_17228;
+                defunc_0_f_res_17225 = redout_17229;
+                defunc_0_f_res_17226 = redout_17230;
+                
+                int64_t x_17330 = mul64(x_17221, defunc_0_f_res_17224);
+                int64_t y_17331 = mul64(x_17223, defunc_0_f_res_17225);
+                int64_t x_17332 = sub64(x_17330, y_17331);
+                int64_t y_17333 = mul64(x_17222, defunc_0_f_res_17226);
+                int64_t mul_res_17334 = sub64(x_17332, y_17333);
+                int64_t x_17335 = mul64(x_17222, defunc_0_f_res_17224);
+                int64_t y_17336 = mul64(x_17221, defunc_0_f_res_17225);
+                int64_t x_17337 = add64(x_17335, y_17336);
+                int64_t y_17338 = mul64(x_17223, defunc_0_f_res_17226);
+                int64_t x_17339 = sub64(x_17337, y_17338);
+                int64_t x_17340 = add64(y_17331, x_17339);
+                int64_t mul_res_17341 = add64(y_17333, x_17340);
+                int64_t x_17342 = mul64(x_17223, defunc_0_f_res_17224);
+                int64_t y_17343 = mul64(x_17222, defunc_0_f_res_17225);
+                int64_t x_17344 = add64(x_17342, y_17343);
+                int64_t y_17345 = mul64(x_17221, defunc_0_f_res_17226);
+                int64_t x_17346 = add64(x_17344, y_17345);
+                int64_t mul_res_17347 = add64(y_17338, x_17346);
+                int64_t canonicalizze_arg_17348 = add64(mul_res_17334, redout_17218);
+                int64_t canonicalizze_res_17349 = umod64(canonicalizze_arg_17348, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_17350 = add64(mul_res_17341, redout_17219);
+                int64_t canonicalizze_res_17351 = umod64(canonicalizze_arg_17350, (int64_t) -4294967295);
+                int64_t canonicalizze_arg_17352 = add64(mul_res_17347, redout_17220);
+                int64_t canonicalizze_res_17353 = umod64(canonicalizze_arg_17352, (int64_t) -4294967295);
+                int64_t redout_tmp_17384 = canonicalizze_res_17349;
+                int64_t redout_tmp_17385 = canonicalizze_res_17351;
+                int64_t redout_tmp_17386 = canonicalizze_res_17353;
+                
+                redout_17218 = redout_tmp_17384;
+                redout_17219 = redout_tmp_17385;
+                redout_17220 = redout_tmp_17386;
+            }
+            defunc_0_f_res_17214 = redout_17218;
+            defunc_0_f_res_17215 = redout_17219;
+            defunc_0_f_res_17216 = redout_17220;
+            
+            int64_t x_17354 = mul64(defunc_0_f_res_15098, defunc_0_f_res_17214);
+            int64_t y_17355 = mul64(defunc_0_f_res_15100, defunc_0_f_res_17215);
+            int64_t x_17356 = sub64(x_17354, y_17355);
+            int64_t y_17357 = mul64(defunc_0_f_res_15099, defunc_0_f_res_17216);
+            int64_t mul_res_17358 = sub64(x_17356, y_17357);
+            int64_t x_17359 = mul64(defunc_0_f_res_15099, defunc_0_f_res_17214);
+            int64_t y_17360 = mul64(defunc_0_f_res_15098, defunc_0_f_res_17215);
+            int64_t x_17361 = add64(x_17359, y_17360);
+            int64_t y_17362 = mul64(defunc_0_f_res_15100, defunc_0_f_res_17216);
+            int64_t x_17363 = sub64(x_17361, y_17362);
+            int64_t x_17364 = add64(y_17355, x_17363);
+            int64_t mul_res_17365 = add64(y_17357, x_17364);
+            int64_t x_17366 = mul64(defunc_0_f_res_15100, defunc_0_f_res_17214);
+            int64_t y_17367 = mul64(defunc_0_f_res_15099, defunc_0_f_res_17215);
+            int64_t x_17368 = add64(x_17366, y_17367);
+            int64_t y_17369 = mul64(defunc_0_f_res_15098, defunc_0_f_res_17216);
+            int64_t x_17370 = add64(x_17368, y_17369);
+            int64_t mul_res_17371 = add64(y_17362, x_17370);
+            uniform int64_t tmp_idx_18531 = (int64_t) 0;
+            
+            ((varying int64_t *) mem_17147)[tmp_idx_18531] = mul_res_17358;
+            
+            uniform int64_t tmp_idx_18532 = (int64_t) 1;
+            
+            ((varying int64_t *) mem_17147)[tmp_idx_18532] = mul_res_17365;
+            
+            uniform int64_t tmp_idx_18533 = (int64_t) 2;
+            
+            ((varying int64_t *) mem_17147)[tmp_idx_18533] = mul_res_17371;
+            if ((int64_t) 24 > 0)
+                memmove_64(mem_17137 + i_17212 * (int64_t) 3 * (int64_t) 8, mem_17147 + (int64_t) 0, extract((int64_t) 24, 0));
+        }
+        if (p_12353 * (int64_t) 3 * (int64_t) 8 > 0)
+            memmove_64(mem_17160.mem + gtid_15995 * ((int64_t) 3 * p_12353) * (int64_t) 8, mem_17137 + (int64_t) 0, extract(p_12353 * (int64_t) 3 * (int64_t) 8, 0));
+    }
+    futhark_mc_mem_struct_18534_->mem_17097 = mem_17097;
+    futhark_mc_mem_struct_18534_->mem_17097_cached_sizze_18519 = mem_17097_cached_sizze_18519;
+    futhark_mc_mem_struct_18534_->mem_17100 = mem_17100;
+    futhark_mc_mem_struct_18534_->mem_17100_cached_sizze_18520 = mem_17100_cached_sizze_18520;
+    futhark_mc_mem_struct_18534_->mem_17103 = mem_17103;
+    futhark_mc_mem_struct_18534_->mem_17103_cached_sizze_18521 = mem_17103_cached_sizze_18521;
+    futhark_mc_mem_struct_18534_->mem_17137 = mem_17137;
+    futhark_mc_mem_struct_18534_->mem_17137_cached_sizze_18522 = mem_17137_cached_sizze_18522;
+    futhark_mc_mem_struct_18534_->mem_17147 = mem_17147;
+    futhark_mc_mem_struct_18534_->mem_17147_cached_sizze_18523 = mem_17147_cached_sizze_18523;
+    return err;
+}
+export uniform int futhark_mc_loop_ispc_18518(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18517 *uniform futhark_mc_param_struct_18517_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18517_->ctx;
+    uniform int64_t n_12351 = futhark_mc_param_struct_18517_->free_n_12351;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18517_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18517_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18517_->free_q_12354;
+    uniform struct memblock zzinvs_mem_17023;
+    
+    zzinvs_mem_17023.desc = futhark_mc_strlit_shim_18524();
+    zzinvs_mem_17023.mem = futhark_mc_param_struct_18517_->free_zzinvs_mem_17023;
+    zzinvs_mem_17023.size = 0;
+    zzinvs_mem_17023.references = NULL;
+    
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18525();
+    eps_mem_17024.mem = futhark_mc_param_struct_18517_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18526();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18517_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18527();
+    mem_17078.mem = futhark_mc_param_struct_18517_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18528();
+    mem_17082.mem = futhark_mc_param_struct_18517_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18529();
+    mem_17086.mem = futhark_mc_param_struct_18517_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform int64_t bytes_17093 = futhark_mc_param_struct_18517_->free_bytes_17093;
+    uniform int64_t bytes_17096 = futhark_mc_param_struct_18517_->free_bytes_17096;
+    uniform struct memblock mem_17160;
+    
+    mem_17160.desc = futhark_mc_strlit_shim_18530();
+    mem_17160.mem = futhark_mc_param_struct_18517_->free_mem_17160;
+    mem_17160.size = 0;
+    mem_17160.references = NULL;
+    
+    size_t mem_17097_cached_sizze_18519 = 0;
+    varying unsigned char *uniform mem_17097 = NULL;
+    size_t mem_17100_cached_sizze_18520 = 0;
+    varying unsigned char *uniform mem_17100 = NULL;
+    size_t mem_17103_cached_sizze_18521 = 0;
+    varying unsigned char *uniform mem_17103 = NULL;
+    size_t mem_17137_cached_sizze_18522 = 0;
+    varying unsigned char *uniform mem_17137 = NULL;
+    size_t mem_17147_cached_sizze_18523 = 0;
+    varying unsigned char *uniform mem_17147 = NULL;
+    uniform struct futhark_mc_mem_struct_18534 futhark_mc_mem_struct_18534_;
+    
+    futhark_mc_mem_struct_18534_.mem_17097 = mem_17097;
+    futhark_mc_mem_struct_18534_.mem_17097_cached_sizze_18519 = mem_17097_cached_sizze_18519;
+    futhark_mc_mem_struct_18534_.mem_17100 = mem_17100;
+    futhark_mc_mem_struct_18534_.mem_17100_cached_sizze_18520 = mem_17100_cached_sizze_18520;
+    futhark_mc_mem_struct_18534_.mem_17103 = mem_17103;
+    futhark_mc_mem_struct_18534_.mem_17103_cached_sizze_18521 = mem_17103_cached_sizze_18521;
+    futhark_mc_mem_struct_18534_.mem_17137 = mem_17137;
+    futhark_mc_mem_struct_18534_.mem_17137_cached_sizze_18522 = mem_17137_cached_sizze_18522;
+    futhark_mc_mem_struct_18534_.mem_17147 = mem_17147;
+    futhark_mc_mem_struct_18534_.mem_17147_cached_sizze_18523 = mem_17147_cached_sizze_18523;
+    
+    uniform int err = futhark_mc_inner_ispc_18535(start, end, futhark_mc_param_struct_18517_, &futhark_mc_mem_struct_18534_);
+    
+    mem_17097 = futhark_mc_mem_struct_18534_.mem_17097;
+    mem_17097_cached_sizze_18519 = futhark_mc_mem_struct_18534_.mem_17097_cached_sizze_18519;
+    mem_17100 = futhark_mc_mem_struct_18534_.mem_17100;
+    mem_17100_cached_sizze_18520 = futhark_mc_mem_struct_18534_.mem_17100_cached_sizze_18520;
+    mem_17103 = futhark_mc_mem_struct_18534_.mem_17103;
+    mem_17103_cached_sizze_18521 = futhark_mc_mem_struct_18534_.mem_17103_cached_sizze_18521;
+    mem_17137 = futhark_mc_mem_struct_18534_.mem_17137;
+    mem_17137_cached_sizze_18522 = futhark_mc_mem_struct_18534_.mem_17137_cached_sizze_18522;
+    mem_17147 = futhark_mc_mem_struct_18534_.mem_17147;
+    mem_17147_cached_sizze_18523 = futhark_mc_mem_struct_18534_.mem_17147_cached_sizze_18523;
+    
+  cleanup:
+    {
+        free(mem_17097);
+        free(mem_17100);
+        free(mem_17103);
+        free(mem_17137);
+        free(mem_17147);
+    }
+    return err;
+}
+struct futhark_mc_param_struct_18547 {
     struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    int64_t free_defunc_0_f_res_16461;
-    int64_t free_defunc_0_f_res_16462;
-    int64_t free_defunc_0_f_res_16463;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    unsigned char *free_mem_17077;
+    int64_t free_n_12351;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    unsigned char *free_zzinvs_mem_17023;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_bytes_17093;
+    unsigned char *free_mem_17160;
 };
-struct futhark_mc_param_struct_18545 {
-    struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    int64_t free_defunc_0_f_res_16461;
-    int64_t free_defunc_0_f_res_16462;
-    int64_t free_defunc_0_f_res_16463;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    unsigned char *free_mem_17077;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18548();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18549();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18550();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18551();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18552();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18553();
-struct futhark_mc_mem_struct_18557 {
-    varying unsigned char *uniform mem_17853;
-    varying size_t mem_17853_cached_sizze_18547;
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18554();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18555();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18556();
+struct futhark_mc_task_18557 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18559();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18560();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18561();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18562();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18563();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18564();
-static unmasked inline uniform int futhark_mc_inner_ispc_18558(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18545 *uniform futhark_mc_param_struct_18545_, uniform struct futhark_mc_mem_struct_18557 *uniform futhark_mc_mem_struct_18557_)
+struct futhark_mc_param_struct_18562 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18565();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18566();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18567();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18568();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18569();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18570();
+struct futhark_mc_mem_struct_18574 {
+    varying unsigned char *uniform mem_17870;
+    varying size_t mem_17870_cached_sizze_18564;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18576();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18577();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18578();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18579();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18580();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18581();
+static unmasked inline uniform int futhark_mc_inner_ispc_18575(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18562 *uniform futhark_mc_param_struct_18562_, uniform struct futhark_mc_mem_struct_18574 *uniform futhark_mc_mem_struct_18574_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18545_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18545_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18545_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18545_->free_gtid_16458;
-    uniform int64_t defunc_0_f_res_16461 = futhark_mc_param_struct_18545_->free_defunc_0_f_res_16461;
-    uniform int64_t defunc_0_f_res_16462 = futhark_mc_param_struct_18545_->free_defunc_0_f_res_16462;
-    uniform int64_t defunc_0_f_res_16463 = futhark_mc_param_struct_18545_->free_defunc_0_f_res_16463;
-    uniform struct memblock eps_mem_17007;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18562_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18562_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18562_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18562_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18562_->free_gtid_16475;
+    uniform int64_t defunc_0_f_res_16478 = futhark_mc_param_struct_18562_->free_defunc_0_f_res_16478;
+    uniform int64_t defunc_0_f_res_16479 = futhark_mc_param_struct_18562_->free_defunc_0_f_res_16479;
+    uniform int64_t defunc_0_f_res_16480 = futhark_mc_param_struct_18562_->free_defunc_0_f_res_16480;
+    uniform struct memblock eps_mem_17024;
     
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18559();
-    eps_mem_17007.mem = futhark_mc_param_struct_18545_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18576();
+    eps_mem_17024.mem = futhark_mc_param_struct_18562_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
     
-    uniform struct memblock expsss_mem_17008;
+    uniform struct memblock expsss_mem_17025;
     
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18560();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18545_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18577();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18562_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
     
-    uniform struct memblock mem_17061;
+    uniform struct memblock mem_17078;
     
-    mem_17061.desc = futhark_mc_strlit_shim_18561();
-    mem_17061.mem = futhark_mc_param_struct_18545_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
+    mem_17078.desc = futhark_mc_strlit_shim_18578();
+    mem_17078.mem = futhark_mc_param_struct_18562_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
     
-    uniform struct memblock mem_17065;
+    uniform struct memblock mem_17082;
     
-    mem_17065.desc = futhark_mc_strlit_shim_18562();
-    mem_17065.mem = futhark_mc_param_struct_18545_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
+    mem_17082.desc = futhark_mc_strlit_shim_18579();
+    mem_17082.mem = futhark_mc_param_struct_18562_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
     
-    uniform struct memblock mem_17069;
+    uniform struct memblock mem_17086;
     
-    mem_17069.desc = futhark_mc_strlit_shim_18563();
-    mem_17069.mem = futhark_mc_param_struct_18545_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
+    mem_17086.desc = futhark_mc_strlit_shim_18580();
+    mem_17086.mem = futhark_mc_param_struct_18562_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
     
-    uniform struct memblock mem_17077;
+    uniform struct memblock mem_17094;
     
-    mem_17077.desc = futhark_mc_strlit_shim_18564();
-    mem_17077.mem = futhark_mc_param_struct_18545_->free_mem_17077;
-    mem_17077.size = 0;
-    mem_17077.references = NULL;
+    mem_17094.desc = futhark_mc_strlit_shim_18581();
+    mem_17094.mem = futhark_mc_param_struct_18562_->free_mem_17094;
+    mem_17094.size = 0;
+    mem_17094.references = NULL;
     
-    varying unsigned char *uniform mem_17853 = futhark_mc_mem_struct_18557_->mem_17853;
-    size_t mem_17853_cached_sizze_18547 = futhark_mc_mem_struct_18557_->mem_17853_cached_sizze_18547;
+    varying unsigned char *uniform mem_17870 = futhark_mc_mem_struct_18574_->mem_17870;
+    size_t mem_17870_cached_sizze_18564 = futhark_mc_mem_struct_18574_->mem_17870_cached_sizze_18564;
     uniform int err = 0;
-    uniform int64_t start_17999;
-    uniform int64_t end_18000;
+    uniform int64_t start_18016;
+    uniform int64_t end_18017;
     
-    start_17999 = start;
-    end_18000 = end;
+    start_18016 = start;
+    end_18017 = end;
     
-    uniform int64_t n_18001 = end_18000 - start_17999;
+    uniform int64_t n_18018 = end_18017 - start_18016;
     
-    if (mem_17853_cached_sizze_18547 < (int64_t) 24) {
-        err = lexical_realloc(ctx, &mem_17853, &mem_17853_cached_sizze_18547, (int64_t) 24);
+    if (mem_17870_cached_sizze_18564 < (int64_t) 24) {
+        err = lexical_realloc(ctx, &mem_17870, &mem_17870_cached_sizze_18564, (int64_t) 24);
         if (err != FUTHARK_SUCCESS)
             unmasked { return err; }
     }
-    foreach (SegMap_i_18002 = start_17999 ... start_17999 + n_18001)
+    foreach (SegMap_i_18019 = start_18016 ... start_18016 + n_18018)
     {
-        uniform int64_t slice_18003 = m_12334;
-        int64_t gtid_17694 = SegMap_i_18002;
-        int64_t remnant_18004 = SegMap_i_18002 - gtid_17694;
-        int64_t defunc_0_f_res_17695;
-        int64_t defunc_0_f_res_17696;
-        int64_t defunc_0_f_res_17697;
-        int64_t redout_17863;
-        int64_t redout_17864;
-        int64_t redout_17865;
+        uniform int64_t slice_18020 = p_12353;
+        int64_t gtid_17711 = SegMap_i_18019;
+        int64_t remnant_18021 = SegMap_i_18019 - gtid_17711;
+        int64_t defunc_0_f_res_17712;
+        int64_t defunc_0_f_res_17713;
+        int64_t defunc_0_f_res_17714;
+        int64_t redout_17880;
+        int64_t redout_17881;
+        int64_t redout_17882;
         
-        redout_17863 = (int64_t) 0;
-        redout_17864 = (int64_t) 0;
-        redout_17865 = (int64_t) 0;
-        for (uniform int64_t i_17862 = 0; i_17862 < p_12335; i_17862++) {
-            int64_t x_17866;
+        redout_17880 = (int64_t) 0;
+        redout_17881 = (int64_t) 0;
+        redout_17882 = (int64_t) 0;
+        for (uniform int64_t i_17879 = 0; i_17879 < q_12354; i_17879++) {
+            int64_t x_17883;
             
-            x_17866 = ((int64_t *) mem_17061.mem)[gtid_17694 * p_12335 + i_17862];
+            x_17883 = ((int64_t *) mem_17078.mem)[gtid_17711 * q_12354 + i_17879];
             
-            int64_t x_17867;
+            int64_t x_17884;
             
-            x_17867 = ((int64_t *) mem_17065.mem)[gtid_17694 * p_12335 + i_17862];
+            x_17884 = ((int64_t *) mem_17082.mem)[gtid_17711 * q_12354 + i_17879];
             
-            int64_t x_17868;
+            int64_t x_17885;
             
-            x_17868 = ((int64_t *) mem_17069.mem)[gtid_17694 * p_12335 + i_17862];
+            x_17885 = ((int64_t *) mem_17086.mem)[gtid_17711 * q_12354 + i_17879];
             
-            int64_t defunc_0_f_res_17869;
-            int64_t defunc_0_f_res_17870;
-            int64_t defunc_0_f_res_17871;
-            int64_t redout_17873;
-            int64_t redout_17874;
-            int64_t redout_17875;
+            int64_t defunc_0_f_res_17886;
+            int64_t defunc_0_f_res_17887;
+            int64_t defunc_0_f_res_17888;
+            int64_t redout_17890;
+            int64_t redout_17891;
+            int64_t redout_17892;
             
-            redout_17873 = (int64_t) 1;
-            redout_17874 = (int64_t) 0;
-            redout_17875 = (int64_t) 0;
-            for (uniform int64_t i_17872 = 0; i_17872 < m_12334; i_17872++) {
-                int64_t x_17876;
+            redout_17890 = (int64_t) 1;
+            redout_17891 = (int64_t) 0;
+            redout_17892 = (int64_t) 0;
+            for (uniform int64_t i_17889 = 0; i_17889 < m_12352; i_17889++) {
+                int64_t x_17893;
                 
-                x_17876 = ((int64_t *) expsss_mem_17008.mem)[gtid_17694 * (m_12334 * p_12335) + i_17862 * m_12334 + i_17872];
+                x_17893 = ((int64_t *) expsss_mem_17025.mem)[gtid_17711 * (m_12352 * q_12354) + i_17879 * m_12352 + i_17889];
                 
-                uniform int64_t x_17877;
+                uniform int64_t x_17894;
                 
-                x_17877 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + i_17872 * (int64_t) 3];
+                x_17894 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + i_17889 * (int64_t) 3];
                 
-                uniform int64_t x_17878;
+                uniform int64_t x_17895;
                 
-                x_17878 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + i_17872 * (int64_t) 3 + (int64_t) 1];
+                x_17895 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + i_17889 * (int64_t) 3 + (int64_t) 1];
                 
-                uniform int64_t x_17879;
+                uniform int64_t x_17896;
                 
-                x_17879 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + i_17872 * (int64_t) 3 + (int64_t) 2];
+                x_17896 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + i_17889 * (int64_t) 3 + (int64_t) 2];
                 
-                bool loop_cond_17880 = ult64((int64_t) 0, x_17876);
-                bool mod_pow_u64_res_17881;
-                int64_t mod_pow_u64_res_17882;
-                int64_t mod_pow_u64_res_17883;
-                int64_t mod_pow_u64_res_17884;
-                int64_t mod_pow_u64_res_17885;
-                int64_t mod_pow_u64_res_17886;
-                int64_t mod_pow_u64_res_17887;
-                int64_t mod_pow_u64_res_17888;
-                bool loop_while_17889;
-                int64_t x_17890;
-                int64_t x_17891;
-                int64_t x_17892;
-                int64_t i_17893;
-                int64_t result_17894;
-                int64_t result_17895;
-                int64_t result_17896;
+                bool loop_cond_17897 = ult64((int64_t) 0, x_17893);
+                bool mod_pow_u64_res_17898;
+                int64_t mod_pow_u64_res_17899;
+                int64_t mod_pow_u64_res_17900;
+                int64_t mod_pow_u64_res_17901;
+                int64_t mod_pow_u64_res_17902;
+                int64_t mod_pow_u64_res_17903;
+                int64_t mod_pow_u64_res_17904;
+                int64_t mod_pow_u64_res_17905;
+                bool loop_while_17906;
+                int64_t x_17907;
+                int64_t x_17908;
+                int64_t x_17909;
+                int64_t i_17910;
+                int64_t result_17911;
+                int64_t result_17912;
+                int64_t result_17913;
                 
-                loop_while_17889 = loop_cond_17880;
-                x_17890 = x_17877;
-                x_17891 = x_17878;
-                x_17892 = x_17879;
-                i_17893 = x_17876;
-                result_17894 = (int64_t) 1;
-                result_17895 = (int64_t) 0;
-                result_17896 = (int64_t) 0;
-                while (loop_while_17889) {
-                    int64_t x_17897 = umod64(i_17893, (int64_t) 2);
-                    bool cond_17898 = x_17897 == (int64_t) 1;
-                    int64_t loopres_17899;
-                    int64_t loopres_17900;
-                    int64_t loopres_17901;
-                    int64_t loopres_17902;
-                    int64_t loopres_17903;
-                    int64_t loopres_17904;
-                    int64_t loopres_17905;
+                loop_while_17906 = loop_cond_17897;
+                x_17907 = x_17894;
+                x_17908 = x_17895;
+                x_17909 = x_17896;
+                i_17910 = x_17893;
+                result_17911 = (int64_t) 1;
+                result_17912 = (int64_t) 0;
+                result_17913 = (int64_t) 0;
+                while (loop_while_17906) {
+                    int64_t x_17914 = umod64(i_17910, (int64_t) 2);
+                    bool cond_17915 = x_17914 == (int64_t) 1;
+                    int64_t loopres_17916;
+                    int64_t loopres_17917;
+                    int64_t loopres_17918;
+                    int64_t loopres_17919;
+                    int64_t loopres_17920;
+                    int64_t loopres_17921;
+                    int64_t loopres_17922;
                     
-                    if (cond_17898 == 1) {
-                        int64_t x_17906 = mul64(x_17890, x_17890);
-                        int64_t y_17907 = mul64(x_17891, x_17892);
-                        int64_t x_17908 = sub64(x_17906, y_17907);
-                        int64_t mul_res_17909 = sub64(x_17908, y_17907);
-                        int64_t x_17910 = mul64(x_17890, x_17891);
-                        int64_t x_17911 = add64(x_17910, x_17910);
-                        int64_t y_17912 = mul64(x_17892, x_17892);
-                        int64_t x_17913 = sub64(x_17911, y_17912);
-                        int64_t x_17914 = add64(y_17907, x_17913);
-                        int64_t mul_res_17915 = add64(y_17907, x_17914);
-                        int64_t x_17916 = mul64(x_17890, x_17892);
-                        int64_t y_17917 = mul64(x_17891, x_17891);
-                        int64_t x_17918 = add64(x_17916, y_17917);
-                        int64_t x_17919 = add64(x_17916, x_17918);
-                        int64_t mul_res_17920 = add64(y_17912, x_17919);
-                        int64_t loopres_t_res_17921 = lshr64(i_17893, (int64_t) 1);
-                        int64_t x_17922 = mul64(x_17890, result_17894);
-                        int64_t y_17923 = mul64(x_17892, result_17895);
-                        int64_t x_17924 = sub64(x_17922, y_17923);
-                        int64_t y_17925 = mul64(x_17891, result_17896);
-                        int64_t mul_res_17926 = sub64(x_17924, y_17925);
-                        int64_t x_17927 = mul64(x_17891, result_17894);
-                        int64_t y_17928 = mul64(x_17890, result_17895);
-                        int64_t x_17929 = add64(x_17927, y_17928);
-                        int64_t y_17930 = mul64(x_17892, result_17896);
-                        int64_t x_17931 = sub64(x_17929, y_17930);
-                        int64_t x_17932 = add64(y_17923, x_17931);
-                        int64_t mul_res_17933 = add64(y_17925, x_17932);
-                        int64_t x_17934 = mul64(x_17892, result_17894);
-                        int64_t y_17935 = mul64(x_17891, result_17895);
-                        int64_t x_17936 = add64(x_17934, y_17935);
-                        int64_t y_17937 = mul64(x_17890, result_17896);
-                        int64_t x_17938 = add64(x_17936, y_17937);
-                        int64_t mul_res_17939 = add64(y_17930, x_17938);
+                    if (cond_17915 == 1) {
+                        int64_t x_17923 = mul64(x_17907, x_17907);
+                        int64_t y_17924 = mul64(x_17908, x_17909);
+                        int64_t x_17925 = sub64(x_17923, y_17924);
+                        int64_t mul_res_17926 = sub64(x_17925, y_17924);
+                        int64_t x_17927 = mul64(x_17907, x_17908);
+                        int64_t x_17928 = add64(x_17927, x_17927);
+                        int64_t y_17929 = mul64(x_17909, x_17909);
+                        int64_t x_17930 = sub64(x_17928, y_17929);
+                        int64_t x_17931 = add64(y_17924, x_17930);
+                        int64_t mul_res_17932 = add64(y_17924, x_17931);
+                        int64_t x_17933 = mul64(x_17907, x_17909);
+                        int64_t y_17934 = mul64(x_17908, x_17908);
+                        int64_t x_17935 = add64(x_17933, y_17934);
+                        int64_t x_17936 = add64(x_17933, x_17935);
+                        int64_t mul_res_17937 = add64(y_17929, x_17936);
+                        int64_t loopres_t_res_17938 = lshr64(i_17910, (int64_t) 1);
+                        int64_t x_17939 = mul64(x_17907, result_17911);
+                        int64_t y_17940 = mul64(x_17909, result_17912);
+                        int64_t x_17941 = sub64(x_17939, y_17940);
+                        int64_t y_17942 = mul64(x_17908, result_17913);
+                        int64_t mul_res_17943 = sub64(x_17941, y_17942);
+                        int64_t x_17944 = mul64(x_17908, result_17911);
+                        int64_t y_17945 = mul64(x_17907, result_17912);
+                        int64_t x_17946 = add64(x_17944, y_17945);
+                        int64_t y_17947 = mul64(x_17909, result_17913);
+                        int64_t x_17948 = sub64(x_17946, y_17947);
+                        int64_t x_17949 = add64(y_17940, x_17948);
+                        int64_t mul_res_17950 = add64(y_17942, x_17949);
+                        int64_t x_17951 = mul64(x_17909, result_17911);
+                        int64_t y_17952 = mul64(x_17908, result_17912);
+                        int64_t x_17953 = add64(x_17951, y_17952);
+                        int64_t y_17954 = mul64(x_17907, result_17913);
+                        int64_t x_17955 = add64(x_17953, y_17954);
+                        int64_t mul_res_17956 = add64(y_17947, x_17955);
                         
-                        loopres_17899 = mul_res_17909;
-                        loopres_17900 = mul_res_17915;
-                        loopres_17901 = mul_res_17920;
-                        loopres_17902 = loopres_t_res_17921;
-                        loopres_17903 = mul_res_17926;
-                        loopres_17904 = mul_res_17933;
-                        loopres_17905 = mul_res_17939;
+                        loopres_17916 = mul_res_17926;
+                        loopres_17917 = mul_res_17932;
+                        loopres_17918 = mul_res_17937;
+                        loopres_17919 = loopres_t_res_17938;
+                        loopres_17920 = mul_res_17943;
+                        loopres_17921 = mul_res_17950;
+                        loopres_17922 = mul_res_17956;
                     } else {
-                        int64_t x_17940 = mul64(x_17890, x_17890);
-                        int64_t y_17941 = mul64(x_17891, x_17892);
-                        int64_t x_17942 = sub64(x_17940, y_17941);
-                        int64_t mul_res_17943 = sub64(x_17942, y_17941);
-                        int64_t x_17944 = mul64(x_17890, x_17891);
-                        int64_t x_17945 = add64(x_17944, x_17944);
-                        int64_t y_17946 = mul64(x_17892, x_17892);
-                        int64_t x_17947 = sub64(x_17945, y_17946);
-                        int64_t x_17948 = add64(y_17941, x_17947);
-                        int64_t mul_res_17949 = add64(y_17941, x_17948);
-                        int64_t x_17950 = mul64(x_17890, x_17892);
-                        int64_t y_17951 = mul64(x_17891, x_17891);
-                        int64_t x_17952 = add64(x_17950, y_17951);
-                        int64_t x_17953 = add64(x_17950, x_17952);
-                        int64_t mul_res_17954 = add64(y_17946, x_17953);
-                        int64_t loopres_f_res_17955 = lshr64(i_17893, (int64_t) 1);
+                        int64_t x_17957 = mul64(x_17907, x_17907);
+                        int64_t y_17958 = mul64(x_17908, x_17909);
+                        int64_t x_17959 = sub64(x_17957, y_17958);
+                        int64_t mul_res_17960 = sub64(x_17959, y_17958);
+                        int64_t x_17961 = mul64(x_17907, x_17908);
+                        int64_t x_17962 = add64(x_17961, x_17961);
+                        int64_t y_17963 = mul64(x_17909, x_17909);
+                        int64_t x_17964 = sub64(x_17962, y_17963);
+                        int64_t x_17965 = add64(y_17958, x_17964);
+                        int64_t mul_res_17966 = add64(y_17958, x_17965);
+                        int64_t x_17967 = mul64(x_17907, x_17909);
+                        int64_t y_17968 = mul64(x_17908, x_17908);
+                        int64_t x_17969 = add64(x_17967, y_17968);
+                        int64_t x_17970 = add64(x_17967, x_17969);
+                        int64_t mul_res_17971 = add64(y_17963, x_17970);
+                        int64_t loopres_f_res_17972 = lshr64(i_17910, (int64_t) 1);
                         
-                        loopres_17899 = mul_res_17943;
-                        loopres_17900 = mul_res_17949;
-                        loopres_17901 = mul_res_17954;
-                        loopres_17902 = loopres_f_res_17955;
-                        loopres_17903 = result_17894;
-                        loopres_17904 = result_17895;
-                        loopres_17905 = result_17896;
+                        loopres_17916 = mul_res_17960;
+                        loopres_17917 = mul_res_17966;
+                        loopres_17918 = mul_res_17971;
+                        loopres_17919 = loopres_f_res_17972;
+                        loopres_17920 = result_17911;
+                        loopres_17921 = result_17912;
+                        loopres_17922 = result_17913;
                     }
                     
-                    bool loop_cond_17956 = ult64((int64_t) 0, loopres_17902);
-                    bool loop_while_tmp_18011 = loop_cond_17956;
-                    int64_t x_tmp_18012 = loopres_17899;
-                    int64_t x_tmp_18013 = loopres_17900;
-                    int64_t x_tmp_18014 = loopres_17901;
-                    int64_t i_tmp_18015 = loopres_17902;
-                    int64_t result_tmp_18016 = loopres_17903;
-                    int64_t result_tmp_18017 = loopres_17904;
-                    int64_t result_tmp_18018 = loopres_17905;
+                    bool loop_cond_17973 = ult64((int64_t) 0, loopres_17919);
+                    bool loop_while_tmp_18028 = loop_cond_17973;
+                    int64_t x_tmp_18029 = loopres_17916;
+                    int64_t x_tmp_18030 = loopres_17917;
+                    int64_t x_tmp_18031 = loopres_17918;
+                    int64_t i_tmp_18032 = loopres_17919;
+                    int64_t result_tmp_18033 = loopres_17920;
+                    int64_t result_tmp_18034 = loopres_17921;
+                    int64_t result_tmp_18035 = loopres_17922;
                     
-                    loop_while_17889 = loop_while_tmp_18011;
-                    x_17890 = x_tmp_18012;
-                    x_17891 = x_tmp_18013;
-                    x_17892 = x_tmp_18014;
-                    i_17893 = i_tmp_18015;
-                    result_17894 = result_tmp_18016;
-                    result_17895 = result_tmp_18017;
-                    result_17896 = result_tmp_18018;
+                    loop_while_17906 = loop_while_tmp_18028;
+                    x_17907 = x_tmp_18029;
+                    x_17908 = x_tmp_18030;
+                    x_17909 = x_tmp_18031;
+                    i_17910 = i_tmp_18032;
+                    result_17911 = result_tmp_18033;
+                    result_17912 = result_tmp_18034;
+                    result_17913 = result_tmp_18035;
                 }
-                mod_pow_u64_res_17881 = loop_while_17889;
-                mod_pow_u64_res_17882 = x_17890;
-                mod_pow_u64_res_17883 = x_17891;
-                mod_pow_u64_res_17884 = x_17892;
-                mod_pow_u64_res_17885 = i_17893;
-                mod_pow_u64_res_17886 = result_17894;
-                mod_pow_u64_res_17887 = result_17895;
-                mod_pow_u64_res_17888 = result_17896;
+                mod_pow_u64_res_17898 = loop_while_17906;
+                mod_pow_u64_res_17899 = x_17907;
+                mod_pow_u64_res_17900 = x_17908;
+                mod_pow_u64_res_17901 = x_17909;
+                mod_pow_u64_res_17902 = i_17910;
+                mod_pow_u64_res_17903 = result_17911;
+                mod_pow_u64_res_17904 = result_17912;
+                mod_pow_u64_res_17905 = result_17913;
                 
-                int64_t x_17957 = mul64(mod_pow_u64_res_17886, redout_17873);
-                int64_t y_17958 = mul64(mod_pow_u64_res_17887, redout_17875);
-                int64_t x_17959 = sub64(x_17957, y_17958);
-                int64_t y_17960 = mul64(mod_pow_u64_res_17888, redout_17874);
-                int64_t defunc_1_op_res_17961 = sub64(x_17959, y_17960);
-                int64_t x_17962 = mul64(mod_pow_u64_res_17886, redout_17874);
-                int64_t y_17963 = mul64(mod_pow_u64_res_17887, redout_17873);
-                int64_t x_17964 = add64(x_17962, y_17963);
-                int64_t y_17965 = mul64(mod_pow_u64_res_17888, redout_17875);
-                int64_t x_17966 = sub64(x_17964, y_17965);
-                int64_t x_17967 = add64(y_17958, x_17966);
-                int64_t defunc_1_op_res_17968 = add64(y_17960, x_17967);
-                int64_t x_17969 = mul64(mod_pow_u64_res_17886, redout_17875);
-                int64_t y_17970 = mul64(mod_pow_u64_res_17887, redout_17874);
-                int64_t x_17971 = add64(x_17969, y_17970);
-                int64_t y_17972 = mul64(mod_pow_u64_res_17888, redout_17873);
-                int64_t x_17973 = add64(x_17971, y_17972);
-                int64_t defunc_1_op_res_17974 = add64(y_17965, x_17973);
-                int64_t redout_tmp_18008 = defunc_1_op_res_17961;
-                int64_t redout_tmp_18009 = defunc_1_op_res_17968;
-                int64_t redout_tmp_18010 = defunc_1_op_res_17974;
+                int64_t x_17974 = mul64(mod_pow_u64_res_17903, redout_17890);
+                int64_t y_17975 = mul64(mod_pow_u64_res_17904, redout_17892);
+                int64_t x_17976 = sub64(x_17974, y_17975);
+                int64_t y_17977 = mul64(mod_pow_u64_res_17905, redout_17891);
+                int64_t defunc_1_op_res_17978 = sub64(x_17976, y_17977);
+                int64_t x_17979 = mul64(mod_pow_u64_res_17903, redout_17891);
+                int64_t y_17980 = mul64(mod_pow_u64_res_17904, redout_17890);
+                int64_t x_17981 = add64(x_17979, y_17980);
+                int64_t y_17982 = mul64(mod_pow_u64_res_17905, redout_17892);
+                int64_t x_17983 = sub64(x_17981, y_17982);
+                int64_t x_17984 = add64(y_17975, x_17983);
+                int64_t defunc_1_op_res_17985 = add64(y_17977, x_17984);
+                int64_t x_17986 = mul64(mod_pow_u64_res_17903, redout_17892);
+                int64_t y_17987 = mul64(mod_pow_u64_res_17904, redout_17891);
+                int64_t x_17988 = add64(x_17986, y_17987);
+                int64_t y_17989 = mul64(mod_pow_u64_res_17905, redout_17890);
+                int64_t x_17990 = add64(x_17988, y_17989);
+                int64_t defunc_1_op_res_17991 = add64(y_17982, x_17990);
+                int64_t redout_tmp_18025 = defunc_1_op_res_17978;
+                int64_t redout_tmp_18026 = defunc_1_op_res_17985;
+                int64_t redout_tmp_18027 = defunc_1_op_res_17991;
                 
-                redout_17873 = redout_tmp_18008;
-                redout_17874 = redout_tmp_18009;
-                redout_17875 = redout_tmp_18010;
+                redout_17890 = redout_tmp_18025;
+                redout_17891 = redout_tmp_18026;
+                redout_17892 = redout_tmp_18027;
             }
-            defunc_0_f_res_17869 = redout_17873;
-            defunc_0_f_res_17870 = redout_17874;
-            defunc_0_f_res_17871 = redout_17875;
+            defunc_0_f_res_17886 = redout_17890;
+            defunc_0_f_res_17887 = redout_17891;
+            defunc_0_f_res_17888 = redout_17892;
             
-            int64_t x_17975 = mul64(x_17866, defunc_0_f_res_17869);
-            int64_t y_17976 = mul64(x_17868, defunc_0_f_res_17870);
-            int64_t x_17977 = sub64(x_17975, y_17976);
-            int64_t y_17978 = mul64(x_17867, defunc_0_f_res_17871);
-            int64_t mul_res_17979 = sub64(x_17977, y_17978);
-            int64_t x_17980 = mul64(x_17867, defunc_0_f_res_17869);
-            int64_t y_17981 = mul64(x_17866, defunc_0_f_res_17870);
-            int64_t x_17982 = add64(x_17980, y_17981);
-            int64_t y_17983 = mul64(x_17868, defunc_0_f_res_17871);
-            int64_t x_17984 = sub64(x_17982, y_17983);
-            int64_t x_17985 = add64(y_17976, x_17984);
-            int64_t mul_res_17986 = add64(y_17978, x_17985);
-            int64_t x_17987 = mul64(x_17868, defunc_0_f_res_17869);
-            int64_t y_17988 = mul64(x_17867, defunc_0_f_res_17870);
-            int64_t x_17989 = add64(x_17987, y_17988);
-            int64_t y_17990 = mul64(x_17866, defunc_0_f_res_17871);
-            int64_t x_17991 = add64(x_17989, y_17990);
-            int64_t mul_res_17992 = add64(y_17983, x_17991);
-            int64_t canonicalizze_arg_17993 = add64(mul_res_17979, redout_17863);
-            int64_t canonicalizze_res_17994 = umod64(canonicalizze_arg_17993, (int64_t) -4294967295);
-            int64_t canonicalizze_arg_17995 = add64(mul_res_17986, redout_17864);
-            int64_t canonicalizze_res_17996 = umod64(canonicalizze_arg_17995, (int64_t) -4294967295);
-            int64_t canonicalizze_arg_17997 = add64(mul_res_17992, redout_17865);
-            int64_t canonicalizze_res_17998 = umod64(canonicalizze_arg_17997, (int64_t) -4294967295);
-            int64_t redout_tmp_18005 = canonicalizze_res_17994;
-            int64_t redout_tmp_18006 = canonicalizze_res_17996;
-            int64_t redout_tmp_18007 = canonicalizze_res_17998;
+            int64_t x_17992 = mul64(x_17883, defunc_0_f_res_17886);
+            int64_t y_17993 = mul64(x_17885, defunc_0_f_res_17887);
+            int64_t x_17994 = sub64(x_17992, y_17993);
+            int64_t y_17995 = mul64(x_17884, defunc_0_f_res_17888);
+            int64_t mul_res_17996 = sub64(x_17994, y_17995);
+            int64_t x_17997 = mul64(x_17884, defunc_0_f_res_17886);
+            int64_t y_17998 = mul64(x_17883, defunc_0_f_res_17887);
+            int64_t x_17999 = add64(x_17997, y_17998);
+            int64_t y_18000 = mul64(x_17885, defunc_0_f_res_17888);
+            int64_t x_18001 = sub64(x_17999, y_18000);
+            int64_t x_18002 = add64(y_17993, x_18001);
+            int64_t mul_res_18003 = add64(y_17995, x_18002);
+            int64_t x_18004 = mul64(x_17885, defunc_0_f_res_17886);
+            int64_t y_18005 = mul64(x_17884, defunc_0_f_res_17887);
+            int64_t x_18006 = add64(x_18004, y_18005);
+            int64_t y_18007 = mul64(x_17883, defunc_0_f_res_17888);
+            int64_t x_18008 = add64(x_18006, y_18007);
+            int64_t mul_res_18009 = add64(y_18000, x_18008);
+            int64_t canonicalizze_arg_18010 = add64(mul_res_17996, redout_17880);
+            int64_t canonicalizze_res_18011 = umod64(canonicalizze_arg_18010, (int64_t) -4294967295);
+            int64_t canonicalizze_arg_18012 = add64(mul_res_18003, redout_17881);
+            int64_t canonicalizze_res_18013 = umod64(canonicalizze_arg_18012, (int64_t) -4294967295);
+            int64_t canonicalizze_arg_18014 = add64(mul_res_18009, redout_17882);
+            int64_t canonicalizze_res_18015 = umod64(canonicalizze_arg_18014, (int64_t) -4294967295);
+            int64_t redout_tmp_18022 = canonicalizze_res_18011;
+            int64_t redout_tmp_18023 = canonicalizze_res_18013;
+            int64_t redout_tmp_18024 = canonicalizze_res_18015;
             
-            redout_17863 = redout_tmp_18005;
-            redout_17864 = redout_tmp_18006;
-            redout_17865 = redout_tmp_18007;
+            redout_17880 = redout_tmp_18022;
+            redout_17881 = redout_tmp_18023;
+            redout_17882 = redout_tmp_18024;
         }
-        defunc_0_f_res_17695 = redout_17863;
-        defunc_0_f_res_17696 = redout_17864;
-        defunc_0_f_res_17697 = redout_17865;
+        defunc_0_f_res_17712 = redout_17880;
+        defunc_0_f_res_17713 = redout_17881;
+        defunc_0_f_res_17714 = redout_17882;
         
-        int64_t x_17835 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17695);
-        int64_t y_17836 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17696);
-        int64_t x_17837 = sub64(x_17835, y_17836);
-        int64_t y_17838 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17697);
-        int64_t mul_res_17839 = sub64(x_17837, y_17838);
-        int64_t x_17840 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17695);
-        int64_t y_17841 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17696);
-        int64_t x_17842 = add64(x_17840, y_17841);
-        int64_t y_17843 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17697);
-        int64_t x_17844 = sub64(x_17842, y_17843);
-        int64_t x_17845 = add64(y_17836, x_17844);
-        int64_t mul_res_17846 = add64(y_17838, x_17845);
-        int64_t x_17847 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17695);
-        int64_t y_17848 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17696);
-        int64_t x_17849 = add64(x_17847, y_17848);
-        int64_t y_17850 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17697);
-        int64_t x_17851 = add64(x_17849, y_17850);
-        int64_t mul_res_17852 = add64(y_17843, x_17851);
-        uniform int64_t tmp_idx_18554 = (int64_t) 0;
+        int64_t x_17852 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17712);
+        int64_t y_17853 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17713);
+        int64_t x_17854 = sub64(x_17852, y_17853);
+        int64_t y_17855 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17714);
+        int64_t mul_res_17856 = sub64(x_17854, y_17855);
+        int64_t x_17857 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17712);
+        int64_t y_17858 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17713);
+        int64_t x_17859 = add64(x_17857, y_17858);
+        int64_t y_17860 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17714);
+        int64_t x_17861 = sub64(x_17859, y_17860);
+        int64_t x_17862 = add64(y_17853, x_17861);
+        int64_t mul_res_17863 = add64(y_17855, x_17862);
+        int64_t x_17864 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17712);
+        int64_t y_17865 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17713);
+        int64_t x_17866 = add64(x_17864, y_17865);
+        int64_t y_17867 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17714);
+        int64_t x_17868 = add64(x_17866, y_17867);
+        int64_t mul_res_17869 = add64(y_17860, x_17868);
+        uniform int64_t tmp_idx_18571 = (int64_t) 0;
         
-        ((varying int64_t *) mem_17853)[tmp_idx_18554] = mul_res_17839;
+        ((varying int64_t *) mem_17870)[tmp_idx_18571] = mul_res_17856;
         
-        uniform int64_t tmp_idx_18555 = (int64_t) 1;
+        uniform int64_t tmp_idx_18572 = (int64_t) 1;
         
-        ((varying int64_t *) mem_17853)[tmp_idx_18555] = mul_res_17846;
+        ((varying int64_t *) mem_17870)[tmp_idx_18572] = mul_res_17863;
         
-        uniform int64_t tmp_idx_18556 = (int64_t) 2;
+        uniform int64_t tmp_idx_18573 = (int64_t) 2;
         
-        ((varying int64_t *) mem_17853)[tmp_idx_18556] = mul_res_17852;
+        ((varying int64_t *) mem_17870)[tmp_idx_18573] = mul_res_17869;
         if ((int64_t) 24 > 0)
-            memmove_64(mem_17077.mem + gtid_17694 * (int64_t) 3 * (int64_t) 8, mem_17853 + (int64_t) 0, extract((int64_t) 24, 0));
+            memmove_64(mem_17094.mem + gtid_17711 * (int64_t) 3 * (int64_t) 8, mem_17870 + (int64_t) 0, extract((int64_t) 24, 0));
     }
-    futhark_mc_mem_struct_18557_->mem_17853 = mem_17853;
-    futhark_mc_mem_struct_18557_->mem_17853_cached_sizze_18547 = mem_17853_cached_sizze_18547;
+    futhark_mc_mem_struct_18574_->mem_17870 = mem_17870;
+    futhark_mc_mem_struct_18574_->mem_17870_cached_sizze_18564 = mem_17870_cached_sizze_18564;
     return err;
 }
-export uniform int futhark_mc_loop_ispc_18546(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18545 *uniform futhark_mc_param_struct_18545_)
+export uniform int futhark_mc_loop_ispc_18563(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18562 *uniform futhark_mc_param_struct_18562_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18545_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18545_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18545_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18545_->free_gtid_16458;
-    uniform int64_t defunc_0_f_res_16461 = futhark_mc_param_struct_18545_->free_defunc_0_f_res_16461;
-    uniform int64_t defunc_0_f_res_16462 = futhark_mc_param_struct_18545_->free_defunc_0_f_res_16462;
-    uniform int64_t defunc_0_f_res_16463 = futhark_mc_param_struct_18545_->free_defunc_0_f_res_16463;
-    uniform struct memblock eps_mem_17007;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18562_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18562_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18562_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18562_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18562_->free_gtid_16475;
+    uniform int64_t defunc_0_f_res_16478 = futhark_mc_param_struct_18562_->free_defunc_0_f_res_16478;
+    uniform int64_t defunc_0_f_res_16479 = futhark_mc_param_struct_18562_->free_defunc_0_f_res_16479;
+    uniform int64_t defunc_0_f_res_16480 = futhark_mc_param_struct_18562_->free_defunc_0_f_res_16480;
+    uniform struct memblock eps_mem_17024;
     
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18548();
-    eps_mem_17007.mem = futhark_mc_param_struct_18545_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18565();
+    eps_mem_17024.mem = futhark_mc_param_struct_18562_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
     
-    uniform struct memblock expsss_mem_17008;
+    uniform struct memblock expsss_mem_17025;
     
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18549();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18545_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18566();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18562_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
     
-    uniform struct memblock mem_17061;
+    uniform struct memblock mem_17078;
     
-    mem_17061.desc = futhark_mc_strlit_shim_18550();
-    mem_17061.mem = futhark_mc_param_struct_18545_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
+    mem_17078.desc = futhark_mc_strlit_shim_18567();
+    mem_17078.mem = futhark_mc_param_struct_18562_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
     
-    uniform struct memblock mem_17065;
+    uniform struct memblock mem_17082;
     
-    mem_17065.desc = futhark_mc_strlit_shim_18551();
-    mem_17065.mem = futhark_mc_param_struct_18545_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
+    mem_17082.desc = futhark_mc_strlit_shim_18568();
+    mem_17082.mem = futhark_mc_param_struct_18562_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
     
-    uniform struct memblock mem_17069;
+    uniform struct memblock mem_17086;
     
-    mem_17069.desc = futhark_mc_strlit_shim_18552();
-    mem_17069.mem = futhark_mc_param_struct_18545_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
+    mem_17086.desc = futhark_mc_strlit_shim_18569();
+    mem_17086.mem = futhark_mc_param_struct_18562_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
     
-    uniform struct memblock mem_17077;
+    uniform struct memblock mem_17094;
     
-    mem_17077.desc = futhark_mc_strlit_shim_18553();
-    mem_17077.mem = futhark_mc_param_struct_18545_->free_mem_17077;
-    mem_17077.size = 0;
-    mem_17077.references = NULL;
+    mem_17094.desc = futhark_mc_strlit_shim_18570();
+    mem_17094.mem = futhark_mc_param_struct_18562_->free_mem_17094;
+    mem_17094.size = 0;
+    mem_17094.references = NULL;
     
-    size_t mem_17853_cached_sizze_18547 = 0;
-    varying unsigned char *uniform mem_17853 = NULL;
-    uniform struct futhark_mc_mem_struct_18557 futhark_mc_mem_struct_18557_;
+    size_t mem_17870_cached_sizze_18564 = 0;
+    varying unsigned char *uniform mem_17870 = NULL;
+    uniform struct futhark_mc_mem_struct_18574 futhark_mc_mem_struct_18574_;
     
-    futhark_mc_mem_struct_18557_.mem_17853 = mem_17853;
-    futhark_mc_mem_struct_18557_.mem_17853_cached_sizze_18547 = mem_17853_cached_sizze_18547;
+    futhark_mc_mem_struct_18574_.mem_17870 = mem_17870;
+    futhark_mc_mem_struct_18574_.mem_17870_cached_sizze_18564 = mem_17870_cached_sizze_18564;
     
-    uniform int err = futhark_mc_inner_ispc_18558(start, end, futhark_mc_param_struct_18545_, &futhark_mc_mem_struct_18557_);
+    uniform int err = futhark_mc_inner_ispc_18575(start, end, futhark_mc_param_struct_18562_, &futhark_mc_mem_struct_18574_);
     
-    mem_17853 = futhark_mc_mem_struct_18557_.mem_17853;
-    mem_17853_cached_sizze_18547 = futhark_mc_mem_struct_18557_.mem_17853_cached_sizze_18547;
+    mem_17870 = futhark_mc_mem_struct_18574_.mem_17870;
+    mem_17870_cached_sizze_18564 = futhark_mc_mem_struct_18574_.mem_17870_cached_sizze_18564;
     
   cleanup:
     {
-        free(mem_17853);
+        free(mem_17870);
     }
     return err;
 }
-struct futhark_mc_param_struct_18569 {
+struct futhark_mc_param_struct_18586 {
     struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    int64_t free_defunc_0_f_res_16461;
-    int64_t free_defunc_0_f_res_16462;
-    int64_t free_defunc_0_f_res_16463;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    unsigned char *free_mem_17077;
+    int64_t free_m_12352;
+    int64_t free_p_12353;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    int64_t free_defunc_0_f_res_16478;
+    int64_t free_defunc_0_f_res_16479;
+    int64_t free_defunc_0_f_res_16480;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    unsigned char *free_mem_17094;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18572();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18573();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18574();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18575();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18576();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18577();
-struct futhark_mc_task_18578 {
-    struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    int64_t free_gtid_17383;
-    int64_t free_flat_tid_18020;
-    int64_t free_flat_tid_18165;
-    int64_t *retval_defunc_0_f_res_17384;
-    int64_t *retval_defunc_0_f_res_17385;
-    int64_t *retval_defunc_0_f_res_17386;
-};
-struct futhark_mc_param_struct_18585 {
-    struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    int64_t free_gtid_17383;
-    int64_t free_flat_tid_18165;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18313;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18315;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18317;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18587();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18588();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18589();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18590();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18591();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18592();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18593();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18594();
-export uniform int futhark_mc_loop_ispc_18586(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18585 *uniform futhark_mc_param_struct_18585_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18585_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18585_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18585_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18585_->free_gtid_16458;
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18587();
-    eps_mem_17007.mem = futhark_mc_param_struct_18585_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18588();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18585_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18589();
-    mem_17061.mem = futhark_mc_param_struct_18585_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18590();
-    mem_17065.mem = futhark_mc_param_struct_18585_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18591();
-    mem_17069.mem = futhark_mc_param_struct_18585_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform int64_t gtid_17383 = futhark_mc_param_struct_18585_->free_gtid_17383;
-    uniform int64_t flat_tid_18165 = futhark_mc_param_struct_18585_->free_flat_tid_18165;
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18313;
-    
-    reduce_stage_1_tid_res_arr_mem_18313.desc = futhark_mc_strlit_shim_18592();
-    reduce_stage_1_tid_res_arr_mem_18313.mem = futhark_mc_param_struct_18585_->free_reduce_stage_1_tid_res_arr_mem_18313;
-    reduce_stage_1_tid_res_arr_mem_18313.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18313.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18315;
-    
-    reduce_stage_1_tid_res_arr_mem_18315.desc = futhark_mc_strlit_shim_18593();
-    reduce_stage_1_tid_res_arr_mem_18315.mem = futhark_mc_param_struct_18585_->free_reduce_stage_1_tid_res_arr_mem_18315;
-    reduce_stage_1_tid_res_arr_mem_18315.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18315.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18317;
-    
-    reduce_stage_1_tid_res_arr_mem_18317.desc = futhark_mc_strlit_shim_18594();
-    reduce_stage_1_tid_res_arr_mem_18317.mem = futhark_mc_param_struct_18585_->free_reduce_stage_1_tid_res_arr_mem_18317;
-    reduce_stage_1_tid_res_arr_mem_18317.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18317.references = NULL;
-    
-    uniform int err = 0;
-    uniform int64_t x_18167;
-    uniform int64_t x_18168;
-    uniform int64_t x_18169;
-    uniform int64_t x_18170;
-    uniform int64_t x_18171;
-    uniform int64_t x_18172;
-    uniform int64_t local_acc_18319 = (int64_t) 0;
-    uniform int64_t local_acc_18320 = (int64_t) 0;
-    uniform int64_t local_acc_18321 = (int64_t) 0;
-    uniform int64_t start_18322;
-    uniform int64_t end_18323;
-    
-    start_18322 = start;
-    end_18323 = end;
-    
-    uniform int64_t n_18324 = end_18323 - start_18322;
-    
-    foreach (SegRed_i_18325 = start_18322 ... start_18322 + n_18324)
-    {
-        int64_t gtid_18166 = SegRed_i_18325;
-        int64_t x_18179;
-        
-        x_18179 = ((int64_t *) mem_17061.mem)[gtid_17383 * p_12335 + gtid_18166];
-        
-        int64_t x_18180;
-        
-        x_18180 = ((int64_t *) mem_17065.mem)[gtid_17383 * p_12335 + gtid_18166];
-        
-        int64_t x_18181;
-        
-        x_18181 = ((int64_t *) mem_17069.mem)[gtid_17383 * p_12335 + gtid_18166];
-        
-        int64_t defunc_0_f_res_18182;
-        int64_t defunc_0_f_res_18183;
-        int64_t defunc_0_f_res_18184;
-        int64_t redout_18186;
-        int64_t redout_18187;
-        int64_t redout_18188;
-        
-        redout_18186 = (int64_t) 1;
-        redout_18187 = (int64_t) 0;
-        redout_18188 = (int64_t) 0;
-        for (uniform int64_t i_18185 = 0; i_18185 < m_12334; i_18185++) {
-            int64_t x_18189;
-            
-            x_18189 = ((int64_t *) expsss_mem_17008.mem)[gtid_17383 * (m_12334 * p_12335) + gtid_18166 * m_12334 + i_18185];
-            
-            uniform int64_t x_18190;
-            
-            x_18190 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + i_18185 * (int64_t) 3];
-            
-            uniform int64_t x_18191;
-            
-            x_18191 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + i_18185 * (int64_t) 3 + (int64_t) 1];
-            
-            uniform int64_t x_18192;
-            
-            x_18192 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + i_18185 * (int64_t) 3 + (int64_t) 2];
-            
-            bool loop_cond_18193 = ult64((int64_t) 0, x_18189);
-            bool mod_pow_u64_res_18194;
-            int64_t mod_pow_u64_res_18195;
-            int64_t mod_pow_u64_res_18196;
-            int64_t mod_pow_u64_res_18197;
-            int64_t mod_pow_u64_res_18198;
-            int64_t mod_pow_u64_res_18199;
-            int64_t mod_pow_u64_res_18200;
-            int64_t mod_pow_u64_res_18201;
-            bool loop_while_18202;
-            int64_t x_18203;
-            int64_t x_18204;
-            int64_t x_18205;
-            int64_t i_18206;
-            int64_t result_18207;
-            int64_t result_18208;
-            int64_t result_18209;
-            
-            loop_while_18202 = loop_cond_18193;
-            x_18203 = x_18190;
-            x_18204 = x_18191;
-            x_18205 = x_18192;
-            i_18206 = x_18189;
-            result_18207 = (int64_t) 1;
-            result_18208 = (int64_t) 0;
-            result_18209 = (int64_t) 0;
-            while (loop_while_18202) {
-                int64_t x_18210 = umod64(i_18206, (int64_t) 2);
-                bool cond_18211 = x_18210 == (int64_t) 1;
-                int64_t loopres_18212;
-                int64_t loopres_18213;
-                int64_t loopres_18214;
-                int64_t loopres_18215;
-                int64_t loopres_18216;
-                int64_t loopres_18217;
-                int64_t loopres_18218;
-                
-                if (cond_18211 == 1) {
-                    int64_t x_18219 = mul64(x_18203, x_18203);
-                    int64_t y_18220 = mul64(x_18204, x_18205);
-                    int64_t x_18221 = sub64(x_18219, y_18220);
-                    int64_t mul_res_18222 = sub64(x_18221, y_18220);
-                    int64_t x_18223 = mul64(x_18203, x_18204);
-                    int64_t x_18224 = add64(x_18223, x_18223);
-                    int64_t y_18225 = mul64(x_18205, x_18205);
-                    int64_t x_18226 = sub64(x_18224, y_18225);
-                    int64_t x_18227 = add64(y_18220, x_18226);
-                    int64_t mul_res_18228 = add64(y_18220, x_18227);
-                    int64_t x_18229 = mul64(x_18203, x_18205);
-                    int64_t y_18230 = mul64(x_18204, x_18204);
-                    int64_t x_18231 = add64(x_18229, y_18230);
-                    int64_t x_18232 = add64(x_18229, x_18231);
-                    int64_t mul_res_18233 = add64(y_18225, x_18232);
-                    int64_t loopres_t_res_18234 = lshr64(i_18206, (int64_t) 1);
-                    int64_t x_18235 = mul64(x_18203, result_18207);
-                    int64_t y_18236 = mul64(x_18205, result_18208);
-                    int64_t x_18237 = sub64(x_18235, y_18236);
-                    int64_t y_18238 = mul64(x_18204, result_18209);
-                    int64_t mul_res_18239 = sub64(x_18237, y_18238);
-                    int64_t x_18240 = mul64(x_18204, result_18207);
-                    int64_t y_18241 = mul64(x_18203, result_18208);
-                    int64_t x_18242 = add64(x_18240, y_18241);
-                    int64_t y_18243 = mul64(x_18205, result_18209);
-                    int64_t x_18244 = sub64(x_18242, y_18243);
-                    int64_t x_18245 = add64(y_18236, x_18244);
-                    int64_t mul_res_18246 = add64(y_18238, x_18245);
-                    int64_t x_18247 = mul64(x_18205, result_18207);
-                    int64_t y_18248 = mul64(x_18204, result_18208);
-                    int64_t x_18249 = add64(x_18247, y_18248);
-                    int64_t y_18250 = mul64(x_18203, result_18209);
-                    int64_t x_18251 = add64(x_18249, y_18250);
-                    int64_t mul_res_18252 = add64(y_18243, x_18251);
-                    
-                    loopres_18212 = mul_res_18222;
-                    loopres_18213 = mul_res_18228;
-                    loopres_18214 = mul_res_18233;
-                    loopres_18215 = loopres_t_res_18234;
-                    loopres_18216 = mul_res_18239;
-                    loopres_18217 = mul_res_18246;
-                    loopres_18218 = mul_res_18252;
-                } else {
-                    int64_t x_18253 = mul64(x_18203, x_18203);
-                    int64_t y_18254 = mul64(x_18204, x_18205);
-                    int64_t x_18255 = sub64(x_18253, y_18254);
-                    int64_t mul_res_18256 = sub64(x_18255, y_18254);
-                    int64_t x_18257 = mul64(x_18203, x_18204);
-                    int64_t x_18258 = add64(x_18257, x_18257);
-                    int64_t y_18259 = mul64(x_18205, x_18205);
-                    int64_t x_18260 = sub64(x_18258, y_18259);
-                    int64_t x_18261 = add64(y_18254, x_18260);
-                    int64_t mul_res_18262 = add64(y_18254, x_18261);
-                    int64_t x_18263 = mul64(x_18203, x_18205);
-                    int64_t y_18264 = mul64(x_18204, x_18204);
-                    int64_t x_18265 = add64(x_18263, y_18264);
-                    int64_t x_18266 = add64(x_18263, x_18265);
-                    int64_t mul_res_18267 = add64(y_18259, x_18266);
-                    int64_t loopres_f_res_18268 = lshr64(i_18206, (int64_t) 1);
-                    
-                    loopres_18212 = mul_res_18256;
-                    loopres_18213 = mul_res_18262;
-                    loopres_18214 = mul_res_18267;
-                    loopres_18215 = loopres_f_res_18268;
-                    loopres_18216 = result_18207;
-                    loopres_18217 = result_18208;
-                    loopres_18218 = result_18209;
-                }
-                
-                bool loop_cond_18269 = ult64((int64_t) 0, loopres_18215);
-                bool loop_while_tmp_18329 = loop_cond_18269;
-                int64_t x_tmp_18330 = loopres_18212;
-                int64_t x_tmp_18331 = loopres_18213;
-                int64_t x_tmp_18332 = loopres_18214;
-                int64_t i_tmp_18333 = loopres_18215;
-                int64_t result_tmp_18334 = loopres_18216;
-                int64_t result_tmp_18335 = loopres_18217;
-                int64_t result_tmp_18336 = loopres_18218;
-                
-                loop_while_18202 = loop_while_tmp_18329;
-                x_18203 = x_tmp_18330;
-                x_18204 = x_tmp_18331;
-                x_18205 = x_tmp_18332;
-                i_18206 = i_tmp_18333;
-                result_18207 = result_tmp_18334;
-                result_18208 = result_tmp_18335;
-                result_18209 = result_tmp_18336;
-            }
-            mod_pow_u64_res_18194 = loop_while_18202;
-            mod_pow_u64_res_18195 = x_18203;
-            mod_pow_u64_res_18196 = x_18204;
-            mod_pow_u64_res_18197 = x_18205;
-            mod_pow_u64_res_18198 = i_18206;
-            mod_pow_u64_res_18199 = result_18207;
-            mod_pow_u64_res_18200 = result_18208;
-            mod_pow_u64_res_18201 = result_18209;
-            
-            int64_t x_18270 = mul64(mod_pow_u64_res_18199, redout_18186);
-            int64_t y_18271 = mul64(mod_pow_u64_res_18200, redout_18188);
-            int64_t x_18272 = sub64(x_18270, y_18271);
-            int64_t y_18273 = mul64(mod_pow_u64_res_18201, redout_18187);
-            int64_t defunc_1_op_res_18274 = sub64(x_18272, y_18273);
-            int64_t x_18275 = mul64(mod_pow_u64_res_18199, redout_18187);
-            int64_t y_18276 = mul64(mod_pow_u64_res_18200, redout_18186);
-            int64_t x_18277 = add64(x_18275, y_18276);
-            int64_t y_18278 = mul64(mod_pow_u64_res_18201, redout_18188);
-            int64_t x_18279 = sub64(x_18277, y_18278);
-            int64_t x_18280 = add64(y_18271, x_18279);
-            int64_t defunc_1_op_res_18281 = add64(y_18273, x_18280);
-            int64_t x_18282 = mul64(mod_pow_u64_res_18199, redout_18188);
-            int64_t y_18283 = mul64(mod_pow_u64_res_18200, redout_18187);
-            int64_t x_18284 = add64(x_18282, y_18283);
-            int64_t y_18285 = mul64(mod_pow_u64_res_18201, redout_18186);
-            int64_t x_18286 = add64(x_18284, y_18285);
-            int64_t defunc_1_op_res_18287 = add64(y_18278, x_18286);
-            int64_t redout_tmp_18326 = defunc_1_op_res_18274;
-            int64_t redout_tmp_18327 = defunc_1_op_res_18281;
-            int64_t redout_tmp_18328 = defunc_1_op_res_18287;
-            
-            redout_18186 = redout_tmp_18326;
-            redout_18187 = redout_tmp_18327;
-            redout_18188 = redout_tmp_18328;
-        }
-        defunc_0_f_res_18182 = redout_18186;
-        defunc_0_f_res_18183 = redout_18187;
-        defunc_0_f_res_18184 = redout_18188;
-        
-        int64_t x_18288 = mul64(x_18179, defunc_0_f_res_18182);
-        int64_t y_18289 = mul64(x_18181, defunc_0_f_res_18183);
-        int64_t x_18290 = sub64(x_18288, y_18289);
-        int64_t y_18291 = mul64(x_18180, defunc_0_f_res_18184);
-        int64_t mul_res_18292 = sub64(x_18290, y_18291);
-        int64_t x_18293 = mul64(x_18180, defunc_0_f_res_18182);
-        int64_t y_18294 = mul64(x_18179, defunc_0_f_res_18183);
-        int64_t x_18295 = add64(x_18293, y_18294);
-        int64_t y_18296 = mul64(x_18181, defunc_0_f_res_18184);
-        int64_t x_18297 = sub64(x_18295, y_18296);
-        int64_t x_18298 = add64(y_18289, x_18297);
-        int64_t mul_res_18299 = add64(y_18291, x_18298);
-        int64_t x_18300 = mul64(x_18181, defunc_0_f_res_18182);
-        int64_t y_18301 = mul64(x_18180, defunc_0_f_res_18183);
-        int64_t x_18302 = add64(x_18300, y_18301);
-        int64_t y_18303 = mul64(x_18179, defunc_0_f_res_18184);
-        int64_t x_18304 = add64(x_18302, y_18303);
-        int64_t mul_res_18305 = add64(y_18296, x_18304);
-        
-        // save map-out results
-        { }
-        for (uniform unsigned int uni_i_18337 = 0; uni_i_18337 < programCount; uni_i_18337++) {
-            if (programIndex == uni_i_18337) {
-                // Load accum params
-                {
-                    x_18167 = local_acc_18319;
-                    x_18168 = local_acc_18320;
-                    x_18169 = local_acc_18321;
-                }
-                // Load next params
-                {
-                    x_18170 = extract(mul_res_18292, uni_i_18337);
-                    x_18171 = extract(mul_res_18299, uni_i_18337);
-                    x_18172 = extract(mul_res_18305, uni_i_18337);
-                }
-                // SegRed body
-                {
-                    uniform int64_t canonicalizze_arg_18173 = add64(x_18167, x_18170);
-                    uniform int64_t canonicalizze_res_18174 = umod64(canonicalizze_arg_18173, (int64_t) -4294967295);
-                    uniform int64_t canonicalizze_arg_18175 = add64(x_18168, x_18171);
-                    uniform int64_t canonicalizze_res_18176 = umod64(canonicalizze_arg_18175, (int64_t) -4294967295);
-                    uniform int64_t canonicalizze_arg_18177 = add64(x_18169, x_18172);
-                    uniform int64_t canonicalizze_res_18178 = umod64(canonicalizze_arg_18177, (int64_t) -4294967295);
-                    
-                    local_acc_18319 = canonicalizze_res_18174;
-                    local_acc_18320 = canonicalizze_res_18176;
-                    local_acc_18321 = canonicalizze_res_18178;
-                }
-            }
-        }
-    }
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18313.mem)[flat_tid_18165] = local_acc_18319;
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18315.mem)[flat_tid_18165] = local_acc_18320;
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18317.mem)[flat_tid_18165] = local_acc_18321;
-    
-  cleanup:
-    { }
-    return err;
-}
-struct futhark_mc_param_struct_18601 {
+struct futhark_mc_task_18595 {
     struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    unsigned char *free_mem_17061;
-    unsigned char *free_mem_17065;
-    unsigned char *free_mem_17069;
-    int64_t free_gtid_17383;
-    int64_t free_flat_tid_18020;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18352;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18354;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18356;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    int64_t free_flat_tid_18037;
+    int64_t free_flat_tid_18182;
+    int64_t *retval_defunc_0_f_res_17401;
+    int64_t *retval_defunc_0_f_res_17402;
+    int64_t *retval_defunc_0_f_res_17403;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18603();
+struct futhark_mc_param_struct_18602 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    int64_t free_flat_tid_18182;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18330;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18332;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18334;
+};
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18604();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18605();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18606();
@@ -8135,2013 +7772,2392 @@ extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18607();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18608();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18609();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18610();
-struct futhark_mc_task_18611 {
-    struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    int64_t free_gtid_17383;
-    int64_t free_gtid_18021;
-    int64_t free_flat_tid_18040;
-    int64_t *retval_defunc_0_f_res_18037;
-    int64_t *retval_defunc_0_f_res_18038;
-    int64_t *retval_defunc_0_f_res_18039;
-};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18611();
+export uniform int futhark_mc_loop_ispc_18603(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18602 *uniform futhark_mc_param_struct_18602_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18602_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18602_->free_m_12352;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18602_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18602_->free_gtid_16475;
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18604();
+    eps_mem_17024.mem = futhark_mc_param_struct_18602_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18605();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18602_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18606();
+    mem_17078.mem = futhark_mc_param_struct_18602_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18607();
+    mem_17082.mem = futhark_mc_param_struct_18602_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18608();
+    mem_17086.mem = futhark_mc_param_struct_18602_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform int64_t gtid_17400 = futhark_mc_param_struct_18602_->free_gtid_17400;
+    uniform int64_t flat_tid_18182 = futhark_mc_param_struct_18602_->free_flat_tid_18182;
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18330;
+    
+    reduce_stage_1_tid_res_arr_mem_18330.desc = futhark_mc_strlit_shim_18609();
+    reduce_stage_1_tid_res_arr_mem_18330.mem = futhark_mc_param_struct_18602_->free_reduce_stage_1_tid_res_arr_mem_18330;
+    reduce_stage_1_tid_res_arr_mem_18330.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18330.references = NULL;
+    
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18332;
+    
+    reduce_stage_1_tid_res_arr_mem_18332.desc = futhark_mc_strlit_shim_18610();
+    reduce_stage_1_tid_res_arr_mem_18332.mem = futhark_mc_param_struct_18602_->free_reduce_stage_1_tid_res_arr_mem_18332;
+    reduce_stage_1_tid_res_arr_mem_18332.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18332.references = NULL;
+    
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18334;
+    
+    reduce_stage_1_tid_res_arr_mem_18334.desc = futhark_mc_strlit_shim_18611();
+    reduce_stage_1_tid_res_arr_mem_18334.mem = futhark_mc_param_struct_18602_->free_reduce_stage_1_tid_res_arr_mem_18334;
+    reduce_stage_1_tid_res_arr_mem_18334.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18334.references = NULL;
+    
+    uniform int err = 0;
+    uniform int64_t x_18184;
+    uniform int64_t x_18185;
+    uniform int64_t x_18186;
+    uniform int64_t x_18187;
+    uniform int64_t x_18188;
+    uniform int64_t x_18189;
+    uniform int64_t local_acc_18336 = (int64_t) 0;
+    uniform int64_t local_acc_18337 = (int64_t) 0;
+    uniform int64_t local_acc_18338 = (int64_t) 0;
+    uniform int64_t start_18339;
+    uniform int64_t end_18340;
+    
+    start_18339 = start;
+    end_18340 = end;
+    
+    uniform int64_t n_18341 = end_18340 - start_18339;
+    
+    foreach (SegRed_i_18342 = start_18339 ... start_18339 + n_18341)
+    {
+        int64_t gtid_18183 = SegRed_i_18342;
+        int64_t x_18196;
+        
+        x_18196 = ((int64_t *) mem_17078.mem)[gtid_17400 * q_12354 + gtid_18183];
+        
+        int64_t x_18197;
+        
+        x_18197 = ((int64_t *) mem_17082.mem)[gtid_17400 * q_12354 + gtid_18183];
+        
+        int64_t x_18198;
+        
+        x_18198 = ((int64_t *) mem_17086.mem)[gtid_17400 * q_12354 + gtid_18183];
+        
+        int64_t defunc_0_f_res_18199;
+        int64_t defunc_0_f_res_18200;
+        int64_t defunc_0_f_res_18201;
+        int64_t redout_18203;
+        int64_t redout_18204;
+        int64_t redout_18205;
+        
+        redout_18203 = (int64_t) 1;
+        redout_18204 = (int64_t) 0;
+        redout_18205 = (int64_t) 0;
+        for (uniform int64_t i_18202 = 0; i_18202 < m_12352; i_18202++) {
+            int64_t x_18206;
+            
+            x_18206 = ((int64_t *) expsss_mem_17025.mem)[gtid_17400 * (m_12352 * q_12354) + gtid_18183 * m_12352 + i_18202];
+            
+            uniform int64_t x_18207;
+            
+            x_18207 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + i_18202 * (int64_t) 3];
+            
+            uniform int64_t x_18208;
+            
+            x_18208 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + i_18202 * (int64_t) 3 + (int64_t) 1];
+            
+            uniform int64_t x_18209;
+            
+            x_18209 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + i_18202 * (int64_t) 3 + (int64_t) 2];
+            
+            bool loop_cond_18210 = ult64((int64_t) 0, x_18206);
+            bool mod_pow_u64_res_18211;
+            int64_t mod_pow_u64_res_18212;
+            int64_t mod_pow_u64_res_18213;
+            int64_t mod_pow_u64_res_18214;
+            int64_t mod_pow_u64_res_18215;
+            int64_t mod_pow_u64_res_18216;
+            int64_t mod_pow_u64_res_18217;
+            int64_t mod_pow_u64_res_18218;
+            bool loop_while_18219;
+            int64_t x_18220;
+            int64_t x_18221;
+            int64_t x_18222;
+            int64_t i_18223;
+            int64_t result_18224;
+            int64_t result_18225;
+            int64_t result_18226;
+            
+            loop_while_18219 = loop_cond_18210;
+            x_18220 = x_18207;
+            x_18221 = x_18208;
+            x_18222 = x_18209;
+            i_18223 = x_18206;
+            result_18224 = (int64_t) 1;
+            result_18225 = (int64_t) 0;
+            result_18226 = (int64_t) 0;
+            while (loop_while_18219) {
+                int64_t x_18227 = umod64(i_18223, (int64_t) 2);
+                bool cond_18228 = x_18227 == (int64_t) 1;
+                int64_t loopres_18229;
+                int64_t loopres_18230;
+                int64_t loopres_18231;
+                int64_t loopres_18232;
+                int64_t loopres_18233;
+                int64_t loopres_18234;
+                int64_t loopres_18235;
+                
+                if (cond_18228 == 1) {
+                    int64_t x_18236 = mul64(x_18220, x_18220);
+                    int64_t y_18237 = mul64(x_18221, x_18222);
+                    int64_t x_18238 = sub64(x_18236, y_18237);
+                    int64_t mul_res_18239 = sub64(x_18238, y_18237);
+                    int64_t x_18240 = mul64(x_18220, x_18221);
+                    int64_t x_18241 = add64(x_18240, x_18240);
+                    int64_t y_18242 = mul64(x_18222, x_18222);
+                    int64_t x_18243 = sub64(x_18241, y_18242);
+                    int64_t x_18244 = add64(y_18237, x_18243);
+                    int64_t mul_res_18245 = add64(y_18237, x_18244);
+                    int64_t x_18246 = mul64(x_18220, x_18222);
+                    int64_t y_18247 = mul64(x_18221, x_18221);
+                    int64_t x_18248 = add64(x_18246, y_18247);
+                    int64_t x_18249 = add64(x_18246, x_18248);
+                    int64_t mul_res_18250 = add64(y_18242, x_18249);
+                    int64_t loopres_t_res_18251 = lshr64(i_18223, (int64_t) 1);
+                    int64_t x_18252 = mul64(x_18220, result_18224);
+                    int64_t y_18253 = mul64(x_18222, result_18225);
+                    int64_t x_18254 = sub64(x_18252, y_18253);
+                    int64_t y_18255 = mul64(x_18221, result_18226);
+                    int64_t mul_res_18256 = sub64(x_18254, y_18255);
+                    int64_t x_18257 = mul64(x_18221, result_18224);
+                    int64_t y_18258 = mul64(x_18220, result_18225);
+                    int64_t x_18259 = add64(x_18257, y_18258);
+                    int64_t y_18260 = mul64(x_18222, result_18226);
+                    int64_t x_18261 = sub64(x_18259, y_18260);
+                    int64_t x_18262 = add64(y_18253, x_18261);
+                    int64_t mul_res_18263 = add64(y_18255, x_18262);
+                    int64_t x_18264 = mul64(x_18222, result_18224);
+                    int64_t y_18265 = mul64(x_18221, result_18225);
+                    int64_t x_18266 = add64(x_18264, y_18265);
+                    int64_t y_18267 = mul64(x_18220, result_18226);
+                    int64_t x_18268 = add64(x_18266, y_18267);
+                    int64_t mul_res_18269 = add64(y_18260, x_18268);
+                    
+                    loopres_18229 = mul_res_18239;
+                    loopres_18230 = mul_res_18245;
+                    loopres_18231 = mul_res_18250;
+                    loopres_18232 = loopres_t_res_18251;
+                    loopres_18233 = mul_res_18256;
+                    loopres_18234 = mul_res_18263;
+                    loopres_18235 = mul_res_18269;
+                } else {
+                    int64_t x_18270 = mul64(x_18220, x_18220);
+                    int64_t y_18271 = mul64(x_18221, x_18222);
+                    int64_t x_18272 = sub64(x_18270, y_18271);
+                    int64_t mul_res_18273 = sub64(x_18272, y_18271);
+                    int64_t x_18274 = mul64(x_18220, x_18221);
+                    int64_t x_18275 = add64(x_18274, x_18274);
+                    int64_t y_18276 = mul64(x_18222, x_18222);
+                    int64_t x_18277 = sub64(x_18275, y_18276);
+                    int64_t x_18278 = add64(y_18271, x_18277);
+                    int64_t mul_res_18279 = add64(y_18271, x_18278);
+                    int64_t x_18280 = mul64(x_18220, x_18222);
+                    int64_t y_18281 = mul64(x_18221, x_18221);
+                    int64_t x_18282 = add64(x_18280, y_18281);
+                    int64_t x_18283 = add64(x_18280, x_18282);
+                    int64_t mul_res_18284 = add64(y_18276, x_18283);
+                    int64_t loopres_f_res_18285 = lshr64(i_18223, (int64_t) 1);
+                    
+                    loopres_18229 = mul_res_18273;
+                    loopres_18230 = mul_res_18279;
+                    loopres_18231 = mul_res_18284;
+                    loopres_18232 = loopres_f_res_18285;
+                    loopres_18233 = result_18224;
+                    loopres_18234 = result_18225;
+                    loopres_18235 = result_18226;
+                }
+                
+                bool loop_cond_18286 = ult64((int64_t) 0, loopres_18232);
+                bool loop_while_tmp_18346 = loop_cond_18286;
+                int64_t x_tmp_18347 = loopres_18229;
+                int64_t x_tmp_18348 = loopres_18230;
+                int64_t x_tmp_18349 = loopres_18231;
+                int64_t i_tmp_18350 = loopres_18232;
+                int64_t result_tmp_18351 = loopres_18233;
+                int64_t result_tmp_18352 = loopres_18234;
+                int64_t result_tmp_18353 = loopres_18235;
+                
+                loop_while_18219 = loop_while_tmp_18346;
+                x_18220 = x_tmp_18347;
+                x_18221 = x_tmp_18348;
+                x_18222 = x_tmp_18349;
+                i_18223 = i_tmp_18350;
+                result_18224 = result_tmp_18351;
+                result_18225 = result_tmp_18352;
+                result_18226 = result_tmp_18353;
+            }
+            mod_pow_u64_res_18211 = loop_while_18219;
+            mod_pow_u64_res_18212 = x_18220;
+            mod_pow_u64_res_18213 = x_18221;
+            mod_pow_u64_res_18214 = x_18222;
+            mod_pow_u64_res_18215 = i_18223;
+            mod_pow_u64_res_18216 = result_18224;
+            mod_pow_u64_res_18217 = result_18225;
+            mod_pow_u64_res_18218 = result_18226;
+            
+            int64_t x_18287 = mul64(mod_pow_u64_res_18216, redout_18203);
+            int64_t y_18288 = mul64(mod_pow_u64_res_18217, redout_18205);
+            int64_t x_18289 = sub64(x_18287, y_18288);
+            int64_t y_18290 = mul64(mod_pow_u64_res_18218, redout_18204);
+            int64_t defunc_1_op_res_18291 = sub64(x_18289, y_18290);
+            int64_t x_18292 = mul64(mod_pow_u64_res_18216, redout_18204);
+            int64_t y_18293 = mul64(mod_pow_u64_res_18217, redout_18203);
+            int64_t x_18294 = add64(x_18292, y_18293);
+            int64_t y_18295 = mul64(mod_pow_u64_res_18218, redout_18205);
+            int64_t x_18296 = sub64(x_18294, y_18295);
+            int64_t x_18297 = add64(y_18288, x_18296);
+            int64_t defunc_1_op_res_18298 = add64(y_18290, x_18297);
+            int64_t x_18299 = mul64(mod_pow_u64_res_18216, redout_18205);
+            int64_t y_18300 = mul64(mod_pow_u64_res_18217, redout_18204);
+            int64_t x_18301 = add64(x_18299, y_18300);
+            int64_t y_18302 = mul64(mod_pow_u64_res_18218, redout_18203);
+            int64_t x_18303 = add64(x_18301, y_18302);
+            int64_t defunc_1_op_res_18304 = add64(y_18295, x_18303);
+            int64_t redout_tmp_18343 = defunc_1_op_res_18291;
+            int64_t redout_tmp_18344 = defunc_1_op_res_18298;
+            int64_t redout_tmp_18345 = defunc_1_op_res_18304;
+            
+            redout_18203 = redout_tmp_18343;
+            redout_18204 = redout_tmp_18344;
+            redout_18205 = redout_tmp_18345;
+        }
+        defunc_0_f_res_18199 = redout_18203;
+        defunc_0_f_res_18200 = redout_18204;
+        defunc_0_f_res_18201 = redout_18205;
+        
+        int64_t x_18305 = mul64(x_18196, defunc_0_f_res_18199);
+        int64_t y_18306 = mul64(x_18198, defunc_0_f_res_18200);
+        int64_t x_18307 = sub64(x_18305, y_18306);
+        int64_t y_18308 = mul64(x_18197, defunc_0_f_res_18201);
+        int64_t mul_res_18309 = sub64(x_18307, y_18308);
+        int64_t x_18310 = mul64(x_18197, defunc_0_f_res_18199);
+        int64_t y_18311 = mul64(x_18196, defunc_0_f_res_18200);
+        int64_t x_18312 = add64(x_18310, y_18311);
+        int64_t y_18313 = mul64(x_18198, defunc_0_f_res_18201);
+        int64_t x_18314 = sub64(x_18312, y_18313);
+        int64_t x_18315 = add64(y_18306, x_18314);
+        int64_t mul_res_18316 = add64(y_18308, x_18315);
+        int64_t x_18317 = mul64(x_18198, defunc_0_f_res_18199);
+        int64_t y_18318 = mul64(x_18197, defunc_0_f_res_18200);
+        int64_t x_18319 = add64(x_18317, y_18318);
+        int64_t y_18320 = mul64(x_18196, defunc_0_f_res_18201);
+        int64_t x_18321 = add64(x_18319, y_18320);
+        int64_t mul_res_18322 = add64(y_18313, x_18321);
+        
+        // save map-out results
+        { }
+        for (uniform unsigned int uni_i_18354 = 0; uni_i_18354 < programCount; uni_i_18354++) {
+            if (programIndex == uni_i_18354) {
+                // Load accum params
+                {
+                    x_18184 = local_acc_18336;
+                    x_18185 = local_acc_18337;
+                    x_18186 = local_acc_18338;
+                }
+                // Load next params
+                {
+                    x_18187 = extract(mul_res_18309, uni_i_18354);
+                    x_18188 = extract(mul_res_18316, uni_i_18354);
+                    x_18189 = extract(mul_res_18322, uni_i_18354);
+                }
+                // SegRed body
+                {
+                    uniform int64_t canonicalizze_arg_18190 = add64(x_18184, x_18187);
+                    uniform int64_t canonicalizze_res_18191 = umod64(canonicalizze_arg_18190, (int64_t) -4294967295);
+                    uniform int64_t canonicalizze_arg_18192 = add64(x_18185, x_18188);
+                    uniform int64_t canonicalizze_res_18193 = umod64(canonicalizze_arg_18192, (int64_t) -4294967295);
+                    uniform int64_t canonicalizze_arg_18194 = add64(x_18186, x_18189);
+                    uniform int64_t canonicalizze_res_18195 = umod64(canonicalizze_arg_18194, (int64_t) -4294967295);
+                    
+                    local_acc_18336 = canonicalizze_res_18191;
+                    local_acc_18337 = canonicalizze_res_18193;
+                    local_acc_18338 = canonicalizze_res_18195;
+                }
+            }
+        }
+    }
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18330.mem)[flat_tid_18182] = local_acc_18336;
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18332.mem)[flat_tid_18182] = local_acc_18337;
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18334.mem)[flat_tid_18182] = local_acc_18338;
+    
+  cleanup:
+    { }
+    return err;
+}
 struct futhark_mc_param_struct_18618 {
     struct futhark_context *ctx;
-    int64_t free_m_12334;
-    int64_t free_p_12335;
-    int64_t free_gtid_16458;
-    unsigned char *free_eps_mem_17007;
-    unsigned char *free_expsss_mem_17008;
-    int64_t free_gtid_17383;
-    int64_t free_gtid_18021;
-    int64_t free_flat_tid_18040;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18366;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18368;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18370;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    unsigned char *free_mem_17078;
+    unsigned char *free_mem_17082;
+    unsigned char *free_mem_17086;
+    int64_t free_gtid_17400;
+    int64_t free_flat_tid_18037;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18369;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18371;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18373;
 };
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18620();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18621();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18622();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18623();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18624();
-export uniform int futhark_mc_loop_ispc_18619(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18618 *uniform futhark_mc_param_struct_18618_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18618_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18618_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18618_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18618_->free_gtid_16458;
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18620();
-    eps_mem_17007.mem = futhark_mc_param_struct_18618_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18621();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18618_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform int64_t gtid_17383 = futhark_mc_param_struct_18618_->free_gtid_17383;
-    uniform int64_t gtid_18021 = futhark_mc_param_struct_18618_->free_gtid_18021;
-    uniform int64_t flat_tid_18040 = futhark_mc_param_struct_18618_->free_flat_tid_18040;
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18366;
-    
-    reduce_stage_1_tid_res_arr_mem_18366.desc = futhark_mc_strlit_shim_18622();
-    reduce_stage_1_tid_res_arr_mem_18366.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18366;
-    reduce_stage_1_tid_res_arr_mem_18366.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18366.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18368;
-    
-    reduce_stage_1_tid_res_arr_mem_18368.desc = futhark_mc_strlit_shim_18623();
-    reduce_stage_1_tid_res_arr_mem_18368.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18368;
-    reduce_stage_1_tid_res_arr_mem_18368.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18368.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18370;
-    
-    reduce_stage_1_tid_res_arr_mem_18370.desc = futhark_mc_strlit_shim_18624();
-    reduce_stage_1_tid_res_arr_mem_18370.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18370;
-    reduce_stage_1_tid_res_arr_mem_18370.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18370.references = NULL;
-    
-    uniform int err = 0;
-    uniform int64_t x_18042;
-    uniform int64_t x_18043;
-    uniform int64_t x_18044;
-    uniform int64_t x_18045;
-    uniform int64_t x_18046;
-    uniform int64_t x_18047;
-    uniform int64_t local_acc_18372 = (int64_t) 1;
-    uniform int64_t local_acc_18373 = (int64_t) 0;
-    uniform int64_t local_acc_18374 = (int64_t) 0;
-    uniform int64_t start_18375;
-    uniform int64_t end_18376;
-    
-    start_18375 = start;
-    end_18376 = end;
-    
-    uniform int64_t n_18377 = end_18376 - start_18375;
-    
-    foreach (SegRed_i_18378 = start_18375 ... start_18375 + n_18377)
-    {
-        int64_t gtid_18041 = SegRed_i_18378;
-        int64_t x_18066;
-        
-        x_18066 = ((int64_t *) expsss_mem_17008.mem)[gtid_17383 * (m_12334 * p_12335) + gtid_18021 * m_12334 + gtid_18041];
-        
-        int64_t x_18067;
-        
-        x_18067 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + gtid_18041 * (int64_t) 3];
-        
-        int64_t x_18068;
-        
-        x_18068 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + gtid_18041 * (int64_t) 3 + (int64_t) 1];
-        
-        int64_t x_18069;
-        
-        x_18069 = ((int64_t *) eps_mem_17007.mem)[gtid_16458 * ((int64_t) 3 * m_12334) + gtid_18041 * (int64_t) 3 + (int64_t) 2];
-        
-        bool loop_cond_18070 = ult64((int64_t) 0, x_18066);
-        bool mod_pow_u64_res_18071;
-        int64_t mod_pow_u64_res_18072;
-        int64_t mod_pow_u64_res_18073;
-        int64_t mod_pow_u64_res_18074;
-        int64_t mod_pow_u64_res_18075;
-        int64_t mod_pow_u64_res_18076;
-        int64_t mod_pow_u64_res_18077;
-        int64_t mod_pow_u64_res_18078;
-        bool loop_while_18079;
-        int64_t x_18080;
-        int64_t x_18081;
-        int64_t x_18082;
-        int64_t i_18083;
-        int64_t result_18084;
-        int64_t result_18085;
-        int64_t result_18086;
-        
-        loop_while_18079 = loop_cond_18070;
-        x_18080 = x_18067;
-        x_18081 = x_18068;
-        x_18082 = x_18069;
-        i_18083 = x_18066;
-        result_18084 = (int64_t) 1;
-        result_18085 = (int64_t) 0;
-        result_18086 = (int64_t) 0;
-        while (loop_while_18079) {
-            int64_t x_18087 = umod64(i_18083, (int64_t) 2);
-            bool cond_18088 = x_18087 == (int64_t) 1;
-            int64_t loopres_18089;
-            int64_t loopres_18090;
-            int64_t loopres_18091;
-            int64_t loopres_18092;
-            int64_t loopres_18093;
-            int64_t loopres_18094;
-            int64_t loopres_18095;
-            
-            if (cond_18088 == 1) {
-                int64_t x_18096 = mul64(x_18080, x_18080);
-                int64_t y_18097 = mul64(x_18081, x_18082);
-                int64_t x_18098 = sub64(x_18096, y_18097);
-                int64_t mul_res_18099 = sub64(x_18098, y_18097);
-                int64_t x_18100 = mul64(x_18080, x_18081);
-                int64_t x_18101 = add64(x_18100, x_18100);
-                int64_t y_18102 = mul64(x_18082, x_18082);
-                int64_t x_18103 = sub64(x_18101, y_18102);
-                int64_t x_18104 = add64(y_18097, x_18103);
-                int64_t mul_res_18105 = add64(y_18097, x_18104);
-                int64_t x_18106 = mul64(x_18080, x_18082);
-                int64_t y_18107 = mul64(x_18081, x_18081);
-                int64_t x_18108 = add64(x_18106, y_18107);
-                int64_t x_18109 = add64(x_18106, x_18108);
-                int64_t mul_res_18110 = add64(y_18102, x_18109);
-                int64_t loopres_t_res_18111 = lshr64(i_18083, (int64_t) 1);
-                int64_t x_18112 = mul64(x_18080, result_18084);
-                int64_t y_18113 = mul64(x_18082, result_18085);
-                int64_t x_18114 = sub64(x_18112, y_18113);
-                int64_t y_18115 = mul64(x_18081, result_18086);
-                int64_t mul_res_18116 = sub64(x_18114, y_18115);
-                int64_t x_18117 = mul64(x_18081, result_18084);
-                int64_t y_18118 = mul64(x_18080, result_18085);
-                int64_t x_18119 = add64(x_18117, y_18118);
-                int64_t y_18120 = mul64(x_18082, result_18086);
-                int64_t x_18121 = sub64(x_18119, y_18120);
-                int64_t x_18122 = add64(y_18113, x_18121);
-                int64_t mul_res_18123 = add64(y_18115, x_18122);
-                int64_t x_18124 = mul64(x_18082, result_18084);
-                int64_t y_18125 = mul64(x_18081, result_18085);
-                int64_t x_18126 = add64(x_18124, y_18125);
-                int64_t y_18127 = mul64(x_18080, result_18086);
-                int64_t x_18128 = add64(x_18126, y_18127);
-                int64_t mul_res_18129 = add64(y_18120, x_18128);
-                
-                loopres_18089 = mul_res_18099;
-                loopres_18090 = mul_res_18105;
-                loopres_18091 = mul_res_18110;
-                loopres_18092 = loopres_t_res_18111;
-                loopres_18093 = mul_res_18116;
-                loopres_18094 = mul_res_18123;
-                loopres_18095 = mul_res_18129;
-            } else {
-                int64_t x_18130 = mul64(x_18080, x_18080);
-                int64_t y_18131 = mul64(x_18081, x_18082);
-                int64_t x_18132 = sub64(x_18130, y_18131);
-                int64_t mul_res_18133 = sub64(x_18132, y_18131);
-                int64_t x_18134 = mul64(x_18080, x_18081);
-                int64_t x_18135 = add64(x_18134, x_18134);
-                int64_t y_18136 = mul64(x_18082, x_18082);
-                int64_t x_18137 = sub64(x_18135, y_18136);
-                int64_t x_18138 = add64(y_18131, x_18137);
-                int64_t mul_res_18139 = add64(y_18131, x_18138);
-                int64_t x_18140 = mul64(x_18080, x_18082);
-                int64_t y_18141 = mul64(x_18081, x_18081);
-                int64_t x_18142 = add64(x_18140, y_18141);
-                int64_t x_18143 = add64(x_18140, x_18142);
-                int64_t mul_res_18144 = add64(y_18136, x_18143);
-                int64_t loopres_f_res_18145 = lshr64(i_18083, (int64_t) 1);
-                
-                loopres_18089 = mul_res_18133;
-                loopres_18090 = mul_res_18139;
-                loopres_18091 = mul_res_18144;
-                loopres_18092 = loopres_f_res_18145;
-                loopres_18093 = result_18084;
-                loopres_18094 = result_18085;
-                loopres_18095 = result_18086;
-            }
-            
-            bool loop_cond_18146 = ult64((int64_t) 0, loopres_18092);
-            bool loop_while_tmp_18379 = loop_cond_18146;
-            int64_t x_tmp_18380 = loopres_18089;
-            int64_t x_tmp_18381 = loopres_18090;
-            int64_t x_tmp_18382 = loopres_18091;
-            int64_t i_tmp_18383 = loopres_18092;
-            int64_t result_tmp_18384 = loopres_18093;
-            int64_t result_tmp_18385 = loopres_18094;
-            int64_t result_tmp_18386 = loopres_18095;
-            
-            loop_while_18079 = loop_while_tmp_18379;
-            x_18080 = x_tmp_18380;
-            x_18081 = x_tmp_18381;
-            x_18082 = x_tmp_18382;
-            i_18083 = i_tmp_18383;
-            result_18084 = result_tmp_18384;
-            result_18085 = result_tmp_18385;
-            result_18086 = result_tmp_18386;
-        }
-        mod_pow_u64_res_18071 = loop_while_18079;
-        mod_pow_u64_res_18072 = x_18080;
-        mod_pow_u64_res_18073 = x_18081;
-        mod_pow_u64_res_18074 = x_18082;
-        mod_pow_u64_res_18075 = i_18083;
-        mod_pow_u64_res_18076 = result_18084;
-        mod_pow_u64_res_18077 = result_18085;
-        mod_pow_u64_res_18078 = result_18086;
-        // save map-out results
-        { }
-        for (uniform unsigned int uni_i_18387 = 0; uni_i_18387 < programCount; uni_i_18387++) {
-            if (programIndex == uni_i_18387) {
-                // Load accum params
-                {
-                    x_18042 = local_acc_18372;
-                    x_18043 = local_acc_18373;
-                    x_18044 = local_acc_18374;
-                }
-                // Load next params
-                {
-                    x_18045 = extract(mod_pow_u64_res_18076, uni_i_18387);
-                    x_18046 = extract(mod_pow_u64_res_18077, uni_i_18387);
-                    x_18047 = extract(mod_pow_u64_res_18078, uni_i_18387);
-                }
-                // SegRed body
-                {
-                    uniform int64_t x_18048 = mul64(x_18042, x_18045);
-                    uniform int64_t y_18049 = mul64(x_18044, x_18046);
-                    uniform int64_t x_18050 = sub64(x_18048, y_18049);
-                    uniform int64_t y_18051 = mul64(x_18043, x_18047);
-                    uniform int64_t defunc_1_op_res_18052 = sub64(x_18050, y_18051);
-                    uniform int64_t x_18053 = mul64(x_18043, x_18045);
-                    uniform int64_t y_18054 = mul64(x_18042, x_18046);
-                    uniform int64_t x_18055 = add64(x_18053, y_18054);
-                    uniform int64_t y_18056 = mul64(x_18044, x_18047);
-                    uniform int64_t x_18057 = sub64(x_18055, y_18056);
-                    uniform int64_t x_18058 = add64(y_18049, x_18057);
-                    uniform int64_t defunc_1_op_res_18059 = add64(y_18051, x_18058);
-                    uniform int64_t x_18060 = mul64(x_18044, x_18045);
-                    uniform int64_t y_18061 = mul64(x_18043, x_18046);
-                    uniform int64_t x_18062 = add64(x_18060, y_18061);
-                    uniform int64_t y_18063 = mul64(x_18042, x_18047);
-                    uniform int64_t x_18064 = add64(x_18062, y_18063);
-                    uniform int64_t defunc_1_op_res_18065 = add64(y_18056, x_18064);
-                    
-                    local_acc_18372 = defunc_1_op_res_18052;
-                    local_acc_18373 = defunc_1_op_res_18059;
-                    local_acc_18374 = defunc_1_op_res_18065;
-                }
-            }
-        }
-    }
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18366.mem)[flat_tid_18040] = local_acc_18372;
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18368.mem)[flat_tid_18040] = local_acc_18373;
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18370.mem)[flat_tid_18040] = local_acc_18374;
-    
-  cleanup:
-    { }
-    return err;
-}
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18625(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18611 *uniform args, uniform int iterations);
-struct futhark_mc_mem_struct_18627 { };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18629();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18630();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18631();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18632();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18633();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18634();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18635();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18636();
-static unmasked inline uniform int futhark_mc_inner_ispc_18628(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18601 *uniform futhark_mc_param_struct_18601_, uniform struct futhark_mc_mem_struct_18627 *uniform futhark_mc_mem_struct_18627_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18601_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18601_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18601_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18601_->free_gtid_16458;
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18629();
-    eps_mem_17007.mem = futhark_mc_param_struct_18601_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18630();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18601_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18631();
-    mem_17061.mem = futhark_mc_param_struct_18601_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18632();
-    mem_17065.mem = futhark_mc_param_struct_18601_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18633();
-    mem_17069.mem = futhark_mc_param_struct_18601_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform int64_t gtid_17383 = futhark_mc_param_struct_18601_->free_gtid_17383;
-    uniform int64_t flat_tid_18020 = futhark_mc_param_struct_18601_->free_flat_tid_18020;
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18352;
-    
-    reduce_stage_1_tid_res_arr_mem_18352.desc = futhark_mc_strlit_shim_18634();
-    reduce_stage_1_tid_res_arr_mem_18352.mem = futhark_mc_param_struct_18601_->free_reduce_stage_1_tid_res_arr_mem_18352;
-    reduce_stage_1_tid_res_arr_mem_18352.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18352.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18354;
-    
-    reduce_stage_1_tid_res_arr_mem_18354.desc = futhark_mc_strlit_shim_18635();
-    reduce_stage_1_tid_res_arr_mem_18354.mem = futhark_mc_param_struct_18601_->free_reduce_stage_1_tid_res_arr_mem_18354;
-    reduce_stage_1_tid_res_arr_mem_18354.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18354.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18356;
-    
-    reduce_stage_1_tid_res_arr_mem_18356.desc = futhark_mc_strlit_shim_18636();
-    reduce_stage_1_tid_res_arr_mem_18356.mem = futhark_mc_param_struct_18601_->free_reduce_stage_1_tid_res_arr_mem_18356;
-    reduce_stage_1_tid_res_arr_mem_18356.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18356.references = NULL;
-    
-    uniform int err = 0;
-    uniform int64_t x_18022;
-    uniform int64_t x_18023;
-    uniform int64_t x_18024;
-    uniform int64_t x_18025;
-    uniform int64_t x_18026;
-    uniform int64_t x_18027;
-    uniform int64_t local_acc_18358 = (int64_t) 0;
-    uniform int64_t local_acc_18359 = (int64_t) 0;
-    uniform int64_t local_acc_18360 = (int64_t) 0;
-    uniform int64_t start_18361;
-    uniform int64_t end_18362;
-    
-    start_18361 = start;
-    end_18362 = end;
-    
-    uniform int64_t n_18363 = end_18362 - start_18361;
-    
-    for (uniform int64_t i = 0; i < (start_18361 + n_18363 - start_18361) / programCount; i++) {
-        int64_t SegRed_i_18364 = start_18361 + programIndex + i * programCount;
-        int64_t gtid_18021 = SegRed_i_18364;
-        int64_t x_18034;
-        
-        x_18034 = ((int64_t *) mem_17061.mem)[gtid_17383 * p_12335 + gtid_18021];
-        
-        int64_t x_18035;
-        
-        x_18035 = ((int64_t *) mem_17065.mem)[gtid_17383 * p_12335 + gtid_18021];
-        
-        int64_t x_18036;
-        
-        x_18036 = ((int64_t *) mem_17069.mem)[gtid_17383 * p_12335 + gtid_18021];
-        
-        int64_t defunc_0_f_res_18037;
-        int64_t defunc_0_f_res_18038;
-        int64_t defunc_0_f_res_18039;
-        uniform int64_t flat_tid_18040 = (int64_t) 0;
-        
-        defunc_0_f_res_18037 = (int64_t) 0;
-        defunc_0_f_res_18038 = (int64_t) 0;
-        defunc_0_f_res_18039 = (int64_t) 0;
-        
-        struct futhark_mc_task_18611 futhark_mc_task_18611_;
-        
-        futhark_mc_task_18611_.ctx = ctx;
-        futhark_mc_task_18611_.free_m_12334 = m_12334;
-        futhark_mc_task_18611_.free_p_12335 = p_12335;
-        futhark_mc_task_18611_.free_gtid_16458 = gtid_16458;
-        futhark_mc_task_18611_.free_eps_mem_17007 = eps_mem_17007.mem;
-        futhark_mc_task_18611_.free_expsss_mem_17008 = expsss_mem_17008.mem;
-        futhark_mc_task_18611_.free_gtid_17383 = gtid_17383;
-        futhark_mc_task_18611_.free_gtid_18021 = gtid_18021;
-        futhark_mc_task_18611_.free_flat_tid_18040 = flat_tid_18040;
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18037 = (int64_t *) &defunc_0_f_res_18037;
-        #if ISPC
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18037 += programIndex;
-        #endif
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18038 = (int64_t *) &defunc_0_f_res_18038;
-        #if ISPC
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18038 += programIndex;
-        #endif
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18039 = (int64_t *) &defunc_0_f_res_18039;
-        #if ISPC
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18039 += programIndex;
-        #endif
-        #if ISPC
-        
-        uniform struct futhark_mc_task_18611 aos_18626[programCount];
-        
-        aos_18626[programIndex] = futhark_mc_task_18611_;
-        foreach_active (i)
-        if (err == 0)
-            err = futhark_mc_schedule_shim_18625(ctx, &aos_18626[i], extract(m_12334, i));
-        if (err != 0)
-            unmasked { return err; }
-        #else
-        err = futhark_mc_schedule_shim_18625(ctx, &futhark_mc_task_18611_, m_12334);
-        if (err != 0)
-            goto cleanup;
-        #endif
-        
-        int64_t x_18147 = mul64(x_18034, defunc_0_f_res_18037);
-        int64_t y_18148 = mul64(x_18036, defunc_0_f_res_18038);
-        int64_t x_18149 = sub64(x_18147, y_18148);
-        int64_t y_18150 = mul64(x_18035, defunc_0_f_res_18039);
-        int64_t mul_res_18151 = sub64(x_18149, y_18150);
-        int64_t x_18152 = mul64(x_18035, defunc_0_f_res_18037);
-        int64_t y_18153 = mul64(x_18034, defunc_0_f_res_18038);
-        int64_t x_18154 = add64(x_18152, y_18153);
-        int64_t y_18155 = mul64(x_18036, defunc_0_f_res_18039);
-        int64_t x_18156 = sub64(x_18154, y_18155);
-        int64_t x_18157 = add64(y_18148, x_18156);
-        int64_t mul_res_18158 = add64(y_18150, x_18157);
-        int64_t x_18159 = mul64(x_18036, defunc_0_f_res_18037);
-        int64_t y_18160 = mul64(x_18035, defunc_0_f_res_18038);
-        int64_t x_18161 = add64(x_18159, y_18160);
-        int64_t y_18162 = mul64(x_18034, defunc_0_f_res_18039);
-        int64_t x_18163 = add64(x_18161, y_18162);
-        int64_t mul_res_18164 = add64(y_18155, x_18163);
-        
-        // save map-out results
-        { }
-        for (uniform unsigned int uni_i_18413 = 0; uni_i_18413 < programCount; uni_i_18413++) {
-            if (programIndex == uni_i_18413) {
-                // Load accum params
-                {
-                    x_18022 = local_acc_18358;
-                    x_18023 = local_acc_18359;
-                    x_18024 = local_acc_18360;
-                }
-                // Load next params
-                {
-                    x_18025 = extract(mul_res_18151, uni_i_18413);
-                    x_18026 = extract(mul_res_18158, uni_i_18413);
-                    x_18027 = extract(mul_res_18164, uni_i_18413);
-                }
-                // SegRed body
-                {
-                    uniform int64_t canonicalizze_arg_18028 = add64(x_18022, x_18025);
-                    uniform int64_t canonicalizze_res_18029 = umod64(canonicalizze_arg_18028, (int64_t) -4294967295);
-                    uniform int64_t canonicalizze_arg_18030 = add64(x_18023, x_18026);
-                    uniform int64_t canonicalizze_res_18031 = umod64(canonicalizze_arg_18030, (int64_t) -4294967295);
-                    uniform int64_t canonicalizze_arg_18032 = add64(x_18024, x_18027);
-                    uniform int64_t canonicalizze_res_18033 = umod64(canonicalizze_arg_18032, (int64_t) -4294967295);
-                    
-                    local_acc_18358 = canonicalizze_res_18029;
-                    local_acc_18359 = canonicalizze_res_18031;
-                    local_acc_18360 = canonicalizze_res_18033;
-                }
-            }
-        }
-    }
-    if (programIndex < (start_18361 + n_18363 - start_18361) % programCount) {
-        int64_t SegRed_i_18364 = start_18361 + programIndex + (start_18361 + n_18363 - start_18361) / programCount * programCount;
-        int64_t gtid_18021 = SegRed_i_18364;
-        int64_t x_18034;
-        
-        x_18034 = ((int64_t *) mem_17061.mem)[gtid_17383 * p_12335 + gtid_18021];
-        
-        int64_t x_18035;
-        
-        x_18035 = ((int64_t *) mem_17065.mem)[gtid_17383 * p_12335 + gtid_18021];
-        
-        int64_t x_18036;
-        
-        x_18036 = ((int64_t *) mem_17069.mem)[gtid_17383 * p_12335 + gtid_18021];
-        
-        int64_t defunc_0_f_res_18037;
-        int64_t defunc_0_f_res_18038;
-        int64_t defunc_0_f_res_18039;
-        uniform int64_t flat_tid_18040 = (int64_t) 0;
-        
-        defunc_0_f_res_18037 = (int64_t) 0;
-        defunc_0_f_res_18038 = (int64_t) 0;
-        defunc_0_f_res_18039 = (int64_t) 0;
-        
-        struct futhark_mc_task_18611 futhark_mc_task_18611_;
-        
-        futhark_mc_task_18611_.ctx = ctx;
-        futhark_mc_task_18611_.free_m_12334 = m_12334;
-        futhark_mc_task_18611_.free_p_12335 = p_12335;
-        futhark_mc_task_18611_.free_gtid_16458 = gtid_16458;
-        futhark_mc_task_18611_.free_eps_mem_17007 = eps_mem_17007.mem;
-        futhark_mc_task_18611_.free_expsss_mem_17008 = expsss_mem_17008.mem;
-        futhark_mc_task_18611_.free_gtid_17383 = gtid_17383;
-        futhark_mc_task_18611_.free_gtid_18021 = gtid_18021;
-        futhark_mc_task_18611_.free_flat_tid_18040 = flat_tid_18040;
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18037 = (int64_t *) &defunc_0_f_res_18037;
-        #if ISPC
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18037 += programIndex;
-        #endif
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18038 = (int64_t *) &defunc_0_f_res_18038;
-        #if ISPC
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18038 += programIndex;
-        #endif
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18039 = (int64_t *) &defunc_0_f_res_18039;
-        #if ISPC
-        futhark_mc_task_18611_.retval_defunc_0_f_res_18039 += programIndex;
-        #endif
-        #if ISPC
-        
-        uniform struct futhark_mc_task_18611 aos_18626[programCount];
-        
-        aos_18626[programIndex] = futhark_mc_task_18611_;
-        foreach_active (i)
-        if (err == 0)
-            err = futhark_mc_schedule_shim_18625(ctx, &aos_18626[i], extract(m_12334, i));
-        if (err != 0)
-            unmasked { return err; }
-        #else
-        err = futhark_mc_schedule_shim_18625(ctx, &futhark_mc_task_18611_, m_12334);
-        if (err != 0)
-            goto cleanup;
-        #endif
-        
-        int64_t x_18147 = mul64(x_18034, defunc_0_f_res_18037);
-        int64_t y_18148 = mul64(x_18036, defunc_0_f_res_18038);
-        int64_t x_18149 = sub64(x_18147, y_18148);
-        int64_t y_18150 = mul64(x_18035, defunc_0_f_res_18039);
-        int64_t mul_res_18151 = sub64(x_18149, y_18150);
-        int64_t x_18152 = mul64(x_18035, defunc_0_f_res_18037);
-        int64_t y_18153 = mul64(x_18034, defunc_0_f_res_18038);
-        int64_t x_18154 = add64(x_18152, y_18153);
-        int64_t y_18155 = mul64(x_18036, defunc_0_f_res_18039);
-        int64_t x_18156 = sub64(x_18154, y_18155);
-        int64_t x_18157 = add64(y_18148, x_18156);
-        int64_t mul_res_18158 = add64(y_18150, x_18157);
-        int64_t x_18159 = mul64(x_18036, defunc_0_f_res_18037);
-        int64_t y_18160 = mul64(x_18035, defunc_0_f_res_18038);
-        int64_t x_18161 = add64(x_18159, y_18160);
-        int64_t y_18162 = mul64(x_18034, defunc_0_f_res_18039);
-        int64_t x_18163 = add64(x_18161, y_18162);
-        int64_t mul_res_18164 = add64(y_18155, x_18163);
-        
-        // save map-out results
-        { }
-        for (uniform unsigned int uni_i_18413 = 0; uni_i_18413 < programCount; uni_i_18413++) {
-            if (programIndex == uni_i_18413) {
-                // Load accum params
-                {
-                    x_18022 = local_acc_18358;
-                    x_18023 = local_acc_18359;
-                    x_18024 = local_acc_18360;
-                }
-                // Load next params
-                {
-                    x_18025 = extract(mul_res_18151, uni_i_18413);
-                    x_18026 = extract(mul_res_18158, uni_i_18413);
-                    x_18027 = extract(mul_res_18164, uni_i_18413);
-                }
-                // SegRed body
-                {
-                    uniform int64_t canonicalizze_arg_18028 = add64(x_18022, x_18025);
-                    uniform int64_t canonicalizze_res_18029 = umod64(canonicalizze_arg_18028, (int64_t) -4294967295);
-                    uniform int64_t canonicalizze_arg_18030 = add64(x_18023, x_18026);
-                    uniform int64_t canonicalizze_res_18031 = umod64(canonicalizze_arg_18030, (int64_t) -4294967295);
-                    uniform int64_t canonicalizze_arg_18032 = add64(x_18024, x_18027);
-                    uniform int64_t canonicalizze_res_18033 = umod64(canonicalizze_arg_18032, (int64_t) -4294967295);
-                    
-                    local_acc_18358 = canonicalizze_res_18029;
-                    local_acc_18359 = canonicalizze_res_18031;
-                    local_acc_18360 = canonicalizze_res_18033;
-                }
-            }
-        }
-    }
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18352.mem)[flat_tid_18020] = local_acc_18358;
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18354.mem)[flat_tid_18020] = local_acc_18359;
-    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18356.mem)[flat_tid_18020] = local_acc_18360;
-    return err;
-}
-export uniform int futhark_mc_loop_ispc_18602(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18601 *uniform futhark_mc_param_struct_18601_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18601_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18601_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18601_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18601_->free_gtid_16458;
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18603();
-    eps_mem_17007.mem = futhark_mc_param_struct_18601_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18604();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18601_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18605();
-    mem_17061.mem = futhark_mc_param_struct_18601_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18606();
-    mem_17065.mem = futhark_mc_param_struct_18601_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18607();
-    mem_17069.mem = futhark_mc_param_struct_18601_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform int64_t gtid_17383 = futhark_mc_param_struct_18601_->free_gtid_17383;
-    uniform int64_t flat_tid_18020 = futhark_mc_param_struct_18601_->free_flat_tid_18020;
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18352;
-    
-    reduce_stage_1_tid_res_arr_mem_18352.desc = futhark_mc_strlit_shim_18608();
-    reduce_stage_1_tid_res_arr_mem_18352.mem = futhark_mc_param_struct_18601_->free_reduce_stage_1_tid_res_arr_mem_18352;
-    reduce_stage_1_tid_res_arr_mem_18352.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18352.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18354;
-    
-    reduce_stage_1_tid_res_arr_mem_18354.desc = futhark_mc_strlit_shim_18609();
-    reduce_stage_1_tid_res_arr_mem_18354.mem = futhark_mc_param_struct_18601_->free_reduce_stage_1_tid_res_arr_mem_18354;
-    reduce_stage_1_tid_res_arr_mem_18354.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18354.references = NULL;
-    
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18356;
-    
-    reduce_stage_1_tid_res_arr_mem_18356.desc = futhark_mc_strlit_shim_18610();
-    reduce_stage_1_tid_res_arr_mem_18356.mem = futhark_mc_param_struct_18601_->free_reduce_stage_1_tid_res_arr_mem_18356;
-    reduce_stage_1_tid_res_arr_mem_18356.size = 0;
-    reduce_stage_1_tid_res_arr_mem_18356.references = NULL;
-    
-    uniform struct futhark_mc_mem_struct_18627 futhark_mc_mem_struct_18627_;
-    uniform int err = futhark_mc_inner_ispc_18628(start, end, futhark_mc_param_struct_18601_, &futhark_mc_mem_struct_18627_);
-    
-    
-  cleanup:
-    { }
-    return err;
-}
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18637(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18578 *uniform args, uniform int iterations);
-struct futhark_mc_mem_struct_18642 {
-    varying unsigned char *uniform mem_17691;
-    varying size_t mem_17691_cached_sizze_18571;
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18625();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18626();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18627();
+struct futhark_mc_task_18628 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    int64_t free_gtid_17400;
+    int64_t free_gtid_18038;
+    int64_t free_flat_tid_18057;
+    int64_t *retval_defunc_0_f_res_18054;
+    int64_t *retval_defunc_0_f_res_18055;
+    int64_t *retval_defunc_0_f_res_18056;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18644();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18645();
+struct futhark_mc_param_struct_18635 {
+    struct futhark_context *ctx;
+    int64_t free_m_12352;
+    int64_t free_q_12354;
+    int64_t free_gtid_16475;
+    unsigned char *free_eps_mem_17024;
+    unsigned char *free_expsss_mem_17025;
+    int64_t free_gtid_17400;
+    int64_t free_gtid_18038;
+    int64_t free_flat_tid_18057;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18383;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18385;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_18387;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18637();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18638();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18639();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18640();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18641();
+export uniform int futhark_mc_loop_ispc_18636(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18635 *uniform futhark_mc_param_struct_18635_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18635_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18635_->free_m_12352;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18635_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18635_->free_gtid_16475;
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18637();
+    eps_mem_17024.mem = futhark_mc_param_struct_18635_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18638();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18635_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform int64_t gtid_17400 = futhark_mc_param_struct_18635_->free_gtid_17400;
+    uniform int64_t gtid_18038 = futhark_mc_param_struct_18635_->free_gtid_18038;
+    uniform int64_t flat_tid_18057 = futhark_mc_param_struct_18635_->free_flat_tid_18057;
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18383;
+    
+    reduce_stage_1_tid_res_arr_mem_18383.desc = futhark_mc_strlit_shim_18639();
+    reduce_stage_1_tid_res_arr_mem_18383.mem = futhark_mc_param_struct_18635_->free_reduce_stage_1_tid_res_arr_mem_18383;
+    reduce_stage_1_tid_res_arr_mem_18383.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18383.references = NULL;
+    
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18385;
+    
+    reduce_stage_1_tid_res_arr_mem_18385.desc = futhark_mc_strlit_shim_18640();
+    reduce_stage_1_tid_res_arr_mem_18385.mem = futhark_mc_param_struct_18635_->free_reduce_stage_1_tid_res_arr_mem_18385;
+    reduce_stage_1_tid_res_arr_mem_18385.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18385.references = NULL;
+    
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18387;
+    
+    reduce_stage_1_tid_res_arr_mem_18387.desc = futhark_mc_strlit_shim_18641();
+    reduce_stage_1_tid_res_arr_mem_18387.mem = futhark_mc_param_struct_18635_->free_reduce_stage_1_tid_res_arr_mem_18387;
+    reduce_stage_1_tid_res_arr_mem_18387.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18387.references = NULL;
+    
+    uniform int err = 0;
+    uniform int64_t x_18059;
+    uniform int64_t x_18060;
+    uniform int64_t x_18061;
+    uniform int64_t x_18062;
+    uniform int64_t x_18063;
+    uniform int64_t x_18064;
+    uniform int64_t local_acc_18389 = (int64_t) 1;
+    uniform int64_t local_acc_18390 = (int64_t) 0;
+    uniform int64_t local_acc_18391 = (int64_t) 0;
+    uniform int64_t start_18392;
+    uniform int64_t end_18393;
+    
+    start_18392 = start;
+    end_18393 = end;
+    
+    uniform int64_t n_18394 = end_18393 - start_18392;
+    
+    foreach (SegRed_i_18395 = start_18392 ... start_18392 + n_18394)
+    {
+        int64_t gtid_18058 = SegRed_i_18395;
+        int64_t x_18083;
+        
+        x_18083 = ((int64_t *) expsss_mem_17025.mem)[gtid_17400 * (m_12352 * q_12354) + gtid_18038 * m_12352 + gtid_18058];
+        
+        int64_t x_18084;
+        
+        x_18084 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + gtid_18058 * (int64_t) 3];
+        
+        int64_t x_18085;
+        
+        x_18085 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + gtid_18058 * (int64_t) 3 + (int64_t) 1];
+        
+        int64_t x_18086;
+        
+        x_18086 = ((int64_t *) eps_mem_17024.mem)[gtid_16475 * ((int64_t) 3 * m_12352) + gtid_18058 * (int64_t) 3 + (int64_t) 2];
+        
+        bool loop_cond_18087 = ult64((int64_t) 0, x_18083);
+        bool mod_pow_u64_res_18088;
+        int64_t mod_pow_u64_res_18089;
+        int64_t mod_pow_u64_res_18090;
+        int64_t mod_pow_u64_res_18091;
+        int64_t mod_pow_u64_res_18092;
+        int64_t mod_pow_u64_res_18093;
+        int64_t mod_pow_u64_res_18094;
+        int64_t mod_pow_u64_res_18095;
+        bool loop_while_18096;
+        int64_t x_18097;
+        int64_t x_18098;
+        int64_t x_18099;
+        int64_t i_18100;
+        int64_t result_18101;
+        int64_t result_18102;
+        int64_t result_18103;
+        
+        loop_while_18096 = loop_cond_18087;
+        x_18097 = x_18084;
+        x_18098 = x_18085;
+        x_18099 = x_18086;
+        i_18100 = x_18083;
+        result_18101 = (int64_t) 1;
+        result_18102 = (int64_t) 0;
+        result_18103 = (int64_t) 0;
+        while (loop_while_18096) {
+            int64_t x_18104 = umod64(i_18100, (int64_t) 2);
+            bool cond_18105 = x_18104 == (int64_t) 1;
+            int64_t loopres_18106;
+            int64_t loopres_18107;
+            int64_t loopres_18108;
+            int64_t loopres_18109;
+            int64_t loopres_18110;
+            int64_t loopres_18111;
+            int64_t loopres_18112;
+            
+            if (cond_18105 == 1) {
+                int64_t x_18113 = mul64(x_18097, x_18097);
+                int64_t y_18114 = mul64(x_18098, x_18099);
+                int64_t x_18115 = sub64(x_18113, y_18114);
+                int64_t mul_res_18116 = sub64(x_18115, y_18114);
+                int64_t x_18117 = mul64(x_18097, x_18098);
+                int64_t x_18118 = add64(x_18117, x_18117);
+                int64_t y_18119 = mul64(x_18099, x_18099);
+                int64_t x_18120 = sub64(x_18118, y_18119);
+                int64_t x_18121 = add64(y_18114, x_18120);
+                int64_t mul_res_18122 = add64(y_18114, x_18121);
+                int64_t x_18123 = mul64(x_18097, x_18099);
+                int64_t y_18124 = mul64(x_18098, x_18098);
+                int64_t x_18125 = add64(x_18123, y_18124);
+                int64_t x_18126 = add64(x_18123, x_18125);
+                int64_t mul_res_18127 = add64(y_18119, x_18126);
+                int64_t loopres_t_res_18128 = lshr64(i_18100, (int64_t) 1);
+                int64_t x_18129 = mul64(x_18097, result_18101);
+                int64_t y_18130 = mul64(x_18099, result_18102);
+                int64_t x_18131 = sub64(x_18129, y_18130);
+                int64_t y_18132 = mul64(x_18098, result_18103);
+                int64_t mul_res_18133 = sub64(x_18131, y_18132);
+                int64_t x_18134 = mul64(x_18098, result_18101);
+                int64_t y_18135 = mul64(x_18097, result_18102);
+                int64_t x_18136 = add64(x_18134, y_18135);
+                int64_t y_18137 = mul64(x_18099, result_18103);
+                int64_t x_18138 = sub64(x_18136, y_18137);
+                int64_t x_18139 = add64(y_18130, x_18138);
+                int64_t mul_res_18140 = add64(y_18132, x_18139);
+                int64_t x_18141 = mul64(x_18099, result_18101);
+                int64_t y_18142 = mul64(x_18098, result_18102);
+                int64_t x_18143 = add64(x_18141, y_18142);
+                int64_t y_18144 = mul64(x_18097, result_18103);
+                int64_t x_18145 = add64(x_18143, y_18144);
+                int64_t mul_res_18146 = add64(y_18137, x_18145);
+                
+                loopres_18106 = mul_res_18116;
+                loopres_18107 = mul_res_18122;
+                loopres_18108 = mul_res_18127;
+                loopres_18109 = loopres_t_res_18128;
+                loopres_18110 = mul_res_18133;
+                loopres_18111 = mul_res_18140;
+                loopres_18112 = mul_res_18146;
+            } else {
+                int64_t x_18147 = mul64(x_18097, x_18097);
+                int64_t y_18148 = mul64(x_18098, x_18099);
+                int64_t x_18149 = sub64(x_18147, y_18148);
+                int64_t mul_res_18150 = sub64(x_18149, y_18148);
+                int64_t x_18151 = mul64(x_18097, x_18098);
+                int64_t x_18152 = add64(x_18151, x_18151);
+                int64_t y_18153 = mul64(x_18099, x_18099);
+                int64_t x_18154 = sub64(x_18152, y_18153);
+                int64_t x_18155 = add64(y_18148, x_18154);
+                int64_t mul_res_18156 = add64(y_18148, x_18155);
+                int64_t x_18157 = mul64(x_18097, x_18099);
+                int64_t y_18158 = mul64(x_18098, x_18098);
+                int64_t x_18159 = add64(x_18157, y_18158);
+                int64_t x_18160 = add64(x_18157, x_18159);
+                int64_t mul_res_18161 = add64(y_18153, x_18160);
+                int64_t loopres_f_res_18162 = lshr64(i_18100, (int64_t) 1);
+                
+                loopres_18106 = mul_res_18150;
+                loopres_18107 = mul_res_18156;
+                loopres_18108 = mul_res_18161;
+                loopres_18109 = loopres_f_res_18162;
+                loopres_18110 = result_18101;
+                loopres_18111 = result_18102;
+                loopres_18112 = result_18103;
+            }
+            
+            bool loop_cond_18163 = ult64((int64_t) 0, loopres_18109);
+            bool loop_while_tmp_18396 = loop_cond_18163;
+            int64_t x_tmp_18397 = loopres_18106;
+            int64_t x_tmp_18398 = loopres_18107;
+            int64_t x_tmp_18399 = loopres_18108;
+            int64_t i_tmp_18400 = loopres_18109;
+            int64_t result_tmp_18401 = loopres_18110;
+            int64_t result_tmp_18402 = loopres_18111;
+            int64_t result_tmp_18403 = loopres_18112;
+            
+            loop_while_18096 = loop_while_tmp_18396;
+            x_18097 = x_tmp_18397;
+            x_18098 = x_tmp_18398;
+            x_18099 = x_tmp_18399;
+            i_18100 = i_tmp_18400;
+            result_18101 = result_tmp_18401;
+            result_18102 = result_tmp_18402;
+            result_18103 = result_tmp_18403;
+        }
+        mod_pow_u64_res_18088 = loop_while_18096;
+        mod_pow_u64_res_18089 = x_18097;
+        mod_pow_u64_res_18090 = x_18098;
+        mod_pow_u64_res_18091 = x_18099;
+        mod_pow_u64_res_18092 = i_18100;
+        mod_pow_u64_res_18093 = result_18101;
+        mod_pow_u64_res_18094 = result_18102;
+        mod_pow_u64_res_18095 = result_18103;
+        // save map-out results
+        { }
+        for (uniform unsigned int uni_i_18404 = 0; uni_i_18404 < programCount; uni_i_18404++) {
+            if (programIndex == uni_i_18404) {
+                // Load accum params
+                {
+                    x_18059 = local_acc_18389;
+                    x_18060 = local_acc_18390;
+                    x_18061 = local_acc_18391;
+                }
+                // Load next params
+                {
+                    x_18062 = extract(mod_pow_u64_res_18093, uni_i_18404);
+                    x_18063 = extract(mod_pow_u64_res_18094, uni_i_18404);
+                    x_18064 = extract(mod_pow_u64_res_18095, uni_i_18404);
+                }
+                // SegRed body
+                {
+                    uniform int64_t x_18065 = mul64(x_18059, x_18062);
+                    uniform int64_t y_18066 = mul64(x_18061, x_18063);
+                    uniform int64_t x_18067 = sub64(x_18065, y_18066);
+                    uniform int64_t y_18068 = mul64(x_18060, x_18064);
+                    uniform int64_t defunc_1_op_res_18069 = sub64(x_18067, y_18068);
+                    uniform int64_t x_18070 = mul64(x_18060, x_18062);
+                    uniform int64_t y_18071 = mul64(x_18059, x_18063);
+                    uniform int64_t x_18072 = add64(x_18070, y_18071);
+                    uniform int64_t y_18073 = mul64(x_18061, x_18064);
+                    uniform int64_t x_18074 = sub64(x_18072, y_18073);
+                    uniform int64_t x_18075 = add64(y_18066, x_18074);
+                    uniform int64_t defunc_1_op_res_18076 = add64(y_18068, x_18075);
+                    uniform int64_t x_18077 = mul64(x_18061, x_18062);
+                    uniform int64_t y_18078 = mul64(x_18060, x_18063);
+                    uniform int64_t x_18079 = add64(x_18077, y_18078);
+                    uniform int64_t y_18080 = mul64(x_18059, x_18064);
+                    uniform int64_t x_18081 = add64(x_18079, y_18080);
+                    uniform int64_t defunc_1_op_res_18082 = add64(y_18073, x_18081);
+                    
+                    local_acc_18389 = defunc_1_op_res_18069;
+                    local_acc_18390 = defunc_1_op_res_18076;
+                    local_acc_18391 = defunc_1_op_res_18082;
+                }
+            }
+        }
+    }
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18383.mem)[flat_tid_18057] = local_acc_18389;
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18385.mem)[flat_tid_18057] = local_acc_18390;
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18387.mem)[flat_tid_18057] = local_acc_18391;
+    
+  cleanup:
+    { }
+    return err;
+}
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18642(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18628 *uniform args, uniform int iterations);
+struct futhark_mc_mem_struct_18644 { };
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18646();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18647();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18648();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18649();
-static unmasked inline uniform int futhark_mc_inner_ispc_18643(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18569 *uniform futhark_mc_param_struct_18569_, uniform struct futhark_mc_mem_struct_18642 *uniform futhark_mc_mem_struct_18642_)
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18650();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18651();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18652();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18653();
+static unmasked inline uniform int futhark_mc_inner_ispc_18645(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18618 *uniform futhark_mc_param_struct_18618_, uniform struct futhark_mc_mem_struct_18644 *uniform futhark_mc_mem_struct_18644_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18569_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18569_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18569_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18569_->free_gtid_16458;
-    uniform int64_t defunc_0_f_res_16461 = futhark_mc_param_struct_18569_->free_defunc_0_f_res_16461;
-    uniform int64_t defunc_0_f_res_16462 = futhark_mc_param_struct_18569_->free_defunc_0_f_res_16462;
-    uniform int64_t defunc_0_f_res_16463 = futhark_mc_param_struct_18569_->free_defunc_0_f_res_16463;
-    uniform struct memblock eps_mem_17007;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18618_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18618_->free_m_12352;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18618_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18618_->free_gtid_16475;
+    uniform struct memblock eps_mem_17024;
     
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18644();
-    eps_mem_17007.mem = futhark_mc_param_struct_18569_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18646();
+    eps_mem_17024.mem = futhark_mc_param_struct_18618_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
     
-    uniform struct memblock expsss_mem_17008;
+    uniform struct memblock expsss_mem_17025;
     
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18645();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18569_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18647();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18618_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
     
-    uniform struct memblock mem_17061;
+    uniform struct memblock mem_17078;
     
-    mem_17061.desc = futhark_mc_strlit_shim_18646();
-    mem_17061.mem = futhark_mc_param_struct_18569_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
+    mem_17078.desc = futhark_mc_strlit_shim_18648();
+    mem_17078.mem = futhark_mc_param_struct_18618_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
     
-    uniform struct memblock mem_17065;
+    uniform struct memblock mem_17082;
     
-    mem_17065.desc = futhark_mc_strlit_shim_18647();
-    mem_17065.mem = futhark_mc_param_struct_18569_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
+    mem_17082.desc = futhark_mc_strlit_shim_18649();
+    mem_17082.mem = futhark_mc_param_struct_18618_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
     
-    uniform struct memblock mem_17069;
+    uniform struct memblock mem_17086;
     
-    mem_17069.desc = futhark_mc_strlit_shim_18648();
-    mem_17069.mem = futhark_mc_param_struct_18569_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
+    mem_17086.desc = futhark_mc_strlit_shim_18650();
+    mem_17086.mem = futhark_mc_param_struct_18618_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
     
-    uniform struct memblock mem_17077;
+    uniform int64_t gtid_17400 = futhark_mc_param_struct_18618_->free_gtid_17400;
+    uniform int64_t flat_tid_18037 = futhark_mc_param_struct_18618_->free_flat_tid_18037;
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18369;
     
-    mem_17077.desc = futhark_mc_strlit_shim_18649();
-    mem_17077.mem = futhark_mc_param_struct_18569_->free_mem_17077;
-    mem_17077.size = 0;
-    mem_17077.references = NULL;
+    reduce_stage_1_tid_res_arr_mem_18369.desc = futhark_mc_strlit_shim_18651();
+    reduce_stage_1_tid_res_arr_mem_18369.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18369;
+    reduce_stage_1_tid_res_arr_mem_18369.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18369.references = NULL;
     
-    varying unsigned char *uniform mem_17691 = futhark_mc_mem_struct_18642_->mem_17691;
-    size_t mem_17691_cached_sizze_18571 = futhark_mc_mem_struct_18642_->mem_17691_cached_sizze_18571;
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18371;
+    
+    reduce_stage_1_tid_res_arr_mem_18371.desc = futhark_mc_strlit_shim_18652();
+    reduce_stage_1_tid_res_arr_mem_18371.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18371;
+    reduce_stage_1_tid_res_arr_mem_18371.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18371.references = NULL;
+    
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18373;
+    
+    reduce_stage_1_tid_res_arr_mem_18373.desc = futhark_mc_strlit_shim_18653();
+    reduce_stage_1_tid_res_arr_mem_18373.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18373;
+    reduce_stage_1_tid_res_arr_mem_18373.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18373.references = NULL;
+    
     uniform int err = 0;
-    uniform int64_t start_18306;
-    uniform int64_t end_18307;
+    uniform int64_t x_18039;
+    uniform int64_t x_18040;
+    uniform int64_t x_18041;
+    uniform int64_t x_18042;
+    uniform int64_t x_18043;
+    uniform int64_t x_18044;
+    uniform int64_t local_acc_18375 = (int64_t) 0;
+    uniform int64_t local_acc_18376 = (int64_t) 0;
+    uniform int64_t local_acc_18377 = (int64_t) 0;
+    uniform int64_t start_18378;
+    uniform int64_t end_18379;
     
-    start_18306 = start;
-    end_18307 = end;
+    start_18378 = start;
+    end_18379 = end;
     
-    uniform int64_t n_18308 = end_18307 - start_18306;
+    uniform int64_t n_18380 = end_18379 - start_18378;
     
-    if (mem_17691_cached_sizze_18571 < (int64_t) 24) {
-        err = lexical_realloc(ctx, &mem_17691, &mem_17691_cached_sizze_18571, (int64_t) 24);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    for (uniform int64_t i = 0; i < (start_18306 + n_18308 - start_18306) / programCount; i++) {
-        int64_t SegMap_i_18309 = start_18306 + programIndex + i * programCount;
-        uniform int64_t slice_18310 = m_12334;
-        int64_t gtid_17383 = SegMap_i_18309;
-        int64_t remnant_18311 = SegMap_i_18309 - gtid_17383;
-        int64_t defunc_0_f_res_17384;
-        int64_t defunc_0_f_res_17385;
-        int64_t defunc_0_f_res_17386;
-        uniform int64_t flat_tid_18165 = (int64_t) 0;
+    for (uniform int64_t i = 0; i < (start_18378 + n_18380 - start_18378) / programCount; i++) {
+        int64_t SegRed_i_18381 = start_18378 + programIndex + i * programCount;
+        int64_t gtid_18038 = SegRed_i_18381;
+        int64_t x_18051;
         
-        defunc_0_f_res_17384 = (int64_t) 0;
-        defunc_0_f_res_17385 = (int64_t) 0;
-        defunc_0_f_res_17386 = (int64_t) 0;
+        x_18051 = ((int64_t *) mem_17078.mem)[gtid_17400 * q_12354 + gtid_18038];
         
-        uniform int64_t flat_tid_18020 = (int64_t) 0;
-        struct futhark_mc_task_18578 futhark_mc_task_18578_;
+        int64_t x_18052;
         
-        futhark_mc_task_18578_.ctx = ctx;
-        futhark_mc_task_18578_.free_m_12334 = m_12334;
-        futhark_mc_task_18578_.free_p_12335 = p_12335;
-        futhark_mc_task_18578_.free_gtid_16458 = gtid_16458;
-        futhark_mc_task_18578_.free_eps_mem_17007 = eps_mem_17007.mem;
-        futhark_mc_task_18578_.free_expsss_mem_17008 = expsss_mem_17008.mem;
-        futhark_mc_task_18578_.free_mem_17061 = mem_17061.mem;
-        futhark_mc_task_18578_.free_mem_17065 = mem_17065.mem;
-        futhark_mc_task_18578_.free_mem_17069 = mem_17069.mem;
-        futhark_mc_task_18578_.free_gtid_17383 = gtid_17383;
-        futhark_mc_task_18578_.free_flat_tid_18020 = flat_tid_18020;
-        futhark_mc_task_18578_.free_flat_tid_18165 = flat_tid_18165;
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17384 = (int64_t *) &defunc_0_f_res_17384;
+        x_18052 = ((int64_t *) mem_17082.mem)[gtid_17400 * q_12354 + gtid_18038];
+        
+        int64_t x_18053;
+        
+        x_18053 = ((int64_t *) mem_17086.mem)[gtid_17400 * q_12354 + gtid_18038];
+        
+        int64_t defunc_0_f_res_18054;
+        int64_t defunc_0_f_res_18055;
+        int64_t defunc_0_f_res_18056;
+        uniform int64_t flat_tid_18057 = (int64_t) 0;
+        
+        defunc_0_f_res_18054 = (int64_t) 0;
+        defunc_0_f_res_18055 = (int64_t) 0;
+        defunc_0_f_res_18056 = (int64_t) 0;
+        
+        struct futhark_mc_task_18628 futhark_mc_task_18628_;
+        
+        futhark_mc_task_18628_.ctx = ctx;
+        futhark_mc_task_18628_.free_m_12352 = m_12352;
+        futhark_mc_task_18628_.free_q_12354 = q_12354;
+        futhark_mc_task_18628_.free_gtid_16475 = gtid_16475;
+        futhark_mc_task_18628_.free_eps_mem_17024 = eps_mem_17024.mem;
+        futhark_mc_task_18628_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+        futhark_mc_task_18628_.free_gtid_17400 = gtid_17400;
+        futhark_mc_task_18628_.free_gtid_18038 = gtid_18038;
+        futhark_mc_task_18628_.free_flat_tid_18057 = flat_tid_18057;
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18054 = (int64_t *) &defunc_0_f_res_18054;
         #if ISPC
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17384 += programIndex;
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18054 += programIndex;
         #endif
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17385 = (int64_t *) &defunc_0_f_res_17385;
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18055 = (int64_t *) &defunc_0_f_res_18055;
         #if ISPC
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17385 += programIndex;
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18055 += programIndex;
         #endif
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17386 = (int64_t *) &defunc_0_f_res_17386;
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18056 = (int64_t *) &defunc_0_f_res_18056;
         #if ISPC
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17386 += programIndex;
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18056 += programIndex;
         #endif
         #if ISPC
         
-        uniform struct futhark_mc_task_18578 aos_18638[programCount];
+        uniform struct futhark_mc_task_18628 aos_18643[programCount];
         
-        aos_18638[programIndex] = futhark_mc_task_18578_;
+        aos_18643[programIndex] = futhark_mc_task_18628_;
         foreach_active (i)
         if (err == 0)
-            err = futhark_mc_schedule_shim_18637(ctx, &aos_18638[i], extract(p_12335, i));
+            err = futhark_mc_schedule_shim_18642(ctx, &aos_18643[i], extract(m_12352, i));
         if (err != 0)
             unmasked { return err; }
         #else
-        err = futhark_mc_schedule_shim_18637(ctx, &futhark_mc_task_18578_, p_12335);
+        err = futhark_mc_schedule_shim_18642(ctx, &futhark_mc_task_18628_, m_12352);
         if (err != 0)
             goto cleanup;
         #endif
         
-        int64_t x_17673 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17384);
-        int64_t y_17674 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17385);
-        int64_t x_17675 = sub64(x_17673, y_17674);
-        int64_t y_17676 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17386);
-        int64_t mul_res_17677 = sub64(x_17675, y_17676);
-        int64_t x_17678 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17384);
-        int64_t y_17679 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17385);
-        int64_t x_17680 = add64(x_17678, y_17679);
-        int64_t y_17681 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17386);
-        int64_t x_17682 = sub64(x_17680, y_17681);
-        int64_t x_17683 = add64(y_17674, x_17682);
-        int64_t mul_res_17684 = add64(y_17676, x_17683);
-        int64_t x_17685 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17384);
-        int64_t y_17686 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17385);
-        int64_t x_17687 = add64(x_17685, y_17686);
-        int64_t y_17688 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17386);
-        int64_t x_17689 = add64(x_17687, y_17688);
-        int64_t mul_res_17690 = add64(y_17681, x_17689);
-        uniform int64_t tmp_idx_18639 = (int64_t) 0;
+        int64_t x_18164 = mul64(x_18051, defunc_0_f_res_18054);
+        int64_t y_18165 = mul64(x_18053, defunc_0_f_res_18055);
+        int64_t x_18166 = sub64(x_18164, y_18165);
+        int64_t y_18167 = mul64(x_18052, defunc_0_f_res_18056);
+        int64_t mul_res_18168 = sub64(x_18166, y_18167);
+        int64_t x_18169 = mul64(x_18052, defunc_0_f_res_18054);
+        int64_t y_18170 = mul64(x_18051, defunc_0_f_res_18055);
+        int64_t x_18171 = add64(x_18169, y_18170);
+        int64_t y_18172 = mul64(x_18053, defunc_0_f_res_18056);
+        int64_t x_18173 = sub64(x_18171, y_18172);
+        int64_t x_18174 = add64(y_18165, x_18173);
+        int64_t mul_res_18175 = add64(y_18167, x_18174);
+        int64_t x_18176 = mul64(x_18053, defunc_0_f_res_18054);
+        int64_t y_18177 = mul64(x_18052, defunc_0_f_res_18055);
+        int64_t x_18178 = add64(x_18176, y_18177);
+        int64_t y_18179 = mul64(x_18051, defunc_0_f_res_18056);
+        int64_t x_18180 = add64(x_18178, y_18179);
+        int64_t mul_res_18181 = add64(y_18172, x_18180);
         
-        ((varying int64_t *) mem_17691)[tmp_idx_18639] = mul_res_17677;
-        
-        uniform int64_t tmp_idx_18640 = (int64_t) 1;
-        
-        ((varying int64_t *) mem_17691)[tmp_idx_18640] = mul_res_17684;
-        
-        uniform int64_t tmp_idx_18641 = (int64_t) 2;
-        
-        ((varying int64_t *) mem_17691)[tmp_idx_18641] = mul_res_17690;
-        if ((int64_t) 24 > 0)
-            memmove_64(mem_17077.mem + gtid_17383 * (int64_t) 3 * (int64_t) 8, mem_17691 + (int64_t) 0, extract((int64_t) 24, 0));
-    }
-    if (programIndex < (start_18306 + n_18308 - start_18306) % programCount) {
-        int64_t SegMap_i_18309 = start_18306 + programIndex + (start_18306 + n_18308 - start_18306) / programCount * programCount;
-        uniform int64_t slice_18310 = m_12334;
-        int64_t gtid_17383 = SegMap_i_18309;
-        int64_t remnant_18311 = SegMap_i_18309 - gtid_17383;
-        int64_t defunc_0_f_res_17384;
-        int64_t defunc_0_f_res_17385;
-        int64_t defunc_0_f_res_17386;
-        uniform int64_t flat_tid_18165 = (int64_t) 0;
-        
-        defunc_0_f_res_17384 = (int64_t) 0;
-        defunc_0_f_res_17385 = (int64_t) 0;
-        defunc_0_f_res_17386 = (int64_t) 0;
-        
-        uniform int64_t flat_tid_18020 = (int64_t) 0;
-        struct futhark_mc_task_18578 futhark_mc_task_18578_;
-        
-        futhark_mc_task_18578_.ctx = ctx;
-        futhark_mc_task_18578_.free_m_12334 = m_12334;
-        futhark_mc_task_18578_.free_p_12335 = p_12335;
-        futhark_mc_task_18578_.free_gtid_16458 = gtid_16458;
-        futhark_mc_task_18578_.free_eps_mem_17007 = eps_mem_17007.mem;
-        futhark_mc_task_18578_.free_expsss_mem_17008 = expsss_mem_17008.mem;
-        futhark_mc_task_18578_.free_mem_17061 = mem_17061.mem;
-        futhark_mc_task_18578_.free_mem_17065 = mem_17065.mem;
-        futhark_mc_task_18578_.free_mem_17069 = mem_17069.mem;
-        futhark_mc_task_18578_.free_gtid_17383 = gtid_17383;
-        futhark_mc_task_18578_.free_flat_tid_18020 = flat_tid_18020;
-        futhark_mc_task_18578_.free_flat_tid_18165 = flat_tid_18165;
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17384 = (int64_t *) &defunc_0_f_res_17384;
-        #if ISPC
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17384 += programIndex;
-        #endif
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17385 = (int64_t *) &defunc_0_f_res_17385;
-        #if ISPC
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17385 += programIndex;
-        #endif
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17386 = (int64_t *) &defunc_0_f_res_17386;
-        #if ISPC
-        futhark_mc_task_18578_.retval_defunc_0_f_res_17386 += programIndex;
-        #endif
-        #if ISPC
-        
-        uniform struct futhark_mc_task_18578 aos_18638[programCount];
-        
-        aos_18638[programIndex] = futhark_mc_task_18578_;
-        foreach_active (i)
-        if (err == 0)
-            err = futhark_mc_schedule_shim_18637(ctx, &aos_18638[i], extract(p_12335, i));
-        if (err != 0)
-            unmasked { return err; }
-        #else
-        err = futhark_mc_schedule_shim_18637(ctx, &futhark_mc_task_18578_, p_12335);
-        if (err != 0)
-            goto cleanup;
-        #endif
-        
-        int64_t x_17673 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17384);
-        int64_t y_17674 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17385);
-        int64_t x_17675 = sub64(x_17673, y_17674);
-        int64_t y_17676 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17386);
-        int64_t mul_res_17677 = sub64(x_17675, y_17676);
-        int64_t x_17678 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17384);
-        int64_t y_17679 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17385);
-        int64_t x_17680 = add64(x_17678, y_17679);
-        int64_t y_17681 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17386);
-        int64_t x_17682 = sub64(x_17680, y_17681);
-        int64_t x_17683 = add64(y_17674, x_17682);
-        int64_t mul_res_17684 = add64(y_17676, x_17683);
-        int64_t x_17685 = mul64(defunc_0_f_res_16463, defunc_0_f_res_17384);
-        int64_t y_17686 = mul64(defunc_0_f_res_16462, defunc_0_f_res_17385);
-        int64_t x_17687 = add64(x_17685, y_17686);
-        int64_t y_17688 = mul64(defunc_0_f_res_16461, defunc_0_f_res_17386);
-        int64_t x_17689 = add64(x_17687, y_17688);
-        int64_t mul_res_17690 = add64(y_17681, x_17689);
-        uniform int64_t tmp_idx_18639 = (int64_t) 0;
-        
-        ((varying int64_t *) mem_17691)[tmp_idx_18639] = mul_res_17677;
-        
-        uniform int64_t tmp_idx_18640 = (int64_t) 1;
-        
-        ((varying int64_t *) mem_17691)[tmp_idx_18640] = mul_res_17684;
-        
-        uniform int64_t tmp_idx_18641 = (int64_t) 2;
-        
-        ((varying int64_t *) mem_17691)[tmp_idx_18641] = mul_res_17690;
-        if ((int64_t) 24 > 0)
-            memmove_64(mem_17077.mem + gtid_17383 * (int64_t) 3 * (int64_t) 8, mem_17691 + (int64_t) 0, extract((int64_t) 24, 0));
-    }
-    futhark_mc_mem_struct_18642_->mem_17691 = mem_17691;
-    futhark_mc_mem_struct_18642_->mem_17691_cached_sizze_18571 = mem_17691_cached_sizze_18571;
-    return err;
-}
-export uniform int futhark_mc_loop_ispc_18570(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18569 *uniform futhark_mc_param_struct_18569_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18569_->ctx;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18569_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18569_->free_p_12335;
-    uniform int64_t gtid_16458 = futhark_mc_param_struct_18569_->free_gtid_16458;
-    uniform int64_t defunc_0_f_res_16461 = futhark_mc_param_struct_18569_->free_defunc_0_f_res_16461;
-    uniform int64_t defunc_0_f_res_16462 = futhark_mc_param_struct_18569_->free_defunc_0_f_res_16462;
-    uniform int64_t defunc_0_f_res_16463 = futhark_mc_param_struct_18569_->free_defunc_0_f_res_16463;
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18572();
-    eps_mem_17007.mem = futhark_mc_param_struct_18569_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18573();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18569_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18574();
-    mem_17061.mem = futhark_mc_param_struct_18569_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18575();
-    mem_17065.mem = futhark_mc_param_struct_18569_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18576();
-    mem_17069.mem = futhark_mc_param_struct_18569_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform struct memblock mem_17077;
-    
-    mem_17077.desc = futhark_mc_strlit_shim_18577();
-    mem_17077.mem = futhark_mc_param_struct_18569_->free_mem_17077;
-    mem_17077.size = 0;
-    mem_17077.references = NULL;
-    
-    size_t mem_17691_cached_sizze_18571 = 0;
-    varying unsigned char *uniform mem_17691 = NULL;
-    uniform struct futhark_mc_mem_struct_18642 futhark_mc_mem_struct_18642_;
-    
-    futhark_mc_mem_struct_18642_.mem_17691 = mem_17691;
-    futhark_mc_mem_struct_18642_.mem_17691_cached_sizze_18571 = mem_17691_cached_sizze_18571;
-    
-    uniform int err = futhark_mc_inner_ispc_18643(start, end, futhark_mc_param_struct_18569_, &futhark_mc_mem_struct_18642_);
-    
-    mem_17691 = futhark_mc_mem_struct_18642_.mem_17691;
-    mem_17691_cached_sizze_18571 = futhark_mc_mem_struct_18642_.mem_17691_cached_sizze_18571;
-    
-  cleanup:
-    {
-        free(mem_17691);
-    }
-    return err;
-}
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18650(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18540 *uniform args, uniform int iterations);
-struct futhark_mc_mem_struct_18652 {
-    varying struct memblock *uniform mem_17077;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18654();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18655();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18656();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18657();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18658();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18659();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18660();
-static unmasked inline uniform int futhark_mc_inner_ispc_18653(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18530 *uniform futhark_mc_param_struct_18530_, uniform struct futhark_mc_mem_struct_18652 *uniform futhark_mc_mem_struct_18652_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18530_->ctx;
-    uniform int64_t n_12333 = futhark_mc_param_struct_18530_->free_n_12333;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18530_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18530_->free_p_12335;
-    uniform struct memblock zzinvs_mem_17006;
-    
-    zzinvs_mem_17006.desc = futhark_mc_strlit_shim_18654();
-    zzinvs_mem_17006.mem = futhark_mc_param_struct_18530_->free_zzinvs_mem_17006;
-    zzinvs_mem_17006.size = 0;
-    zzinvs_mem_17006.references = NULL;
-    
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18655();
-    eps_mem_17007.mem = futhark_mc_param_struct_18530_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18656();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18530_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18657();
-    mem_17061.mem = futhark_mc_param_struct_18530_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18658();
-    mem_17065.mem = futhark_mc_param_struct_18530_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18659();
-    mem_17069.mem = futhark_mc_param_struct_18530_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform int64_t bytes_17076 = futhark_mc_param_struct_18530_->free_bytes_17076;
-    uniform struct memblock mem_17143;
-    
-    mem_17143.desc = futhark_mc_strlit_shim_18660();
-    mem_17143.mem = futhark_mc_param_struct_18530_->free_mem_17143;
-    mem_17143.size = 0;
-    mem_17143.references = NULL;
-    
-    struct memblock mem_17077 = *futhark_mc_mem_struct_18652_->mem_17077;
-    uniform int err = 0;
-    uniform int64_t start_17855;
-    uniform int64_t end_17856;
-    
-    start_17855 = start;
-    end_17856 = end;
-    
-    uniform int64_t n_17857 = end_17856 - start_17855;
-    
-    if (memblock_alloc(ctx, &mem_17077, bytes_17076, futhark_mc_strlit_shim_18539()))
-        unmasked { return 1; }
-    for (uniform int64_t i = 0; i < (start_17855 + n_17857 - start_17855) / programCount; i++) {
-        int64_t SegMap_i_17858 = start_17855 + programIndex + i * programCount;
-        uniform int64_t slice_17859 = n_12333;
-        int64_t gtid_16458 = SegMap_i_17858;
-        int64_t remnant_17860 = SegMap_i_17858 - gtid_16458;
-        int64_t defunc_0_f_res_16461;
-        
-        defunc_0_f_res_16461 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_16458 * (int64_t) 3];
-        
-        int64_t defunc_0_f_res_16462;
-        
-        defunc_0_f_res_16462 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_16458 * (int64_t) 3 + (int64_t) 1];
-        
-        int64_t defunc_0_f_res_16463;
-        
-        defunc_0_f_res_16463 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_16458 * (int64_t) 3 + (int64_t) 2];
-        
-        uniform int64_t flat_tid_17693 = (int64_t) 0;
-        uniform int64_t flat_tid_17382 = (int64_t) 0;
-        struct futhark_mc_task_18540 futhark_mc_task_18540_;
-        
-        futhark_mc_task_18540_.ctx = ctx;
-        futhark_mc_task_18540_.free_m_12334 = m_12334;
-        futhark_mc_task_18540_.free_p_12335 = p_12335;
-        futhark_mc_task_18540_.free_gtid_16458 = gtid_16458;
-        futhark_mc_task_18540_.free_defunc_0_f_res_16461 = defunc_0_f_res_16461;
-        futhark_mc_task_18540_.free_defunc_0_f_res_16462 = defunc_0_f_res_16462;
-        futhark_mc_task_18540_.free_defunc_0_f_res_16463 = defunc_0_f_res_16463;
-        futhark_mc_task_18540_.free_eps_mem_17007 = eps_mem_17007.mem;
-        futhark_mc_task_18540_.free_expsss_mem_17008 = expsss_mem_17008.mem;
-        futhark_mc_task_18540_.free_mem_17061 = mem_17061.mem;
-        futhark_mc_task_18540_.free_mem_17065 = mem_17065.mem;
-        futhark_mc_task_18540_.free_mem_17069 = mem_17069.mem;
-        futhark_mc_task_18540_.free_mem_17077 = mem_17077.mem;
-        #if ISPC
-        
-        uniform struct futhark_mc_task_18540 aos_18651[programCount];
-        
-        aos_18651[programIndex] = futhark_mc_task_18540_;
-        foreach_active (i)
-        if (err == 0)
-            err = futhark_mc_schedule_shim_18650(ctx, &aos_18651[i], extract(m_12334, i));
-        if (err != 0)
-            unmasked { return err; }
-        #else
-        err = futhark_mc_schedule_shim_18650(ctx, &futhark_mc_task_18540_, m_12334);
-        if (err != 0)
-            goto cleanup;
-        #endif
-        if (m_12334 * (int64_t) 3 * (int64_t) 8 > 0)
-            memmove(mem_17143.mem + gtid_16458 * ((int64_t) 3 * m_12334) * (int64_t) 8, mem_17077.mem + (int64_t) 0, m_12334 * (int64_t) 3 * (int64_t) 8);
-    }
-    if (programIndex < (start_17855 + n_17857 - start_17855) % programCount) {
-        int64_t SegMap_i_17858 = start_17855 + programIndex + (start_17855 + n_17857 - start_17855) / programCount * programCount;
-        uniform int64_t slice_17859 = n_12333;
-        int64_t gtid_16458 = SegMap_i_17858;
-        int64_t remnant_17860 = SegMap_i_17858 - gtid_16458;
-        int64_t defunc_0_f_res_16461;
-        
-        defunc_0_f_res_16461 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_16458 * (int64_t) 3];
-        
-        int64_t defunc_0_f_res_16462;
-        
-        defunc_0_f_res_16462 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_16458 * (int64_t) 3 + (int64_t) 1];
-        
-        int64_t defunc_0_f_res_16463;
-        
-        defunc_0_f_res_16463 = ((int64_t *) zzinvs_mem_17006.mem)[gtid_16458 * (int64_t) 3 + (int64_t) 2];
-        
-        uniform int64_t flat_tid_17693 = (int64_t) 0;
-        uniform int64_t flat_tid_17382 = (int64_t) 0;
-        struct futhark_mc_task_18540 futhark_mc_task_18540_;
-        
-        futhark_mc_task_18540_.ctx = ctx;
-        futhark_mc_task_18540_.free_m_12334 = m_12334;
-        futhark_mc_task_18540_.free_p_12335 = p_12335;
-        futhark_mc_task_18540_.free_gtid_16458 = gtid_16458;
-        futhark_mc_task_18540_.free_defunc_0_f_res_16461 = defunc_0_f_res_16461;
-        futhark_mc_task_18540_.free_defunc_0_f_res_16462 = defunc_0_f_res_16462;
-        futhark_mc_task_18540_.free_defunc_0_f_res_16463 = defunc_0_f_res_16463;
-        futhark_mc_task_18540_.free_eps_mem_17007 = eps_mem_17007.mem;
-        futhark_mc_task_18540_.free_expsss_mem_17008 = expsss_mem_17008.mem;
-        futhark_mc_task_18540_.free_mem_17061 = mem_17061.mem;
-        futhark_mc_task_18540_.free_mem_17065 = mem_17065.mem;
-        futhark_mc_task_18540_.free_mem_17069 = mem_17069.mem;
-        futhark_mc_task_18540_.free_mem_17077 = mem_17077.mem;
-        #if ISPC
-        
-        uniform struct futhark_mc_task_18540 aos_18651[programCount];
-        
-        aos_18651[programIndex] = futhark_mc_task_18540_;
-        foreach_active (i)
-        if (err == 0)
-            err = futhark_mc_schedule_shim_18650(ctx, &aos_18651[i], extract(m_12334, i));
-        if (err != 0)
-            unmasked { return err; }
-        #else
-        err = futhark_mc_schedule_shim_18650(ctx, &futhark_mc_task_18540_, m_12334);
-        if (err != 0)
-            goto cleanup;
-        #endif
-        if (m_12334 * (int64_t) 3 * (int64_t) 8 > 0)
-            memmove(mem_17143.mem + gtid_16458 * ((int64_t) 3 * m_12334) * (int64_t) 8, mem_17077.mem + (int64_t) 0, m_12334 * (int64_t) 3 * (int64_t) 8);
-    }
-    *futhark_mc_mem_struct_18652_->mem_17077 = mem_17077;
-    return err;
-}
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18661();
-export uniform int futhark_mc_loop_ispc_18531(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18530 *uniform futhark_mc_param_struct_18530_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18530_->ctx;
-    uniform int64_t n_12333 = futhark_mc_param_struct_18530_->free_n_12333;
-    uniform int64_t m_12334 = futhark_mc_param_struct_18530_->free_m_12334;
-    uniform int64_t p_12335 = futhark_mc_param_struct_18530_->free_p_12335;
-    uniform struct memblock zzinvs_mem_17006;
-    
-    zzinvs_mem_17006.desc = futhark_mc_strlit_shim_18532();
-    zzinvs_mem_17006.mem = futhark_mc_param_struct_18530_->free_zzinvs_mem_17006;
-    zzinvs_mem_17006.size = 0;
-    zzinvs_mem_17006.references = NULL;
-    
-    uniform struct memblock eps_mem_17007;
-    
-    eps_mem_17007.desc = futhark_mc_strlit_shim_18533();
-    eps_mem_17007.mem = futhark_mc_param_struct_18530_->free_eps_mem_17007;
-    eps_mem_17007.size = 0;
-    eps_mem_17007.references = NULL;
-    
-    uniform struct memblock expsss_mem_17008;
-    
-    expsss_mem_17008.desc = futhark_mc_strlit_shim_18534();
-    expsss_mem_17008.mem = futhark_mc_param_struct_18530_->free_expsss_mem_17008;
-    expsss_mem_17008.size = 0;
-    expsss_mem_17008.references = NULL;
-    
-    uniform struct memblock mem_17061;
-    
-    mem_17061.desc = futhark_mc_strlit_shim_18535();
-    mem_17061.mem = futhark_mc_param_struct_18530_->free_mem_17061;
-    mem_17061.size = 0;
-    mem_17061.references = NULL;
-    
-    uniform struct memblock mem_17065;
-    
-    mem_17065.desc = futhark_mc_strlit_shim_18536();
-    mem_17065.mem = futhark_mc_param_struct_18530_->free_mem_17065;
-    mem_17065.size = 0;
-    mem_17065.references = NULL;
-    
-    uniform struct memblock mem_17069;
-    
-    mem_17069.desc = futhark_mc_strlit_shim_18537();
-    mem_17069.mem = futhark_mc_param_struct_18530_->free_mem_17069;
-    mem_17069.size = 0;
-    mem_17069.references = NULL;
-    
-    uniform int64_t bytes_17076 = futhark_mc_param_struct_18530_->free_bytes_17076;
-    uniform struct memblock mem_17143;
-    
-    mem_17143.desc = futhark_mc_strlit_shim_18538();
-    mem_17143.mem = futhark_mc_param_struct_18530_->free_mem_17143;
-    mem_17143.size = 0;
-    mem_17143.references = NULL;
-    
-    struct memblock mem_17077;
-    
-    mem_17077.references = NULL;
-    
-    uniform struct futhark_mc_mem_struct_18652 futhark_mc_mem_struct_18652_;
-    
-    futhark_mc_mem_struct_18652_.mem_17077 = &mem_17077;
-    
-    uniform int err = futhark_mc_inner_ispc_18653(start, end, futhark_mc_param_struct_18530_, &futhark_mc_mem_struct_18652_);
-    
-    mem_17077 = *futhark_mc_mem_struct_18652_.mem_17077;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_17077, futhark_mc_strlit_shim_18661()) != 0)
-            unmasked { return 1; }
-    }
-    return err;
-}
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18662(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18491 *uniform args, uniform int iterations);
-struct futhark_mc_task_18665 {
-    struct futhark_context *ctx;
-    int64_t free_nz2080U_9823;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    int64_t free_bytes_17009;
-    unsigned char *free_mem_17027;
-};
-struct futhark_mc_param_struct_18670 {
-    struct futhark_context *ctx;
-    int64_t free_nz2080U_9823;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    int64_t free_bytes_17009;
-    unsigned char *free_mem_17027;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18673();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18674();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18675();
-struct futhark_mc_mem_struct_18676 {
-    varying unsigned char *uniform mem_17013;
-    varying size_t mem_17013_cached_sizze_18672;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18678();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18679();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18680();
-static unmasked inline uniform int futhark_mc_inner_ispc_18677(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18670 *uniform futhark_mc_param_struct_18670_, uniform struct futhark_mc_mem_struct_18676 *uniform futhark_mc_mem_struct_18676_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18670_->ctx;
-    uniform int64_t nz2080U_9823 = futhark_mc_param_struct_18670_->free_nz2080U_9823;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18670_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18670_->free_mz2082U_9825;
-    uniform struct memblock xss_mem_17006;
-    
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18678();
-    xss_mem_17006.mem = futhark_mc_param_struct_18670_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
-    
-    uniform struct memblock yss_mem_17007;
-    
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18679();
-    yss_mem_17007.mem = futhark_mc_param_struct_18670_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
-    
-    uniform int64_t bytes_17009 = futhark_mc_param_struct_18670_->free_bytes_17009;
-    uniform struct memblock mem_17027;
-    
-    mem_17027.desc = futhark_mc_strlit_shim_18680();
-    mem_17027.mem = futhark_mc_param_struct_18670_->free_mem_17027;
-    mem_17027.size = 0;
-    mem_17027.references = NULL;
-    
-    varying unsigned char *uniform mem_17013 = futhark_mc_mem_struct_18676_->mem_17013;
-    size_t mem_17013_cached_sizze_18672 = futhark_mc_mem_struct_18676_->mem_17013_cached_sizze_18672;
-    uniform int err = 0;
-    uniform int64_t start_17156;
-    uniform int64_t end_17157;
-    
-    start_17156 = start;
-    end_17157 = end;
-    
-    uniform int64_t n_17158 = end_17157 - start_17156;
-    
-    if (mem_17013_cached_sizze_18672 < bytes_17009) {
-        err = lexical_realloc(ctx, &mem_17013, &mem_17013_cached_sizze_18672, bytes_17009);
-        if (err != FUTHARK_SUCCESS)
-            unmasked { return err; }
-    }
-    foreach (SegMap_i_17159 = start_17156 ... start_17156 + n_17158)
-    {
-        uniform int64_t slice_17160 = nz2080U_9823;
-        int64_t gtid_15912 = SegMap_i_17159;
-        int64_t remnant_17161 = SegMap_i_17159 - gtid_15912;
-        
-        for (uniform int64_t i_17146 = 0; i_17146 < mz2082U_9825; i_17146++) {
-            int32_t defunc_2_reduce_res_17148;
-            int32_t redout_17150 = 0;
-            
-            for (uniform int64_t i_17149 = 0; i_17149 < pz2081U_9824; i_17149++) {
-                int32_t x_17151;
-                
-                x_17151 = ((int32_t *) xss_mem_17006.mem)[gtid_15912 * pz2081U_9824 + i_17149];
-                
-                uniform int32_t x_17152;
-                
-                x_17152 = ((int32_t *) yss_mem_17007.mem)[i_17149 * mz2082U_9825 + i_17146];
-                
-                int32_t defunc_1_f_res_17153 = mul32(x_17151, x_17152);
-                int32_t defunc_1_op_res_17154 = add32(defunc_1_f_res_17153, redout_17150);
-                int32_t redout_tmp_17163 = defunc_1_op_res_17154;
-                
-                redout_17150 = redout_tmp_17163;
+        // save map-out results
+        { }
+        for (uniform unsigned int uni_i_18430 = 0; uni_i_18430 < programCount; uni_i_18430++) {
+            if (programIndex == uni_i_18430) {
+                // Load accum params
+                {
+                    x_18039 = local_acc_18375;
+                    x_18040 = local_acc_18376;
+                    x_18041 = local_acc_18377;
+                }
+                // Load next params
+                {
+                    x_18042 = extract(mul_res_18168, uni_i_18430);
+                    x_18043 = extract(mul_res_18175, uni_i_18430);
+                    x_18044 = extract(mul_res_18181, uni_i_18430);
+                }
+                // SegRed body
+                {
+                    uniform int64_t canonicalizze_arg_18045 = add64(x_18039, x_18042);
+                    uniform int64_t canonicalizze_res_18046 = umod64(canonicalizze_arg_18045, (int64_t) -4294967295);
+                    uniform int64_t canonicalizze_arg_18047 = add64(x_18040, x_18043);
+                    uniform int64_t canonicalizze_res_18048 = umod64(canonicalizze_arg_18047, (int64_t) -4294967295);
+                    uniform int64_t canonicalizze_arg_18049 = add64(x_18041, x_18044);
+                    uniform int64_t canonicalizze_res_18050 = umod64(canonicalizze_arg_18049, (int64_t) -4294967295);
+                    
+                    local_acc_18375 = canonicalizze_res_18046;
+                    local_acc_18376 = canonicalizze_res_18048;
+                    local_acc_18377 = canonicalizze_res_18050;
+                }
             }
-            defunc_2_reduce_res_17148 = redout_17150;
-            ((varying int32_t *) mem_17013)[i_17146] = defunc_2_reduce_res_17148;
         }
-        if (mz2082U_9825 * (int64_t) 4 > 0)
-            memmove_32(mem_17027.mem + gtid_15912 * mz2082U_9825 * (int64_t) 4, mem_17013 + (int64_t) 0, extract(mz2082U_9825 * (int64_t) 4, 0));
     }
-    futhark_mc_mem_struct_18676_->mem_17013 = mem_17013;
-    futhark_mc_mem_struct_18676_->mem_17013_cached_sizze_18672 = mem_17013_cached_sizze_18672;
-    return err;
-}
-export uniform int futhark_mc_loop_ispc_18671(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18670 *uniform futhark_mc_param_struct_18670_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18670_->ctx;
-    uniform int64_t nz2080U_9823 = futhark_mc_param_struct_18670_->free_nz2080U_9823;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18670_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18670_->free_mz2082U_9825;
-    uniform struct memblock xss_mem_17006;
-    
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18673();
-    xss_mem_17006.mem = futhark_mc_param_struct_18670_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
-    
-    uniform struct memblock yss_mem_17007;
-    
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18674();
-    yss_mem_17007.mem = futhark_mc_param_struct_18670_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
-    
-    uniform int64_t bytes_17009 = futhark_mc_param_struct_18670_->free_bytes_17009;
-    uniform struct memblock mem_17027;
-    
-    mem_17027.desc = futhark_mc_strlit_shim_18675();
-    mem_17027.mem = futhark_mc_param_struct_18670_->free_mem_17027;
-    mem_17027.size = 0;
-    mem_17027.references = NULL;
-    
-    size_t mem_17013_cached_sizze_18672 = 0;
-    varying unsigned char *uniform mem_17013 = NULL;
-    uniform struct futhark_mc_mem_struct_18676 futhark_mc_mem_struct_18676_;
-    
-    futhark_mc_mem_struct_18676_.mem_17013 = mem_17013;
-    futhark_mc_mem_struct_18676_.mem_17013_cached_sizze_18672 = mem_17013_cached_sizze_18672;
-    
-    uniform int err = futhark_mc_inner_ispc_18677(start, end, futhark_mc_param_struct_18670_, &futhark_mc_mem_struct_18676_);
-    
-    mem_17013 = futhark_mc_mem_struct_18676_.mem_17013;
-    mem_17013_cached_sizze_18672 = futhark_mc_mem_struct_18676_.mem_17013_cached_sizze_18672;
-    
-  cleanup:
-    {
-        free(mem_17013);
-    }
-    return err;
-}
-struct futhark_mc_param_struct_18685 {
-    struct futhark_context *ctx;
-    int64_t free_nz2080U_9823;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    int64_t free_bytes_17009;
-    unsigned char *free_mem_17027;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18687();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18688();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18689();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18690();
-struct futhark_mc_task_18691 {
-    struct futhark_context *ctx;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    int64_t free_gtid_15934;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    unsigned char *free_mem_17010;
-};
-struct futhark_mc_param_struct_18695 {
-    struct futhark_context *ctx;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    int64_t free_gtid_15934;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    unsigned char *free_mem_17010;
-};
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18697();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18698();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18699();
-export uniform int futhark_mc_loop_ispc_18696(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18695 *uniform futhark_mc_param_struct_18695_)
-{
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18695_->ctx;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18695_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18695_->free_mz2082U_9825;
-    uniform int64_t gtid_15934 = futhark_mc_param_struct_18695_->free_gtid_15934;
-    uniform struct memblock xss_mem_17006;
-    
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18697();
-    xss_mem_17006.mem = futhark_mc_param_struct_18695_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
-    
-    uniform struct memblock yss_mem_17007;
-    
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18698();
-    yss_mem_17007.mem = futhark_mc_param_struct_18695_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
-    
-    uniform struct memblock mem_17010;
-    
-    mem_17010.desc = futhark_mc_strlit_shim_18699();
-    mem_17010.mem = futhark_mc_param_struct_18695_->free_mem_17010;
-    mem_17010.size = 0;
-    mem_17010.references = NULL;
-    
-    uniform int err = 0;
-    uniform int64_t start_17198;
-    uniform int64_t end_17199;
-    
-    start_17198 = start;
-    end_17199 = end;
-    
-    uniform int64_t n_17200 = end_17199 - start_17198;
-    
-    foreach (SegMap_i_17201 = start_17198 ... start_17198 + n_17200)
-    {
-        uniform int64_t slice_17202 = mz2082U_9825;
-        int64_t gtid_17177 = SegMap_i_17201;
-        int64_t remnant_17203 = SegMap_i_17201 - gtid_17177;
-        int32_t defunc_2_reduce_res_17178;
-        int32_t redout_17193 = 0;
+    if (programIndex < (start_18378 + n_18380 - start_18378) % programCount) {
+        int64_t SegRed_i_18381 = start_18378 + programIndex + (start_18378 + n_18380 - start_18378) / programCount * programCount;
+        int64_t gtid_18038 = SegRed_i_18381;
+        int64_t x_18051;
         
-        for (uniform int64_t i_17192 = 0; i_17192 < pz2081U_9824; i_17192++) {
-            uniform int32_t x_17194;
-            
-            x_17194 = ((int32_t *) xss_mem_17006.mem)[gtid_15934 * pz2081U_9824 + i_17192];
-            
-            int32_t x_17195;
-            
-            x_17195 = ((int32_t *) yss_mem_17007.mem)[i_17192 * mz2082U_9825 + gtid_17177];
-            
-            int32_t defunc_1_f_res_17196 = mul32(x_17194, x_17195);
-            int32_t defunc_1_op_res_17197 = add32(defunc_1_f_res_17196, redout_17193);
-            int32_t redout_tmp_17204 = defunc_1_op_res_17197;
-            
-            redout_17193 = redout_tmp_17204;
+        x_18051 = ((int64_t *) mem_17078.mem)[gtid_17400 * q_12354 + gtid_18038];
+        
+        int64_t x_18052;
+        
+        x_18052 = ((int64_t *) mem_17082.mem)[gtid_17400 * q_12354 + gtid_18038];
+        
+        int64_t x_18053;
+        
+        x_18053 = ((int64_t *) mem_17086.mem)[gtid_17400 * q_12354 + gtid_18038];
+        
+        int64_t defunc_0_f_res_18054;
+        int64_t defunc_0_f_res_18055;
+        int64_t defunc_0_f_res_18056;
+        uniform int64_t flat_tid_18057 = (int64_t) 0;
+        
+        defunc_0_f_res_18054 = (int64_t) 0;
+        defunc_0_f_res_18055 = (int64_t) 0;
+        defunc_0_f_res_18056 = (int64_t) 0;
+        
+        struct futhark_mc_task_18628 futhark_mc_task_18628_;
+        
+        futhark_mc_task_18628_.ctx = ctx;
+        futhark_mc_task_18628_.free_m_12352 = m_12352;
+        futhark_mc_task_18628_.free_q_12354 = q_12354;
+        futhark_mc_task_18628_.free_gtid_16475 = gtid_16475;
+        futhark_mc_task_18628_.free_eps_mem_17024 = eps_mem_17024.mem;
+        futhark_mc_task_18628_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+        futhark_mc_task_18628_.free_gtid_17400 = gtid_17400;
+        futhark_mc_task_18628_.free_gtid_18038 = gtid_18038;
+        futhark_mc_task_18628_.free_flat_tid_18057 = flat_tid_18057;
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18054 = (int64_t *) &defunc_0_f_res_18054;
+        #if ISPC
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18054 += programIndex;
+        #endif
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18055 = (int64_t *) &defunc_0_f_res_18055;
+        #if ISPC
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18055 += programIndex;
+        #endif
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18056 = (int64_t *) &defunc_0_f_res_18056;
+        #if ISPC
+        futhark_mc_task_18628_.retval_defunc_0_f_res_18056 += programIndex;
+        #endif
+        #if ISPC
+        
+        uniform struct futhark_mc_task_18628 aos_18643[programCount];
+        
+        aos_18643[programIndex] = futhark_mc_task_18628_;
+        foreach_active (i)
+        if (err == 0)
+            err = futhark_mc_schedule_shim_18642(ctx, &aos_18643[i], extract(m_12352, i));
+        if (err != 0)
+            unmasked { return err; }
+        #else
+        err = futhark_mc_schedule_shim_18642(ctx, &futhark_mc_task_18628_, m_12352);
+        if (err != 0)
+            goto cleanup;
+        #endif
+        
+        int64_t x_18164 = mul64(x_18051, defunc_0_f_res_18054);
+        int64_t y_18165 = mul64(x_18053, defunc_0_f_res_18055);
+        int64_t x_18166 = sub64(x_18164, y_18165);
+        int64_t y_18167 = mul64(x_18052, defunc_0_f_res_18056);
+        int64_t mul_res_18168 = sub64(x_18166, y_18167);
+        int64_t x_18169 = mul64(x_18052, defunc_0_f_res_18054);
+        int64_t y_18170 = mul64(x_18051, defunc_0_f_res_18055);
+        int64_t x_18171 = add64(x_18169, y_18170);
+        int64_t y_18172 = mul64(x_18053, defunc_0_f_res_18056);
+        int64_t x_18173 = sub64(x_18171, y_18172);
+        int64_t x_18174 = add64(y_18165, x_18173);
+        int64_t mul_res_18175 = add64(y_18167, x_18174);
+        int64_t x_18176 = mul64(x_18053, defunc_0_f_res_18054);
+        int64_t y_18177 = mul64(x_18052, defunc_0_f_res_18055);
+        int64_t x_18178 = add64(x_18176, y_18177);
+        int64_t y_18179 = mul64(x_18051, defunc_0_f_res_18056);
+        int64_t x_18180 = add64(x_18178, y_18179);
+        int64_t mul_res_18181 = add64(y_18172, x_18180);
+        
+        // save map-out results
+        { }
+        for (uniform unsigned int uni_i_18430 = 0; uni_i_18430 < programCount; uni_i_18430++) {
+            if (programIndex == uni_i_18430) {
+                // Load accum params
+                {
+                    x_18039 = local_acc_18375;
+                    x_18040 = local_acc_18376;
+                    x_18041 = local_acc_18377;
+                }
+                // Load next params
+                {
+                    x_18042 = extract(mul_res_18168, uni_i_18430);
+                    x_18043 = extract(mul_res_18175, uni_i_18430);
+                    x_18044 = extract(mul_res_18181, uni_i_18430);
+                }
+                // SegRed body
+                {
+                    uniform int64_t canonicalizze_arg_18045 = add64(x_18039, x_18042);
+                    uniform int64_t canonicalizze_res_18046 = umod64(canonicalizze_arg_18045, (int64_t) -4294967295);
+                    uniform int64_t canonicalizze_arg_18047 = add64(x_18040, x_18043);
+                    uniform int64_t canonicalizze_res_18048 = umod64(canonicalizze_arg_18047, (int64_t) -4294967295);
+                    uniform int64_t canonicalizze_arg_18049 = add64(x_18041, x_18044);
+                    uniform int64_t canonicalizze_res_18050 = umod64(canonicalizze_arg_18049, (int64_t) -4294967295);
+                    
+                    local_acc_18375 = canonicalizze_res_18046;
+                    local_acc_18376 = canonicalizze_res_18048;
+                    local_acc_18377 = canonicalizze_res_18050;
+                }
+            }
         }
-        defunc_2_reduce_res_17178 = redout_17193;
-        ((int32_t *) mem_17010.mem)[gtid_17177] = defunc_2_reduce_res_17178;
     }
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18369.mem)[flat_tid_18037] = local_acc_18375;
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18371.mem)[flat_tid_18037] = local_acc_18376;
+    ((int64_t *) reduce_stage_1_tid_res_arr_mem_18373.mem)[flat_tid_18037] = local_acc_18377;
+    return err;
+}
+export uniform int futhark_mc_loop_ispc_18619(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18618 *uniform futhark_mc_param_struct_18618_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18618_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18618_->free_m_12352;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18618_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18618_->free_gtid_16475;
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18620();
+    eps_mem_17024.mem = futhark_mc_param_struct_18618_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18621();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18618_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18622();
+    mem_17078.mem = futhark_mc_param_struct_18618_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18623();
+    mem_17082.mem = futhark_mc_param_struct_18618_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18624();
+    mem_17086.mem = futhark_mc_param_struct_18618_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform int64_t gtid_17400 = futhark_mc_param_struct_18618_->free_gtid_17400;
+    uniform int64_t flat_tid_18037 = futhark_mc_param_struct_18618_->free_flat_tid_18037;
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18369;
+    
+    reduce_stage_1_tid_res_arr_mem_18369.desc = futhark_mc_strlit_shim_18625();
+    reduce_stage_1_tid_res_arr_mem_18369.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18369;
+    reduce_stage_1_tid_res_arr_mem_18369.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18369.references = NULL;
+    
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18371;
+    
+    reduce_stage_1_tid_res_arr_mem_18371.desc = futhark_mc_strlit_shim_18626();
+    reduce_stage_1_tid_res_arr_mem_18371.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18371;
+    reduce_stage_1_tid_res_arr_mem_18371.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18371.references = NULL;
+    
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_18373;
+    
+    reduce_stage_1_tid_res_arr_mem_18373.desc = futhark_mc_strlit_shim_18627();
+    reduce_stage_1_tid_res_arr_mem_18373.mem = futhark_mc_param_struct_18618_->free_reduce_stage_1_tid_res_arr_mem_18373;
+    reduce_stage_1_tid_res_arr_mem_18373.size = 0;
+    reduce_stage_1_tid_res_arr_mem_18373.references = NULL;
+    
+    uniform struct futhark_mc_mem_struct_18644 futhark_mc_mem_struct_18644_;
+    uniform int err = futhark_mc_inner_ispc_18645(start, end, futhark_mc_param_struct_18618_, &futhark_mc_mem_struct_18644_);
+    
     
   cleanup:
     { }
     return err;
 }
-struct futhark_mc_param_struct_18703 {
-    struct futhark_context *ctx;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    int64_t free_gtid_15934;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    unsigned char *free_mem_17010;
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18654(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18595 *uniform args, uniform int iterations);
+struct futhark_mc_mem_struct_18659 {
+    varying unsigned char *uniform mem_17708;
+    varying size_t mem_17708_cached_sizze_18588;
 };
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18661();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18662();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18663();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18664();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18665();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18666();
+static unmasked inline uniform int futhark_mc_inner_ispc_18660(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18586 *uniform futhark_mc_param_struct_18586_, uniform struct futhark_mc_mem_struct_18659 *uniform futhark_mc_mem_struct_18659_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18586_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18586_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18586_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18586_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18586_->free_gtid_16475;
+    uniform int64_t defunc_0_f_res_16478 = futhark_mc_param_struct_18586_->free_defunc_0_f_res_16478;
+    uniform int64_t defunc_0_f_res_16479 = futhark_mc_param_struct_18586_->free_defunc_0_f_res_16479;
+    uniform int64_t defunc_0_f_res_16480 = futhark_mc_param_struct_18586_->free_defunc_0_f_res_16480;
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18661();
+    eps_mem_17024.mem = futhark_mc_param_struct_18586_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18662();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18586_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18663();
+    mem_17078.mem = futhark_mc_param_struct_18586_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18664();
+    mem_17082.mem = futhark_mc_param_struct_18586_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18665();
+    mem_17086.mem = futhark_mc_param_struct_18586_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform struct memblock mem_17094;
+    
+    mem_17094.desc = futhark_mc_strlit_shim_18666();
+    mem_17094.mem = futhark_mc_param_struct_18586_->free_mem_17094;
+    mem_17094.size = 0;
+    mem_17094.references = NULL;
+    
+    varying unsigned char *uniform mem_17708 = futhark_mc_mem_struct_18659_->mem_17708;
+    size_t mem_17708_cached_sizze_18588 = futhark_mc_mem_struct_18659_->mem_17708_cached_sizze_18588;
+    uniform int err = 0;
+    uniform int64_t start_18323;
+    uniform int64_t end_18324;
+    
+    start_18323 = start;
+    end_18324 = end;
+    
+    uniform int64_t n_18325 = end_18324 - start_18323;
+    
+    if (mem_17708_cached_sizze_18588 < (int64_t) 24) {
+        err = lexical_realloc(ctx, &mem_17708, &mem_17708_cached_sizze_18588, (int64_t) 24);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    for (uniform int64_t i = 0; i < (start_18323 + n_18325 - start_18323) / programCount; i++) {
+        int64_t SegMap_i_18326 = start_18323 + programIndex + i * programCount;
+        uniform int64_t slice_18327 = p_12353;
+        int64_t gtid_17400 = SegMap_i_18326;
+        int64_t remnant_18328 = SegMap_i_18326 - gtid_17400;
+        int64_t defunc_0_f_res_17401;
+        int64_t defunc_0_f_res_17402;
+        int64_t defunc_0_f_res_17403;
+        uniform int64_t flat_tid_18182 = (int64_t) 0;
+        
+        defunc_0_f_res_17401 = (int64_t) 0;
+        defunc_0_f_res_17402 = (int64_t) 0;
+        defunc_0_f_res_17403 = (int64_t) 0;
+        
+        uniform int64_t flat_tid_18037 = (int64_t) 0;
+        struct futhark_mc_task_18595 futhark_mc_task_18595_;
+        
+        futhark_mc_task_18595_.ctx = ctx;
+        futhark_mc_task_18595_.free_m_12352 = m_12352;
+        futhark_mc_task_18595_.free_q_12354 = q_12354;
+        futhark_mc_task_18595_.free_gtid_16475 = gtid_16475;
+        futhark_mc_task_18595_.free_eps_mem_17024 = eps_mem_17024.mem;
+        futhark_mc_task_18595_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+        futhark_mc_task_18595_.free_mem_17078 = mem_17078.mem;
+        futhark_mc_task_18595_.free_mem_17082 = mem_17082.mem;
+        futhark_mc_task_18595_.free_mem_17086 = mem_17086.mem;
+        futhark_mc_task_18595_.free_gtid_17400 = gtid_17400;
+        futhark_mc_task_18595_.free_flat_tid_18037 = flat_tid_18037;
+        futhark_mc_task_18595_.free_flat_tid_18182 = flat_tid_18182;
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17401 = (int64_t *) &defunc_0_f_res_17401;
+        #if ISPC
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17401 += programIndex;
+        #endif
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17402 = (int64_t *) &defunc_0_f_res_17402;
+        #if ISPC
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17402 += programIndex;
+        #endif
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17403 = (int64_t *) &defunc_0_f_res_17403;
+        #if ISPC
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17403 += programIndex;
+        #endif
+        #if ISPC
+        
+        uniform struct futhark_mc_task_18595 aos_18655[programCount];
+        
+        aos_18655[programIndex] = futhark_mc_task_18595_;
+        foreach_active (i)
+        if (err == 0)
+            err = futhark_mc_schedule_shim_18654(ctx, &aos_18655[i], extract(q_12354, i));
+        if (err != 0)
+            unmasked { return err; }
+        #else
+        err = futhark_mc_schedule_shim_18654(ctx, &futhark_mc_task_18595_, q_12354);
+        if (err != 0)
+            goto cleanup;
+        #endif
+        
+        int64_t x_17690 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17401);
+        int64_t y_17691 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17402);
+        int64_t x_17692 = sub64(x_17690, y_17691);
+        int64_t y_17693 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17403);
+        int64_t mul_res_17694 = sub64(x_17692, y_17693);
+        int64_t x_17695 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17401);
+        int64_t y_17696 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17402);
+        int64_t x_17697 = add64(x_17695, y_17696);
+        int64_t y_17698 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17403);
+        int64_t x_17699 = sub64(x_17697, y_17698);
+        int64_t x_17700 = add64(y_17691, x_17699);
+        int64_t mul_res_17701 = add64(y_17693, x_17700);
+        int64_t x_17702 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17401);
+        int64_t y_17703 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17402);
+        int64_t x_17704 = add64(x_17702, y_17703);
+        int64_t y_17705 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17403);
+        int64_t x_17706 = add64(x_17704, y_17705);
+        int64_t mul_res_17707 = add64(y_17698, x_17706);
+        uniform int64_t tmp_idx_18656 = (int64_t) 0;
+        
+        ((varying int64_t *) mem_17708)[tmp_idx_18656] = mul_res_17694;
+        
+        uniform int64_t tmp_idx_18657 = (int64_t) 1;
+        
+        ((varying int64_t *) mem_17708)[tmp_idx_18657] = mul_res_17701;
+        
+        uniform int64_t tmp_idx_18658 = (int64_t) 2;
+        
+        ((varying int64_t *) mem_17708)[tmp_idx_18658] = mul_res_17707;
+        if ((int64_t) 24 > 0)
+            memmove_64(mem_17094.mem + gtid_17400 * (int64_t) 3 * (int64_t) 8, mem_17708 + (int64_t) 0, extract((int64_t) 24, 0));
+    }
+    if (programIndex < (start_18323 + n_18325 - start_18323) % programCount) {
+        int64_t SegMap_i_18326 = start_18323 + programIndex + (start_18323 + n_18325 - start_18323) / programCount * programCount;
+        uniform int64_t slice_18327 = p_12353;
+        int64_t gtid_17400 = SegMap_i_18326;
+        int64_t remnant_18328 = SegMap_i_18326 - gtid_17400;
+        int64_t defunc_0_f_res_17401;
+        int64_t defunc_0_f_res_17402;
+        int64_t defunc_0_f_res_17403;
+        uniform int64_t flat_tid_18182 = (int64_t) 0;
+        
+        defunc_0_f_res_17401 = (int64_t) 0;
+        defunc_0_f_res_17402 = (int64_t) 0;
+        defunc_0_f_res_17403 = (int64_t) 0;
+        
+        uniform int64_t flat_tid_18037 = (int64_t) 0;
+        struct futhark_mc_task_18595 futhark_mc_task_18595_;
+        
+        futhark_mc_task_18595_.ctx = ctx;
+        futhark_mc_task_18595_.free_m_12352 = m_12352;
+        futhark_mc_task_18595_.free_q_12354 = q_12354;
+        futhark_mc_task_18595_.free_gtid_16475 = gtid_16475;
+        futhark_mc_task_18595_.free_eps_mem_17024 = eps_mem_17024.mem;
+        futhark_mc_task_18595_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+        futhark_mc_task_18595_.free_mem_17078 = mem_17078.mem;
+        futhark_mc_task_18595_.free_mem_17082 = mem_17082.mem;
+        futhark_mc_task_18595_.free_mem_17086 = mem_17086.mem;
+        futhark_mc_task_18595_.free_gtid_17400 = gtid_17400;
+        futhark_mc_task_18595_.free_flat_tid_18037 = flat_tid_18037;
+        futhark_mc_task_18595_.free_flat_tid_18182 = flat_tid_18182;
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17401 = (int64_t *) &defunc_0_f_res_17401;
+        #if ISPC
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17401 += programIndex;
+        #endif
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17402 = (int64_t *) &defunc_0_f_res_17402;
+        #if ISPC
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17402 += programIndex;
+        #endif
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17403 = (int64_t *) &defunc_0_f_res_17403;
+        #if ISPC
+        futhark_mc_task_18595_.retval_defunc_0_f_res_17403 += programIndex;
+        #endif
+        #if ISPC
+        
+        uniform struct futhark_mc_task_18595 aos_18655[programCount];
+        
+        aos_18655[programIndex] = futhark_mc_task_18595_;
+        foreach_active (i)
+        if (err == 0)
+            err = futhark_mc_schedule_shim_18654(ctx, &aos_18655[i], extract(q_12354, i));
+        if (err != 0)
+            unmasked { return err; }
+        #else
+        err = futhark_mc_schedule_shim_18654(ctx, &futhark_mc_task_18595_, q_12354);
+        if (err != 0)
+            goto cleanup;
+        #endif
+        
+        int64_t x_17690 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17401);
+        int64_t y_17691 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17402);
+        int64_t x_17692 = sub64(x_17690, y_17691);
+        int64_t y_17693 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17403);
+        int64_t mul_res_17694 = sub64(x_17692, y_17693);
+        int64_t x_17695 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17401);
+        int64_t y_17696 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17402);
+        int64_t x_17697 = add64(x_17695, y_17696);
+        int64_t y_17698 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17403);
+        int64_t x_17699 = sub64(x_17697, y_17698);
+        int64_t x_17700 = add64(y_17691, x_17699);
+        int64_t mul_res_17701 = add64(y_17693, x_17700);
+        int64_t x_17702 = mul64(defunc_0_f_res_16480, defunc_0_f_res_17401);
+        int64_t y_17703 = mul64(defunc_0_f_res_16479, defunc_0_f_res_17402);
+        int64_t x_17704 = add64(x_17702, y_17703);
+        int64_t y_17705 = mul64(defunc_0_f_res_16478, defunc_0_f_res_17403);
+        int64_t x_17706 = add64(x_17704, y_17705);
+        int64_t mul_res_17707 = add64(y_17698, x_17706);
+        uniform int64_t tmp_idx_18656 = (int64_t) 0;
+        
+        ((varying int64_t *) mem_17708)[tmp_idx_18656] = mul_res_17694;
+        
+        uniform int64_t tmp_idx_18657 = (int64_t) 1;
+        
+        ((varying int64_t *) mem_17708)[tmp_idx_18657] = mul_res_17701;
+        
+        uniform int64_t tmp_idx_18658 = (int64_t) 2;
+        
+        ((varying int64_t *) mem_17708)[tmp_idx_18658] = mul_res_17707;
+        if ((int64_t) 24 > 0)
+            memmove_64(mem_17094.mem + gtid_17400 * (int64_t) 3 * (int64_t) 8, mem_17708 + (int64_t) 0, extract((int64_t) 24, 0));
+    }
+    futhark_mc_mem_struct_18659_->mem_17708 = mem_17708;
+    futhark_mc_mem_struct_18659_->mem_17708_cached_sizze_18588 = mem_17708_cached_sizze_18588;
+    return err;
+}
+export uniform int futhark_mc_loop_ispc_18587(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18586 *uniform futhark_mc_param_struct_18586_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18586_->ctx;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18586_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18586_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18586_->free_q_12354;
+    uniform int64_t gtid_16475 = futhark_mc_param_struct_18586_->free_gtid_16475;
+    uniform int64_t defunc_0_f_res_16478 = futhark_mc_param_struct_18586_->free_defunc_0_f_res_16478;
+    uniform int64_t defunc_0_f_res_16479 = futhark_mc_param_struct_18586_->free_defunc_0_f_res_16479;
+    uniform int64_t defunc_0_f_res_16480 = futhark_mc_param_struct_18586_->free_defunc_0_f_res_16480;
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18589();
+    eps_mem_17024.mem = futhark_mc_param_struct_18586_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18590();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18586_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18591();
+    mem_17078.mem = futhark_mc_param_struct_18586_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18592();
+    mem_17082.mem = futhark_mc_param_struct_18586_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18593();
+    mem_17086.mem = futhark_mc_param_struct_18586_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform struct memblock mem_17094;
+    
+    mem_17094.desc = futhark_mc_strlit_shim_18594();
+    mem_17094.mem = futhark_mc_param_struct_18586_->free_mem_17094;
+    mem_17094.size = 0;
+    mem_17094.references = NULL;
+    
+    size_t mem_17708_cached_sizze_18588 = 0;
+    varying unsigned char *uniform mem_17708 = NULL;
+    uniform struct futhark_mc_mem_struct_18659 futhark_mc_mem_struct_18659_;
+    
+    futhark_mc_mem_struct_18659_.mem_17708 = mem_17708;
+    futhark_mc_mem_struct_18659_.mem_17708_cached_sizze_18588 = mem_17708_cached_sizze_18588;
+    
+    uniform int err = futhark_mc_inner_ispc_18660(start, end, futhark_mc_param_struct_18586_, &futhark_mc_mem_struct_18659_);
+    
+    mem_17708 = futhark_mc_mem_struct_18659_.mem_17708;
+    mem_17708_cached_sizze_18588 = futhark_mc_mem_struct_18659_.mem_17708_cached_sizze_18588;
+    
+  cleanup:
+    {
+        free(mem_17708);
+    }
+    return err;
+}
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18667(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18557 *uniform args, uniform int iterations);
+struct futhark_mc_mem_struct_18669 {
+    varying struct memblock *uniform mem_17094;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18671();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18672();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18673();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18674();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18675();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18676();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18677();
+static unmasked inline uniform int futhark_mc_inner_ispc_18670(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18547 *uniform futhark_mc_param_struct_18547_, uniform struct futhark_mc_mem_struct_18669 *uniform futhark_mc_mem_struct_18669_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18547_->ctx;
+    uniform int64_t n_12351 = futhark_mc_param_struct_18547_->free_n_12351;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18547_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18547_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18547_->free_q_12354;
+    uniform struct memblock zzinvs_mem_17023;
+    
+    zzinvs_mem_17023.desc = futhark_mc_strlit_shim_18671();
+    zzinvs_mem_17023.mem = futhark_mc_param_struct_18547_->free_zzinvs_mem_17023;
+    zzinvs_mem_17023.size = 0;
+    zzinvs_mem_17023.references = NULL;
+    
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18672();
+    eps_mem_17024.mem = futhark_mc_param_struct_18547_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18673();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18547_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18674();
+    mem_17078.mem = futhark_mc_param_struct_18547_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18675();
+    mem_17082.mem = futhark_mc_param_struct_18547_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18676();
+    mem_17086.mem = futhark_mc_param_struct_18547_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform int64_t bytes_17093 = futhark_mc_param_struct_18547_->free_bytes_17093;
+    uniform struct memblock mem_17160;
+    
+    mem_17160.desc = futhark_mc_strlit_shim_18677();
+    mem_17160.mem = futhark_mc_param_struct_18547_->free_mem_17160;
+    mem_17160.size = 0;
+    mem_17160.references = NULL;
+    
+    struct memblock mem_17094 = *futhark_mc_mem_struct_18669_->mem_17094;
+    uniform int err = 0;
+    uniform int64_t start_17872;
+    uniform int64_t end_17873;
+    
+    start_17872 = start;
+    end_17873 = end;
+    
+    uniform int64_t n_17874 = end_17873 - start_17872;
+    
+    if (memblock_alloc(ctx, &mem_17094, bytes_17093, futhark_mc_strlit_shim_18556()))
+        unmasked { return 1; }
+    for (uniform int64_t i = 0; i < (start_17872 + n_17874 - start_17872) / programCount; i++) {
+        int64_t SegMap_i_17875 = start_17872 + programIndex + i * programCount;
+        uniform int64_t slice_17876 = n_12351;
+        int64_t gtid_16475 = SegMap_i_17875;
+        int64_t remnant_17877 = SegMap_i_17875 - gtid_16475;
+        int64_t defunc_0_f_res_16478;
+        
+        defunc_0_f_res_16478 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_16475 * (int64_t) 3];
+        
+        int64_t defunc_0_f_res_16479;
+        
+        defunc_0_f_res_16479 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_16475 * (int64_t) 3 + (int64_t) 1];
+        
+        int64_t defunc_0_f_res_16480;
+        
+        defunc_0_f_res_16480 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_16475 * (int64_t) 3 + (int64_t) 2];
+        
+        uniform int64_t flat_tid_17710 = (int64_t) 0;
+        uniform int64_t flat_tid_17399 = (int64_t) 0;
+        struct futhark_mc_task_18557 futhark_mc_task_18557_;
+        
+        futhark_mc_task_18557_.ctx = ctx;
+        futhark_mc_task_18557_.free_m_12352 = m_12352;
+        futhark_mc_task_18557_.free_p_12353 = p_12353;
+        futhark_mc_task_18557_.free_q_12354 = q_12354;
+        futhark_mc_task_18557_.free_gtid_16475 = gtid_16475;
+        futhark_mc_task_18557_.free_defunc_0_f_res_16478 = defunc_0_f_res_16478;
+        futhark_mc_task_18557_.free_defunc_0_f_res_16479 = defunc_0_f_res_16479;
+        futhark_mc_task_18557_.free_defunc_0_f_res_16480 = defunc_0_f_res_16480;
+        futhark_mc_task_18557_.free_eps_mem_17024 = eps_mem_17024.mem;
+        futhark_mc_task_18557_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+        futhark_mc_task_18557_.free_mem_17078 = mem_17078.mem;
+        futhark_mc_task_18557_.free_mem_17082 = mem_17082.mem;
+        futhark_mc_task_18557_.free_mem_17086 = mem_17086.mem;
+        futhark_mc_task_18557_.free_mem_17094 = mem_17094.mem;
+        #if ISPC
+        
+        uniform struct futhark_mc_task_18557 aos_18668[programCount];
+        
+        aos_18668[programIndex] = futhark_mc_task_18557_;
+        foreach_active (i)
+        if (err == 0)
+            err = futhark_mc_schedule_shim_18667(ctx, &aos_18668[i], extract(p_12353, i));
+        if (err != 0)
+            unmasked { return err; }
+        #else
+        err = futhark_mc_schedule_shim_18667(ctx, &futhark_mc_task_18557_, p_12353);
+        if (err != 0)
+            goto cleanup;
+        #endif
+        if (p_12353 * (int64_t) 3 * (int64_t) 8 > 0)
+            memmove(mem_17160.mem + gtid_16475 * ((int64_t) 3 * p_12353) * (int64_t) 8, mem_17094.mem + (int64_t) 0, p_12353 * (int64_t) 3 * (int64_t) 8);
+    }
+    if (programIndex < (start_17872 + n_17874 - start_17872) % programCount) {
+        int64_t SegMap_i_17875 = start_17872 + programIndex + (start_17872 + n_17874 - start_17872) / programCount * programCount;
+        uniform int64_t slice_17876 = n_12351;
+        int64_t gtid_16475 = SegMap_i_17875;
+        int64_t remnant_17877 = SegMap_i_17875 - gtid_16475;
+        int64_t defunc_0_f_res_16478;
+        
+        defunc_0_f_res_16478 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_16475 * (int64_t) 3];
+        
+        int64_t defunc_0_f_res_16479;
+        
+        defunc_0_f_res_16479 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_16475 * (int64_t) 3 + (int64_t) 1];
+        
+        int64_t defunc_0_f_res_16480;
+        
+        defunc_0_f_res_16480 = ((int64_t *) zzinvs_mem_17023.mem)[gtid_16475 * (int64_t) 3 + (int64_t) 2];
+        
+        uniform int64_t flat_tid_17710 = (int64_t) 0;
+        uniform int64_t flat_tid_17399 = (int64_t) 0;
+        struct futhark_mc_task_18557 futhark_mc_task_18557_;
+        
+        futhark_mc_task_18557_.ctx = ctx;
+        futhark_mc_task_18557_.free_m_12352 = m_12352;
+        futhark_mc_task_18557_.free_p_12353 = p_12353;
+        futhark_mc_task_18557_.free_q_12354 = q_12354;
+        futhark_mc_task_18557_.free_gtid_16475 = gtid_16475;
+        futhark_mc_task_18557_.free_defunc_0_f_res_16478 = defunc_0_f_res_16478;
+        futhark_mc_task_18557_.free_defunc_0_f_res_16479 = defunc_0_f_res_16479;
+        futhark_mc_task_18557_.free_defunc_0_f_res_16480 = defunc_0_f_res_16480;
+        futhark_mc_task_18557_.free_eps_mem_17024 = eps_mem_17024.mem;
+        futhark_mc_task_18557_.free_expsss_mem_17025 = expsss_mem_17025.mem;
+        futhark_mc_task_18557_.free_mem_17078 = mem_17078.mem;
+        futhark_mc_task_18557_.free_mem_17082 = mem_17082.mem;
+        futhark_mc_task_18557_.free_mem_17086 = mem_17086.mem;
+        futhark_mc_task_18557_.free_mem_17094 = mem_17094.mem;
+        #if ISPC
+        
+        uniform struct futhark_mc_task_18557 aos_18668[programCount];
+        
+        aos_18668[programIndex] = futhark_mc_task_18557_;
+        foreach_active (i)
+        if (err == 0)
+            err = futhark_mc_schedule_shim_18667(ctx, &aos_18668[i], extract(p_12353, i));
+        if (err != 0)
+            unmasked { return err; }
+        #else
+        err = futhark_mc_schedule_shim_18667(ctx, &futhark_mc_task_18557_, p_12353);
+        if (err != 0)
+            goto cleanup;
+        #endif
+        if (p_12353 * (int64_t) 3 * (int64_t) 8 > 0)
+            memmove(mem_17160.mem + gtid_16475 * ((int64_t) 3 * p_12353) * (int64_t) 8, mem_17094.mem + (int64_t) 0, p_12353 * (int64_t) 3 * (int64_t) 8);
+    }
+    *futhark_mc_mem_struct_18669_->mem_17094 = mem_17094;
+    return err;
+}
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18678();
+export uniform int futhark_mc_loop_ispc_18548(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18547 *uniform futhark_mc_param_struct_18547_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18547_->ctx;
+    uniform int64_t n_12351 = futhark_mc_param_struct_18547_->free_n_12351;
+    uniform int64_t m_12352 = futhark_mc_param_struct_18547_->free_m_12352;
+    uniform int64_t p_12353 = futhark_mc_param_struct_18547_->free_p_12353;
+    uniform int64_t q_12354 = futhark_mc_param_struct_18547_->free_q_12354;
+    uniform struct memblock zzinvs_mem_17023;
+    
+    zzinvs_mem_17023.desc = futhark_mc_strlit_shim_18549();
+    zzinvs_mem_17023.mem = futhark_mc_param_struct_18547_->free_zzinvs_mem_17023;
+    zzinvs_mem_17023.size = 0;
+    zzinvs_mem_17023.references = NULL;
+    
+    uniform struct memblock eps_mem_17024;
+    
+    eps_mem_17024.desc = futhark_mc_strlit_shim_18550();
+    eps_mem_17024.mem = futhark_mc_param_struct_18547_->free_eps_mem_17024;
+    eps_mem_17024.size = 0;
+    eps_mem_17024.references = NULL;
+    
+    uniform struct memblock expsss_mem_17025;
+    
+    expsss_mem_17025.desc = futhark_mc_strlit_shim_18551();
+    expsss_mem_17025.mem = futhark_mc_param_struct_18547_->free_expsss_mem_17025;
+    expsss_mem_17025.size = 0;
+    expsss_mem_17025.references = NULL;
+    
+    uniform struct memblock mem_17078;
+    
+    mem_17078.desc = futhark_mc_strlit_shim_18552();
+    mem_17078.mem = futhark_mc_param_struct_18547_->free_mem_17078;
+    mem_17078.size = 0;
+    mem_17078.references = NULL;
+    
+    uniform struct memblock mem_17082;
+    
+    mem_17082.desc = futhark_mc_strlit_shim_18553();
+    mem_17082.mem = futhark_mc_param_struct_18547_->free_mem_17082;
+    mem_17082.size = 0;
+    mem_17082.references = NULL;
+    
+    uniform struct memblock mem_17086;
+    
+    mem_17086.desc = futhark_mc_strlit_shim_18554();
+    mem_17086.mem = futhark_mc_param_struct_18547_->free_mem_17086;
+    mem_17086.size = 0;
+    mem_17086.references = NULL;
+    
+    uniform int64_t bytes_17093 = futhark_mc_param_struct_18547_->free_bytes_17093;
+    uniform struct memblock mem_17160;
+    
+    mem_17160.desc = futhark_mc_strlit_shim_18555();
+    mem_17160.mem = futhark_mc_param_struct_18547_->free_mem_17160;
+    mem_17160.size = 0;
+    mem_17160.references = NULL;
+    
+    struct memblock mem_17094;
+    
+    mem_17094.references = NULL;
+    
+    uniform struct futhark_mc_mem_struct_18669 futhark_mc_mem_struct_18669_;
+    
+    futhark_mc_mem_struct_18669_.mem_17094 = &mem_17094;
+    
+    uniform int err = futhark_mc_inner_ispc_18670(start, end, futhark_mc_param_struct_18547_, &futhark_mc_mem_struct_18669_);
+    
+    mem_17094 = *futhark_mc_mem_struct_18669_.mem_17094;
+    
+  cleanup:
+    {
+        if (memblock_unref(ctx, &mem_17094, futhark_mc_strlit_shim_18678()) != 0)
+            unmasked { return 1; }
+    }
+    return err;
+}
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18679(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18508 *uniform args, uniform int iterations);
+struct futhark_mc_task_18682 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+struct futhark_mc_param_struct_18687 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18690();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18691();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18692();
+struct futhark_mc_mem_struct_18693 {
+    varying unsigned char *uniform mem_17030;
+    varying size_t mem_17030_cached_sizze_18689;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18695();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18696();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18697();
+static unmasked inline uniform int futhark_mc_inner_ispc_18694(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18687 *uniform futhark_mc_param_struct_18687_, uniform struct futhark_mc_mem_struct_18693 *uniform futhark_mc_mem_struct_18693_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18687_->ctx;
+    uniform int64_t nz2080U_9828 = futhark_mc_param_struct_18687_->free_nz2080U_9828;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18687_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18687_->free_mz2082U_9830;
+    uniform struct memblock xss_mem_17023;
+    
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18695();
+    xss_mem_17023.mem = futhark_mc_param_struct_18687_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
+    
+    uniform struct memblock yss_mem_17024;
+    
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18696();
+    yss_mem_17024.mem = futhark_mc_param_struct_18687_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
+    
+    uniform int64_t bytes_17026 = futhark_mc_param_struct_18687_->free_bytes_17026;
+    uniform struct memblock mem_17044;
+    
+    mem_17044.desc = futhark_mc_strlit_shim_18697();
+    mem_17044.mem = futhark_mc_param_struct_18687_->free_mem_17044;
+    mem_17044.size = 0;
+    mem_17044.references = NULL;
+    
+    varying unsigned char *uniform mem_17030 = futhark_mc_mem_struct_18693_->mem_17030;
+    size_t mem_17030_cached_sizze_18689 = futhark_mc_mem_struct_18693_->mem_17030_cached_sizze_18689;
+    uniform int err = 0;
+    uniform int64_t start_17173;
+    uniform int64_t end_17174;
+    
+    start_17173 = start;
+    end_17174 = end;
+    
+    uniform int64_t n_17175 = end_17174 - start_17173;
+    
+    if (mem_17030_cached_sizze_18689 < bytes_17026) {
+        err = lexical_realloc(ctx, &mem_17030, &mem_17030_cached_sizze_18689, bytes_17026);
+        if (err != FUTHARK_SUCCESS)
+            unmasked { return err; }
+    }
+    foreach (SegMap_i_17176 = start_17173 ... start_17173 + n_17175)
+    {
+        uniform int64_t slice_17177 = nz2080U_9828;
+        int64_t gtid_15929 = SegMap_i_17176;
+        int64_t remnant_17178 = SegMap_i_17176 - gtid_15929;
+        
+        for (uniform int64_t i_17163 = 0; i_17163 < mz2082U_9830; i_17163++) {
+            int32_t defunc_2_reduce_res_17165;
+            int32_t redout_17167 = 0;
+            
+            for (uniform int64_t i_17166 = 0; i_17166 < pz2081U_9829; i_17166++) {
+                int32_t x_17168;
+                
+                x_17168 = ((int32_t *) xss_mem_17023.mem)[gtid_15929 * pz2081U_9829 + i_17166];
+                
+                uniform int32_t x_17169;
+                
+                x_17169 = ((int32_t *) yss_mem_17024.mem)[i_17166 * mz2082U_9830 + i_17163];
+                
+                int32_t defunc_1_f_res_17170 = mul32(x_17168, x_17169);
+                int32_t defunc_1_op_res_17171 = add32(defunc_1_f_res_17170, redout_17167);
+                int32_t redout_tmp_17180 = defunc_1_op_res_17171;
+                
+                redout_17167 = redout_tmp_17180;
+            }
+            defunc_2_reduce_res_17165 = redout_17167;
+            ((varying int32_t *) mem_17030)[i_17163] = defunc_2_reduce_res_17165;
+        }
+        if (mz2082U_9830 * (int64_t) 4 > 0)
+            memmove_32(mem_17044.mem + gtid_15929 * mz2082U_9830 * (int64_t) 4, mem_17030 + (int64_t) 0, extract(mz2082U_9830 * (int64_t) 4, 0));
+    }
+    futhark_mc_mem_struct_18693_->mem_17030 = mem_17030;
+    futhark_mc_mem_struct_18693_->mem_17030_cached_sizze_18689 = mem_17030_cached_sizze_18689;
+    return err;
+}
+export uniform int futhark_mc_loop_ispc_18688(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18687 *uniform futhark_mc_param_struct_18687_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18687_->ctx;
+    uniform int64_t nz2080U_9828 = futhark_mc_param_struct_18687_->free_nz2080U_9828;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18687_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18687_->free_mz2082U_9830;
+    uniform struct memblock xss_mem_17023;
+    
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18690();
+    xss_mem_17023.mem = futhark_mc_param_struct_18687_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
+    
+    uniform struct memblock yss_mem_17024;
+    
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18691();
+    yss_mem_17024.mem = futhark_mc_param_struct_18687_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
+    
+    uniform int64_t bytes_17026 = futhark_mc_param_struct_18687_->free_bytes_17026;
+    uniform struct memblock mem_17044;
+    
+    mem_17044.desc = futhark_mc_strlit_shim_18692();
+    mem_17044.mem = futhark_mc_param_struct_18687_->free_mem_17044;
+    mem_17044.size = 0;
+    mem_17044.references = NULL;
+    
+    size_t mem_17030_cached_sizze_18689 = 0;
+    varying unsigned char *uniform mem_17030 = NULL;
+    uniform struct futhark_mc_mem_struct_18693 futhark_mc_mem_struct_18693_;
+    
+    futhark_mc_mem_struct_18693_.mem_17030 = mem_17030;
+    futhark_mc_mem_struct_18693_.mem_17030_cached_sizze_18689 = mem_17030_cached_sizze_18689;
+    
+    uniform int err = futhark_mc_inner_ispc_18694(start, end, futhark_mc_param_struct_18687_, &futhark_mc_mem_struct_18693_);
+    
+    mem_17030 = futhark_mc_mem_struct_18693_.mem_17030;
+    mem_17030_cached_sizze_18689 = futhark_mc_mem_struct_18693_.mem_17030_cached_sizze_18689;
+    
+  cleanup:
+    {
+        free(mem_17030);
+    }
+    return err;
+}
+struct futhark_mc_param_struct_18702 {
+    struct futhark_context *ctx;
+    int64_t free_nz2080U_9828;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_bytes_17026;
+    unsigned char *free_mem_17044;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18704();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18705();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18706();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18707();
 struct futhark_mc_task_18708 {
     struct futhark_context *ctx;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    int64_t free_gtid_15934;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    int64_t free_gtid_17166;
-    int64_t free_flat_tid_17206;
-    int32_t *retval_defunc_2_reduce_res_17167;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
 };
-struct futhark_mc_param_struct_18713 {
+struct futhark_mc_param_struct_18712 {
     struct futhark_context *ctx;
-    int64_t free_pz2081U_9824;
-    int64_t free_mz2082U_9825;
-    int64_t free_gtid_15934;
-    unsigned char *free_xss_mem_17006;
-    unsigned char *free_yss_mem_17007;
-    int64_t free_gtid_17166;
-    int64_t free_flat_tid_17206;
-    unsigned char *free_reduce_stage_1_tid_res_arr_mem_17221;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
 };
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18714();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18715();
 extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18716();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18717();
-export uniform int futhark_mc_loop_ispc_18714(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18713 *uniform futhark_mc_param_struct_18713_)
+export uniform int futhark_mc_loop_ispc_18713(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18712 *uniform futhark_mc_param_struct_18712_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18713_->ctx;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18713_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18713_->free_mz2082U_9825;
-    uniform int64_t gtid_15934 = futhark_mc_param_struct_18713_->free_gtid_15934;
-    uniform struct memblock xss_mem_17006;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18712_->ctx;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18712_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18712_->free_mz2082U_9830;
+    uniform int64_t gtid_15951 = futhark_mc_param_struct_18712_->free_gtid_15951;
+    uniform struct memblock xss_mem_17023;
     
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18715();
-    xss_mem_17006.mem = futhark_mc_param_struct_18713_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18714();
+    xss_mem_17023.mem = futhark_mc_param_struct_18712_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
     
-    uniform struct memblock yss_mem_17007;
+    uniform struct memblock yss_mem_17024;
     
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18716();
-    yss_mem_17007.mem = futhark_mc_param_struct_18713_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18715();
+    yss_mem_17024.mem = futhark_mc_param_struct_18712_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
     
-    uniform int64_t gtid_17166 = futhark_mc_param_struct_18713_->free_gtid_17166;
-    uniform int64_t flat_tid_17206 = futhark_mc_param_struct_18713_->free_flat_tid_17206;
-    uniform struct memblock reduce_stage_1_tid_res_arr_mem_17221;
+    uniform struct memblock mem_17027;
     
-    reduce_stage_1_tid_res_arr_mem_17221.desc = futhark_mc_strlit_shim_18717();
-    reduce_stage_1_tid_res_arr_mem_17221.mem = futhark_mc_param_struct_18713_->free_reduce_stage_1_tid_res_arr_mem_17221;
-    reduce_stage_1_tid_res_arr_mem_17221.size = 0;
-    reduce_stage_1_tid_res_arr_mem_17221.references = NULL;
+    mem_17027.desc = futhark_mc_strlit_shim_18716();
+    mem_17027.mem = futhark_mc_param_struct_18712_->free_mem_17027;
+    mem_17027.size = 0;
+    mem_17027.references = NULL;
     
     uniform int err = 0;
-    uniform int32_t x_17223;
-    uniform int32_t x_17224;
-    uniform int32_t local_acc_17226 = 0;
-    int32_t x_17208;
-    int32_t x_17209;
-    int32_t local_acc_17227 = 0;
-    uniform int64_t start_17228;
-    uniform int64_t end_17229;
+    uniform int64_t start_17215;
+    uniform int64_t end_17216;
     
-    start_17228 = start;
-    end_17229 = end;
+    start_17215 = start;
+    end_17216 = end;
     
-    uniform int64_t n_17230 = end_17229 - start_17228;
+    uniform int64_t n_17217 = end_17216 - start_17215;
     
-    foreach (SegRed_i_17231 = start_17228 ... start_17228 + n_17230)
+    foreach (SegMap_i_17218 = start_17215 ... start_17215 + n_17217)
     {
-        int64_t gtid_17207 = SegRed_i_17231;
-        int32_t x_17211;
+        uniform int64_t slice_17219 = mz2082U_9830;
+        int64_t gtid_17194 = SegMap_i_17218;
+        int64_t remnant_17220 = SegMap_i_17218 - gtid_17194;
+        int32_t defunc_2_reduce_res_17195;
+        int32_t redout_17210 = 0;
         
-        x_17211 = ((int32_t *) xss_mem_17006.mem)[gtid_15934 * pz2081U_9824 + gtid_17207];
+        for (uniform int64_t i_17209 = 0; i_17209 < pz2081U_9829; i_17209++) {
+            uniform int32_t x_17211;
+            
+            x_17211 = ((int32_t *) xss_mem_17023.mem)[gtid_15951 * pz2081U_9829 + i_17209];
+            
+            int32_t x_17212;
+            
+            x_17212 = ((int32_t *) yss_mem_17024.mem)[i_17209 * mz2082U_9830 + gtid_17194];
+            
+            int32_t defunc_1_f_res_17213 = mul32(x_17211, x_17212);
+            int32_t defunc_1_op_res_17214 = add32(defunc_1_f_res_17213, redout_17210);
+            int32_t redout_tmp_17221 = defunc_1_op_res_17214;
+            
+            redout_17210 = redout_tmp_17221;
+        }
+        defunc_2_reduce_res_17195 = redout_17210;
+        ((int32_t *) mem_17027.mem)[gtid_17194] = defunc_2_reduce_res_17195;
+    }
+    
+  cleanup:
+    { }
+    return err;
+}
+struct futhark_mc_param_struct_18720 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    unsigned char *free_mem_17027;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18722();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18723();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18724();
+struct futhark_mc_task_18725 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_gtid_17183;
+    int64_t free_flat_tid_17223;
+    int32_t *retval_defunc_2_reduce_res_17184;
+};
+struct futhark_mc_param_struct_18730 {
+    struct futhark_context *ctx;
+    int64_t free_pz2081U_9829;
+    int64_t free_mz2082U_9830;
+    int64_t free_gtid_15951;
+    unsigned char *free_xss_mem_17023;
+    unsigned char *free_yss_mem_17024;
+    int64_t free_gtid_17183;
+    int64_t free_flat_tid_17223;
+    unsigned char *free_reduce_stage_1_tid_res_arr_mem_17238;
+};
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18732();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18733();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18734();
+export uniform int futhark_mc_loop_ispc_18731(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18730 *uniform futhark_mc_param_struct_18730_)
+{
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18730_->ctx;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18730_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18730_->free_mz2082U_9830;
+    uniform int64_t gtid_15951 = futhark_mc_param_struct_18730_->free_gtid_15951;
+    uniform struct memblock xss_mem_17023;
+    
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18732();
+    xss_mem_17023.mem = futhark_mc_param_struct_18730_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
+    
+    uniform struct memblock yss_mem_17024;
+    
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18733();
+    yss_mem_17024.mem = futhark_mc_param_struct_18730_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
+    
+    uniform int64_t gtid_17183 = futhark_mc_param_struct_18730_->free_gtid_17183;
+    uniform int64_t flat_tid_17223 = futhark_mc_param_struct_18730_->free_flat_tid_17223;
+    uniform struct memblock reduce_stage_1_tid_res_arr_mem_17238;
+    
+    reduce_stage_1_tid_res_arr_mem_17238.desc = futhark_mc_strlit_shim_18734();
+    reduce_stage_1_tid_res_arr_mem_17238.mem = futhark_mc_param_struct_18730_->free_reduce_stage_1_tid_res_arr_mem_17238;
+    reduce_stage_1_tid_res_arr_mem_17238.size = 0;
+    reduce_stage_1_tid_res_arr_mem_17238.references = NULL;
+    
+    uniform int err = 0;
+    uniform int32_t x_17240;
+    uniform int32_t x_17241;
+    uniform int32_t local_acc_17243 = 0;
+    int32_t x_17225;
+    int32_t x_17226;
+    int32_t local_acc_17244 = 0;
+    uniform int64_t start_17245;
+    uniform int64_t end_17246;
+    
+    start_17245 = start;
+    end_17246 = end;
+    
+    uniform int64_t n_17247 = end_17246 - start_17245;
+    
+    foreach (SegRed_i_17248 = start_17245 ... start_17245 + n_17247)
+    {
+        int64_t gtid_17224 = SegRed_i_17248;
+        int32_t x_17228;
         
-        int32_t x_17212;
+        x_17228 = ((int32_t *) xss_mem_17023.mem)[gtid_15951 * pz2081U_9829 + gtid_17224];
         
-        x_17212 = ((int32_t *) yss_mem_17007.mem)[gtid_17207 * mz2082U_9825 + gtid_17166];
+        int32_t x_17229;
         
-        int32_t defunc_1_f_res_17213 = mul32(x_17211, x_17212);
+        x_17229 = ((int32_t *) yss_mem_17024.mem)[gtid_17224 * mz2082U_9830 + gtid_17183];
+        
+        int32_t defunc_1_f_res_17230 = mul32(x_17228, x_17229);
         
         // save map-out results
         { }
         // Load accum params
         {
-            x_17208 = local_acc_17227;
+            x_17225 = local_acc_17244;
         }
         // Load next params
         {
-            x_17209 = defunc_1_f_res_17213;
+            x_17226 = defunc_1_f_res_17230;
         }
         // SegRed body
         {
-            int32_t defunc_1_op_res_17210 = add32(x_17208, x_17209);
+            int32_t defunc_1_op_res_17227 = add32(x_17225, x_17226);
             
-            local_acc_17227 = defunc_1_op_res_17210;
+            local_acc_17244 = defunc_1_op_res_17227;
         }
     }
-    for (uniform unsigned int uni_i_17232 = 0; uni_i_17232 < programCount; uni_i_17232++) {
-        if (programIndex == uni_i_17232) {
-            int64_t gtid_17207 = uni_i_17232;
+    for (uniform unsigned int uni_i_17249 = 0; uni_i_17249 < programCount; uni_i_17249++) {
+        if (programIndex == uni_i_17249) {
+            int64_t gtid_17224 = uni_i_17249;
             
             // Load accum params
             {
-                x_17223 = local_acc_17226;
+                x_17240 = local_acc_17243;
             }
             // Load next params
             {
-                x_17224 = extract(local_acc_17227, uni_i_17232);
+                x_17241 = extract(local_acc_17244, uni_i_17249);
             }
             // SegRed body
             {
-                uniform int32_t defunc_1_op_res_17225 = add32(x_17223, x_17224);
+                uniform int32_t defunc_1_op_res_17242 = add32(x_17240, x_17241);
                 
-                local_acc_17226 = defunc_1_op_res_17225;
+                local_acc_17243 = defunc_1_op_res_17242;
             }
         }
     }
-    ((int32_t *) reduce_stage_1_tid_res_arr_mem_17221.mem)[flat_tid_17206] = local_acc_17226;
+    ((int32_t *) reduce_stage_1_tid_res_arr_mem_17238.mem)[flat_tid_17223] = local_acc_17243;
     
   cleanup:
     { }
     return err;
 }
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18718(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18708 *uniform args, uniform int iterations);
-struct futhark_mc_mem_struct_18720 { };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18722();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18723();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18724();
-static unmasked inline uniform int futhark_mc_inner_ispc_18721(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18703 *uniform futhark_mc_param_struct_18703_, uniform struct futhark_mc_mem_struct_18720 *uniform futhark_mc_mem_struct_18720_)
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18735(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18725 *uniform args, uniform int iterations);
+struct futhark_mc_mem_struct_18737 { };
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18739();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18740();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18741();
+static unmasked inline uniform int futhark_mc_inner_ispc_18738(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18720 *uniform futhark_mc_param_struct_18720_, uniform struct futhark_mc_mem_struct_18737 *uniform futhark_mc_mem_struct_18737_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18703_->ctx;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18703_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18703_->free_mz2082U_9825;
-    uniform int64_t gtid_15934 = futhark_mc_param_struct_18703_->free_gtid_15934;
-    uniform struct memblock xss_mem_17006;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18720_->ctx;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18720_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18720_->free_mz2082U_9830;
+    uniform int64_t gtid_15951 = futhark_mc_param_struct_18720_->free_gtid_15951;
+    uniform struct memblock xss_mem_17023;
     
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18722();
-    xss_mem_17006.mem = futhark_mc_param_struct_18703_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18739();
+    xss_mem_17023.mem = futhark_mc_param_struct_18720_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
     
-    uniform struct memblock yss_mem_17007;
+    uniform struct memblock yss_mem_17024;
     
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18723();
-    yss_mem_17007.mem = futhark_mc_param_struct_18703_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18740();
+    yss_mem_17024.mem = futhark_mc_param_struct_18720_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
     
-    uniform struct memblock mem_17010;
+    uniform struct memblock mem_17027;
     
-    mem_17010.desc = futhark_mc_strlit_shim_18724();
-    mem_17010.mem = futhark_mc_param_struct_18703_->free_mem_17010;
-    mem_17010.size = 0;
-    mem_17010.references = NULL;
+    mem_17027.desc = futhark_mc_strlit_shim_18741();
+    mem_17027.mem = futhark_mc_param_struct_18720_->free_mem_17027;
+    mem_17027.size = 0;
+    mem_17027.references = NULL;
     
     uniform int err = 0;
-    uniform int64_t start_17214;
-    uniform int64_t end_17215;
+    uniform int64_t start_17231;
+    uniform int64_t end_17232;
     
-    start_17214 = start;
-    end_17215 = end;
+    start_17231 = start;
+    end_17232 = end;
     
-    uniform int64_t n_17216 = end_17215 - start_17214;
+    uniform int64_t n_17233 = end_17232 - start_17231;
     
-    for (uniform int64_t i = 0; i < (start_17214 + n_17216 - start_17214) / programCount; i++) {
-        int64_t SegMap_i_17217 = start_17214 + programIndex + i * programCount;
-        uniform int64_t slice_17218 = mz2082U_9825;
-        int64_t gtid_17166 = SegMap_i_17217;
-        int64_t remnant_17219 = SegMap_i_17217 - gtid_17166;
-        int32_t defunc_2_reduce_res_17167;
-        uniform int64_t flat_tid_17206 = (int64_t) 0;
+    for (uniform int64_t i = 0; i < (start_17231 + n_17233 - start_17231) / programCount; i++) {
+        int64_t SegMap_i_17234 = start_17231 + programIndex + i * programCount;
+        uniform int64_t slice_17235 = mz2082U_9830;
+        int64_t gtid_17183 = SegMap_i_17234;
+        int64_t remnant_17236 = SegMap_i_17234 - gtid_17183;
+        int32_t defunc_2_reduce_res_17184;
+        uniform int64_t flat_tid_17223 = (int64_t) 0;
         
-        defunc_2_reduce_res_17167 = 0;
+        defunc_2_reduce_res_17184 = 0;
         
-        struct futhark_mc_task_18708 futhark_mc_task_18708_;
+        struct futhark_mc_task_18725 futhark_mc_task_18725_;
         
-        futhark_mc_task_18708_.ctx = ctx;
-        futhark_mc_task_18708_.free_pz2081U_9824 = pz2081U_9824;
-        futhark_mc_task_18708_.free_mz2082U_9825 = mz2082U_9825;
-        futhark_mc_task_18708_.free_gtid_15934 = gtid_15934;
-        futhark_mc_task_18708_.free_xss_mem_17006 = xss_mem_17006.mem;
-        futhark_mc_task_18708_.free_yss_mem_17007 = yss_mem_17007.mem;
-        futhark_mc_task_18708_.free_gtid_17166 = gtid_17166;
-        futhark_mc_task_18708_.free_flat_tid_17206 = flat_tid_17206;
-        futhark_mc_task_18708_.retval_defunc_2_reduce_res_17167 = (int32_t *) &defunc_2_reduce_res_17167;
+        futhark_mc_task_18725_.ctx = ctx;
+        futhark_mc_task_18725_.free_pz2081U_9829 = pz2081U_9829;
+        futhark_mc_task_18725_.free_mz2082U_9830 = mz2082U_9830;
+        futhark_mc_task_18725_.free_gtid_15951 = gtid_15951;
+        futhark_mc_task_18725_.free_xss_mem_17023 = xss_mem_17023.mem;
+        futhark_mc_task_18725_.free_yss_mem_17024 = yss_mem_17024.mem;
+        futhark_mc_task_18725_.free_gtid_17183 = gtid_17183;
+        futhark_mc_task_18725_.free_flat_tid_17223 = flat_tid_17223;
+        futhark_mc_task_18725_.retval_defunc_2_reduce_res_17184 = (int32_t *) &defunc_2_reduce_res_17184;
         #if ISPC
-        futhark_mc_task_18708_.retval_defunc_2_reduce_res_17167 += programIndex;
+        futhark_mc_task_18725_.retval_defunc_2_reduce_res_17184 += programIndex;
         #endif
         #if ISPC
         
-        uniform struct futhark_mc_task_18708 aos_18719[programCount];
+        uniform struct futhark_mc_task_18725 aos_18736[programCount];
         
-        aos_18719[programIndex] = futhark_mc_task_18708_;
+        aos_18736[programIndex] = futhark_mc_task_18725_;
         foreach_active (i)
         if (err == 0)
-            err = futhark_mc_schedule_shim_18718(ctx, &aos_18719[i], extract(pz2081U_9824, i));
+            err = futhark_mc_schedule_shim_18735(ctx, &aos_18736[i], extract(pz2081U_9829, i));
         if (err != 0)
             unmasked { return err; }
         #else
-        err = futhark_mc_schedule_shim_18718(ctx, &futhark_mc_task_18708_, pz2081U_9824);
+        err = futhark_mc_schedule_shim_18735(ctx, &futhark_mc_task_18725_, pz2081U_9829);
         if (err != 0)
             goto cleanup;
         #endif
-        ((int32_t *) mem_17010.mem)[gtid_17166] = defunc_2_reduce_res_17167;
+        ((int32_t *) mem_17027.mem)[gtid_17183] = defunc_2_reduce_res_17184;
     }
-    if (programIndex < (start_17214 + n_17216 - start_17214) % programCount) {
-        int64_t SegMap_i_17217 = start_17214 + programIndex + (start_17214 + n_17216 - start_17214) / programCount * programCount;
-        uniform int64_t slice_17218 = mz2082U_9825;
-        int64_t gtid_17166 = SegMap_i_17217;
-        int64_t remnant_17219 = SegMap_i_17217 - gtid_17166;
-        int32_t defunc_2_reduce_res_17167;
-        uniform int64_t flat_tid_17206 = (int64_t) 0;
+    if (programIndex < (start_17231 + n_17233 - start_17231) % programCount) {
+        int64_t SegMap_i_17234 = start_17231 + programIndex + (start_17231 + n_17233 - start_17231) / programCount * programCount;
+        uniform int64_t slice_17235 = mz2082U_9830;
+        int64_t gtid_17183 = SegMap_i_17234;
+        int64_t remnant_17236 = SegMap_i_17234 - gtid_17183;
+        int32_t defunc_2_reduce_res_17184;
+        uniform int64_t flat_tid_17223 = (int64_t) 0;
         
-        defunc_2_reduce_res_17167 = 0;
+        defunc_2_reduce_res_17184 = 0;
         
-        struct futhark_mc_task_18708 futhark_mc_task_18708_;
+        struct futhark_mc_task_18725 futhark_mc_task_18725_;
         
-        futhark_mc_task_18708_.ctx = ctx;
-        futhark_mc_task_18708_.free_pz2081U_9824 = pz2081U_9824;
-        futhark_mc_task_18708_.free_mz2082U_9825 = mz2082U_9825;
-        futhark_mc_task_18708_.free_gtid_15934 = gtid_15934;
-        futhark_mc_task_18708_.free_xss_mem_17006 = xss_mem_17006.mem;
-        futhark_mc_task_18708_.free_yss_mem_17007 = yss_mem_17007.mem;
-        futhark_mc_task_18708_.free_gtid_17166 = gtid_17166;
-        futhark_mc_task_18708_.free_flat_tid_17206 = flat_tid_17206;
-        futhark_mc_task_18708_.retval_defunc_2_reduce_res_17167 = (int32_t *) &defunc_2_reduce_res_17167;
+        futhark_mc_task_18725_.ctx = ctx;
+        futhark_mc_task_18725_.free_pz2081U_9829 = pz2081U_9829;
+        futhark_mc_task_18725_.free_mz2082U_9830 = mz2082U_9830;
+        futhark_mc_task_18725_.free_gtid_15951 = gtid_15951;
+        futhark_mc_task_18725_.free_xss_mem_17023 = xss_mem_17023.mem;
+        futhark_mc_task_18725_.free_yss_mem_17024 = yss_mem_17024.mem;
+        futhark_mc_task_18725_.free_gtid_17183 = gtid_17183;
+        futhark_mc_task_18725_.free_flat_tid_17223 = flat_tid_17223;
+        futhark_mc_task_18725_.retval_defunc_2_reduce_res_17184 = (int32_t *) &defunc_2_reduce_res_17184;
         #if ISPC
-        futhark_mc_task_18708_.retval_defunc_2_reduce_res_17167 += programIndex;
+        futhark_mc_task_18725_.retval_defunc_2_reduce_res_17184 += programIndex;
         #endif
         #if ISPC
         
-        uniform struct futhark_mc_task_18708 aos_18719[programCount];
+        uniform struct futhark_mc_task_18725 aos_18736[programCount];
         
-        aos_18719[programIndex] = futhark_mc_task_18708_;
+        aos_18736[programIndex] = futhark_mc_task_18725_;
         foreach_active (i)
         if (err == 0)
-            err = futhark_mc_schedule_shim_18718(ctx, &aos_18719[i], extract(pz2081U_9824, i));
+            err = futhark_mc_schedule_shim_18735(ctx, &aos_18736[i], extract(pz2081U_9829, i));
         if (err != 0)
             unmasked { return err; }
         #else
-        err = futhark_mc_schedule_shim_18718(ctx, &futhark_mc_task_18708_, pz2081U_9824);
+        err = futhark_mc_schedule_shim_18735(ctx, &futhark_mc_task_18725_, pz2081U_9829);
         if (err != 0)
             goto cleanup;
         #endif
-        ((int32_t *) mem_17010.mem)[gtid_17166] = defunc_2_reduce_res_17167;
+        ((int32_t *) mem_17027.mem)[gtid_17183] = defunc_2_reduce_res_17184;
     }
     return err;
 }
-export uniform int futhark_mc_loop_ispc_18704(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18703 *uniform futhark_mc_param_struct_18703_)
+export uniform int futhark_mc_loop_ispc_18721(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18720 *uniform futhark_mc_param_struct_18720_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18703_->ctx;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18703_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18703_->free_mz2082U_9825;
-    uniform int64_t gtid_15934 = futhark_mc_param_struct_18703_->free_gtid_15934;
-    uniform struct memblock xss_mem_17006;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18720_->ctx;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18720_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18720_->free_mz2082U_9830;
+    uniform int64_t gtid_15951 = futhark_mc_param_struct_18720_->free_gtid_15951;
+    uniform struct memblock xss_mem_17023;
     
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18705();
-    xss_mem_17006.mem = futhark_mc_param_struct_18703_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18722();
+    xss_mem_17023.mem = futhark_mc_param_struct_18720_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
     
-    uniform struct memblock yss_mem_17007;
+    uniform struct memblock yss_mem_17024;
     
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18706();
-    yss_mem_17007.mem = futhark_mc_param_struct_18703_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18723();
+    yss_mem_17024.mem = futhark_mc_param_struct_18720_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
     
-    uniform struct memblock mem_17010;
+    uniform struct memblock mem_17027;
     
-    mem_17010.desc = futhark_mc_strlit_shim_18707();
-    mem_17010.mem = futhark_mc_param_struct_18703_->free_mem_17010;
-    mem_17010.size = 0;
-    mem_17010.references = NULL;
+    mem_17027.desc = futhark_mc_strlit_shim_18724();
+    mem_17027.mem = futhark_mc_param_struct_18720_->free_mem_17027;
+    mem_17027.size = 0;
+    mem_17027.references = NULL;
     
-    uniform struct futhark_mc_mem_struct_18720 futhark_mc_mem_struct_18720_;
-    uniform int err = futhark_mc_inner_ispc_18721(start, end, futhark_mc_param_struct_18703_, &futhark_mc_mem_struct_18720_);
+    uniform struct futhark_mc_mem_struct_18737 futhark_mc_mem_struct_18737_;
+    uniform int err = futhark_mc_inner_ispc_18738(start, end, futhark_mc_param_struct_18720_, &futhark_mc_mem_struct_18737_);
     
     
   cleanup:
     { }
     return err;
 }
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18725(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18691 *uniform args, uniform int iterations);
-struct futhark_mc_mem_struct_18727 {
-    varying struct memblock *uniform mem_17010;
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18742(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18708 *uniform args, uniform int iterations);
+struct futhark_mc_mem_struct_18744 {
+    varying struct memblock *uniform mem_17027;
 };
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18729();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18730();
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18731();
-static unmasked inline uniform int futhark_mc_inner_ispc_18728(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18685 *uniform futhark_mc_param_struct_18685_, uniform struct futhark_mc_mem_struct_18727 *uniform futhark_mc_mem_struct_18727_)
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18746();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18747();
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18748();
+static unmasked inline uniform int futhark_mc_inner_ispc_18745(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18702 *uniform futhark_mc_param_struct_18702_, uniform struct futhark_mc_mem_struct_18744 *uniform futhark_mc_mem_struct_18744_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18685_->ctx;
-    uniform int64_t nz2080U_9823 = futhark_mc_param_struct_18685_->free_nz2080U_9823;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18685_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18685_->free_mz2082U_9825;
-    uniform struct memblock xss_mem_17006;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18702_->ctx;
+    uniform int64_t nz2080U_9828 = futhark_mc_param_struct_18702_->free_nz2080U_9828;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18702_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18702_->free_mz2082U_9830;
+    uniform struct memblock xss_mem_17023;
     
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18729();
-    xss_mem_17006.mem = futhark_mc_param_struct_18685_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18746();
+    xss_mem_17023.mem = futhark_mc_param_struct_18702_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
     
-    uniform struct memblock yss_mem_17007;
+    uniform struct memblock yss_mem_17024;
     
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18730();
-    yss_mem_17007.mem = futhark_mc_param_struct_18685_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18747();
+    yss_mem_17024.mem = futhark_mc_param_struct_18702_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
     
-    uniform int64_t bytes_17009 = futhark_mc_param_struct_18685_->free_bytes_17009;
-    uniform struct memblock mem_17027;
+    uniform int64_t bytes_17026 = futhark_mc_param_struct_18702_->free_bytes_17026;
+    uniform struct memblock mem_17044;
     
-    mem_17027.desc = futhark_mc_strlit_shim_18731();
-    mem_17027.mem = futhark_mc_param_struct_18685_->free_mem_17027;
-    mem_17027.size = 0;
-    mem_17027.references = NULL;
+    mem_17044.desc = futhark_mc_strlit_shim_18748();
+    mem_17044.mem = futhark_mc_param_struct_18702_->free_mem_17044;
+    mem_17044.size = 0;
+    mem_17044.references = NULL;
     
-    struct memblock mem_17010 = *futhark_mc_mem_struct_18727_->mem_17010;
+    struct memblock mem_17027 = *futhark_mc_mem_struct_18744_->mem_17027;
     uniform int err = 0;
-    uniform int64_t start_17185;
-    uniform int64_t end_17186;
+    uniform int64_t start_17202;
+    uniform int64_t end_17203;
     
-    start_17185 = start;
-    end_17186 = end;
+    start_17202 = start;
+    end_17203 = end;
     
-    uniform int64_t n_17187 = end_17186 - start_17185;
+    uniform int64_t n_17204 = end_17203 - start_17202;
     
-    if (memblock_alloc(ctx, &mem_17010, bytes_17009, futhark_mc_strlit_shim_18690()))
+    if (memblock_alloc(ctx, &mem_17027, bytes_17026, futhark_mc_strlit_shim_18707()))
         unmasked { return 1; }
-    for (uniform int64_t i = 0; i < (start_17185 + n_17187 - start_17185) / programCount; i++) {
-        int64_t SegMap_i_17188 = start_17185 + programIndex + i * programCount;
-        uniform int64_t slice_17189 = nz2080U_9823;
-        int64_t gtid_15934 = SegMap_i_17188;
-        int64_t remnant_17190 = SegMap_i_17188 - gtid_15934;
-        uniform int64_t flat_tid_17176 = (int64_t) 0;
-        uniform int64_t flat_tid_17165 = (int64_t) 0;
-        struct futhark_mc_task_18691 futhark_mc_task_18691_;
+    for (uniform int64_t i = 0; i < (start_17202 + n_17204 - start_17202) / programCount; i++) {
+        int64_t SegMap_i_17205 = start_17202 + programIndex + i * programCount;
+        uniform int64_t slice_17206 = nz2080U_9828;
+        int64_t gtid_15951 = SegMap_i_17205;
+        int64_t remnant_17207 = SegMap_i_17205 - gtid_15951;
+        uniform int64_t flat_tid_17193 = (int64_t) 0;
+        uniform int64_t flat_tid_17182 = (int64_t) 0;
+        struct futhark_mc_task_18708 futhark_mc_task_18708_;
         
-        futhark_mc_task_18691_.ctx = ctx;
-        futhark_mc_task_18691_.free_pz2081U_9824 = pz2081U_9824;
-        futhark_mc_task_18691_.free_mz2082U_9825 = mz2082U_9825;
-        futhark_mc_task_18691_.free_gtid_15934 = gtid_15934;
-        futhark_mc_task_18691_.free_xss_mem_17006 = xss_mem_17006.mem;
-        futhark_mc_task_18691_.free_yss_mem_17007 = yss_mem_17007.mem;
-        futhark_mc_task_18691_.free_mem_17010 = mem_17010.mem;
+        futhark_mc_task_18708_.ctx = ctx;
+        futhark_mc_task_18708_.free_pz2081U_9829 = pz2081U_9829;
+        futhark_mc_task_18708_.free_mz2082U_9830 = mz2082U_9830;
+        futhark_mc_task_18708_.free_gtid_15951 = gtid_15951;
+        futhark_mc_task_18708_.free_xss_mem_17023 = xss_mem_17023.mem;
+        futhark_mc_task_18708_.free_yss_mem_17024 = yss_mem_17024.mem;
+        futhark_mc_task_18708_.free_mem_17027 = mem_17027.mem;
         #if ISPC
         
-        uniform struct futhark_mc_task_18691 aos_18726[programCount];
+        uniform struct futhark_mc_task_18708 aos_18743[programCount];
         
-        aos_18726[programIndex] = futhark_mc_task_18691_;
+        aos_18743[programIndex] = futhark_mc_task_18708_;
         foreach_active (i)
         if (err == 0)
-            err = futhark_mc_schedule_shim_18725(ctx, &aos_18726[i], extract(mz2082U_9825, i));
+            err = futhark_mc_schedule_shim_18742(ctx, &aos_18743[i], extract(mz2082U_9830, i));
         if (err != 0)
             unmasked { return err; }
         #else
-        err = futhark_mc_schedule_shim_18725(ctx, &futhark_mc_task_18691_, mz2082U_9825);
+        err = futhark_mc_schedule_shim_18742(ctx, &futhark_mc_task_18708_, mz2082U_9830);
         if (err != 0)
             goto cleanup;
         #endif
-        if (mz2082U_9825 * (int64_t) 4 > 0)
-            memmove(mem_17027.mem + gtid_15934 * mz2082U_9825 * (int64_t) 4, mem_17010.mem + (int64_t) 0, mz2082U_9825 * (int64_t) 4);
+        if (mz2082U_9830 * (int64_t) 4 > 0)
+            memmove(mem_17044.mem + gtid_15951 * mz2082U_9830 * (int64_t) 4, mem_17027.mem + (int64_t) 0, mz2082U_9830 * (int64_t) 4);
     }
-    if (programIndex < (start_17185 + n_17187 - start_17185) % programCount) {
-        int64_t SegMap_i_17188 = start_17185 + programIndex + (start_17185 + n_17187 - start_17185) / programCount * programCount;
-        uniform int64_t slice_17189 = nz2080U_9823;
-        int64_t gtid_15934 = SegMap_i_17188;
-        int64_t remnant_17190 = SegMap_i_17188 - gtid_15934;
-        uniform int64_t flat_tid_17176 = (int64_t) 0;
-        uniform int64_t flat_tid_17165 = (int64_t) 0;
-        struct futhark_mc_task_18691 futhark_mc_task_18691_;
+    if (programIndex < (start_17202 + n_17204 - start_17202) % programCount) {
+        int64_t SegMap_i_17205 = start_17202 + programIndex + (start_17202 + n_17204 - start_17202) / programCount * programCount;
+        uniform int64_t slice_17206 = nz2080U_9828;
+        int64_t gtid_15951 = SegMap_i_17205;
+        int64_t remnant_17207 = SegMap_i_17205 - gtid_15951;
+        uniform int64_t flat_tid_17193 = (int64_t) 0;
+        uniform int64_t flat_tid_17182 = (int64_t) 0;
+        struct futhark_mc_task_18708 futhark_mc_task_18708_;
         
-        futhark_mc_task_18691_.ctx = ctx;
-        futhark_mc_task_18691_.free_pz2081U_9824 = pz2081U_9824;
-        futhark_mc_task_18691_.free_mz2082U_9825 = mz2082U_9825;
-        futhark_mc_task_18691_.free_gtid_15934 = gtid_15934;
-        futhark_mc_task_18691_.free_xss_mem_17006 = xss_mem_17006.mem;
-        futhark_mc_task_18691_.free_yss_mem_17007 = yss_mem_17007.mem;
-        futhark_mc_task_18691_.free_mem_17010 = mem_17010.mem;
+        futhark_mc_task_18708_.ctx = ctx;
+        futhark_mc_task_18708_.free_pz2081U_9829 = pz2081U_9829;
+        futhark_mc_task_18708_.free_mz2082U_9830 = mz2082U_9830;
+        futhark_mc_task_18708_.free_gtid_15951 = gtid_15951;
+        futhark_mc_task_18708_.free_xss_mem_17023 = xss_mem_17023.mem;
+        futhark_mc_task_18708_.free_yss_mem_17024 = yss_mem_17024.mem;
+        futhark_mc_task_18708_.free_mem_17027 = mem_17027.mem;
         #if ISPC
         
-        uniform struct futhark_mc_task_18691 aos_18726[programCount];
+        uniform struct futhark_mc_task_18708 aos_18743[programCount];
         
-        aos_18726[programIndex] = futhark_mc_task_18691_;
+        aos_18743[programIndex] = futhark_mc_task_18708_;
         foreach_active (i)
         if (err == 0)
-            err = futhark_mc_schedule_shim_18725(ctx, &aos_18726[i], extract(mz2082U_9825, i));
+            err = futhark_mc_schedule_shim_18742(ctx, &aos_18743[i], extract(mz2082U_9830, i));
         if (err != 0)
             unmasked { return err; }
         #else
-        err = futhark_mc_schedule_shim_18725(ctx, &futhark_mc_task_18691_, mz2082U_9825);
+        err = futhark_mc_schedule_shim_18742(ctx, &futhark_mc_task_18708_, mz2082U_9830);
         if (err != 0)
             goto cleanup;
         #endif
-        if (mz2082U_9825 * (int64_t) 4 > 0)
-            memmove(mem_17027.mem + gtid_15934 * mz2082U_9825 * (int64_t) 4, mem_17010.mem + (int64_t) 0, mz2082U_9825 * (int64_t) 4);
+        if (mz2082U_9830 * (int64_t) 4 > 0)
+            memmove(mem_17044.mem + gtid_15951 * mz2082U_9830 * (int64_t) 4, mem_17027.mem + (int64_t) 0, mz2082U_9830 * (int64_t) 4);
     }
-    *futhark_mc_mem_struct_18727_->mem_17010 = mem_17010;
+    *futhark_mc_mem_struct_18744_->mem_17027 = mem_17027;
     return err;
 }
-extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18732();
-export uniform int futhark_mc_loop_ispc_18686(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18685 *uniform futhark_mc_param_struct_18685_)
+extern "C" unmasked uniform char *uniform futhark_mc_strlit_shim_18749();
+export uniform int futhark_mc_loop_ispc_18703(uniform int64_t start, uniform int64_t end, uniform struct futhark_mc_param_struct_18702 *uniform futhark_mc_param_struct_18702_)
 {
-    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18685_->ctx;
-    uniform int64_t nz2080U_9823 = futhark_mc_param_struct_18685_->free_nz2080U_9823;
-    uniform int64_t pz2081U_9824 = futhark_mc_param_struct_18685_->free_pz2081U_9824;
-    uniform int64_t mz2082U_9825 = futhark_mc_param_struct_18685_->free_mz2082U_9825;
-    uniform struct memblock xss_mem_17006;
+    uniform struct futhark_context *uniform ctx = futhark_mc_param_struct_18702_->ctx;
+    uniform int64_t nz2080U_9828 = futhark_mc_param_struct_18702_->free_nz2080U_9828;
+    uniform int64_t pz2081U_9829 = futhark_mc_param_struct_18702_->free_pz2081U_9829;
+    uniform int64_t mz2082U_9830 = futhark_mc_param_struct_18702_->free_mz2082U_9830;
+    uniform struct memblock xss_mem_17023;
     
-    xss_mem_17006.desc = futhark_mc_strlit_shim_18687();
-    xss_mem_17006.mem = futhark_mc_param_struct_18685_->free_xss_mem_17006;
-    xss_mem_17006.size = 0;
-    xss_mem_17006.references = NULL;
+    xss_mem_17023.desc = futhark_mc_strlit_shim_18704();
+    xss_mem_17023.mem = futhark_mc_param_struct_18702_->free_xss_mem_17023;
+    xss_mem_17023.size = 0;
+    xss_mem_17023.references = NULL;
     
-    uniform struct memblock yss_mem_17007;
+    uniform struct memblock yss_mem_17024;
     
-    yss_mem_17007.desc = futhark_mc_strlit_shim_18688();
-    yss_mem_17007.mem = futhark_mc_param_struct_18685_->free_yss_mem_17007;
-    yss_mem_17007.size = 0;
-    yss_mem_17007.references = NULL;
+    yss_mem_17024.desc = futhark_mc_strlit_shim_18705();
+    yss_mem_17024.mem = futhark_mc_param_struct_18702_->free_yss_mem_17024;
+    yss_mem_17024.size = 0;
+    yss_mem_17024.references = NULL;
     
-    uniform int64_t bytes_17009 = futhark_mc_param_struct_18685_->free_bytes_17009;
-    uniform struct memblock mem_17027;
+    uniform int64_t bytes_17026 = futhark_mc_param_struct_18702_->free_bytes_17026;
+    uniform struct memblock mem_17044;
     
-    mem_17027.desc = futhark_mc_strlit_shim_18689();
-    mem_17027.mem = futhark_mc_param_struct_18685_->free_mem_17027;
-    mem_17027.size = 0;
+    mem_17044.desc = futhark_mc_strlit_shim_18706();
+    mem_17044.mem = futhark_mc_param_struct_18702_->free_mem_17044;
+    mem_17044.size = 0;
+    mem_17044.references = NULL;
+    
+    struct memblock mem_17027;
+    
     mem_17027.references = NULL;
     
-    struct memblock mem_17010;
+    uniform struct futhark_mc_mem_struct_18744 futhark_mc_mem_struct_18744_;
     
-    mem_17010.references = NULL;
+    futhark_mc_mem_struct_18744_.mem_17027 = &mem_17027;
     
-    uniform struct futhark_mc_mem_struct_18727 futhark_mc_mem_struct_18727_;
+    uniform int err = futhark_mc_inner_ispc_18745(start, end, futhark_mc_param_struct_18702_, &futhark_mc_mem_struct_18744_);
     
-    futhark_mc_mem_struct_18727_.mem_17010 = &mem_17010;
-    
-    uniform int err = futhark_mc_inner_ispc_18728(start, end, futhark_mc_param_struct_18685_, &futhark_mc_mem_struct_18727_);
-    
-    mem_17010 = *futhark_mc_mem_struct_18727_.mem_17010;
+    mem_17027 = *futhark_mc_mem_struct_18744_.mem_17027;
     
   cleanup:
     {
-        if (memblock_unref(ctx, &mem_17010, futhark_mc_strlit_shim_18732()) != 0)
+        if (memblock_unref(ctx, &mem_17027, futhark_mc_strlit_shim_18749()) != 0)
             unmasked { return 1; }
     }
     return err;
 }
-extern "C" unmasked uniform int futhark_mc_schedule_shim_18733(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18665 *uniform args, uniform int iterations);
+extern "C" unmasked uniform int futhark_mc_schedule_shim_18750(uniform struct futhark_context *uniform ctx, uniform struct futhark_mc_task_18682 *uniform args, uniform int iterations);
