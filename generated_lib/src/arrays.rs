@@ -155,7 +155,6 @@ pub struct Array_i32_2d {
     ctx: *mut bindings::futhark_context,
 }
 
-
 impl Array_i32_2d {
     pub(crate) unsafe fn as_raw(&self) -> *const futhark_i32_2d {
          self.ptr
@@ -203,12 +202,12 @@ impl Array_i32_2d {
         let ctx = self.ctx;
         unsafe {
             futhark_context_sync(ctx);
-            let shape = Self::shape(ctx, self.as_raw());
+            let shape = Self::shape(ctx, self.as_raw());      
             let elems = shape.iter().fold(1, |acc, e| acc * e) as usize;
             let mut buffer: Vec<i32> =
                 vec![i32::default(); elems];
-            let cint = futhark_i32_2d::values(ctx, self.as_raw_mut(), buffer.as_mut_ptr())?;
-            Ok((buffer, shape.to_owned()))
+            futhark_i32_2d::values(ctx, self.as_raw_mut(), buffer.as_mut_ptr())?;
+            Ok((buffer, shape))
         }
     }
 
@@ -234,7 +233,6 @@ pub struct Array_u64_2d {
     ptr: *const futhark_u64_2d,
     ctx: *mut bindings::futhark_context,
 }
-
 
 impl Array_u64_2d {
     pub(crate) unsafe fn as_raw(&self) -> *const futhark_u64_2d {
@@ -283,12 +281,12 @@ impl Array_u64_2d {
         let ctx = self.ctx;
         unsafe {
             futhark_context_sync(ctx);
-            let shape = Self::shape(ctx, self.as_raw());
+            let shape = Self::shape(ctx, self.as_raw());      
             let elems = shape.iter().fold(1, |acc, e| acc * e) as usize;
             let mut buffer: Vec<u64> =
                 vec![u64::default(); elems];
-            let cint = futhark_u64_2d::values(ctx, self.as_raw_mut(), buffer.as_mut_ptr())?;
-            Ok((buffer, shape.to_owned()))
+            futhark_u64_2d::values(ctx, self.as_raw_mut(), buffer.as_mut_ptr())?;
+            Ok((buffer, shape))
         }
     }
 
@@ -314,7 +312,6 @@ pub struct Array_u64_3d {
     ptr: *const futhark_u64_3d,
     ctx: *mut bindings::futhark_context,
 }
-
 
 impl Array_u64_3d {
     pub(crate) unsafe fn as_raw(&self) -> *const futhark_u64_3d {
@@ -363,12 +360,12 @@ impl Array_u64_3d {
         let ctx = self.ctx;
         unsafe {
             futhark_context_sync(ctx);
-            let shape = Self::shape(ctx, self.as_raw());
+            let shape = Self::shape(ctx, self.as_raw());      
             let elems = shape.iter().fold(1, |acc, e| acc * e) as usize;
             let mut buffer: Vec<u64> =
                 vec![u64::default(); elems];
-            let cint = futhark_u64_3d::values(ctx, self.as_raw_mut(), buffer.as_mut_ptr())?;
-            Ok((buffer, shape.to_owned()))
+            futhark_u64_3d::values(ctx, self.as_raw_mut(), buffer.as_mut_ptr())?;
+            Ok((buffer, shape))
         }
     }
 
