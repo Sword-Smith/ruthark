@@ -2,9 +2,9 @@ help:
 	cat Makefile
 
 all:
-	@$(MAKE) futhark-check --no-print-directory
+	@$(MAKE) fc --no-print-directory
 	@$(MAKE) generated --no-print-directory
-	@$(MAKE) tf --no-print-directory
+	# @$(MAKE) tf --no-print-directory
 
 print_stage:
 	@echo ""
@@ -14,16 +14,20 @@ print_stage:
 	@echo ""
 
 SRC_DIR := futhark_source
-futhark-check:
-	@PARAM="FUTHARK CHECK" $(MAKE) print_stage 
-	cd futhark-library && $(MAKE) -C $(SRC_DIR) --no-print-directory
+fc:
+	@PARAM="FUTHARK CHECK" $(MAKE) print_stage --no-print-directory
+	@cd futhark-library && $(MAKE) -C $(SRC_DIR) --no-print-directory
 	
+exports:
+	export CPATH=/opt/cuda/include:$CPATH
+	export LD_LIBRARY_PATH=/opt/cuda/lib64/:$LD_LIBRARY_PATH
+	export LIBRARY_PATH=/opt/cuda/lib64:$LIBRARY_PATH
+
 generated:
 	@PARAM="COMPILING LIBRARY GENERATOR" $(MAKE) print_stage 
 	cd futhark-library && cargo build && cargo run
 
-	rm generated_lib -rf
-	mv futhark-library/generated_lib generated_lib
+	mv -uf futhark-library/generated_lib generated_lib
 
 	@PARAM="COMPILING LIBRARY" $(MAKE) print_stage 
 	cd generated_lib  && RUSTFLAGS=-Awarnings cargo build
