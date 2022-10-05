@@ -27,7 +27,11 @@ def outer_to_inner
 
 type MPolynomial [p][m] = {coefficients: [p]([m]u64, XFieldElement)}
 
+def (x: XFieldElementOpaque) * (y: XFieldElementOpaque) = XFieldElement.my_mul x y
 
+def (x: XFieldElementOpaque) + (y: XFieldElementOpaque) = XFieldElement.add x y
+
+def (elm: XFieldElementOpaque) %** (exp: u64) = XFieldElement.my_mod_pow_u64 elm exp
 
 def make_transposed_quotient_codewords
     [n][m][p][q]
@@ -37,16 +41,14 @@ def make_transposed_quotient_codewords
     ( coefficientss:    [p][q]XFieldElementOpaque)
     : [n][p]XFieldElementOpaque =
         map2 (\ evaluation_points  z_inv ->
-            map2 (\expss coefficients ->
-                XFieldElement.mul z_inv (
-                    reduce (XFieldElement.add) XFieldElement.zero <|
-                    map2(\exps coefficient ->
-                        XFieldElement.mul coefficient (
-                            reduce (XFieldElement.mul) XFieldElement.one <|
-                            map2 (\exp elm -> XFieldElement.mod_pow_u64 elm exp) exps evaluation_points
-                        )
-                    ) expss coefficients
-                )
+            map2 (\ expss coefficients ->
+                map2 (\ exps coefficient ->
+                   map2 (%**) evaluation_points exps
+                   |> reduce (*) XFieldElement.one
+                   |> (coefficient *)
+                ) expss coefficients
+                |> reduce (+) XFieldElement.zero
+                |> (z_inv *)
             ) expsss coefficientss
         ) eps zinvs
 
