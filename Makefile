@@ -27,7 +27,7 @@ generated:
 	@PARAM="COMPILING LIBRARY GENERATOR" $(MAKE) print_stage 
 	cd futhark-library && cargo build && cargo run
 
-	mv -uf futhark-library/generated_lib generated_lib
+	cp -fur ./futhark-library/generated_lib ./
 
 	@PARAM="COMPILING LIBRARY" $(MAKE) print_stage 
 	cd generated_lib  && RUSTFLAGS=-Awarnings cargo build
