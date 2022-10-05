@@ -71,14 +71,14 @@ entry batch_inversion_futhark [input_length] (input: [input_length]XFieldElement
     let zero = XFieldElement.zero
     let one = XFieldElement.one
 
-    let scratch = replicate input_length zero
-    let acc = one
+    let _scratch = replicate input_length zero
+    let _acc = one
 
     -- We can't assert in Futhark, but we can pass a flagvalue back, if we really want to.
     -- That costs, though...
 
-    let flag = reduce (||) false <| map (XFieldElement.is_zero) input -- Cannot do batch inversion on zero
-    let scratch = scan (XFieldElement.mul) input[0] input
+    let _flag = reduce (||) false <| map (XFieldElement.is_zero) input -- Cannot do batch inversion on zero
+    let _scratch = scan (XFieldElement.mul) input[0] input
     -- was it an inclusive or exclusive scan? or something inconsistent?
 
     --     for i in 0..input_length {
