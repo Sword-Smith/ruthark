@@ -22,7 +22,7 @@ def one  : BFieldElement = 1
 
 def canonicalize (n: BFieldElement) : BFieldElement = n % prime
 
-def new (n: u64) : BFieldElement = n
+def new (n: u64) : BFieldElement = canonicalize n
 
 -- Futhark's naming convention: BFieldElement.bool : bool -> BFieldElement
 def bool (x: bool) : BFieldElement = u64.bool x
@@ -47,13 +47,22 @@ def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
 def wrapping_add (augend: u64) (addend: u64) : u64 =
   augend + addend
 
-def add (a: BFieldElement) (b: BFieldElement): BFieldElement = canonicalize (a + b)
-def rem (a: BFieldElement) (b: BFieldElement): BFieldElement = canonicalize (a % b)
+def MAX = prime - 1
+
+def add (a: BFieldElement) (b: BFieldElement): BFieldElement =
+        let (result, overflow) = overflowing_add a b
+        let res = wrapping_sub result (prime * u64.bool overflow)
+        in if res > MAX
+           then res - prime
+           else res
+
 --TODO: what happens when b > a
 -- def submod (a: BFieldElement) (b: BFieldElement): BFieldElement = (a - b) % prime
 def sub (a: BFieldElement) (b: BFieldElement): BFieldElement =
   let (result, overflow) = overflowing_sub a (canonicalize b)
   in wrapping_add result (prime * u64.bool overflow)
+
+def rem (a: BFieldElement) (b: BFieldElement): BFieldElement = canonicalize (a % b)
 
 def neg (n: BFieldElement) : BFieldElement = prime - canonicalize n
 
@@ -281,6 +290,16 @@ entry u64_mul_test (a: u64) (b: u64) : (u64, u64) =
 -- entry: multest
 -- input  { 0x200000000000u64 0x200000000000u64 }
 -- output { 288230376084602880u64 }
-entry multest (a: u64) (b: u64) : u64 =
+entry mul_thorkil_test (a: u64) (b: u64) : u64 =
  redmod (u64_mul a b)
+
+
+-- Test multest
+-- ==
+-- entry: multest
+-- input  { 0x200000000000u64 0x200000000000u64 }
+-- output { 288230376084602880u64 }
+-- entry sub_test ()
+
+
 
