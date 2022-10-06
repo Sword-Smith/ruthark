@@ -150,12 +150,9 @@ def redmod (x: U128) : u64 =
         let ret = wrapping_add result (lower32bit * (u64.bool over))
         in ret
 
-
-
 def fastmul (a: u64) (b: u64): u64 = redmod (u64_mul a b)
-
-
 def mulmod (a: u64) (b: u64): BFieldElement = canonicalize (fastmul a b)
+def mul = fastmul
 
 -- Todo:  repeated squaring
 def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
@@ -275,6 +272,15 @@ entry wrapping_add_test (augend: u64) (addend: u64) : u64 =
 -- output { 0xe100000000000000u64 0x0u64 }
 -- input  { 0xffffffffffffffffu64 0xffffffffffffffffu64 }
 -- output { 0xfffffffffffffffeu64 0x1u64 }
-
 entry u64_mul_test (a: u64) (b: u64) : (u64, u64) =
   u64_mul a b
+
+
+-- Test multest
+-- ==
+-- entry: multest
+-- input  { 0x200000000000u64 0x200000000000u64 }
+-- output { 288230376084602880u64 }
+entry multest (a: u64) (b: u64) : u64 =
+ redmod (u64_mul a b)
+

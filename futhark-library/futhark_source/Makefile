@@ -5,3 +5,9 @@ futhark: $(SRC_FILES)
 	for file in $^ ; do \
 		futhark check $${file} ; \
 	done
+
+test: $(SRC_FILES)
+	for file in $^ ; do \
+		echo ">>> $${file} <<<" ;\
+		futhark test $${file} ; \
+	done
