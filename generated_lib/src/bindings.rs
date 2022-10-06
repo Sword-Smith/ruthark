@@ -27374,6 +27374,48 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct futhark_i64_1d {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn futhark_new_i64_1d(
+        ctx: *mut futhark_context,
+        data: *const i64,
+        dim0: i64,
+    ) -> *mut futhark_i64_1d;
+}
+extern "C" {
+    pub fn futhark_new_raw_i64_1d(
+        ctx: *mut futhark_context,
+        data: CUdeviceptr,
+        offset: i64,
+        dim0: i64,
+    ) -> *mut futhark_i64_1d;
+}
+extern "C" {
+    pub fn futhark_free_i64_1d(
+        ctx: *mut futhark_context,
+        arr: *mut futhark_i64_1d,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_values_i64_1d(
+        ctx: *mut futhark_context,
+        arr: *mut futhark_i64_1d,
+        data: *mut i64,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_values_raw_i64_1d(
+        ctx: *mut futhark_context,
+        arr: *mut futhark_i64_1d,
+    ) -> CUdeviceptr;
+}
+extern "C" {
+    pub fn futhark_shape_i64_1d(ctx: *mut futhark_context, arr: *mut futhark_i64_1d) -> *const i64;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct futhark_u64_2d {
     _unused: [u8; 0],
 }
@@ -27478,6 +27520,17 @@ extern "C" {
         out0: *mut *mut futhark_i32_2d,
         in0: *const futhark_i32_2d,
         in1: *const futhark_i32_2d,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_entry_non_padded_make_transposed_quotient_codewords_non_opaque(
+        ctx: *mut futhark_context,
+        out0: *mut *mut futhark_u64_3d,
+        in0: *const futhark_u64_2d,
+        in1: *const futhark_u64_3d,
+        in2: *const futhark_u64_2d,
+        in3: *const futhark_u64_2d,
+        in4: *const futhark_i64_1d,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {

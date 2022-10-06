@@ -1,3 +1,5 @@
+# nvidia-smi - shows you the processes using nvidia gpu memory
+
 help:
 	cat Makefile
 
