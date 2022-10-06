@@ -16,6 +16,8 @@ def lower32bit : u64 = 0xffff_ffff
 -- 2^64 - 2^32 + 1
 -- let prime : BFieldElement = 2**64 - 2**32 + 1
 def prime : BFieldElement = 0xffff_ffff_0000_0001u64
+def quotient : BFieldElement = 0xffff_ffff_0000_0001u64
+def MAX : BFieldElement = quotient - 1
 -- let prime : BFieldElement = 101
 def zero : BFieldElement = 0
 def one  : BFieldElement = 1
@@ -47,22 +49,16 @@ def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
 def wrapping_add (augend: u64) (addend: u64) : u64 =
   augend + addend
 
-def MAX = prime - 1
-
 def add (a: BFieldElement) (b: BFieldElement): BFieldElement =
-        let (result, overflow) = overflowing_add a b
-        let res = wrapping_sub result (prime * u64.bool overflow)
-        in if res > MAX
-           then res - prime
-           else res
-
+  let (result, overflow) = overflowing_add a b
+  let vala = wrapping_sub result (quotient * (u64.bool overflow)) in
+  if vala > MAX then vala - quotient else vala
+def rem (a: BFieldElement) (b: BFieldElement): BFieldElement = canonicalize (a % b)
 --TODO: what happens when b > a
 -- def submod (a: BFieldElement) (b: BFieldElement): BFieldElement = (a - b) % prime
 def sub (a: BFieldElement) (b: BFieldElement): BFieldElement =
   let (result, overflow) = overflowing_sub a (canonicalize b)
   in wrapping_add result (prime * u64.bool overflow)
-
-def rem (a: BFieldElement) (b: BFieldElement): BFieldElement = canonicalize (a % b)
 
 def neg (n: BFieldElement) : BFieldElement = prime - canonicalize n
 
@@ -161,7 +157,7 @@ def redmod (x: U128) : u64 =
 
 def fastmul (a: u64) (b: u64): u64 = redmod (u64_mul a b)
 def mulmod (a: u64) (b: u64): BFieldElement = canonicalize (fastmul a b)
-def mul = mulmod
+def mul = fastmul
 
 -- Todo:  repeated squaring
 def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
