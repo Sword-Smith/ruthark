@@ -64,12 +64,22 @@ def inverse (a : XFieldElement) : XFieldElement = one
 --  inverse
 
 def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
--- Special cases
--- use arithmetic operations from this module
- ( c0 * c1 - a0 * b1 - b0 * a1                      -- * x^0
- , b0 * c1 + c0 * b1 - a0 * a1 + a0 * b1 + b0 * a1  -- * x^1
- , a0 * c1 + b0 * b1 + c0 * a1 + a0 * a1            -- * x^2
- )
+  let mul = BFieldElement.mul
+  let add = BFieldElement.add
+  let sub = BFieldElement.sub
+-- Special casing for LHS = 0 + (a : BFieldElement) or RHS = 0 + (b: BFieldElement) is
+-- likely not a good idea for GPU code.  But run benchmarks.
+-- Note that `sub` is likely more expensive than `add`.
+  in
+-- ( c0 * c1 - a0 * b1 - b0 * a1                      -- * x^0
+-- ( c0 * c1 - (a0 * b1 + b0 * a1)
+  ( sub (mul c0 c1) (add (mul a0 b1) (mul b0 a1))
+-- , b0 * c1 + c0 * b1 - a0 * a1 + a0 * b1 + b0 * a1  -- * x^1
+-- , b0 * c1 + c0 * b1 + a0 * b1 + b0 * a1 - a0 * a1
+  , sub (add (add (add (mul b0 c1) (mul c0 b1)) (mul a0 b1)) (mul b0 a1)) (mul a0 a1)
+ -- , a0 * c1 + b0 * b1 + c0 * a1 + a0 * a1           -- * x^2
+  , add (add (add (mul a0 c1) (b0 * b1)) (mul c0 a1)) (mul a0 a1)
+  )
 
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
@@ -85,3 +95,15 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
 
 def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =
   mod_pow_u64 element (u64.u32 exponent)
+
+
+
+-- Test mul
+-- ==
+-- entry: mul_test
+-- input { 2u64 3u64 5u64 7u64 11u64 13u64 }
+-- output { 18446744069414584241u64 72u64 159u64 }
+entry mul_test (a0: u64) (b0: u64) (c0: u64) (a1: u64) (b1: u64) (c1: u64) : (u64, u64, u64) =
+  let a = new a0 b0 c0
+  let b = new a1 b1 c1
+  in canonicalize (mul a b)
