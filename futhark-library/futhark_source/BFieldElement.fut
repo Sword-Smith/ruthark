@@ -161,8 +161,7 @@ def redmod (x: U128) : u64 =
 
 def fastmul (a: u64) (b: u64): u64 = redmod (u64_mul a b)
 def mulmod (a: u64) (b: u64): BFieldElement = canonicalize (fastmul a b)
-def mul = fastmul
-
+def mul = mulmod
 
 -- Todo:  repeated squaring
 def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =

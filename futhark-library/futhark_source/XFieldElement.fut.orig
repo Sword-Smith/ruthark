@@ -64,11 +64,17 @@ def inverse (_a : XFieldElement) : XFieldElement = zero
 --  let (_, inverse, _) = Polynoimal.xgcd self_as_poly Polynoimal.shah_polynomial in
 --  inverse
 
+<<<<<<< HEAD
 def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
 --  let canonicalizeB = BFieldElement.canonicalize
 --  let mul = \x y -> canonicalizeB (BFieldElement.mul x y)
 --  let add = \x y -> canonicalizeB (BFieldElement.add x y)
 --  let sub = \x y -> canonicalizeB (BFieldElement.sub x y)
+||||||| parent of b197ff3 (WIP)
+def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+=======
+def special_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+>>>>>>> b197ff3 (WIP)
   let mul = BFieldElement.mul
   let add = BFieldElement.add
   let sub = BFieldElement.sub
@@ -107,22 +113,22 @@ def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldEl
         (mul c0 a1))
       (mul a0 a1)
   )
-  
+
 def (x: BFieldElement) |-| (y: BFieldElement) = BFieldElement.sub x y
 def (x: BFieldElement) |+| (y: BFieldElement) = BFieldElement.add x y
 def (x: BFieldElement) |*| (y: BFieldElement) = BFieldElement.mul x y
 
-def special_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
--- Special cases
--- use arithmetic operations from this module
-  let a0b1 = (a0 |*| b1)
-  let b0a1 = (b0 |*| a1)
-  let a0a1 = (a0 |*| a1)
-  in
- ( (((c0 |*| c1)  |-| a0b1) |-| b0a1)                                  -- * x^0
- , ((((b0 |*| c1) |+| (c0 |*| b1)) |-| a0a1) |+| a0b1) |+| b0a1 -- * x^1
- , (((a0 |*| c1)  |+| (b0 |*| b1)) |+| (c0 |*| a1)) |+| a0a1                  -- * x^2
- )
+-- def special_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+-- -- Special cases
+-- -- use arithmetic operations from this module
+--   let a0b1 = (a0 |*| b1)
+--   let b0a1 = (b0 |*| a1)
+--   let a0a1 = (a0 |*| a1)
+--   in
+--  ( (( (c0 |*| c1) |-| a0b1) |-| b0a1)                                  -- * x^0
+--  , ((((b0 |*| c1) |+| (c0 |*| b1)) |-| a0a1) |+| a0b1) |+| b0a1 -- * x^1
+--  , (( (a0 |*| c1) |+| (b0 |*| b1)) |+| (c0 |*| a1)) |+| a0a1                  -- * x^2
+--  )
 
 -- def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
 -- -- Special cases
@@ -139,23 +145,17 @@ def combined_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) :
           if (a1 == 0) && (b1 == 0) then common_mul (c0, b0, a0) (c1, b1, a1)
           else special_mul (c0, b0, a0) (c1, b1, a1)
 
--- it calls this
-def mul = combined_mul
--- and it calls this
-def dumb_mod_pow_u64 ((a, b, c) : XFieldElement) (exponent: u64) : XFieldElement =
-  (a * exponent, b * exponent, c * exponent)
+let mul = combined_mul
+
+-- this version adds makes the 260s take 290s, hence it is commented out
+-- def dumb_mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
+--   reduce (mul) one (replicate (i64.u64 exponent) element)
 
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
 
-<<<<<<< HEAD
 -- def rem ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
 
-||||||| parent of 325b5be (WIP)
--- def mod ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
-
-=======
->>>>>>> 325b5be (WIP)
 def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
       if i % 2 == 1
@@ -163,7 +163,9 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
       else (mul x x, i>>1, result)
   in result
 
+-- it calls this
 def my_mul = mul
+-- and it calls this
 def my_mod_pow_u64 = mod_pow_u64
 
 def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =

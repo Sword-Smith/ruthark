@@ -107,22 +107,22 @@ def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldEl
         (mul c0 a1))
       (mul a0 a1)
   )
-  
+
 def (x: BFieldElement) |-| (y: BFieldElement) = BFieldElement.sub x y
 def (x: BFieldElement) |+| (y: BFieldElement) = BFieldElement.add x y
 def (x: BFieldElement) |*| (y: BFieldElement) = BFieldElement.mul x y
 
-def special_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
--- Special cases
--- use arithmetic operations from this module
-  let a0b1 = (a0 |*| b1)
-  let b0a1 = (b0 |*| a1)
-  let a0a1 = (a0 |*| a1)
-  in
- ( (((c0 |*| c1)  |-| a0b1) |-| b0a1)                                  -- * x^0
- , ((((b0 |*| c1) |+| (c0 |*| b1)) |-| a0a1) |+| a0b1) |+| b0a1 -- * x^1
- , (((a0 |*| c1)  |+| (b0 |*| b1)) |+| (c0 |*| a1)) |+| a0a1                  -- * x^2
- )
+-- def special_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+-- -- Special cases
+-- -- use arithmetic operations from this module
+--   let a0b1 = (a0 |*| b1)
+--   let b0a1 = (b0 |*| a1)
+--   let a0a1 = (a0 |*| a1)
+--   in
+--  ( (( (c0 |*| c1) |-| a0b1) |-| b0a1)                                  -- * x^0
+--  , ((((b0 |*| c1) |+| (c0 |*| b1)) |-| a0a1) |+| a0b1) |+| b0a1 -- * x^1
+--  , (( (a0 |*| c1) |+| (b0 |*| b1)) |+| (c0 |*| a1)) |+| a0a1                  -- * x^2
+--  )
 
 -- def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
 -- -- Special cases
@@ -132,18 +132,16 @@ def special_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : 
 --  , a0 * c1 + b0 * b1 + c0 * a1 + a0 * a1            -- * x^2
 --  )
 
-def common_mul ((c0, b0, a0) : XFieldElement) ((c1, _b1, _a1) : XFieldElement) : XFieldElement =
-                (c0 |*| c1, b0 |*| c1, a0 |*| c1)
+-- def common_mul ((c0, b0, a0) : XFieldElement) ((c1, _b1, _a1) : XFieldElement) : XFieldElement =
+--                 (c0 |*| c1, b0 |*| c1, a0 |*| c1)
 
-def combined_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
-          if (a1 == 0) && (b1 == 0) then common_mul (c0, b0, a0) (c1, b1, a1)
-          else special_mul (c0, b0, a0) (c1, b1, a1)
+-- def combined_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+--           if (a1 == 0) && (b1 == 0) then common_mul (c0, b0, a0) (c1, b1, a1)
+--           else special_mul (c0, b0, a0) (c1, b1, a1)
 
--- it calls this
-def mul = combined_mul
--- and it calls this
-def dumb_mod_pow_u64 ((a, b, c) : XFieldElement) (exponent: u64) : XFieldElement =
-  (a * exponent, b * exponent, c * exponent)
+-- this version adds makes the 260s take 290s, hence it is commented out
+-- def dumb_mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
+--   reduce (mul) one (replicate (i64.u64 exponent) element)
 
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
@@ -157,7 +155,9 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
       else (mul x x, i>>1, result)
   in result
 
+-- it calls this
 def my_mul = mul
+-- and it calls this
 def my_mod_pow_u64 = mod_pow_u64
 
 def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =
