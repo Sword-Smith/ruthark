@@ -53,6 +53,8 @@ def add (a: BFieldElement) (b: BFieldElement): BFieldElement =
   let (result, overflow) = overflowing_add a b
   let vala = wrapping_sub result (quotient * (u64.bool overflow)) in
   if vala > MAX then vala - quotient else vala
+
+
 def rem (a: BFieldElement) (b: BFieldElement): BFieldElement = canonicalize (a % b)
 --TODO: what happens when b > a
 -- def submod (a: BFieldElement) (b: BFieldElement): BFieldElement = (a - b) % prime
