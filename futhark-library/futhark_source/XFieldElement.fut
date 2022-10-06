@@ -78,7 +78,7 @@ def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldEl
 -- , b0 * c1 + c0 * b1 + a0 * b1 + b0 * a1 - a0 * a1
   , sub (add (add (add (mul b0 c1) (mul c0 b1)) (mul a0 b1)) (mul b0 a1)) (mul a0 a1)
  -- , a0 * c1 + b0 * b1 + c0 * a1 + a0 * a1           -- * x^2
-  , add (add (add (mul a0 c1) (b0 * b1)) (mul c0 a1)) (mul a0 a1)
+  , add (add (add (mul a0 c1) (mul b0 b1)) (mul c0 a1)) (mul a0 a1)
   )
 
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
