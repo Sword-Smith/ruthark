@@ -1,19 +1,16 @@
--- TODO:
--- 1. Rename c, b, a to c, b, a
---
-
 module BFieldElement = import "BFieldElement"
 
 type BFieldElement = BFieldElement.BFieldElement
---                   (c            , b            , a            )
+-- a*x^2 + b*x + c:  (c            , b            , a            )
 type XFieldElement = (BFieldElement, BFieldElement, BFieldElement)
 
-def new (c: BFieldElement) (b: BFieldElement) (a: BFieldElement) : XFieldElement = (c, b, a)
-def new_u64 (coeffs: [3]u64) : XFieldElement =
+def new (c: BFieldElement) (b: BFieldElement) (a: BFieldElement) : XFieldElement =
   let canonicalize = BFieldElement.canonicalize
-  in new (canonicalize coeffs[0])
-         (canonicalize coeffs[1])
-         (canonicalize coeffs[2])
+  in (canonicalize c, canonicalize b, canonicalize a)
+
+def new_u64 (coeffs: [3]u64) : XFieldElement = new coeffs[0] coeffs[1] coeffs[2]
+
+def new_const (element: BFieldElement) : XFieldElement = new element BFieldElement.zero BFieldElement.zero
 
 def tripple2array (c, b, a) : [3]u64 = [c, b, a]
 def array2tripple (cba: [3]u64) : XFieldElement = new cba[0] cba[1] cba[2]
@@ -24,13 +21,8 @@ def canonicalize ((c, b, a) : XFieldElement) : XFieldElement =
   , BFieldElement.canonicalize a
   )
 
-def equal (a : XFieldElement) (b : XFieldElement) : bool =
+def eq (a : XFieldElement) (b : XFieldElement) : bool =
   (canonicalize a) == (canonicalize b)
-
--- def new_u64 (c: u64, b: u64, a: u64) : XFieldElement =
---  (BFieldElement.U64 c, BFieldElement.U64 b, BFieldElement.U64 a)
-
-def new_const (element: BFieldElement) : XFieldElement = new element BFieldElement.zero BFieldElement.zero
 
 def zero : XFieldElement = new_const BFieldElement.zero
 def one : XFieldElement = new_const BFieldElement.one
@@ -63,15 +55,17 @@ def neg ((c, b, a) : XFieldElement) : XFieldElement =
   )
 
 def sub (a: XFieldElement) (b: XFieldElement) : XFieldElement =
-  canonicalize (add a (neg b))
+  add a (neg b)
 
 -- TODO: Requires Polynomial.divide and BFieldElement.inverse
-def inverse (_a : XFieldElement) : XFieldElement = one
---  let self_as_poly = Polynomial.XFieldElement a in
---  let (_, inverse, _) = Polynoimal.xgcd self_as_poly Polynoimal.shah_polynomial in
---  inverse
+-- This should not be needed at all.
+def inverse (_a : XFieldElement) : XFieldElement = zero
 
-def mulf ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+--  let canonicalizeB = BFieldElement.canonicalize
+--  let mul = \x y -> canonicalizeB (BFieldElement.mul x y)
+--  let add = \x y -> canonicalizeB (BFieldElement.add x y)
+--  let sub = \x y -> canonicalizeB (BFieldElement.sub x y)
   let mul = BFieldElement.mul
   let add = BFieldElement.add
   let sub = BFieldElement.sub
@@ -80,28 +74,9 @@ def mulf ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldE
 -- Note that `sub` is likely more expensive than `add`.
   in
 -- ( c0 * c1 - a0 * b1 - b0 * a1                      -- * x^0
--- ( c0 * c1 - (a0 * b1 + b0 * a1)
---  (sub (sub (mul c0 c1) (mul a0 b1)) (mul b0 a1)
-    ( sub (mul c0 c1) (add (mul a0 b1) (mul b0 a1))
--- , b0 * c1 + c0 * b1 - a0 * a1 + a0 * b1 + b0 * a1  -- * x^1
--- , b0 * c1 + c0 * b1 + a0 * b1 + b0 * a1 - a0 * a1
-  , sub (add (add (add (mul b0 c1) (mul c0 b1)) (mul a0 b1)) (mul b0 a1)) (mul a0 a1)
- -- , a0 * c1 + b0 * b1 + c0 * a1 + a0 * a1           -- * x^2
-  , add (add (add (mul a0 c1) (mul b0 b1)) (mul c0 a1)) (mul a0 a1)
-  )
-
-def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
-  let canonicalizeB = BFieldElement.canonicalize
-  let mul = \x y -> canonicalizeB (BFieldElement.mul x y)
-  let add = \x y -> canonicalizeB (BFieldElement.add x y)
-  let sub = \x y -> canonicalizeB (BFieldElement.sub x y)
--- Special casing for LHS = 0 + (a : BFieldElement) or RHS = 0 + (b: BFieldElement) is
--- likely not a good idea for GPU code.  But run benchmarks.
--- Note that `sub` is likely more expensive than `add`.
-  in
--- ( c0 * c1 - a0 * b1 - b0 * a1                      -- * x^0
 -- ( c0 * c1 - (a0 * b1 + b0 * a1)                    -- * x^0
-    canonicalize
+-- canonicalize
+-- alternatively: ( sub (mul c0 c1) (add (mul a0 b1) (mul b0 a1))
     ( sub
       (mul c0 c1)
       (add
@@ -109,6 +84,7 @@ def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldEl
         (mul b0 a1))
 -- , b0 * c1 + c0 * b1 - a0 * a1 + a0 * b1 + b0 * a1  -- * x^1
 -- , b0 * c1 + c0 * b1 + a0 * b1 + b0 * a1 - a0 * a1
+-- alternatively: , sub (add (add (add (mul b0 c1) (mul c0 b1)) (mul a0 b1)) (mul b0 a1)) (mul a0 a1)
   , sub
       (add
         (add
@@ -119,6 +95,7 @@ def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldEl
         (mul b0 a1))
       (mul a0 a1)
  -- , a0 * c1 + b0 * b1 + c0 * a1 + a0 * a1           -- * x^2
+-- alternatively, add (add (add (mul a0 c1) (mul b0 b1)) (mul c0 a1)) (mul a0 a1)
   , add
       (add
         (add
@@ -131,7 +108,7 @@ def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldEl
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
 
--- def mod ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
+-- def rem ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
 
 def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
@@ -160,9 +137,9 @@ def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =
 -- output { [0u64, 0u64, 0u64] }
 -- input { [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64] [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64] }
 -- output { [12884901885u64, 18446744030759878666u64, 18446744017874976781u64] }
--- input { [0xffffffffu64, 0xfffffffu64, 0xffffffffu64] [0xffffffffu64, 0xffffffffu64, 0xffffffffu64] }
+-- input { [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64] [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64] }
 -- output { [12884901885u64, 18446744030759878666u64, 18446744017874976781u64] }
 entry mul_test_array (a_coeffs: [3]u64) (b_coeffs: [3]u64) : [3]u64 =
   let a = new_u64(a_coeffs)
   let b = new_u64(b_coeffs)
-  in tripple2array ((mul a b))
+  in tripple2array (mul a b)

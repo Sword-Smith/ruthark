@@ -287,19 +287,8 @@ entry u64_mul_test (a: u64) (b: u64) : (u64, u64) =
 
 -- Test multest
 -- ==
--- entry: multest
+-- entry: thorkil_mul_test
 -- input  { 0x200000000000u64 0x200000000000u64 }
 -- output { 288230376084602880u64 }
-entry mul_thorkil_test (a: u64) (b: u64) : u64 =
+entry thorkil_mul_test (a: u64) (b: u64) : u64 =
  redmod (u64_mul a b)
-
-
--- Test multest
--- ==
--- entry: multest
--- input  { 0x200000000000u64 0x200000000000u64 }
--- output { 288230376084602880u64 }
--- entry sub_test ()
-
-
-
