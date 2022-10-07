@@ -103,11 +103,11 @@ def kernel_histogram_impl
     ( coefficient_1d_seg:      [pq]XFieldElement)
     ( q_1d:                    [p]i64) -- the shadow dimension
     : [n][p]XFieldElement =
-        let is = create_histogram_is q_1d pq
-        in  map2 (\ zerofier_inverse evaluation_point_1d ->
-            let innermapped = inner_redo_map exp_2d_seg coefficient_1d_seg evaluation_point_1d
-            let reduced = hist (^+^) XFieldElement.zero p is innermapped
-            in  map (zerofier_inverse ^*^) reduced
+        map2 (\ zerofier_inverse evaluation_point_1d ->
+           let innermapped = inner_redo_map exp_2d_seg coefficient_1d_seg evaluation_point_1d
+           let is = create_histogram_is q_1d pq
+           let reduced = hist (^+^) XFieldElement.zero p is innermapped
+           in  map (zerofier_inverse ^*^) reduced
         ) zerofier_inverse_1d evaluation_point_2d
 
 
@@ -115,7 +115,7 @@ def kernel_histogram_impl
 
 
 
-----------------       Everything below this is boring entry-point wrapping     ----------------
+---------------- Everything below this is boring entry-point wrapping ----------------
 
 type XFieldElement_flat = [3]BFieldElement
 
@@ -134,11 +134,13 @@ entry kernel_padded
     ( exp_3d:                 [p][q][m]u64)
     ( coefficient_2d     :    [p][q]XFieldElement_flat)
     : [n][p]XFieldElement_flat =
+    let kernel = kernel_padded_impl
+
     let inner_zerofier_inverse_1d = map outer_to_inner zerofier_inverse_1d
     let inner_evaluation_point_2d = map (map outer_to_inner) evaluation_point_2d
     let inner_exp_3d = exp_3d
     let inner_coefficient_2d = map (map outer_to_inner) coefficient_2d
-    let inner_res = kernel_padded_impl inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d
+    let inner_res = kernel inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d
     in map (map inner_to_outer) inner_res
 
 def generalised_wrapper
