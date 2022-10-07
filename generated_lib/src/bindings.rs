@@ -27505,7 +27505,18 @@ extern "C" {
     pub fn futhark_shape_u64_3d(ctx: *mut futhark_context, arr: *mut futhark_u64_3d) -> *const i64;
 }
 extern "C" {
-    pub fn futhark_entry_make_transposed_quotient_codewords_non_opaque(
+    pub fn futhark_entry_kernel_histogram(
+        ctx: *mut futhark_context,
+        out0: *mut *mut futhark_u64_3d,
+        in0: *const futhark_u64_2d,
+        in1: *const futhark_u64_3d,
+        in2: *const futhark_u64_2d,
+        in3: *const futhark_u64_2d,
+        in4: *const futhark_i64_1d,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_entry_kernel_padded(
         ctx: *mut futhark_context,
         out0: *mut *mut futhark_u64_3d,
         in0: *const futhark_u64_2d,
@@ -27515,15 +27526,7 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn futhark_entry_matmul(
-        ctx: *mut futhark_context,
-        out0: *mut *mut futhark_i32_2d,
-        in0: *const futhark_i32_2d,
-        in1: *const futhark_i32_2d,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn futhark_entry_non_padded_make_transposed_quotient_codewords_non_opaque(
+    pub fn futhark_entry_kernel_segmented_reduce(
         ctx: *mut futhark_context,
         out0: *mut *mut futhark_u64_3d,
         in0: *const futhark_u64_2d,
@@ -27531,6 +27534,14 @@ extern "C" {
         in2: *const futhark_u64_2d,
         in3: *const futhark_u64_2d,
         in4: *const futhark_i64_1d,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_entry_matmul(
+        ctx: *mut futhark_context,
+        out0: *mut *mut futhark_i32_2d,
+        in0: *const futhark_i32_2d,
+        in1: *const futhark_i32_2d,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
