@@ -14,132 +14,164 @@ module Parametric_module = import "parametric_module"
 -- How to make imported functions callable
 entry matmul = Matmul.matmul
 
-type XFieldElementOpaque = XFieldElement.XFieldElement
+type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
 
-type XFieldElement = [3]BFieldElement
+def (x: XFieldElement) ^*^ (y: XFieldElement) = XFieldElement.my_mul x y
 
-def inner_to_outer 
-    (a: XFieldElementOpaque) : XFieldElement =
+def (x: XFieldElement) ^+^ (y: XFieldElement) = XFieldElement.add x y
+
+def (elm: XFieldElement) %** (exp: u64) = XFieldElement.my_mod_pow_u64 elm exp
+
+def inner_redo_map
+    ( exp_2d )
+    ( coefficient_1d )
+    ( evaluation_point_1d )
+    =
+    map2 (\ exp_1d coefficient ->
+        map2 (%**) evaluation_point_1d exp_1d
+        |> reduce (^*^) XFieldElement.one
+        |> (coefficient ^*^)
+    ) exp_2d coefficient_1d
+
+def kernel_padded_impl
+    [n][m][p][q]
+    ( zerofier_inverse_1d: [n]XFieldElement)
+    ( evaluation_point_2d: [n]      [m]XFieldElement)
+    ( exp_3d:                 [p][q][m]u64)
+    ( coefficient_2d:         [p][q]XFieldElement)
+    : [n][p]XFieldElement =
+        map2 (\ zerofier_inverse evaluation_point_1d ->
+            map2 (\ exp_2d    coefficient_1d ->
+                inner_redo_map exp_2d coefficient_1d evaluation_point_1d
+                |> reduce (^+^) XFieldElement.zero
+                |> (zerofier_inverse ^*^)
+            ) exp_3d coefficient_2d
+        ) zerofier_inverse_1d evaluation_point_2d
+
+def create_segreduce_flags
+    ( q_1d )
+    ( p )
+    ( pq )
+    =
+    let false_is = scan (+) 0 q_1d
+    let is_almost = map (\i -> false_is[(i+1)%p]) <| iota p
+    let is = copy is_almost with [0] = 0
+    let vs = replicate p true
+    let dest = replicate pq false
+    -- these flags are invarant to the outer map, and should therefore be created out here
+    let flags = scatter dest is vs
+    in flags
+
+def kernel_segmented_reduce_impl
+    [n][m][p][pq]
+    ( zerofier_inverse_1d:  [n]XFieldElement)
+    ( evaluation_point_2d:  [n]    [m]XFieldElement)
+    ( exp_2d_seg:              [pq][m]u64)
+    ( coefficient_1d_seg:      [pq]XFieldElement)
+    ( q_1d:                    [p]i64) -- the shadow dimension
+    : [n][p]XFieldElement =
+        -- these flags are invarant to the outer map, and should therefore be created out here
+        let flags = create_segreduce_flags q_1d p pq
+        in map2 (\ zerofier_inverse evaluation_point_1d ->
+            let innermapped = inner_redo_map exp_2d_seg coefficient_1d_seg evaluation_point_1d
+            -- this fails due to an off-by-one size somewhere
+            let reduced = segmented_reduce (^+^) XFieldElement.zero flags innermapped :> [p]XFieldElement
+            in  map (zerofier_inverse ^*^) reduced
+        ) zerofier_inverse_1d evaluation_point_2d
+
+def segmented_replicate [n] 't (revaluation_point_2d:[n]i64) (vs:[n]t) : []t =
+    let idxs = replicated_iota revaluation_point_2d
+    in map (\i -> vs[i]) idxs
+
+def create_histogram_is
+    [p]
+    ( q_1d: [p]i64)
+    ( pq )
+    =
+    let false_is = scan (+) 0 q_1d
+    let is_almost = map (\i -> false_is[(i+1)%p]) <| iota p
+    let ice = copy is_almost with [0] = 0
+    let is = segmented_replicate ice q_1d :> [pq]i64
+    in is
+
+def kernel_histogram_impl
+    [n][m][p][pq]
+    ( zerofier_inverse_1d:  [n]XFieldElement)
+    ( evaluation_point_2d:  [n]    [m]XFieldElement)
+    ( exp_2d_seg:              [pq][m]u64)
+    ( coefficient_1d_seg:      [pq]XFieldElement)
+    ( q_1d:                    [p]i64) -- the shadow dimension
+    : [n][p]XFieldElement =
+        let is = create_histogram_is q_1d pq
+        in  map2 (\ zerofier_inverse evaluation_point_1d ->
+            let innermapped = inner_redo_map exp_2d_seg coefficient_1d_seg evaluation_point_1d
+            let reduced = hist (^+^) XFieldElement.zero p is innermapped
+            in  map (zerofier_inverse ^*^) reduced
+        ) zerofier_inverse_1d evaluation_point_2d
+
+
+
+
+
+
+----------------       Everything below this is boring entry-point wrapping     ----------------
+
+type XFieldElement_flat = [3]BFieldElement
+
+def inner_to_outer
+    (a: XFieldElement) : XFieldElement_flat =
     [a.0, a.1, a.2]
 
 def outer_to_inner
-    (a: XFieldElement) : XFieldElementOpaque =
+    (a: XFieldElement_flat) : XFieldElement =
     (a[0], a[1], a[2])
 
-type MPolynomial [p][m] = {coefficients: [p]([m]u64, XFieldElement)}
-
-def (x: XFieldElementOpaque) ^*^ (y: XFieldElementOpaque) = XFieldElement.my_mul x y
-
-def (x: XFieldElementOpaque) ^+^ (y: XFieldElementOpaque) = XFieldElement.add x y
-
-def (elm: XFieldElementOpaque) %** (exp: u64) = XFieldElement.my_mod_pow_u64 elm exp
-
-def make_transposed_quotient_codewords
+entry kernel_padded
     [n][m][p][q]
-    ( zinvs:         [n]XFieldElementOpaque)
-    ( eps:           [n]      [m]XFieldElementOpaque)
-    ( expsss:           [p][q][m]u64)
-    ( coefficientss:    [p][q]XFieldElementOpaque)
-    : [n][p]XFieldElementOpaque =
-
-           --   XFE   [m]XFE
-        map2 (\ z_inv evaluation_points ->
-            --     [q][m]u64 [q]XFE  
-            map2 (\ expss    coefficients ->
-
-                --      [m]u64  XFE   ---> [q]XFE
-                map2 (\ exps   coefficient ->
-                        -- XFE ** u64  -> [m] XFE
-                   map2 (%**) evaluation_points exps
-
-                   -- [m]XFE -> XFE
-                   |> reduce (^*^) XFieldElement.one
-                    -- XFE   * XFE --> XFE
-                   |> (coefficient ^*^)
-                ) expss coefficients
-                -- how to express this when exps and coefficients are flattened?
-
-                -- [q] XFE
-                |> reduce (^+^) XFieldElement.zero
-                |> (z_inv ^*^)
-            ) expsss coefficientss
-        ) zinvs eps
-
-entry make_transposed_quotient_codewords_non_opaque
-    [n][m][p][q]
-    ( zinvs:         [n]XFieldElement)
-    ( eps:           [n]      [m]XFieldElement)
-    ( expsss:           [p][q][m]u64)
-    ( coefficientss:    [p][q]XFieldElement)
-    : [n][p]XFieldElement =
-    let inner_zinvs = map outer_to_inner zinvs
-    let inner_eps = map (map outer_to_inner) eps
-    let inner_expsss = expsss
-    let inner_coefficientss = map (map outer_to_inner) coefficientss
-    let inner_res = make_transposed_quotient_codewords inner_zinvs inner_eps inner_expsss inner_coefficientss
+    ( zerofier_inverse_1d: [n]XFieldElement_flat)
+    ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
+    ( exp_3d:                 [p][q][m]u64)
+    ( coefficient_2d     :    [p][q]XFieldElement_flat)
+    : [n][p]XFieldElement_flat =
+    let inner_zerofier_inverse_1d = map outer_to_inner zerofier_inverse_1d
+    let inner_evaluation_point_2d = map (map outer_to_inner) evaluation_point_2d
+    let inner_exp_3d = exp_3d
+    let inner_coefficient_2d = map (map outer_to_inner) coefficient_2d
+    let inner_res = kernel_padded_impl inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d
     in map (map inner_to_outer) inner_res
 
+def generalised_wrapper
+    ( kernel_f )
+    ( zerofier_inverse_1d )
+    ( evaluation_point_2d )
+    ( exps_segs )
+    ( coefficient_1d_seg )
+    ( q_1d )
+     =
+    let inner_zerofier_inverse_1d = map outer_to_inner zerofier_inverse_1d
+    let inner_evaluation_point_2d = map (map outer_to_inner) evaluation_point_2d
+    let inner_exp_3d = exps_segs
+    let inner_coefficient_2d = map outer_to_inner coefficient_1d_seg
+    let inner_res = kernel_f inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d q_1d
+    in map (map inner_to_outer) inner_res
 
-
-def non_padded_make_transposed_quotient_codewords
+entry kernel_histogram
     [n][m][p][pq]
-    ( zinvs:          [n]XFieldElementOpaque)
-    ( epss:           [n]    [m]XFieldElementOpaque)
+    ( zerofier_inverse_1d: [n]XFieldElement_flat)
+    ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
+    ( exp_2d_seg:             [pq][m]u64)
+    ( coefficient_1d_seg:     [pq]XFieldElement_flat)
+    ( q_1d:                   [p]i64)
+    : [n][p]XFieldElement_flat =
+    generalised_wrapper kernel_histogram_impl zerofier_inverse_1d evaluation_point_2d exp_2d_seg coefficient_1d_seg q_1d
 
-    ( exps_segss:        [pq][m]u64)
-    ( coefficients_segs: [pq]XFieldElementOpaque)
-    ( qs:                [p]i64) -- the shadow dimension
-    : [n][p]XFieldElementOpaque =
-        -- n    XFE   [m]XFE
-        let false_is = scan (+) 0 qs
-        let is_almost = map (\i -> false_is[(i+1)%p]) <| iota p
-        let is = copy is_almost with [0] = 0
-        let vs = replicate p true
-        let dest = replicate pq false
-        --scatter 'a : (dest: *[]a) -> (is: []i32) -> (vs: []a) -> *[]a
-        let flags = scatter dest is vs
-        in
-
-        map2 (\ z_inv evaluation_points ->
-            -- pq   [m]u64 XFE
-            -- the outer map reduces q, which is now hidden
-            let innermapped = 
-                map2 (\ exps   coefficient ->
-                    -- the inner redomap reduces m, so we dont need to change anything really
-                    -- XFE ** u64  -> [m] XFE
-                    map2 (%**) evaluation_points exps
-                    -- [m]XFE -> XFE
-                    |> reduce (^*^) XFieldElement.one
-                        -- XFE   * XFE --> XFE
-                    |> (coefficient ^*^)
-                    -- [q] XFE
-                ) exps_segss coefficients_segs
-
-            -- this reduction reduces pq to 1, 
-            -- but it should segreduce to p
-            -- segmented_reduce [n] 't: 
-            -- (op: t -> t -> t) -> 
-            -- (ne: t) -> 
-            -- (flags: [n]bool) -> 
-            -- (as: [n]t) ->
-            -- ?[d₃₄].*[d₃₄]t
-            let reduced = segmented_reduce (^+^) XFieldElement.zero flags innermapped
-            let bob = map (\i -> reduced[i % (length reduced)]) <| iota p
-            in  map (z_inv ^*^) bob
-        ) zinvs epss
-
-entry non_padded_make_transposed_quotient_codewords_non_opaque
+entry kernel_segmented_reduce
     [n][m][p][pq]
-    ( zinvs:         [n]XFieldElement)
-    ( eps:           [n]        [m]XFieldElement)
-    ( exps_segss:           [pq][m]u64)
-    ( coefficients_segs:    [pq]XFieldElement)
-    ( qs:                   [p]i64) -- the shadow dimension
-    : [n][p]XFieldElement =
-    let inner_zinvs = map outer_to_inner zinvs
-    let inner_eps = map (map outer_to_inner) eps
-    let inner_expsss = exps_segss
-    let inner_coefficientss = map (outer_to_inner) coefficients_segs
-    let inner_res = non_padded_make_transposed_quotient_codewords inner_zinvs inner_eps inner_expsss inner_coefficientss qs
-    in map (map (inner_to_outer)) inner_res
+    ( zerofier_inverse_1d: [n]XFieldElement_flat)
+    ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
+    ( exp_2d_seg:             [pq][m]u64)
+    ( coefficient_1d_seg:     [pq]XFieldElement_flat)
+    ( q_1d:                   [p]i64)
+    : [n][p]XFieldElement_flat =
+    generalised_wrapper kernel_segmented_reduce_impl zerofier_inverse_1d evaluation_point_2d exp_2d_seg coefficient_1d_seg q_1d
