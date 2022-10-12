@@ -234,6 +234,3 @@ entry kernel_segmented_reduce
 --     let inner_coefficient_2d = map outer_to_inner coefficient_1d_seg
 --     let inner_res = kernel_segmented_reduce_with_flags_impl inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d flags :> [n][p]XFieldElement
 --     in map (map inner_to_outer) inner_res
-
-
-
