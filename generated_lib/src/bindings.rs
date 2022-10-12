@@ -27516,6 +27516,18 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn futhark_entry_kernel_histogram_with_is(
+        ctx: *mut futhark_context,
+        out0: *mut *mut futhark_u64_3d,
+        in0: *const futhark_u64_2d,
+        in1: *const futhark_u64_3d,
+        in2: *const futhark_u64_2d,
+        in3: *const futhark_u64_2d,
+        in4: *const futhark_i64_1d,
+        in5: *const futhark_i64_1d,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn futhark_entry_kernel_padded(
         ctx: *mut futhark_context,
         out0: *mut *mut futhark_u64_3d,

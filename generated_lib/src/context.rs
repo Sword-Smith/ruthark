@@ -38,7 +38,7 @@ impl FutharkContext {
         }
     }
 
-    pub fn drop(&mut self) {
+    pub fn free(&mut self) {
         unsafe {
             bindings::futhark_context_free(self.context);
             bindings::futhark_context_config_free(self.config);

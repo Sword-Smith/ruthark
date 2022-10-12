@@ -670,7 +670,6 @@ dependencies = [
 [[package]]
 name = "genfut"
 version = "0.4.3"
-source = "git+https://github.com/Ulrik-dk/genfut.git#be34aecd4e24749dc75fba67dd6d5daed265aad9"
 dependencies = [
  "Inflector",
  "bindgen",

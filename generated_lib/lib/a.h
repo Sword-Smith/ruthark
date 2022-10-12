@@ -80,6 +80,7 @@ const int64_t *futhark_shape_u64_3d(struct futhark_context *ctx, struct futhark_
 
 // Entry points
 int futhark_entry_kernel_histogram(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4);
+int futhark_entry_kernel_histogram_with_is(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4, const struct futhark_i64_1d *in5);
 int futhark_entry_kernel_padded(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_3d *in2, const struct futhark_u64_3d *in3);
 int futhark_entry_kernel_segmented_reduce(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4);
 int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **out0, const struct futhark_i32_2d *in0, const struct futhark_i32_2d *in1);
