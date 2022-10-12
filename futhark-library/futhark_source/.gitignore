@@ -1,5 +1,7 @@
 *
-!*.fut
-!Makefile
-!.gitignore
-!futhark.pkg
+!**/*.fut
+!**/Makefile
+!**/.gitignore
+!**/futhark.pkg
+!*/
+lib/

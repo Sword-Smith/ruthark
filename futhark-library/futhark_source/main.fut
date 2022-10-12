@@ -3,12 +3,6 @@ import "lib/github.com/Ulrik-dk/segmented/segmented"
 -- Math foundation
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
-
--- Experiments
-module Fastlib = import "fastlib"
-module Parametric_module = import "parametric_module"
-
-
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
 

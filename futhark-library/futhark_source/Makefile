@@ -8,8 +8,8 @@ check: $(SRC_FILES)
 		futhark check $${file} ; \
 	done
 
-test: $(SRC_FILES)
-	futhark test $^
+test:
+	$(MAKE) -C tests
 
 .PHONY: clean
 clean:

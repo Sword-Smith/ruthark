@@ -4,6 +4,8 @@ type BFieldElement = BFieldElement.BFieldElement
 -- a*x^2 + b*x + c:  (c            , b            , a            )
 type XFieldElement = (BFieldElement, BFieldElement, BFieldElement)
 
+type ZFieldElement = [3]BFieldElement
+
 def new (c: BFieldElement) (b: BFieldElement) (a: BFieldElement) : XFieldElement =
   let canonicalize = BFieldElement.canonicalize
   in (canonicalize c, canonicalize b, canonicalize a)
