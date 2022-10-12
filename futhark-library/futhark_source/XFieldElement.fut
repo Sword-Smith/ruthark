@@ -64,7 +64,7 @@ def inverse (_a : XFieldElement) : XFieldElement = zero
 --  let (_, inverse, _) = Polynoimal.xgcd self_as_poly Polynoimal.shah_polynomial in
 --  inverse
 
-def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+def slow_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
 --  let canonicalizeB = BFieldElement.canonicalize
 --  let mul = \x y -> canonicalizeB (BFieldElement.mul x y)
 --  let add = \x y -> canonicalizeB (BFieldElement.add x y)
@@ -132,12 +132,14 @@ def (x: BFieldElement) |*| (y: BFieldElement) = BFieldElement.mul x y
 --  , a0 * c1 + b0 * b1 + c0 * a1 + a0 * a1            -- * x^2
 --  )
 
--- def common_mul ((c0, b0, a0) : XFieldElement) ((c1, _b1, _a1) : XFieldElement) : XFieldElement =
---                 (c0 |*| c1, b0 |*| c1, a0 |*| c1)
+def common_mul ((c0, b0, a0) : XFieldElement) ((c1, _b1, _a1) : XFieldElement) : XFieldElement =
+                (c0 |*| c1, b0 |*| c1, a0 |*| c1)
 
--- def combined_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
---           if (a1 == 0) && (b1 == 0) then common_mul (c0, b0, a0) (c1, b1, a1)
---           else special_mul (c0, b0, a0) (c1, b1, a1)
+def combined_mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement =
+          if (a1 == 0) && (b1 == 0) then common_mul (c0, b0, a0) (c1, b1, a1)
+          else slow_mul (c0, b0, a0) (c1, b1, a1)
+
+def mul = combined_mul
 
 -- this version adds makes the 260s take 290s, hence it is commented out
 -- def dumb_mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
