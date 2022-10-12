@@ -148,14 +148,14 @@ def mul = combined_mul
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
 
--- def rem ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
-
 def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
       if i % 2 == 1
       then (mul x x, i>>1, mul x result)
       else (mul x x, i>>1, result)
   in result
+
+-- def rem ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
 
 -- it calls this
 def my_mul = mul
