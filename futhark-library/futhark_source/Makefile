@@ -1,3 +1,5 @@
+default: futhark
+
 SRC_DIR := ./
 SRC_FILES := $(wildcard $(SRC_DIR)/*.fut)
 

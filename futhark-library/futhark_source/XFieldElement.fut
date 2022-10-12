@@ -120,6 +120,10 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
 def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =
   mod_pow_u64 element (u64.u32 exponent)
 
+-- TODO: This can be simplified
+def mod_pow 't (element : XFieldElement) (exponent: t) : XFieldElement =
+  mod_pow_u64 element (u64.t exponent)
+
 -- u64.highest = 18446744073709551615u64
 
 -- Test mul
