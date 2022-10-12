@@ -14,3 +14,7 @@ test_verbose: $(SRC_FILES)
 
 test: $(SRC_FILES)
 	futhark test $^
+
+.PHONY: clean
+clean:
+	git clean -xi
