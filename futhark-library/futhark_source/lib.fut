@@ -88,6 +88,7 @@ def create_histogram_is
     [p]
     ( q_1d: [p]i64)
     ( pq )
+    : [pq]i64
     =
     let false_is = scan (+) 0 q_1d
     let is_almost = map (\i -> false_is[(i+1)%p]) <| iota p
@@ -111,7 +112,19 @@ def kernel_histogram_impl
         ) zerofier_inverse_1d evaluation_point_2d
 
 
-
+def kernel_histogram_with_is_impl
+    [n][m][p][pq]
+    ( zerofier_inverse_1d:  [n]XFieldElement)
+    ( evaluation_point_2d:  [n]    [m]XFieldElement)
+    ( exp_2d_seg:              [pq][m]u64)
+    ( coefficient_1d_seg:      [pq]XFieldElement)
+    ( is:                      [pq]i64)
+    : [n][p]XFieldElement =
+        map2 (\ zerofier_inverse evaluation_point_1d ->
+           let innermapped = inner_redo_map exp_2d_seg coefficient_1d_seg evaluation_point_1d
+           let reduced = hist (^+^) XFieldElement.zero p is innermapped
+           in  map (zerofier_inverse ^*^) reduced
+        ) zerofier_inverse_1d evaluation_point_2d
 
 
 
@@ -167,6 +180,18 @@ entry kernel_histogram
     ( q_1d:                   [p]i64)
     : [n][p]XFieldElement_flat =
     generalised_wrapper kernel_histogram_impl zerofier_inverse_1d evaluation_point_2d exp_2d_seg coefficient_1d_seg q_1d
+
+entry kernel_histogram_with_is
+    [n][m][p][pq]
+    ( zerofier_inverse_1d: [n]XFieldElement_flat)
+    ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
+    ( exp_2d_seg:             [pq][m]u64)
+    ( coefficient_1d_seg:     [pq]XFieldElement_flat)
+    ( _q_1d:                  [p]i64)
+    ( is:                     [pq]i64)
+    : [n][p]XFieldElement_flat =
+    generalised_wrapper kernel_histogram_with_is_impl zerofier_inverse_1d evaluation_point_2d exp_2d_seg coefficient_1d_seg is
+
 
 entry kernel_segmented_reduce
     [n][m][p][pq]
