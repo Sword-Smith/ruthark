@@ -139,9 +139,13 @@ def mod_pow_u8 (element : XFieldElement) (exponent: u8) : XFieldElement =
 -- output { [0u64, 0u64, 0u64] }
 -- input { [1u64, 0u64, 0u64] [0u64, 0u64, 0u64] }
 -- output { [0u64, 0u64, 0u64] }
--- input { [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64] [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64] }
+-- input { [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64]
+--         [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64]
+-- }
 -- output { [12884901885u64, 18446744030759878666u64, 18446744017874976781u64] }
--- input { [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64] [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64] }
+-- input { [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64]
+--         [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64]
+-- }
 -- output { [12884901885u64, 18446744030759878666u64, 18446744017874976781u64] }
 entry mul_test_array (a_coeffs: [3]u64) (b_coeffs: [3]u64) : [3]u64 =
   let a = new_u64(a_coeffs)
