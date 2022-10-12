@@ -69,7 +69,7 @@ def kernel_segmented_reduce_impl
     ( evaluation_point_2d:  [n]    [m]XFieldElement)
     ( exp_2d_seg:              [pq][m]u64)
     ( coefficient_1d_seg:      [pq]XFieldElement)
-    ( q_1d:                    [p]i64) -- the shadow dimension
+    ( q_1d:                    [p]i64)
     : [n][p]XFieldElement =
         -- these flags are invarant to the outer map, and should therefore be created out here
         let flags = create_segreduce_flags q_1d p pq
@@ -79,6 +79,22 @@ def kernel_segmented_reduce_impl
             let reduced = segmented_reduce (^+^) XFieldElement.zero flags innermapped :> [p]XFieldElement
             in  map (zerofier_inverse ^*^) reduced
         ) zerofier_inverse_1d evaluation_point_2d
+
+def kernel_segmented_reduce_with_flags_impl
+    [n][m][p][pq]
+    ( zerofier_inverse_1d:  [n]XFieldElement)
+    ( evaluation_point_2d:  [n]    [m]XFieldElement)
+    ( exp_2d_seg:              [pq][m]u64)
+    ( coefficient_1d_seg:      [pq]XFieldElement)
+    ( flags:                   [pq]bool)
+    : [n][p]XFieldElement =
+        -- these flags are invarant to the outer map, and should therefore be created out here
+        let res = map2 (\ zerofier_inverse evaluation_point_1d ->
+                    let innermapped = inner_redo_map exp_2d_seg coefficient_1d_seg evaluation_point_1d :> [pq]XFieldElement
+                    let reduced = segmented_reduce (^+^) XFieldElement.zero flags innermapped :> [p]XFieldElement
+                    in  map (zerofier_inverse ^*^) reduced
+                  ) zerofier_inverse_1d evaluation_point_2d
+        in res
 
 def segmented_replicate [n] 't (revaluation_point_2d:[n]i64) (vs:[n]t) : []t =
     let idxs = replicated_iota revaluation_point_2d
@@ -102,7 +118,7 @@ def kernel_histogram_impl
     ( evaluation_point_2d:  [n]    [m]XFieldElement)
     ( exp_2d_seg:              [pq][m]u64)
     ( coefficient_1d_seg:      [pq]XFieldElement)
-    ( q_1d:                    [p]i64) -- the shadow dimension
+    ( q_1d:                    [p]i64)
     : [n][p]XFieldElement =
         map2 (\ zerofier_inverse evaluation_point_1d ->
            let innermapped = inner_redo_map exp_2d_seg coefficient_1d_seg evaluation_point_1d
@@ -202,3 +218,19 @@ entry kernel_segmented_reduce
     ( q_1d:                   [p]i64)
     : [n][p]XFieldElement_flat =
     generalised_wrapper kernel_segmented_reduce_impl zerofier_inverse_1d evaluation_point_2d exp_2d_seg coefficient_1d_seg q_1d
+
+-- entry kernel_segmented_reduce_with_flags
+--     [n][m][p][pq]
+--     ( zerofier_inverse_1d: [n]XFieldElement_flat)
+--     ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
+--     ( exp_2d_seg:             [pq][m]u64)
+--     ( coefficient_1d_seg:     [pq]XFieldElement_flat)
+--     ( flags:                  [pq]bool)
+--     : [n][p]XFieldElement_flat =
+
+--     let inner_zerofier_inverse_1d = map outer_to_inner zerofier_inverse_1d
+--     let inner_evaluation_point_2d = map (map outer_to_inner) evaluation_point_2d
+--     let inner_exp_3d = exp_2d_seg
+--     let inner_coefficient_2d = map outer_to_inner coefficient_1d_seg
+--     let inner_res = kernel_segmented_reduce_with_flags_impl inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d flags :> [n][p]XFieldElement
+--     in map (map inner_to_outer) inner_res
