@@ -27330,6 +27330,51 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct futhark_bool_1d {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn futhark_new_bool_1d(
+        ctx: *mut futhark_context,
+        data: *const bool,
+        dim0: i64,
+    ) -> *mut futhark_bool_1d;
+}
+extern "C" {
+    pub fn futhark_new_raw_bool_1d(
+        ctx: *mut futhark_context,
+        data: CUdeviceptr,
+        offset: i64,
+        dim0: i64,
+    ) -> *mut futhark_bool_1d;
+}
+extern "C" {
+    pub fn futhark_free_bool_1d(
+        ctx: *mut futhark_context,
+        arr: *mut futhark_bool_1d,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_values_bool_1d(
+        ctx: *mut futhark_context,
+        arr: *mut futhark_bool_1d,
+        data: *mut bool,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_values_raw_bool_1d(
+        ctx: *mut futhark_context,
+        arr: *mut futhark_bool_1d,
+    ) -> CUdeviceptr;
+}
+extern "C" {
+    pub fn futhark_shape_bool_1d(
+        ctx: *mut futhark_context,
+        arr: *mut futhark_bool_1d,
+    ) -> *const i64;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct futhark_i32_2d {
     _unused: [u8; 0],
 }
@@ -27546,6 +27591,18 @@ extern "C" {
         in2: *const futhark_u64_2d,
         in3: *const futhark_u64_2d,
         in4: *const futhark_i64_1d,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn futhark_entry_kernel_segmented_reduce_with_flags(
+        ctx: *mut futhark_context,
+        out0: *mut *mut futhark_u64_3d,
+        in0: *const futhark_u64_2d,
+        in1: *const futhark_u64_3d,
+        in2: *const futhark_u64_2d,
+        in3: *const futhark_u64_2d,
+        in4: *const futhark_bool_1d,
+        in5: *const futhark_bool_1d,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
