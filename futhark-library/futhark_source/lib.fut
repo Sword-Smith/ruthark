@@ -17,11 +17,11 @@ entry matmul = Matmul.matmul
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
 
-def (x: XFieldElement) ^*^ (y: XFieldElement) = XFieldElement.my_mul x y
+def (x: XFieldElement) ^*^ (y: XFieldElement) = XFieldElement.mul x y
 
 def (x: XFieldElement) ^+^ (y: XFieldElement) = XFieldElement.add x y
 
-def (elm: XFieldElement) %** (exp: u64) = XFieldElement.my_mod_pow_u64 elm exp
+def (elm: XFieldElement) %** (exp: u64) = XFieldElement.mod_pow_u64 elm exp
 
 def inner_redo_map
     ( exp_2d )
