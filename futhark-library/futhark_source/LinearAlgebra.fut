@@ -28,12 +28,14 @@ def eval_all_terms [n] [m] [t] (term_exp_mtx : [t][m]u8) (eval_points_mtx : [n][
   map (eval_term_on_all_points eval_points_mtx) term_exp_mtx
 
 -- r = t x n
-def sum_terms_per_poly [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]bool) (eval_points_mtx : [n][m]XFieldElement) : []XFieldElement =
+def sum_terms_per_poly [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]bool) (eval_points_mtx : [n][m]XFieldElement) : [r]XFieldElement =
   -- Here coefficient vector should multiplied
   let evaluated_terms = eval_all_terms term_exp_mtx eval_points_mtx
   let all_terms = flatten evaluated_terms :> [r]XFieldElement
-  in segmented_add qs_flags all_terms
+  let sum_arr = segmented_add qs_flags all_terms
+  in sum_arr
 
+def extract_poli = 1
 
 
 
@@ -83,17 +85,17 @@ def matrix_map [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f
 -- entry: test_eval_all_terms
 -- input  { [ [ 2, 7]
 --          , [ 3, 5] ]
---          [ false, false, false, true, false, false]
+--          [ false, false, false, false, false, false]
 --          [ [ 0, 0]
---          , [ 0, 0]
+--          , [ 1, 1]
 --          , [ 2, 2] ]
 -- }
 -- output {
 --       [ [  0, 0, 0 ]
---       , [  0, 0, 0 ]
+--       , [  1, 0, 0 ]
 --       , [  512, 0, 0 ]
 --       , [  0, 0, 0 ]
---       , [  0, 0, 0 ]
+--       , [  1, 0, 0 ]
 --       , [  256, 0, 0 ] ]
 -- }
 entry test_eval_all_terms [n] [m] [t] [r] (term_exp_mtx : [t][m]i32) (qs : [r]bool)  (eval_points_mtx : [n][m]i32) : ?[r].[r][3]i32 =
@@ -101,7 +103,33 @@ entry test_eval_all_terms [n] [m] [t] [r] (term_exp_mtx : [t][m]i32) (qs : [r]bo
   let term_exp_mtx_u8 = matrix_map u8.i32 term_exp_mtx
   let evaluated_terms = eval_all_terms term_exp_mtx_u8 eval_points_mtx_xfe
   let all_terms = flatten evaluated_terms :> [r]XFieldElement
-  in (map XFieldElement.tripple2array all_terms) |> (matrix_map i32.u64)
+  in map XFieldElement.tripple2array all_terms |> matrix_map i32.u64
+
+
+-- Test test_eval_all_terms
+-- ==
+-- entry: test_eval_all_terms
+-- input  { [ [ 2, 7]
+--          , [ 3, 5] ]
+--          [ false, false, false, true, false, false]
+--          [ [ 0, 0]
+--          , [ 1, 1]
+--          , [ 2, 2] ]
+-- }
+-- output { [ [  513, 0, 0 ]
+--        ,   [  257, 0, 0 ] ]
+-- }
+entry test_term_exp_matrix [n] [m] [t] [r] [p] (term_exp_mtx : [t][m]u8) (qs : [p]i32) (qs_flags : [r]bool) (eval_points_mtx : [n][m]i32) : [p][3]i32 =
+  let eval_points_mtx_xfe = matrix_map XFieldElement.from_i32 eval_points_mtx
+  let term_exp_mtx_u8 = matrix_map u8.i32 term_exp_mtx
+  let evaluated_terms = eval_all_terms term_exp_mtx_u8 eval_points_mtx_xfe
+  let all_terms = flatten evaluated_terms :> [r]XFieldElement
+  let segmented_sum = sum_terms_per_poly term_exp_mtx_u8 qs_flags eval_points_mtx_xfe
+  let res = pick_indices qs segmented_sum
+  in map XFieldElement.tripple2array res |> matrix_map i32.u64
+
+
+def pick_indices [p] [r] (qs : [p]i32) (seg_sum : [r]XFieldElement) : [p]XFieldElement = XFieldElement.one
 
 
 entry test_term_exp_matrix_u64 [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]bool) (eval_points_mtx : [n][m]u64) : ?[p].[p][3]i32 =
