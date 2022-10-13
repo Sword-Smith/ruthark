@@ -7,6 +7,7 @@ type XFieldElement = XFieldElement.XFieldElement
 
 
 import "Segmented"
+import "Flags"
 -- module linalg_bfe = mk_linalg BFieldElement
 
 
@@ -77,7 +78,7 @@ def matrix_map [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f
 -- 8
 -- 12
 
--- Test term_exp_matrix_test
+-- Test test_term_exp_matrix
 -- ==
 -- entry: test_term_exp_matrix
 -- input  { [[ 2u8,  3u8,  5u8],
