@@ -14,6 +14,8 @@ def new_const (element: BFieldElement) : XFieldElement = new element BFieldEleme
 
 def from_u64 (number: u64) : XFieldElement = BFieldElement.new number |> new_const
 
+def from_i32 (number: i32) : XFieldElement = u64.i32 number |> BFieldElement.new |> new_const
+
 def tripple2array (c, b, a) : [3]u64 = [c, b, a]
 def array2tripple (cba: [3]u64) : XFieldElement = new cba[0] cba[1] cba[2]
 
@@ -140,6 +142,26 @@ def mod_pow_u8 (element : XFieldElement) (exponent: u8) : XFieldElement =
       then (mul x x, i>>1, mul x result)
       else (mul x x, i>>1, result)
    in result
+
+-- Test mul
+-- ==
+-- entry: test_mod_pow_u8
+-- input { 1 1 }
+-- output { [1, 0, 0] }
+-- input { 0 1 }
+-- output { [0, 0, 0] }
+-- input { 1 0 }
+-- output { [1, 0, 0] }
+-- input { 0 0 }
+-- output { [1, 0, 0] }
+-- input { 0 2 }
+-- output { [0, 0, 0] }
+entry test_mod_pow_u8 (xfe_raw : i32) (exp_raw : i32) : [3]i32 =
+  let xfe = from_i32 xfe_raw
+  let exp = u8.i32 exp_raw
+  let res = mod_pow_u8 xfe exp
+  let arr = tripple2array res
+  in map i32.u64 arr
 
 -- u64.highest = 18446744073709551615u64
 

@@ -78,9 +78,50 @@ def matrix_map [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f
 -- 8
 -- 12
 
--- Test test_term_exp_matrix
+-- Test test_eval_all_terms
 -- ==
+-- entry: test_eval_all_terms
+-- input  { [ [ 2, 7]
+--          , [ 3, 5] ]
+--          [ false, false, false, true, false, false]
+--          [ [ 0, 0]
+--          , [ 0, 0]
+--          , [ 2, 2] ]
+-- }
+-- output {
+--       [ [  0, 0, 0 ]
+--       , [  0, 0, 0 ]
+--       , [  512, 0, 0 ]
+--       , [  0, 0, 0 ]
+--       , [  0, 0, 0 ]
+--       , [  256, 0, 0 ] ]
+-- }
+entry test_eval_all_terms [n] [m] [t] [r] (term_exp_mtx : [t][m]i32) (qs : [r]bool)  (eval_points_mtx : [n][m]i32) : ?[r].[r][3]i32 =
+  let eval_points_mtx_xfe = matrix_map XFieldElement.from_i32 eval_points_mtx
+  let term_exp_mtx_u8 = matrix_map u8.i32 term_exp_mtx
+  let evaluated_terms = eval_all_terms term_exp_mtx_u8 eval_points_mtx_xfe
+  let all_terms = flatten evaluated_terms :> [r]XFieldElement
+  in (map XFieldElement.tripple2array all_terms) |> (matrix_map i32.u64)
+
+
+entry test_term_exp_matrix_u64 [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]bool) (eval_points_mtx : [n][m]u64) : ?[p].[p][3]i32 =
+  let eval_points_mtx_xfe = map (map XFieldElement.from_u64) eval_points_mtx
+  let res = sum_terms_per_poly term_exp_mtx qs_flags eval_points_mtx_xfe
+  in map XFieldElement.tripple2array res |> matrix_map i32.u64
+
+-- test_term_exp_matrix
+--
 -- entry: test_term_exp_matrix
+-- input  { [ [ 2u8, 7u8]
+--          , [ 3u8, 5u8] ]
+--          [ false, true]
+--          [ [ 2u64, 1u64]
+--          , [ 1u64, 0u64] ]
+-- }
+-- output {
+--       [ [ 28u64, 2u64 ]
+--       , [ 40u64, 3u64 ]]
+-- }
 -- input  { [[ 2u8,  3u8,  5u8],
 --            [ 7u8, 11u8, 13u8],
 --            [17u8, 19u8, 23u8],
@@ -124,7 +165,3 @@ def matrix_map [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f
 --       , [ 1, 2, 3 ]
 --       , [ 1, 2, 3 ]]
 -- }
-entry test_term_exp_matrix [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]bool) (eval_points_mtx : [n][m]u64) : ?[p].[p][3]i32 =
-  let eval_points_mtx_xfe = map (map XFieldElement.from_u64) eval_points_mtx
-  let res = sum_terms_per_poly term_exp_mtx qs_flags eval_points_mtx_xfe
-  in map XFieldElement.tripple2array res |> matrix_map i32.u64
