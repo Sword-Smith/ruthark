@@ -6,6 +6,7 @@ type BFieldElement = BFieldElement.BFieldElement
 type XFieldElement = XFieldElement.XFieldElement
 
 
+import "Segmented"
 -- module linalg_bfe = mk_linalg BFieldElement
 
 
@@ -19,53 +20,23 @@ def eval_term_on_point [m] (term_exp : [m]u8) (point : [m]XFieldElement) : XFiel
   let factors = map2 XFieldElement.mod_pow_u8 point term_exp
   in reduce XFieldElement.mul XFieldElement.one factors
 
-def eval_term_on_all_points [m] [n] (term_exp : [m]u8) (eval_points_mtx : [n][m]XFieldElement) : [n]XFieldElement =
+def eval_term_on_all_points [m] [n] (eval_points_mtx : [n][m]XFieldElement) (term_exp : [m]u8) : [n]XFieldElement =
   map (eval_term_on_point term_exp) eval_points_mtx
 
 def eval_all_terms [n] [m] [t] (term_exp_mtx : [t][m]u8) (eval_points_mtx : [n][m]XFieldElement) : [t][n]XFieldElement =
-  map (\term -> eval_term_on_all_points term eval_points_mtx) term_exp_mtx
+  map (eval_term_on_all_points eval_points_mtx) term_exp_mtx
 
-def segmented_scan 't [n] (g:t->t->t) (ne: t) (flags: [n]bool) (vals: [n]t): [n]t =
-  let pairs = scan ( \ (v1,f1) (v2,f2) ->
-                       let f = f1 || f2
-                       let v = if f2 then v2 else g v1 v2
-                       in (v,f) ) (ne,false) (zip vals flags)
-  let (res,_) = unzip pairs
-  in res
-
-def replicated_iota [n] (reps:[n]i64) : []i64 =
-  let s1 = scan (+) 0 reps
-  let s2 = map (\i -> if i==0 then 0 else s1[i-1]) (iota n)
-  let tmp = scatter (replicate (reduce (+) 0 reps) 0) s2 (iota n)
-  let flags = map (>0) tmp
-  in segmented_scan (+) 0 flags tmp
-
-def segmented_replicate [n] (reps:[n]i64) (vs:[n]i64) : []i64 =
-  let idxs = replicated_iota reps
-  in map (\i -> vs[i]) idxs
-
-def idxs_to_flags [p] (qs : [p]i64) : []bool =
-  let vs = segmented_replicate qs (iota p)
-  let m = length vs
-  in map2 (!=) (vs :> [m]i64) ([0] ++ vs[:m-1] :> [m]i64)
-
-def segmented_add [t] (flags: [t]bool) (vals : [t]XFieldElement) : []XFieldElement =
-  let pairs = scan ( \(v1, f1) (v2, f2) ->
-                      let f = f1 || f2
-                      let v = if f2 then v2 else XFieldElement.add v1 v2
-                      in (v, f) )
-                      (XFieldElement.zero, false) (zip vals flags)
-  let (res, _) = unzip pairs
-  in res
-
-def sum_terms_per_poly [n] [m] [t] [p] (term_exp_mtx : [t][m]u8) (qs : [p]u64) (eval_points_mtx : [n][m]XFieldElement) : [p]XFieldElement =
+-- r = t x n
+def sum_terms_per_poly [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]bool) (eval_points_mtx : [n][m]XFieldElement) : []XFieldElement =
   -- Here coefficient vector should multiplied
   let evaluated_terms = eval_all_terms term_exp_mtx eval_points_mtx
-  let flags = idxs_to_flags (map i64.u64 qs)
-  in segmented_add flags (flatten evaluated_terms)
+  let all_terms = flatten evaluated_terms :> [r]XFieldElement
+  in segmented_add qs_flags all_terms
 
 
 
+
+def matrix_map [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f) mtx
 
 
 -- Terms Exponent Matrix
@@ -108,18 +79,51 @@ def sum_terms_per_poly [n] [m] [t] [p] (term_exp_mtx : [t][m]u8) (qs : [p]u64) (
 
 -- Test term_exp_matrix_test
 -- ==
--- entry: term_exp_matrix_test
--- input:  { [[ 2,  3,  5],
---            [ 7, 11, 13],
---            [17, 19, 23],
---            [ 2,  3,  5],
---            [ 7, 11, 13],
---            [17, 19, 23]]
---           [  1,  2,  3]
---           [[ 1, 54,  3],
---            [44, 23, 42],
---            [10, 11, 13],
---            [ 7,  4,  0]]
+-- entry: test_term_exp_matrix
+-- input  { [[ 2u8,  3u8,  5u8],
+--            [ 7u8, 11u8, 13u8],
+--            [17u8, 19u8, 23u8],
+--            [ 2u8,  3u8,  5u8],
+--            [ 7u8, 11u8, 13u8],
+--            [17u8, 19u8, 23u8]]
+--           [ false, false, false, true,
+--             false, false, false, false,
+--             false, false, false, true,
+--             false, false, false, false,
+--             false, false, false, false,
+--             false, false, false, true ]
+--           [[ 1u64, 54u64,  3u64],
+--            [44u64, 23u64, 42u64],
+--            [10u64, 11u64, 13u64],
+--            [ 7u64,  4u64,  0u64]]
 -- }
--- output: { [[4, 8, 12 ] ] }
-entry term_exp_matrix_test = sum_terms_per_poly
+-- output {
+--       [ [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]
+--       , [ 1, 2, 3 ]]
+-- }
+entry test_term_exp_matrix [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]bool) (eval_points_mtx : [n][m]u64) : ?[p].[p][3]i32 =
+  let eval_points_mtx_xfe = map (map XFieldElement.from_u64) eval_points_mtx
+  let res = sum_terms_per_poly term_exp_mtx qs_flags eval_points_mtx_xfe
+  in map XFieldElement.tripple2array res |> matrix_map i32.u64

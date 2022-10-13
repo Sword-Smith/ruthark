@@ -12,6 +12,8 @@ def new_u64 (coeffs: [3]u64) : XFieldElement = new coeffs[0] coeffs[1] coeffs[2]
 
 def new_const (element: BFieldElement) : XFieldElement = new element BFieldElement.zero BFieldElement.zero
 
+def from_u64 (number: u64) : XFieldElement = BFieldElement.new number |> new_const
+
 def tripple2array (c, b, a) : [3]u64 = [c, b, a]
 def array2tripple (cba: [3]u64) : XFieldElement = new cba[0] cba[1] cba[2]
 
