@@ -117,6 +117,8 @@ def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
 
 -- def rem ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
+-- Not supported https://futhark-book.readthedocs.io/en/latest/language.html#parametric-polymorphism
+-- def mod_pow 't (element : XFieldElement) (exponent: t) : XFieldElement =
 
 def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
@@ -126,11 +128,18 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
    in result
 
 def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =
-  mod_pow_u64 element (u64.u32 exponent)
+  let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
+      if i % 2 == 1
+      then (mul x x, i>>1, mul x result)
+      else (mul x x, i>>1, result)
+   in result
 
--- TODO: This can be simplified
 def mod_pow_u8 (element : XFieldElement) (exponent: u8) : XFieldElement =
-  mod_pow_u64 element (u64.u8 exponent)
+  let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
+      if i % 2 == 1
+      then (mul x x, i>>1, mul x result)
+      else (mul x x, i>>1, result)
+   in result
 
 -- u64.highest = 18446744073709551615u64
 
