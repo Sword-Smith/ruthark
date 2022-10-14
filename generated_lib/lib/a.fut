@@ -30,7 +30,7 @@ def inner_redo_map
     =
     map2 (\ exp_1d coefficient ->
         map2 (%**) evaluation_point_1d exp_1d
-        |> reduce (^*^) XFieldElement.one
+        |> reduce_comm (^*^) XFieldElement.one
         |> (coefficient ^*^)
     ) exp_2d coefficient_1d
 
