@@ -129,6 +129,13 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
       else (mul x x, i>>1, result)
   in result
 
+def mod_pow_u8 (element : XFieldElement) (exponent: u8) : XFieldElement =
+  let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
+      if i % 2 == 1
+      then (mul x x, i>>1, mul x result)
+      else (mul x x, i>>1, result)
+  in result
+
 -- u64.highest = 18446744073709551615u64
 
 -- Test mul
