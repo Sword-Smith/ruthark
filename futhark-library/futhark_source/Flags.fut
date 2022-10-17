@@ -1,10 +1,54 @@
-def seglen_to_indices [n] (reps:[n]i64) : [n]i64 =
+-- calculate segment start index
+def segments_start_indices_i32 [n] (reps:[n]i32) : [n]i32 =
+  -- assert no zero length segments
   let cumsum = scan (+) 0 reps
-  in  map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
+   in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
+
+-- calculate segment start index
+def segments_start_indices_i64 [n] (reps:[n]i64) : [n]i64 =
+  -- assert no zero length segments
+  let cumsum = scan (+) 0 reps
+   in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
+
+
+def segments_end_indices_i32 [n] (reps:[n]i32) : [n]i32 =
+  -- assert no zero length segments
+  scan (+) (-1) reps
+
+def segments_end_indices_i64 [n] (reps:[n]i64) : [n]i64 =
+  -- assert no zero length segments
+  scan (+) (-1) reps
+
+-- Test test_end
+-- ==
+-- entry: test_segment_end_indices
+-- input { [2, 3, 1, 1] }
+-- output { [1, 4, 5, 6] }
+-- input { [2, 1, 3] }
+-- output { [1, 2, 5] }
+-- input { [1, 2, 3] }
+-- output { [0, 2, 5] }
+-- input { [1, 2] }
+-- output { [0, 2] }
+entry test_segment_end_indices reps = segments_end_indices_i32 reps
+
+def gather_i32 [p] [r] (idxs : [p]i32) (vals : [r]i32) : [p]i32 =
+  map (\i -> vals[i]) idxs
+
+def gather_i64 [p] [r] (idxs : [p]i64) (vals : [r]i64) : [p]i64 =
+  map (\i -> vals[i]) idxs
+
+def gather_sums_i32 [n] [r] (reps :[n]i32) (segsum : [r]i32) : [n]i32 =
+  let idxs = segments_end_indices_i32 reps
+   in gather_i32 idxs segsum
+
+def gather_sums_i64 [n] [r] (reps : [n]i64) (segsum : [r]i64) : [n]i64 =
+  let idxs = segments_end_indices_i64 reps
+   in gather_i64 idxs segsum
 
 -- Test idxssegs
 -- ==
--- entry: test_seglen_to_indices
+-- entry: test_segment_start_indices
 -- input { [2, 3, 1, 1] }
 -- output { [0, 2, 5, 6] }
 -- input { [2, 1, 3] }
@@ -13,19 +57,34 @@ def seglen_to_indices [n] (reps:[n]i64) : [n]i64 =
 -- output { [0, 1, 3] }
 -- input { [1, 2] }
 -- output { [0, 1] }
-entry test_seglen_to_indices reps =
+entry test_segment_start_indices reps =
   let reps_i64 = map i64.i32 reps
-  let res = seglen_to_indices reps_i64
-  in  map i32.i64 res
+  let res = segments_start_indices_i64 reps_i64
+   in map i32.i64 res
 
-def idxs_to_flags [n] (reps:[n]i64) : ?[N].[N]bool =
+def idxs_to_flags_i32 [n] (reps:[n]i32) : ?[length].[length]bool =
+  let cumsum = scan (+) 0 reps
+  let idxs = map i64.i32 <| map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
+  let length = i64.i32 <| reduce (+) 0 reps
+  let canvas = replicate length false
+  let vals = map (>0) (iota n)
+   in scatter canvas idxs vals
+
+def idxs_to_flags_i64 [n] (reps:[n]i64) : ?[length].[length]bool =
   let cumsum = scan (+) 0 reps
   let idxs = map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
-  let N = reduce (+) 0 reps
-  let canvas = replicate N false
+  let length = reduce (+) 0 reps
+  let canvas = replicate length false
   let vals = map (>0) (iota n)
-  in  scatter canvas idxs vals
+   in scatter canvas idxs vals
 
+def idxs_to_flags_i64_2 [n] (reps:[n]i64) : ?[length].[length]bool =
+  let cumsum        = scan (+) 0 reps
+  let total_length  = cumsum[n-1]
+  let segment_idxs  = map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
+  let canvas        = replicate total_length false
+  let start_markers = replicate n true
+   in scatter canvas segment_idxs start_markers
 -- Test idxs
 -- ==
 -- entry: test_idxs_to_flags
@@ -39,8 +98,95 @@ def idxs_to_flags [n] (reps:[n]i64) : ?[N].[N]bool =
 -- output { [false, true, false ] }
 entry test_idxs_to_flags reps =
   let reps_i64 = map i64.i32 reps
-  in  idxs_to_flags reps_i64
+   in idxs_to_flags_i64 reps_i64
 
 
 
 
+
+-- Segmented scan with integer addition
+def segmented_scan_add [n] (flags:[n]bool) (vals:[n]i32) : [n]i32 =
+  let pairs = scan ( \(v1,f1) (v2,f2) ->
+                       let f = f1 || f2
+                       let v = if f2 then v2 else v1+v2
+                       in (v,f) ) (0,false) (zip vals flags)
+  let (res,_) = unzip pairs
+   in res
+
+-- Test segsum
+-- ==
+-- entry: test_segsum
+-- input { [2, 1, 3]
+--         [0, 1, 2, 3, 4, 5]
+-- }
+-- output { [0,1,2,3,7,12] }
+entry test_segsum [n] [l] (reps : [n]i32) (vals : [l]i32) =
+  let flags = idxs_to_flags_i32 reps :> [l]bool
+  let segsum = segmented_scan_add flags vals
+   in segsum
+
+-- Test segsum
+-- ==
+-- entry: test_gather_segsums
+-- input { [2, 1, 3]
+--         [0, 1, 2, 3, 4, 5]
+-- }
+-- output { [1,2,12] }
+entry test_gather_segsums [n] [l] (reps : [n]i32) (vals : [l]i32) : [n]i32 =
+  let flags0 = idxs_to_flags_i32 reps :> [l]bool
+  let flags = (copy flags0) with [0] = true
+  let segsum = segmented_scan_add flags vals
+  let idxs = segments_end_indices_i32 reps
+   in map (\i -> segsum[i]) idxs
+
+
+-- Test segsum
+-- ==
+-- entry: test_gather_segsums1
+-- input { [2, 1, 3]
+--         [0, 1, 2, 3, 4, 5]
+-- }
+-- output { [0,1,2,3,7,12] }
+entry test_gather_segsums1 [n] [l] (reps : [n]i32) (vals : [l]i32) : [l]i32 =
+  let flags = idxs_to_flags_i32 reps :> [l]bool
+  let segsum = segmented_scan_add flags vals
+  in segsum
+
+-- Test segsum
+-- ==
+-- entry: test_gather_segsums2
+-- input { [2, 1, 3]
+--         [0, 1, 2, 3, 4, 5]
+-- }
+-- output { [false,false,true,true,false,false] }
+entry test_gather_segsums2 [n] [l] (reps : [n]i32) (_vals : [l]i32) : [l]bool =
+  let flags = idxs_to_flags_i32 reps :> [l]bool
+  in flags
+
+
+-- Test segsum
+-- ==
+-- entry: test_gather_segsums3
+-- input { [2, 1, 3]
+--         [0, 1, 2, 3, 4, 5]
+-- }
+-- output { [1,2,5] }
+entry test_gather_segsums3 [n] [l] (reps : [n]i32) (_vals : [l]i32) : [n]i32 =
+  let idxs = segments_end_indices_i32 reps
+   in idxs
+
+
+
+-- Test segsum
+-- ==
+-- entry: test_gather_segsums4
+-- input { [2, 1, 3]
+--         [0, 1, 2, 3, 4, 5]
+-- }
+-- output { [1,2,12] }
+entry test_gather_segsums4 [n] [l] (reps : [n]i32) (vals : [l]i32) : [n]i32 =
+  let flags0 = idxs_to_flags_i32 reps :> [l]bool
+  let flags = (copy flags0) with [0] = true
+  let segsum = segmented_scan_add flags vals
+  let idxs = segments_end_indices_i32 reps
+   in map (\i -> segsum[i]) idxs

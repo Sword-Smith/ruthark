@@ -1,5 +1,8 @@
 import "lib/github.com/diku-dk/linalg/linalg"
 
+
+-- reduce_comm
+
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
 type BFieldElement = BFieldElement.BFieldElement
@@ -9,6 +12,7 @@ type XFieldElement = XFieldElement.XFieldElement
 import "Segmented"
 import "Flags"
 -- module linalg_bfe = mk_linalg BFieldElement
+-- module linalg_xfe = mk_linalg XFieldElement
 
 
 --entry main : i32 =

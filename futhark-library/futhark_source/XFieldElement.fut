@@ -156,6 +156,8 @@ def mod_pow_u8 (element : XFieldElement) (exponent: u8) : XFieldElement =
 -- output { [1, 0, 0] }
 -- input { 0 2 }
 -- output { [0, 0, 0] }
+-- input { 3 3 }
+-- output { [27, 0, 0] }
 entry test_mod_pow_u8 (xfe_raw : i32) (exp_raw : i32) : [3]i32 =
   let xfe = from_i32 xfe_raw
   let exp = u8.i32 exp_raw
