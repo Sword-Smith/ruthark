@@ -16,10 +16,13 @@ print_stage:
 	@echo ""
 
 SRC_DIR := futhark_source
-fc:
+fc:	
 	@PARAM="FUTHARK CHECK" $(MAKE) print_stage --no-print-directory
 	@cd futhark-library && $(MAKE) -C $(SRC_DIR) --no-print-directory
 	
+updatefut:
+	@cd futhark-library/$(SRC_DIR) ; futhark pkg upgrade ; futhark pkg sync
+
 exports:
 	export CPATH=/opt/cuda/include:$CPATH
 	export LD_LIBRARY_PATH=/opt/cuda/lib64/:$LD_LIBRARY_PATH

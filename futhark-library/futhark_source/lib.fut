@@ -1,4 +1,4 @@
-import "segmented"
+import "lib/github.com/Ulrik-dk/segmented/segmented"
 
 -- Math foundation
 module BFieldElement = import "BFieldElement"
