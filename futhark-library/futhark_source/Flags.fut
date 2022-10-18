@@ -1,27 +1,42 @@
--- calculate segment start index
 def segments_start_indices_i32 [n] (reps:[n]i32) : [n]i32 =
   let _ = map (\rep -> assert (rep > 0) true) reps
   -- assert no zero length segments
   let cumsum = scan (+) 0 reps
    in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
 
--- calculate segment start index
 def segments_start_indices_i64 [n] (reps:[n]i64) : [n]i64 =
   let _ = map (\rep -> assert (rep > 0) true) reps
   -- assert no zero length segments
   let cumsum = scan (+) 0 reps
    in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
 
+-- Test idxssegs
+-- ==
+-- entry: test_segment_start_indices
+-- input { [2, 3, 1, 1] }
+-- output { [0, 2, 5, 6] }
+-- input { [2, 1, 3] }
+-- output { [0, 2, 3] }
+-- input { [1, 2, 3] }
+-- output { [0, 1, 3] }
+-- input { [1, 2] }
+-- output { [0, 1] }
+entry test_segment_start_indices reps =
+  let reps_i64 = map i64.i32 reps
+  let res = segments_start_indices_i64 reps_i64
+   in map i32.i64 res
 
 def segments_end_indices_i32 [n] (reps:[n]i32) : [n]i32 =
   let _ = assert (n > 0) true
   -- assert no zero length segments
-   in scan (+) (-1) reps
+  let tmp = scan (+) (0) reps
+   in map (\i -> i-1) tmp
 
 def segments_end_indices_i64 [n] (reps:[n]i64) : [n]i64 =
   let _ = assert (n > 0) true
   -- assert no zero length segments
-   in scan (+) (-1) reps
+  let tmp = scan (+) (0) reps
+   in map (\i -> i-1) tmp
 
 -- Test test_end
 -- ==
@@ -50,22 +65,6 @@ def gather_sums_i64 [n] [r] (reps : [n]i64) (segsum : [r]i64) : [n]i64 =
   let idxs = segments_end_indices_i64 reps
    in gather_i64 idxs segsum
 
--- Test idxssegs
--- ==
--- entry: test_segment_start_indices
--- input { [2, 3, 1, 1] }
--- output { [0, 2, 5, 6] }
--- input { [2, 1, 3] }
--- output { [0, 2, 3] }
--- input { [1, 2, 3] }
--- output { [0, 1, 3] }
--- input { [1, 2] }
--- output { [0, 1] }
-entry test_segment_start_indices reps =
-  let reps_i64 = map i64.i32 reps
-  let res = segments_start_indices_i64 reps_i64
-   in map i32.i64 res
-
 def idxs_to_flags_i32 [n] (reps:[n]i32) : ?[length].[length]bool =
   let _ = map (\rep -> assert (rep > 0) true) reps
   let cumsum = scan (+) 0 reps
@@ -75,7 +74,7 @@ def idxs_to_flags_i32 [n] (reps:[n]i32) : ?[length].[length]bool =
   let vals = map (>0) (iota n)
    in scatter canvas idxs vals
 
-def idxs_to_flags_i64 [n] (reps:[n]i64) : ?[length].[length]bool =
+def idxs_to_flags_i64 [n] (reps:[n]i64) : ?[l].[l]bool =
   let _ = map (\rep -> assert (rep > 0) true) reps
   let cumsum = scan (+) 0 reps
   let idxs = map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
@@ -84,6 +83,7 @@ def idxs_to_flags_i64 [n] (reps:[n]i64) : ?[length].[length]bool =
   let vals = map (>0) (iota n)
    in scatter canvas idxs vals
 
+-- Same as above, but `rv[0] == true`
 def idxs_to_flags_i64_2 [n] (reps:[n]i64) : ?[length].[length]bool =
   let _ = map (\rep -> assert (rep > 0) true) reps
   let cumsum        = scan (+) 0 reps
@@ -92,6 +92,7 @@ def idxs_to_flags_i64_2 [n] (reps:[n]i64) : ?[length].[length]bool =
   let canvas        = replicate total_length false
   let start_markers = replicate n true
    in scatter canvas segment_idxs start_markers
+
 -- Test idxs
 -- ==
 -- entry: test_idxs_to_flags
@@ -107,8 +108,20 @@ entry test_idxs_to_flags reps =
   let reps_i64 = map i64.i32 reps
    in idxs_to_flags_i64 reps_i64
 
-
-
+-- Test idxs
+-- ==
+-- entry: test_idxs_to_flags_2
+-- input { [2, 3, 1, 1] }
+-- output { [true, false, true, false, false, true, true ] }
+-- input { [2, 1, 3] }
+-- output { [true, false, true, true, false, false ] }
+-- input { [1, 2, 3] }
+-- output { [true, true, false, true, false, false ] }
+-- input { [1, 2] }
+-- output { [true, true, false ] }
+entry test_idxs_to_flags_2 reps =
+  let reps_i64 = map i64.i32 reps
+   in idxs_to_flags_i64_2 reps_i64
 
 
 -- Segmented scan with integer addition
@@ -166,7 +179,6 @@ entry test_gather_segsums3 [n] [l] (reps : [n]i32) (vals : [l]i32) : [l]i32 =
   let segsum = segmented_scan_add flags vals
   in segsum
 
-
 -- Test segsum4
 -- ==
 -- entry: test_gather_segsums4
@@ -187,7 +199,7 @@ entry test_gather_segsums4 [n] [l] (reps : [n]i32) (vals : [l]i32) : [n]i32 =
 --         [0, 1, 2, 3, 4, 5]
 -- }
 -- output { [1,2,12] }
-entry test_gather_segsums5 [n] [l] (reps : [n]i32) (vals : [l]i32) : [n]i32 =
+entry test_gather_segsums5 [n] [l] (_reps : [n]i32) (_vals : [l]i32) : [n]i32 =
   let _flags = [false,false,true,true,false,false]
   let segsum = [0,1,2,3,7,12]
   let idxs = [1,2,5] :> [n]i32
