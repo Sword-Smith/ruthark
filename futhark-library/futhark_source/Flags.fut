@@ -1,12 +1,12 @@
 def segments_start_indices_i32 [n] (reps:[n]i32) : [n]i32 =
-  let _ = map (\rep -> assert (rep > 0) true) reps
   -- assert no zero length segments
+  let reps = map (\rep -> assert (rep > 0) true) reps
   let cumsum = scan (+) 0 reps
    in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
 
 def segments_start_indices_i64 [n] (reps:[n]i64) : [n]i64 =
-  let _ = map (\rep -> assert (rep > 0) true) reps
   -- assert no zero length segments
+  let reps = map (\rep -> assert (rep > 0) true) reps
   let cumsum = scan (+) 0 reps
    in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
 
@@ -27,14 +27,14 @@ entry test_segment_start_indices reps =
    in map i32.i64 res
 
 def segments_end_indices_i32 [n] (reps:[n]i32) : [n]i32 =
-  let _ = assert (n > 0) true
   -- assert no zero length segments
+  let reps = assert (n > 0) reps
   let tmp = scan (+) (0) reps
    in map (\i -> i-1) tmp
 
 def segments_end_indices_i64 [n] (reps:[n]i64) : [n]i64 =
-  let _ = assert (n > 0) true
   -- assert no zero length segments
+  let reps = assert (n > 0) reps
   let tmp = scan (+) (0) reps
    in map (\i -> i-1) tmp
 
@@ -65,8 +65,8 @@ def gather_sums_i64 [n] [r] (reps : [n]i64) (segsum : [r]i64) : [n]i64 =
   let idxs = segments_end_indices_i64 reps
    in gather_i64 idxs segsum
 
-def idxs_to_flags_i32 [n] (reps:[n]i32) : ?[length].[length]bool =
-  let _ = map (\rep -> assert (rep > 0) true) reps
+def idxs_to_flags_i32 [n] (reps:[n]i32) : ?[l].[l]bool =
+  let reps = map (\rep -> assert (rep > 0) true) reps
   let cumsum = scan (+) 0 reps
   let idxs = map i64.i32 <| map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
   let length = i64.i32 <| reduce (+) 0 reps
@@ -75,7 +75,7 @@ def idxs_to_flags_i32 [n] (reps:[n]i32) : ?[length].[length]bool =
    in scatter canvas idxs vals
 
 def idxs_to_flags_i64 [n] (reps:[n]i64) : ?[l].[l]bool =
-  let _ = map (\rep -> assert (rep > 0) true) reps
+  let reps = map (\rep -> assert (rep > 0) true) reps
   let cumsum = scan (+) 0 reps
   let idxs = map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
   let length = reduce (+) 0 reps
@@ -85,7 +85,7 @@ def idxs_to_flags_i64 [n] (reps:[n]i64) : ?[l].[l]bool =
 
 -- Same as above, but `rv[0] == true`
 def idxs_to_flags_i64_2 [n] (reps:[n]i64) : ?[length].[length]bool =
-  let _ = map (\rep -> assert (rep > 0) true) reps
+  let reps = map (\rep -> assert (rep > 0) true) reps
   let cumsum        = scan (+) 0 reps
   let total_length  = cumsum[n-1]
   let segment_idxs  = map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
