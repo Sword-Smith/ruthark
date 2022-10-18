@@ -34,15 +34,15 @@ def one : XFieldElement = new_const BFieldElement.one
 -- def default : XFieldElement = one
 
 def is_zero ((c, b, a) : XFieldElement) : bool =
-  let zero = BFieldElement.zero in
-  zero == BFieldElement.canonicalize c
+  let zero = BFieldElement.zero
+  in zero == BFieldElement.canonicalize c
   && zero == BFieldElement.canonicalize b
   && zero == BFieldElement.canonicalize a
 
 def is_one ((c, b, a) : XFieldElement) : bool =
-  let zero = BFieldElement.zero in
-  let one = BFieldElement.one in
-  one == BFieldElement.canonicalize c
+  let zero = BFieldElement.zero
+  let one = BFieldElement.one
+  in one == BFieldElement.canonicalize c
   && zero == BFieldElement.canonicalize b
   && zero == BFieldElement.canonicalize a
 

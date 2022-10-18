@@ -1,33 +1,24 @@
 -- Math foundation
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
-module Polynomial = import "Polynomial"
-module MPolynomial = import "MPolynomial"
 
 -- Experiments
 module Fastlib = import "fastlib"
-module Matmul = import "matmul"
 module Parametric_module = import "parametric_module"
-
--- How to make imported functions callable
-entry matmul = Matmul.matmul
 
 type XFieldElementOpaque = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
 
+-- This definition is a odds with the one in `XFieldElement.fut`.
 type XFieldElement = [3]BFieldElement
 
-def inner_to_outer 
+def inner_to_outer
     (a: XFieldElementOpaque) : XFieldElement =
     [a.0, a.1, a.2]
 
 def outer_to_inner
     (a: XFieldElement) : XFieldElementOpaque =
     (a[0], a[1], a[2])
-
-type MPolynomial [p][m] = {coefficients: [p]([m]u64, XFieldElement)}
-
-
 
 def make_transposed_quotient_codewords
     [n][m][p][q]

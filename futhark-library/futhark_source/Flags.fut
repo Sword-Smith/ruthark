@@ -49,6 +49,9 @@ def segments_end_indices_i64 [n] (reps:[n]i64) : [n]i64 =
 -- output { [0, 2] }
 entry test_segment_end_indices reps = segments_end_indices_i32 reps
 
+def gather [p] [r] 't (idxs : [p]i64) (vals : [r]t) : [p]t =
+  map (\i -> vals[i]) idxs
+
 def gather_i32 [p] [r] (idxs : [p]i32) (vals : [r]i32) : [p]i32 =
   map (\i -> vals[i]) idxs
 
@@ -82,7 +85,7 @@ def idxs_to_flags_i64 [n] (reps:[n]i64) : ?[l].[l]bool =
    in scatter canvas idxs vals
 
 -- Same as above, but `rv[0] == true`
-def idxs_to_flags_i64_2 [n] (reps:[n]i64) : ?[length].[length]bool =
+def idxs_to_flags_i64_2 [n] (reps:[n]i64) : ?[l].[l]bool =
   let reps = map (\rep -> assert (rep > 0) rep) reps
   let cumsum        = scan (+) 0 reps
   let total_length  = cumsum[n-1]
@@ -106,6 +109,31 @@ entry test_idxs_to_flags reps =
   let reps_i64 = map i64.i32 reps
    in idxs_to_flags_i64 reps_i64
 
+-- Test test_idxs_to_flags_old
+-- ==
+-- entry: test_idxs_to_flags
+-- input  { [1i64, 2i64, 3i64] }
+-- output {
+-- [ true,
+--   false,
+--   true,
+--   false,
+--   false,
+--   true ]
+-- }
+
+-- Test test_idxs_to_flags2
+-- ==
+-- entry: idxs_to_flags
+-- input  { [1i64, 2i64, 3i64] }
+-- output {
+-- [ false, false, false, true,
+--   false, false, false, false,
+--   false, false, false, true,
+--   false, false, false, false,
+--   false, false, false, false,
+--   false, false, false, true ]
+-- }
 -- Test idxs
 -- ==
 -- entry: test_idxs_to_flags_2
