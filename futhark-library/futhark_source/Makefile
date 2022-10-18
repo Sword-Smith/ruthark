@@ -19,4 +19,4 @@ test: $(SRC_FILES)
 
 .PHONY: clean
 clean:
-	git clean -xi
+	git clean -Xi
