@@ -1,4 +1,4 @@
-import "segmented"
+import "lib/github.com/Ulrik-dk/segmented/segmented"
 
 -- Math foundation
 module BFieldElement = import "BFieldElement"
@@ -51,7 +51,6 @@ def kernel_padded_impl
 
 def ex_scan 'a [n] (op: a -> a -> a) (ne: a) (as: [n]a) : [n]a =
     let inc_scan = scan op ne as
-
     let res_almost = rotate (-1) inc_scan
     in res_almost with [0] = ne
 
