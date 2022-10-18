@@ -192,3 +192,15 @@ entry mul_test_array (a_coeffs: [3]u64) (b_coeffs: [3]u64) : [3]u64 =
   let a = new_u64(a_coeffs)
   let b = new_u64(b_coeffs)
   in tripple2array (mul a b)
+
+-- Segmented scan with XFieldElementaddition
+-- Benchmark against version from library
+def segmented_scan_add [n] (flags : [n]bool) (vals : [n]XFieldElement) : ?[l].[l]XFieldElement =
+  let pairs = scan ( \(v1,f1) (v2,f2) ->
+                       let f = f1 || f2
+                       let v = if f2 then v2 else add v1 v2
+                       in (v,f) ) (zero, false) (zip vals flags)
+  let (res, _) = unzip pairs
+   in res
+
+

@@ -36,7 +36,7 @@ def sum_terms_per_poly [n] [m] [t] [r] (term_exp_mtx : [t][m]u8) (qs_flags : [r]
   -- Here coefficient vector should multiplied
   let evaluated_terms = eval_all_terms term_exp_mtx eval_points_mtx
   let all_terms = flatten evaluated_terms :> [r]XFieldElement
-  let sum_arr = segmented_add qs_flags all_terms
+  let sum_arr = XFieldElement.segmented_scan_add qs_flags all_terms
   in sum_arr
 
 def extract_poli = 1
