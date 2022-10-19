@@ -15,7 +15,14 @@ type XFieldElement = XFieldElement.XFieldElement
 def map2d [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f) mtx
 def zipWith [p] 't (f : t -> t -> t) (v1 : [p]t) (v2 : [p]t) : [p]t = map2 f v1 v2
 
-def eval_term_on_point [m]
+
+-- [p] the number of *p*olynomials
+-- [t] the sum of the number of *t*erms across all polynomials
+-- [m] the number of variabels in each polynomial
+-- [n] the number of evaluation points, i.e. length of FRI-domain, omega
+
+def eval_term_on_point
+  [m]
   (coefficient : XFieldElement)
   (term_exp : [m]u8)
   (point : [m]XFieldElement)
@@ -23,30 +30,53 @@ def eval_term_on_point [m]
   let factors = map2 XFieldElement.mod_pow_u8 point term_exp
    in reduce_comm XFieldElement.mul coefficient factors
 
-def eval_term_on_all_points [m] [n] (eval_points_mtx : [n][m]XFieldElement) (coefficient : XFieldElement) (term_exp : [m]u8) : [n]XFieldElement =
+def eval_term_on_all_points
+  [m] [n]
+  (eval_points_mtx : [n][m]XFieldElement)
+  (coefficient : XFieldElement)
+  (term_exp : [m]u8)
+  : [n]XFieldElement =
   map (eval_term_on_point coefficient term_exp) eval_points_mtx
 
 -- t = qs_sum = number of terms
-def eval_all_terms [n] [m] [t] (eval_points_mtx : [n][m]XFieldElement) (coefficients : [t]XFieldElement) (term_exp_mtx : [t][m]u8)  : ?[tn].[tn]XFieldElement =
+def eval_all_terms
+  [n] [m] [t]
+  (eval_points_mtx : [n][m]XFieldElement)
+  (coefficients : [t]XFieldElement)
+  (term_exp_mtx : [t][m]u8)
+  : ?[tn].[tn]XFieldElement =
   let tn = t * n
   let all_terms_all_points = map2 (eval_term_on_all_points eval_points_mtx) coefficients term_exp_mtx
    in flatten all_terms_all_points :> [tn]XFieldElement
 
 -- r = t x n
-def sum_terms_per_poly [n] [m] [t] [p] (term_exp_mtx : [t][m]u8) (qs : [p]i64) (eval_points_mtx : [n][m]XFieldElement) (coefficients : [t]XFieldElement) : ?[tn].[tn]XFieldElement =
+def sum_terms_per_poly
+  [n] [m] [t] [p]
+  (term_exp_mtx : [t][m]u8)
+  (qs : [p]i64)
+  (eval_points_mtx : [n][m]XFieldElement)
+  (coefficients : [t]XFieldElement)
+  : ?[tn].[tn]XFieldElement =
   let tn = t * n
   let evaluated_terms = eval_all_terms eval_points_mtx coefficients term_exp_mtx :> [tn]XFieldElement
   let qs_flags = Flags.idxs_to_flags_i64 qs :> [tn]bool
   let segmented_sum = XFieldElement.segmented_scan_add qs_flags evaluated_terms
    in segmented_sum
 
-def eval_polys [n] [m] [t] [p] (term_exp_mtx : [t][m]u8) (qs : [p]i64) (eval_points_mtx : [n][m]XFieldElement) (coefficients : [t]XFieldElement) : [p]XFieldElement =
+def eval_polys
+  [n] [m] [t] [p]
+  (term_exp_mtx : [t][m]u8)
+  (qs : [p]i64)
+  (eval_points_mtx : [n][m]XFieldElement)
+  (coefficients : [t]XFieldElement)
+  : [p]XFieldElement =
   let segmented_sum = sum_terms_per_poly term_exp_mtx qs eval_points_mtx coefficients
   let sum_indices = Flags.segments_end_indices_i64 qs
   let sums = Flags.gather sum_indices segmented_sum
    in sums
 
-def main [n] [m] [t] [p]
+def main
+    [n] [m] [t] [p]
     (term_exp_mtx : [t][m]u8)
     (qs : [p]i64)
     (eval_points_mtx : [n][m]XFieldElement)
