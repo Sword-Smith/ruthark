@@ -12,6 +12,10 @@ def new_u64 (coeffs: [3]u64) : XFieldElement = new coeffs[0] coeffs[1] coeffs[2]
 
 def new_const (element: BFieldElement) : XFieldElement = new element BFieldElement.zero BFieldElement.zero
 
+def from_u64 (number: u64) : XFieldElement = BFieldElement.new number |> new_const
+
+def from_i32 (number: i32) : XFieldElement = u64.i32 number |> BFieldElement.new |> new_const
+
 def tripple2array (c, b, a) : [3]u64 = [c, b, a]
 def array2tripple (cba: [3]u64) : XFieldElement = new cba[0] cba[1] cba[2]
 
@@ -30,15 +34,15 @@ def one : XFieldElement = new_const BFieldElement.one
 -- def default : XFieldElement = one
 
 def is_zero ((c, b, a) : XFieldElement) : bool =
-  let zero = BFieldElement.zero in
-  zero == BFieldElement.canonicalize c
+  let zero = BFieldElement.zero
+  in zero == BFieldElement.canonicalize c
   && zero == BFieldElement.canonicalize b
   && zero == BFieldElement.canonicalize a
 
 def is_one ((c, b, a) : XFieldElement) : bool =
-  let zero = BFieldElement.zero in
-  let one = BFieldElement.one in
-  one == BFieldElement.canonicalize c
+  let zero = BFieldElement.zero
+  let one = BFieldElement.one
+  in one == BFieldElement.canonicalize c
   && zero == BFieldElement.canonicalize b
   && zero == BFieldElement.canonicalize a
 
@@ -119,8 +123,18 @@ def mul ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldEl
           if (a1 == 0) && (b1 == 0) then xfebfemul (c0, b0, a0) (c1, b1, a1)
           else xfexfemul (c0, b0, a0) (c1, b1, a1)
 
+def mul_bfe ((c0, b0, a0) : XFieldElement) (bfe : BFieldElement) : XFieldElement =
+  ( BFieldElement.mul c0 bfe
+  , BFieldElement.mul b0 bfe
+  , BFieldElement.mul a0 bfe
+  )
+
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
+
+-- def rem ((c0, b0, a0) : XFieldElement) ((c1, b1, a1) : XFieldElement) : XFieldElement = one
+-- Not supported https://futhark-book.readthedocs.io/en/latest/language.html#parametric-polymorphism
+-- def mod_pow 't (element : XFieldElement) (exponent: t) : XFieldElement =
 
 def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
@@ -129,12 +143,41 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
       else (mul x x, i>>1, result)
   in result
 
+def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =
+  let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
+      if i % 2 == 1
+      then (mul x x, i>>1, mul x result)
+      else (mul x x, i>>1, result)
+   in result
+
 def mod_pow_u8 (element : XFieldElement) (exponent: u8) : XFieldElement =
   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
       if i % 2 == 1
       then (mul x x, i>>1, mul x result)
       else (mul x x, i>>1, result)
-  in result
+   in result
+
+-- Test mul
+-- ==
+-- entry: test_mod_pow_u8
+-- input { 1 1 }
+-- output { [1, 0, 0] }
+-- input { 0 1 }
+-- output { [0, 0, 0] }
+-- input { 1 0 }
+-- output { [1, 0, 0] }
+-- input { 0 0 }
+-- output { [1, 0, 0] }
+-- input { 0 2 }
+-- output { [0, 0, 0] }
+-- input { 3 3 }
+-- output { [27, 0, 0] }
+entry test_mod_pow_u8 (xfe_raw : i32) (exp_raw : i32) : [3]i32 =
+  let xfe = from_i32 xfe_raw
+  let exp = u8.i32 exp_raw
+  let res = mod_pow_u8 xfe exp
+  let arr = tripple2array res
+  in map i32.u64 arr
 
 -- u64.highest = 18446744073709551615u64
 
@@ -151,11 +194,27 @@ def mod_pow_u8 (element : XFieldElement) (exponent: u8) : XFieldElement =
 -- output { [0u64, 0u64, 0u64] }
 -- input { [1u64, 0u64, 0u64] [0u64, 0u64, 0u64] }
 -- output { [0u64, 0u64, 0u64] }
--- input { [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64] [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64] }
+-- input { [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64]
+--         [18446744073709551615u64, 18446744073709551615u64, 18446744073709551615u64]
+-- }
 -- output { [12884901885u64, 18446744030759878666u64, 18446744017874976781u64] }
--- input { [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64] [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64] }
+-- input { [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64]
+--         [0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64, 0xffff_ffff_ffff_ffffu64]
+-- }
 -- output { [12884901885u64, 18446744030759878666u64, 18446744017874976781u64] }
 entry mul_test_array (a_coeffs: [3]u64) (b_coeffs: [3]u64) : [3]u64 =
   let a = new_u64(a_coeffs)
   let b = new_u64(b_coeffs)
   in tripple2array (mul a b)
+
+-- Segmented scan with XFieldElementaddition
+-- Benchmark against version from library
+def segmented_scan_add [n] (flags : [n]bool) (vals : [n]XFieldElement) : ?[l].[l]XFieldElement =
+  let pairs = scan ( \(v1,f1) (v2,f2) ->
+                       let f = f1 || f2
+                       let v = if f2 then v2 else add v1 v2
+                       in (v,f) ) (zero, false) (zip vals flags)
+  let (res, _) = unzip pairs
+   in res
+
+

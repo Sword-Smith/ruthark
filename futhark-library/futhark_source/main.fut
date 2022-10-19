@@ -3,16 +3,11 @@ import "lib/github.com/Ulrik-dk/segmented/segmented"
 -- Math foundation
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
-module Polynomial = import "Polynomial"
-module MPolynomial = import "MPolynomial"
 
 -- Experiments
 module Fastlib = import "fastlib"
-module Matmul = import "matmul"
 module Parametric_module = import "parametric_module"
 
--- How to make imported functions callable
-entry matmul = Matmul.matmul
 
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
