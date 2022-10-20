@@ -16,10 +16,10 @@ def map2d [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f) mtx
 def zipWith [p] 't (f : t -> t -> t) (v1 : [p]t) (v2 : [p]t) : [p]t = map2 f v1 v2
 
 
--- [p] the number of *p*olynomials
--- [t] the sum of the number of *t*erms across all polynomials
--- [m] the number of variabels in each polynomial
--- [n] the number of evaluation points, i.e. length of FRI-domain, omega
+-- [p] the number of [p]olynomials
+-- [t] the sum of the number of [t]erms across all polynomials
+-- [m] the number of variabels in each polynomial, i.e. 2x colu[m]n_count
+-- [n] the number of evaluatio[n] points, i.e. length of FRI-domain, |omega|
 
 def eval_term_on_point
   [m]
@@ -76,13 +76,13 @@ def eval_polys
    in sums
 
 def main
-    [n] [m] [t] [p]
-    (term_exp_mtx : [t][m]u8)
-    (qs : [p]i64)
-    (eval_points_mtx : [n][m]XFieldElement)
-    (coefficients : [t]XFieldElement)
-    (zerofiers : [p]XFieldElement)
-    : [p]XFieldElement =
+  [n] [m] [t] [p]
+  (term_exp_mtx : [t][m]u8)
+  (qs : [p]i64)
+  (eval_points_mtx : [n][m]XFieldElement)
+  (coefficients : [t]XFieldElement)
+  (zerofiers : [p]XFieldElement)
+  : [p]XFieldElement =
   let evaluated_polynomials = eval_polys term_exp_mtx qs eval_points_mtx coefficients
   let quotients = map2 XFieldElement.mul evaluated_polynomials zerofiers
    in quotients
