@@ -16,12 +16,37 @@ Ok so you want to create and call GPU code from Rust. It will involve these step
 3. Import the generated library in your Cargo.toml.
 4. Write your wrapping-code by pattern-matching on the code in [triton-vm-gpu/../gpu_kernels.rs](https://neptune.builders/ulrik-dk/triton-vm-gpu/src/branch/master/triton-vm/src/table/gpu_kernels.rs).
 
-## Dependencies
-### Futhark
+## Installation of dependencies
+* Futharks dependencies
+* Futhark
+* CUDA
+* ISPC (very optional)
+
+### Ubuntu
+```bash
+# Install Futhark (by first installing linuxbrew)
+/bin/bash-c"/bin/bash-c" /bin/bash -c "(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Add /home/linuxbrew/.linuxbrew/bin to your PATH:
+export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH # You should add this to your ~/.bashrc
+brew install futhark # No sudo needed!
+
+# Clone repo
+$ git clone ssh://git@neptune.builders:2222/ulrik-dk/ruthark.git
+ 
+# Install `libclang-dev`
+$ sudo apt-get install libclang-dev
+
+# Run the Futhark program
+$ make all
+```
+
+### Arch
+#### Futhark
 * [the latest futhark release](https://futhark-lang.org/releases/)
 * [futhark dependencies](https://futhark.readthedocs.io/en/latest/installation.html#dependencies)
-* clang
-### CUDA
+
+#### CUDA
 * install the cuda package (depending on your distro)
 * arch: community/cuda
 * find your cuda path, and set it as an environment variable (e.g. in your .bashrc, but you probably have a nicer place to put it)
