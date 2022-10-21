@@ -1,64 +1,29 @@
-# A rust/futhark demo
+# A library for accelerating some Neptune stuff with GPU's via futhark
+## How do I use Futhark in Rust?
+Ok so you want to create and call GPU code from Rust. It will involve these steps:
+0. Aquiring all software dependencies (see the relevant section).
+1. Writing a [futhark entry-point](https://futhark.readthedocs.io/en/latest/language-reference.html#entry-points) in a futhark file, such as futhark-library/futhark_source/main.fut.
+2. Creating a rust crate with an executable that depends on [genfut](https://github.com/Ulrik-dk/genfut.git), with a main function that calls `genfut()`, such as is done in `futhark-library/src/main.rs`.
+3. Run this crate, to generate a library, such as `generated_lib`. This will be generated from wherever the executable is run.
+4. Compile the generated library.
+5. Import the generated library in your rust project, and use it, as is done in [triton-vm-gpu/../gpu_kernels.rs](https://neptune.builders/ulrik-dk/triton-vm-gpu/src/branch/master/triton-vm/src/table/gpu_kernels.rs)
+6. This means creating a FutharkContext, transforming your data into Futhark arrays (the rust class), calling the function in the context, (this will be named after your entrypoint in your `main.fut`). The result will then have to be unpacked awaited, unpacked etc.
 
-Investigating and experimenting with various ways of using futhark in rust.
+## Dependencies
+### Futhark
+[releases](https://futhark-lang.org/releases/)
+clang
+TODO
+### CUDA
+* TODO
+arch packages: cuda
+environment variables
 
-## Ok so do I try this out?
-0. Install Futhark if you haven't already. I prefer a precompiled snapshot: https://futhark.readthedocs.io/en/stable/installation.html#installing-from-a-precompiled-snapshot.
-1. Clone this repo.
-2. `make all`.
+#### something like this, might be etc instead, depending on your system
+export MYCUDAPATH=/opt/cuda
+export CPATH=${MYCUDAPATH}/include:$CPATH
+export LD_LIBRARY_PATH=${MYCUDAPATH}/lib64/:$LD_LIBRARY_PATH
+export LIBRARY_PATH=${MYCUDAPATH}/lib64:$LIBRARY_PATH
 
-## What happened?
-
-Assuming it worked with no errors, it compiled the sub-modules in a very specific order, and then executed a rust binary that makes use of a futhark backend to perform this matrix multiplication:
-
-```
-1 2         2 3         10 5
-3 4    *    4 1    =    22 13
-```
-
-The futhark code is:
-
-```futhark
-let dotprod [n] (xs: [n]i32) (ys: [n]i32): i32 =
-    i32.(reduce (+) (i32 0) (map2 (*) xs ys))
-
-entry matmul [n][p][m] (xss: [n][p]i32) (yss: [p][m]i32): [n][m]i32 =
-    map (\xs -> map (dotprod xs) (transpose yss)) xss
-```
-
-There are a lot of moving parts, which you can see if you `make help`.
-
-## What you need to use genfut
-
-1. A futhark sourcefile with an entrypoint.
-
-2. The module-generator, which will generate a rust-module that wraps around the futhark sourcefile, and exposes a rust wrapper around the entrypoint.
-
-3. The generated library/module resulting from running the generator.
-
-4. A rust library or test or binary that imports the generated module, and uses it.
-
-It is might be useful to segregate all of these. You *could* possibly combine all the first three in one, and then just 'update' the crate by changing the futhark code, rerunning the generator, and then checking the generated library and the new futhark code into git. That way, they follow each other around, which is probably useful. 
-
-The issue, then, is that the generator might have its own dependencies overwritten by itself. For this reason, I am using a workspace.
-
-Important: The generator finds the futhark source file from wherever you run the binary, and it spits out the module from wherever you run the binary. Therefore, please run the binary from the workspace folder, so that the generated library is not dumped into the generator-module as a subfolder. Please also specify, in `generator/src/main.rs`, the full path __from the workspace folder__ to the specific file with an entrypoint, which you want the module to wrap around. 
-
-Since you can only specify one file, you will want to segregate futhark implementations from the outer entry-point file, which should import from other futhark fules and expose entry-points to the generator.
-
-
-## Important stuff
-
-https://futhark-lang.org/blog/2022-07-01-how-futhark-talks-to-its-friends.html
-
-https://github.com/Erk-/genfut
-
-## Related stuff we probably wont need
-
-https://doc.rust-lang.org/std/ffi/index.html
-
-[sep. 2022] https://github.com/zshipko/futhark-bindgen/tree/main/examples/rust
-
-[oct. 2021] https://github.com/SafariMonkey/futhark-experiments
-
-[oct. 2020] https://github.com/Michael-F-Bryan/futhark-rs
+### Other
+TODO
