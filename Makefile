@@ -1,9 +1,5 @@
 default: help
 
-export MYCUDAPATH=/opt/cuda
-export CPATH=${MYCUDAPATH}/include:$CPATH
-export LD_LIBRARY_PATH=${MYCUDAPATH}/lib64/:$LD_LIBRARY_PATH
-export LIBRARY_PATH=${MYCUDAPATH}/lib64:$LIBRARY_PATH
 
 help:
 	cat Makefile
