@@ -1,4 +1,4 @@
-# A library for accelerating some Neptune stuff with GPU's via futhark
+# Ruthark: Exploiting the parallelism in Neptune.
 ## How do I use Futhark in Rust?
 Ok so you want to create and call GPU code from Rust. It will involve these steps:
 
@@ -64,5 +64,12 @@ $ make all
 
 ### ISPC
 If you want to use the ISPC backend, which can give some appreciable CPU speedup, you can install the dependency, and use it as your backend in your generators call to `genfut()`. WARNING: Compilation may take a very long time.
-
 * arch: community/ispc
+
+## Futhark readinglist
+* [index](https://futhark-lang.org/index.html)
+* [Language Reference](https://futhark.readthedocs.io/en/latest/language-reference.html)
+* [Futhark Compared to Other Functional Languages](https://futhark.readthedocs.io/en/stable/versus-other-languages.html)
+* [Futhark Library Documentation](https://futhark-lang.org/docs/prelude/)
+* [Parallel Programming in Futhark](https://futhark-book.readthedocs.io/en/latest/)
+* [Writing Fast Futhark Programs](https://futhark.readthedocs.io/en/latest/performance.html)
