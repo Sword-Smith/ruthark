@@ -52,13 +52,6 @@ int futhark_free_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *ar
 int futhark_values_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr, bool *data);
 CUdeviceptr futhark_values_raw_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
 const int64_t *futhark_shape_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
-struct futhark_i32_2d;
-struct futhark_i32_2d *futhark_new_i32_2d(struct futhark_context *ctx, const int32_t *data, int64_t dim0, int64_t dim1);
-struct futhark_i32_2d *futhark_new_raw_i32_2d(struct futhark_context *ctx, const CUdeviceptr data, int64_t offset, int64_t dim0, int64_t dim1);
-int futhark_free_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
-int futhark_values_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr, int32_t *data);
-CUdeviceptr futhark_values_raw_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
-const int64_t *futhark_shape_i32_2d(struct futhark_context *ctx, struct futhark_i32_2d *arr);
 struct futhark_i64_1d;
 struct futhark_i64_1d *futhark_new_i64_1d(struct futhark_context *ctx, const int64_t *data, int64_t dim0);
 struct futhark_i64_1d *futhark_new_raw_i64_1d(struct futhark_context *ctx, const CUdeviceptr data, int64_t offset, int64_t dim0);
@@ -91,7 +84,6 @@ int futhark_entry_kernel_histogram_with_is(struct futhark_context *ctx, struct f
 int futhark_entry_kernel_padded(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_3d *in2, const struct futhark_u64_3d *in3);
 int futhark_entry_kernel_segmented_reduce(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4);
 int futhark_entry_kernel_segmented_reduce_with_flags(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_bool_1d *in4, const struct futhark_bool_1d *in5);
-int futhark_entry_matmul(struct futhark_context *ctx, struct futhark_i32_2d **out0, const struct futhark_i32_2d *in0, const struct futhark_i32_2d *in1);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);

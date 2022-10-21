@@ -27375,50 +27375,6 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct futhark_i32_2d {
-    _unused: [u8; 0],
-}
-extern "C" {
-    pub fn futhark_new_i32_2d(
-        ctx: *mut futhark_context,
-        data: *const i32,
-        dim0: i64,
-        dim1: i64,
-    ) -> *mut futhark_i32_2d;
-}
-extern "C" {
-    pub fn futhark_new_raw_i32_2d(
-        ctx: *mut futhark_context,
-        data: CUdeviceptr,
-        offset: i64,
-        dim0: i64,
-        dim1: i64,
-    ) -> *mut futhark_i32_2d;
-}
-extern "C" {
-    pub fn futhark_free_i32_2d(
-        ctx: *mut futhark_context,
-        arr: *mut futhark_i32_2d,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn futhark_values_i32_2d(
-        ctx: *mut futhark_context,
-        arr: *mut futhark_i32_2d,
-        data: *mut i32,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn futhark_values_raw_i32_2d(
-        ctx: *mut futhark_context,
-        arr: *mut futhark_i32_2d,
-    ) -> CUdeviceptr;
-}
-extern "C" {
-    pub fn futhark_shape_i32_2d(ctx: *mut futhark_context, arr: *mut futhark_i32_2d) -> *const i64;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct futhark_i64_1d {
     _unused: [u8; 0],
 }
@@ -27603,14 +27559,6 @@ extern "C" {
         in3: *const futhark_u64_2d,
         in4: *const futhark_bool_1d,
         in5: *const futhark_bool_1d,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn futhark_entry_matmul(
-        ctx: *mut futhark_context,
-        out0: *mut *mut futhark_i32_2d,
-        in0: *const futhark_i32_2d,
-        in1: *const futhark_i32_2d,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
