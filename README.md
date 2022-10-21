@@ -1,6 +1,7 @@
 # A library for accelerating some Neptune stuff with GPU's via futhark
 ## How do I use Futhark in Rust?
 Ok so you want to create and call GPU code from Rust. It will involve these steps:
+
 0. Aquiring all software dependencies (see the relevant section).
 1. Writing a [futhark entry-point](https://futhark.readthedocs.io/en/latest/language-reference.html#entry-points) in a futhark file, such as `futhark-library/futhark_source/main.fut`.
 2. Creating a rust crate with an executable that depends on [genfut](https://github.com/Ulrik-dk/genfut.git), with a main function that calls `genfut()`, such as is done in `futhark-library/src/main.rs`.
