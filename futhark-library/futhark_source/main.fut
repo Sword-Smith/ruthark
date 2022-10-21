@@ -116,12 +116,18 @@ def kernel_histogram_impl
         ) zerofier_inverse_1d evaluation_point_2d
 
 
+-- TODO:
+-- Most expontents are always 0, and most of the rest are 1
+-- Exponents are a property of the virtual machine, not a given evm program
+-- so they could be represented by futhark code, instead of input data here.
+
+-- Zerofier could be generated in futhark
 def kernel_histogram_with_is_impl
     [n][m][p][pq]
     ( zerofier_inverse_1d:  [n]XFieldElement)
-    ( evaluation_point_2d:  [n]    [m]XFieldElement)
-    ( exp_2d_seg:              [pq][m]u64)
-    ( coefficient_1d_seg:      [pq]XFieldElement)
+    ( evaluation_point_2d:  [n]    [m]XFieldElement) -- Extension codewords
+    ( exp_2d_seg:              [pq][m]u64)           -- Exponents of AIR
+    ( coefficient_1d_seg:      [pq]XFieldElement)    -- Coefficients of AIR (that is, Multivariate Polynomials)
     ( is:                      [pq]i64)
     : [n][p]XFieldElement =
         map2 (\ zerofier_inverse evaluation_point_1d ->
@@ -130,9 +136,34 @@ def kernel_histogram_with_is_impl
            in  map (zerofier_inverse ^*^) reduced
         ) zerofier_inverse_1d evaluation_point_2d
 
+-------------- Experiment
+def inner_redo_map_segregated
+    ( exp_2d )
+    ( coefficient_1d )
+    ( evaluation_point_1d )
+    ( evaluation_point_muted_1d )
+    =
+    map2 (\ exp_1d coefficient ->
+        let foo = map2 (%**) evaluation_point_1d exp_1d
+        let bar = reduce_comm (^*^) XFieldElement.one foo 
+        let bob = reduce_comm (^*^) XFieldElement.one evaluation_point_muted_1d
+        in bar ^*^ bob ^*^ coefficient
+    ) exp_2d coefficient_1d
 
-
----------------- Everything below this is boring entry-point wrapping ----------------
+def kernel_histogram_with_is_and_muted_impl
+    [n][m][p][pq][muted]
+    ( zerofier_inverse_1d:        [n]XFieldElement)
+    ( evaluation_point_2d:        [n]    [m]XFieldElement)
+    ( evaluation_point_muted_2d:  [n]    [muted]XFieldElement)
+    ( exp_2d_seg:              [pq]      [m]u64)
+    ( coefficient_1d_seg:      [pq]XFieldElement)
+    ( is:                      [pq]i64)
+    : [n][p]XFieldElement =
+        map3 (\ zerofier_inverse evaluation_point_1d evaluation_point_muted_1d->
+           let innermapped = inner_redo_map_segregated exp_2d_seg coefficient_1d_seg evaluation_point_1d evaluation_point_muted_1d
+           let reduced = hist (^+^) XFieldElement.zero p is innermapped
+           in  map (zerofier_inverse ^*^) reduced
+        ) zerofier_inverse_1d evaluation_point_2d evaluation_point_muted_2d
 
 type XFieldElement_flat = [3]BFieldElement
 
@@ -143,6 +174,30 @@ def inner_to_outer
 def outer_to_inner
     (a: XFieldElement_flat) : XFieldElement =
     (a[0], a[1], a[2])
+
+
+
+-----------------
+
+
+---------------- Everything below this is boring entry-point wrapping ----------------
+
+-- entry kernel_histogram_with_is_and_muted
+--     [n][m][p][pq][muted]
+--     ( zerofier_inverse_1d: [n]XFieldElement_flat)
+--     ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
+--     ( evaluation_point_muted_2d:  [n][muted]XFieldElement_flat)
+--     ( exp_2d_seg:             [pq][m]u64)
+--     ( coefficient_1d_seg:     [pq]XFieldElement_flat)
+--     ( q_1d:                  [p]i64)
+--     ( is:                     [pq]i64)
+--     : [n][p]XFieldElement_flat =
+--     let inner_zerofier_inverse_1d = map outer_to_inner zerofier_inverse_1d
+--     let inner_evaluation_point_2d = map (map outer_to_inner) evaluation_point_2d
+--     let inner_exp_3d = exp_2d_seg
+--     let inner_coefficient_2d = map outer_to_inner coefficient_1d_seg
+--     let inner_res = kernel_histogram_with_is_and_muted_impl inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d q_1d
+--     in map (map inner_to_outer) inner_res
 
 entry kernel_padded
     [n][m][p][q]
@@ -164,13 +219,13 @@ def generalised_wrapper
     ( kernel_f )
     ( zerofier_inverse_1d )
     ( evaluation_point_2d )
-    ( exps_segs )
+    ( exp_3d )
     ( coefficient_1d_seg )
     ( q_1d )
      =
     let inner_zerofier_inverse_1d = map outer_to_inner zerofier_inverse_1d
     let inner_evaluation_point_2d = map (map outer_to_inner) evaluation_point_2d
-    let inner_exp_3d = exps_segs
+    let inner_exp_3d = exp_3d
     let inner_coefficient_2d = map outer_to_inner coefficient_1d_seg
     let inner_res = kernel_f inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d q_1d
     in map (map inner_to_outer) inner_res
