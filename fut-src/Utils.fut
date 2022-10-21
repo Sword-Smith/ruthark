@@ -1,38 +1,22 @@
 def segments_start_indices_i32 [n] (reps:[n]i32) : [n]i32 =
   let reps = map (\rep -> assert (rep > 0) rep) reps
-<<<<<<< HEAD:fut-src/Utils.fut
   let reps = assert (n > 0) reps
   let cumsum = scan (+) 0 reps
    in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
 def segments_start_indices_i64 [n] (reps:[n]i64) : [n]i64 =
   let reps = map (\rep -> assert (rep > 0) rep) reps
   let reps = assert (n > 0) reps
-=======
-  let cumsum = scan (+) 0 reps
-   in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
-
-def segments_start_indices_i64 [n] (reps:[n]i64) : [n]i64 =
-  let reps = map (\rep -> assert (rep > 0) rep) reps
->>>>>>> a5f723c (Move tests):futhark-library/futhark_source/Utils.fut
   let cumsum = scan (+) 0 reps
    in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
 
 def segments_end_indices_i32 [n] (reps:[n]i32) : [n]i32 =
-<<<<<<< HEAD:fut-src/Utils.fut
   let reps = map (\rep -> assert (rep > 0) rep) reps
-=======
-  -- assert no zero length segments
->>>>>>> a5f723c (Move tests):futhark-library/futhark_source/Utils.fut
   let reps = assert (n > 0) reps
   let tmp = scan (+) (0) reps
    in map (\i -> i-1) tmp
 
 def segments_end_indices_i64 [n] (reps:[n]i64) : [n]i64 =
-<<<<<<< HEAD:fut-src/Utils.fut
   let reps = map (\rep -> assert (rep > 0) rep) reps
-=======
-  -- assert no zero length segments
->>>>>>> a5f723c (Move tests):futhark-library/futhark_source/Utils.fut
   let reps = assert (n > 0) reps
   let tmp = scan (+) (0) reps
    in map (\i -> i-1) tmp
@@ -91,9 +75,6 @@ def segmented_scan_add [n] (flags:[n]bool) (vals:[n]i32) : [n]i32 =
   let (res,_) = unzip pairs
    in res
 
-<<<<<<< HEAD:fut-src/Utils.fut
 def map2d [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f) mtx
 
 def zipWith [p] 't (f : t -> t -> t) (v1 : [p]t) (v2 : [p]t) : [p]t = map2 f v1 v2
-=======
->>>>>>> a5f723c (Move tests):futhark-library/futhark_source/Utils.fut
