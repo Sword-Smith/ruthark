@@ -1,4 +1,9 @@
-# nvidia-smi - shows you the processes using nvidia gpu memory
+default: help
+
+export MYCUDAPATH=/opt/cuda
+export CPATH=${MYCUDAPATH}/include:$CPATH
+export LD_LIBRARY_PATH=${MYCUDAPATH}/lib64/:$LD_LIBRARY_PATH
+export LIBRARY_PATH=${MYCUDAPATH}/lib64:$LIBRARY_PATH
 
 help:
 	cat Makefile
@@ -8,6 +13,10 @@ all:
 	@$(MAKE) generated --no-print-directory
 	# @$(MAKE) tf --no-print-directory
 
+# show you the processes using nvidia gpu memory
+mygpu:
+	nvidia-smi
+
 print_stage:
 	@echo ""
 	##
@@ -16,32 +25,27 @@ print_stage:
 	@echo ""
 
 SRC_DIR := futhark_source
-fc:	
+fc:
 	@PARAM="FUTHARK CHECK" $(MAKE) print_stage --no-print-directory
 	@cd futhark-library && $(MAKE) -C $(SRC_DIR) --no-print-directory
-	
+
 updatefut:
 	@cd futhark-library/$(SRC_DIR) ; futhark pkg upgrade ; futhark pkg sync
 
-exports:
-	export CPATH=/opt/cuda/include:$CPATH
-	export LD_LIBRARY_PATH=/opt/cuda/lib64/:$LD_LIBRARY_PATH
-	export LIBRARY_PATH=/opt/cuda/lib64:$LIBRARY_PATH
-
 generated:
-	@PARAM="COMPILING LIBRARY GENERATOR" $(MAKE) print_stage 
+	@PARAM="COMPILING LIBRARY GENERATOR" $(MAKE) print_stage
 	cd futhark-library && cargo build && cargo run
 
 	cp -fur ./futhark-library/generated_lib ./
 
-	@PARAM="COMPILING LIBRARY" $(MAKE) print_stage 
+	@PARAM="COMPILING LIBRARY" $(MAKE) print_stage
 	cd generated_lib  && RUSTFLAGS=-Awarnings cargo build
-	
-	@PARAM="QUIETLY FIX GENERATED CODE" $(MAKE) print_stage 
+
+	@PARAM="QUIETLY FIX GENERATED CODE" $(MAKE) print_stage
 	cd generated_lib  && cargo fix --allow-dirty --allow-staged --allow-no-vcs 2> /dev/null
 
 tf:
-	@PARAM="TWENTY-FIRST" $(MAKE) print_stage 
+	@PARAM="TWENTY-FIRST" $(MAKE) print_stage
 	cd twenty-first && cargo build && cargo test futhark
 
 clean:
