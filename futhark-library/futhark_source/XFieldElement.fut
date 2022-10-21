@@ -131,6 +131,7 @@ def mul_bfe ((c0, b0, a0) : XFieldElement) (bfe : BFieldElement) : XFieldElement
   , BFieldElement.mul a0 bfe
   )
 
+
 def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   mul a (inverse b)
 

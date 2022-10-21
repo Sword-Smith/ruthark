@@ -5,3 +5,8 @@
 !**/futhark.pkg
 !*/
 lib/
+*
+!*.fut
+!Makefile
+!.gitignore
+!futhark.pkg
