@@ -5,6 +5,7 @@ help:
 	cat Makefile
 
 all:
+	@$(MAKE) updatefut
 	@$(MAKE) fc --no-print-directory
 	@$(MAKE) generated --no-print-directory
 	# @$(MAKE) tf --no-print-directory
