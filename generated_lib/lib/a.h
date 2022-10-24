@@ -73,17 +73,31 @@ int futhark_free_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr)
 int futhark_values_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr, uint64_t *data);
 CUdeviceptr futhark_values_raw_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
 const int64_t *futhark_shape_u64_3d(struct futhark_context *ctx, struct futhark_u64_3d *arr);
+struct futhark_u8_2d;
+struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1);
+struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, const CUdeviceptr data, int64_t offset, int64_t dim0, int64_t dim1);
+int futhark_free_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+int futhark_values_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr, uint8_t *data);
+CUdeviceptr futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+const int64_t *futhark_shape_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+struct futhark_u8_3d;
+struct futhark_u8_3d *futhark_new_u8_3d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1, int64_t dim2);
+struct futhark_u8_3d *futhark_new_raw_u8_3d(struct futhark_context *ctx, const CUdeviceptr data, int64_t offset, int64_t dim0, int64_t dim1, int64_t dim2);
+int futhark_free_u8_3d(struct futhark_context *ctx, struct futhark_u8_3d *arr);
+int futhark_values_u8_3d(struct futhark_context *ctx, struct futhark_u8_3d *arr, uint8_t *data);
+CUdeviceptr futhark_values_raw_u8_3d(struct futhark_context *ctx, struct futhark_u8_3d *arr);
+const int64_t *futhark_shape_u8_3d(struct futhark_context *ctx, struct futhark_u8_3d *arr);
 
 // Opaque values
 
 
 
 // Entry points
-int futhark_entry_kernel_histogram(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4);
-int futhark_entry_kernel_histogram_with_is(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4, const struct futhark_i64_1d *in5);
-int futhark_entry_kernel_padded(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_3d *in2, const struct futhark_u64_3d *in3);
-int futhark_entry_kernel_segmented_reduce(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4);
-int futhark_entry_kernel_segmented_reduce_with_flags(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u64_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_bool_1d *in4, const struct futhark_bool_1d *in5);
+int futhark_entry_kernel_histogram(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u8_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4);
+int futhark_entry_kernel_histogram_with_is(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u8_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4, const struct futhark_i64_1d *in5);
+int futhark_entry_kernel_padded(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u8_3d *in2, const struct futhark_u64_3d *in3);
+int futhark_entry_kernel_segmented_reduce(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u8_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_i64_1d *in4);
+int futhark_entry_kernel_segmented_reduce_with_flags(struct futhark_context *ctx, struct futhark_u64_3d **out0, const struct futhark_u64_2d *in0, const struct futhark_u64_3d *in1, const struct futhark_u8_2d *in2, const struct futhark_u64_2d *in3, const struct futhark_bool_1d *in4, const struct futhark_bool_1d *in5);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);

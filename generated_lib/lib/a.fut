@@ -10,7 +10,7 @@ def (x: XFieldElement) ^*^ (y: XFieldElement) = XFieldElement.mul x y
 
 def (x: XFieldElement) ^+^ (y: XFieldElement) = XFieldElement.add x y
 
-def (elm: XFieldElement) %** (exp: u64) = XFieldElement.mod_pow_u64 elm exp
+def (elm: XFieldElement) %** (exp: u8) = XFieldElement.mod_pow_u8 elm exp
 
 def inner_redo_map
     ( exp_2d )
@@ -27,7 +27,7 @@ def kernel_padded_impl
     [n][m][p][q]
     ( zerofier_inverse_1d: [n]XFieldElement)
     ( evaluation_point_2d: [n]      [m]XFieldElement)
-    ( exp_3d:                 [p][q][m]u64)
+    ( exp_3d:                 [p][q][m]u8)
     ( coefficient_2d:         [p][q]XFieldElement)
     : [n][p]XFieldElement =
         map2 (\ zerofier_inverse evaluation_point_1d ->
@@ -54,7 +54,7 @@ def kernel_segmented_reduce_impl
     [n][m][p][pq]
     ( zerofier_inverse_1d:  [n]XFieldElement)
     ( evaluation_point_2d:  [n]    [m]XFieldElement)
-    ( exp_2d_seg:              [pq][m]u64)
+    ( exp_2d_seg:              [pq][m]u8)
     ( coefficient_1d_seg:      [pq]XFieldElement)
     ( q_1d:                    [p]i64)
     : [n][p]XFieldElement =
@@ -71,7 +71,7 @@ def kernel_segmented_reduce_with_flags_impl
     [n][m][p][pq]
     ( zerofier_inverse_1d:  [n]XFieldElement)
     ( evaluation_point_2d:  [n]    [m]XFieldElement)
-    ( exp_2d_seg:              [pq][m]u64)
+    ( exp_2d_seg:              [pq][m]u8)
     ( coefficient_1d_seg:      [pq]XFieldElement)
     ( flags:                   [pq]bool)
     : [n][p]XFieldElement =
@@ -104,7 +104,7 @@ def kernel_histogram_impl
     [n][m][p][pq]
     ( zerofier_inverse_1d:  [n]XFieldElement)
     ( evaluation_point_2d:  [n]    [m]XFieldElement)
-    ( exp_2d_seg:              [pq][m]u64)
+    ( exp_2d_seg:              [pq][m]u8)
     ( coefficient_1d_seg:      [pq]XFieldElement)
     ( q_1d:                    [p]i64)
     : [n][p]XFieldElement =
@@ -126,7 +126,7 @@ def kernel_histogram_with_is_impl
     [n][m][p][pq]
     ( zerofier_inverse_1d:  [n]XFieldElement)
     ( evaluation_point_2d:  [n]    [m]XFieldElement) -- Extension codewords
-    ( exp_2d_seg:              [pq][m]u64)           -- Exponents of AIR
+    ( exp_2d_seg:              [pq][m]u8)           -- Exponents of AIR
     ( coefficient_1d_seg:      [pq]XFieldElement)    -- Coefficients of AIR (that is, Multivariate Polynomials)
     ( is:                      [pq]i64)
     : [n][p]XFieldElement =
@@ -155,7 +155,7 @@ def kernel_histogram_with_is_and_muted_impl
     ( zerofier_inverse_1d:        [n]XFieldElement)
     ( evaluation_point_2d:        [n]    [m]XFieldElement)
     ( evaluation_point_muted_2d:  [n]    [muted]XFieldElement)
-    ( exp_2d_seg:              [pq]      [m]u64)
+    ( exp_2d_seg:              [pq]      [m]u8)
     ( coefficient_1d_seg:      [pq]XFieldElement)
     ( is:                      [pq]i64)
     : [n][p]XFieldElement =
@@ -203,7 +203,7 @@ entry kernel_padded
     [n][m][p][q]
     ( zerofier_inverse_1d: [n]XFieldElement_flat)
     ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
-    ( exp_3d:                 [p][q][m]u64)
+    ( exp_3d:                 [p][q][m]u8)
     ( coefficient_2d     :    [p][q]XFieldElement_flat)
     : [n][p]XFieldElement_flat =
     let kernel = kernel_padded_impl
@@ -234,7 +234,7 @@ entry kernel_histogram
     [n][m][p][pq]
     ( zerofier_inverse_1d: [n]XFieldElement_flat)
     ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
-    ( exp_2d_seg:             [pq][m]u64)
+    ( exp_2d_seg:             [pq][m]u8)
     ( coefficient_1d_seg:     [pq]XFieldElement_flat)
     ( q_1d:                   [p]i64)
     : [n][p]XFieldElement_flat =
@@ -244,7 +244,7 @@ entry kernel_histogram_with_is
     [n][m][p][pq]
     ( zerofier_inverse_1d: [n]XFieldElement_flat)
     ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
-    ( exp_2d_seg:             [pq][m]u64)
+    ( exp_2d_seg:             [pq][m]u8)
     ( coefficient_1d_seg:     [pq]XFieldElement_flat)
     ( _q_1d:                  [p]i64)
     ( is:                     [pq]i64)
@@ -256,7 +256,7 @@ entry kernel_segmented_reduce
     [n][m][p][pq]
     ( zerofier_inverse_1d: [n]XFieldElement_flat)
     ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
-    ( exp_2d_seg:             [pq][m]u64)
+    ( exp_2d_seg:             [pq][m]u8)
     ( coefficient_1d_seg:     [pq]XFieldElement_flat)
     ( q_1d:                   [p]i64)
     : [n][p]XFieldElement_flat =
@@ -266,7 +266,7 @@ entry kernel_segmented_reduce_with_flags
     [n][m][p][pq]
     ( zerofier_inverse_1d: [n]XFieldElement_flat)
     ( evaluation_point_2d: [n]    [m]XFieldElement_flat)
-    ( exp_2d_seg:             [pq][m]u64)
+    ( exp_2d_seg:             [pq][m]u8)
     ( coefficient_1d_seg:     [pq]XFieldElement_flat)
     ( flags:                  [pq]bool)
     ( _witness:                [p]bool)
