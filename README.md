@@ -23,7 +23,8 @@ Ok so you want to create and call GPU code from Rust. It will involve these step
 * CUDA
 * ISPC (very optional)
 
-### Ubuntu
+### Futhark
+#### Ubuntu
 ```bash
 # Install Futhark (by first installing linuxbrew)
 /bin/bash-c"/bin/bash-c" /bin/bash -c "(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -42,12 +43,11 @@ $ sudo apt-get install libclang-dev
 $ make all
 ```
 
-### Arch
-#### Futhark
+#### Arch
 * [the latest futhark release](https://futhark-lang.org/releases/)
 * [futhark dependencies](https://futhark.readthedocs.io/en/latest/installation.html#dependencies)
 
-#### CUDA
+### CUDA
 * install the cuda package (depending on your distro)
 * arch: community/cuda
 * find your cuda path, and set it as an environment variable (e.g. in your .bashrc, but you probably have a nicer place to put it)
