@@ -3,6 +3,7 @@ def segments_start_indices_i32 [n] (reps:[n]i32) : [n]i32 =
   let reps = assert (n > 0) reps
   let cumsum = scan (+) 0 reps
    in map (\i -> if i==0 then 0 else cumsum[i-1]) (iota n)
+
 def segments_start_indices_i64 [n] (reps:[n]i64) : [n]i64 =
   let reps = map (\rep -> assert (rep > 0) rep) reps
   let reps = assert (n > 0) reps
