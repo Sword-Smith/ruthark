@@ -145,12 +145,13 @@ def main
 --       , [  1, 0, 0 ]
 --       , [  256, 0, 0 ] ]
 -- }
-entry test_eval_all_terms [n] [m] [t] [r] (term_exp_mtx : [t][m]i32) (_qs : [r]bool)  (eval_points_mtx : [n][m]i32) : ?[r].[r][3]i32 =
-  let eval_points_mtx_xfe = map2d XFieldElement.from_i32 eval_points_mtx
-  let term_exp_mtx_u8 = map2d u8.i32 term_exp_mtx
-  let evaluated_terms = eval_all_terms term_exp_mtx_u8 eval_points_mtx_xfe
-  let all_terms = flatten evaluated_terms :> [r]XFieldElement
-   in map XFieldElement.tripple2array all_terms |> map2d i32.u64
+
+-- entry test_eval_all_terms [n] [m] [t] [r] (term_exp_mtx : [t][m]i32) (_qs : [r]bool)  (eval_points_mtx : [n][m]i32) : ?[r].[r][3]i32 =
+--   let eval_points_mtx_xfe = map2d XFieldElement.from_i32 eval_points_mtx
+--   let term_exp_mtx_u8 = map2d u8.i32 term_exp_mtx
+--   let evaluated_terms = eval_all_terms term_exp_mtx_u8 eval_points_mtx_xfe
+--   let all_terms = flatten evaluated_terms :> [r]XFieldElement
+--    in map XFieldElement.tripple2array all_terms |> map2d i32.u64
 
 
 -- Test test_term_exp_matrix
@@ -177,15 +178,15 @@ entry test_eval_all_terms [n] [m] [t] [r] (term_exp_mtx : [t][m]i32) (_qs : [r]b
 -- output { [ [  770, 0, 0 ]
 --        ,   [  16777217, 0, 0 ] ]
 -- }
-entry test_term_exp_matrix [n] [m] [t] [p] (term_exp_mtx : [t][m]i32) (qs : [p]i32)  (eval_points_mtx : [n][m]i32) : [p][3]i32 =
-  let eval_points_mtx_xfe = map2d XFieldElement.from_i32 eval_points_mtx
-  let term_exp_mtx_u8 = map2d u8.i32 term_exp_mtx
-  let qs_i64 = map i64.i32 qs
-  let evaluated_terms = eval_all_terms term_exp_mtx_u8 eval_points_mtx_xfe
-  let all_terms = flatten evaluated_terms :> [p]XFieldElement
-  let segmented_sum = sum_terms_per_poly term_exp_mtx_u8 qs_i64 eval_points_mtx_xfe
-  let res = Flags.gather (Flags.segments_end_indices_i64 qs_i64) segmented_sum
-   in map XFieldElement.tripple2array res |> map2d i32.u64
+-- entry test_term_exp_matrix [n] [m] [t] [p] (term_exp_mtx : [t][m]i32) (qs : [p]i32)  (eval_points_mtx : [n][m]i32) : [p][3]i32 =
+--   let eval_points_mtx_xfe = map2d XFieldElement.from_i32 eval_points_mtx
+--   let term_exp_mtx_u8 = map2d u8.i32 term_exp_mtx
+--   let qs_i64 = map i64.i32 qs
+--   let evaluated_terms = eval_all_terms term_exp_mtx_u8 eval_points_mtx_xfe
+--   let all_terms = flatten evaluated_terms :> [p]XFieldElement
+--   let segmented_sum = sum_terms_per_poly term_exp_mtx_u8 qs_i64 eval_points_mtx_xfe
+--   let res = Flags.gather (Flags.segments_end_indices_i64 qs_i64) segmented_sum
+--    in map XFieldElement.tripple2array res |> map2d i32.u64
 
 
 -- test_term_exp_matrix
