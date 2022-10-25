@@ -1,2 +1,2 @@
 [workspace]
-members = ["futhark-library", "generated_lib"]
+members = ["rust-generator", "gpu-accelerator"]
