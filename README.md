@@ -47,6 +47,8 @@ $ make all
 * [the latest futhark release](https://futhark-lang.org/releases/)
 * [futhark dependencies](https://futhark.readthedocs.io/en/latest/installation.html#dependencies)
 
+In the Makefile, there is a sudo-requiring command that generically installs futhark. It should work for all linux distros.
+
 ### CUDA
 * install the cuda package (depending on your distro)
 * arch: community/cuda
