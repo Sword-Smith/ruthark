@@ -1,0 +1,20 @@
+[package]
+name = "gpu-accelerator"
+description = "Futhark accelerator for Neptune"
+version = "0.1.0"
+authors = ["Name <name@example.com>"]
+edition = "2018"
+license = "NONE"
+
+[dependencies]
+
+[build-dependencies]
+cc = "1.0"
+
+[features]
+default = ["c"]
+c = []
+multicore = []
+ispc = []
+cuda = []
+opencl = []
