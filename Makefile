@@ -1,18 +1,17 @@
 default: help
 
-
 help:
 	cat Makefile
 
 all:
-	@$(MAKE) updatefut
+	@$(MAKE) fu --no-print-directory
 	@$(MAKE) fc --no-print-directory
-	@$(MAKE) generated --no-print-directory
-	# @$(MAKE) tf --no-print-directory
+	@$(MAKE) gl --no-print-directory
+	@$(MAKE) rl --no-print-directory
 
-# show you the processes using nvidia gpu memory
-mygpu:
-	nvidia-smi
+fast: # updating the futhark dependencies is slow almost never needed
+	@$(MAKE) gl --no-print-directory
+	@$(MAKE) rl --no-print-directory
 
 print_stage:
 	@echo ""
@@ -21,43 +20,30 @@ print_stage:
 	##
 	@echo ""
 
-SRC_DIR := futhark_source
-fc:
+GENERATOR := rust-generator
+GENERATED := gpu-accelerator
+FUTHARK_DIR := fut-src
+
+fu: #futhark-upgrade
+	@cd $(FUTHARK_DIR) ; futhark pkg upgrade ; futhark pkg sync
+
+fc: #futhark-check
 	@PARAM="FUTHARK CHECK" $(MAKE) print_stage --no-print-directory
-	@cd futhark-library && $(MAKE) -C $(SRC_DIR) --no-print-directory
+	@$(MAKE) -C $(FUTHARK_DIR) --no-print-directory
 
-updatefut:
-	@cd futhark-library/$(SRC_DIR) ; futhark pkg upgrade ; futhark pkg sync
-
-generated:
+gl: #generate library
 	@PARAM="COMPILING LIBRARY GENERATOR" $(MAKE) print_stage
-	cd futhark-library && cargo build && cargo run
+	RUSTFLAGS=-Awarnings cargo build -p $(GENERATOR)
+	cargo run -p $(GENERATOR)
 
-	cp -fur ./futhark-library/generated_lib ./
-
+rl: #rust library
 	@PARAM="COMPILING LIBRARY" $(MAKE) print_stage
-	cd generated_lib  && RUSTFLAGS=-Awarnings cargo build
+	RUSTFLAGS=-Awarnings cargo build -p $(GENERATED)
 
-	@PARAM="QUIETLY FIX GENERATED CODE" $(MAKE) print_stage
-	cd generated_lib  && cargo fix --allow-dirty --allow-staged --allow-no-vcs 2> /dev/null
-
-tf:
-	@PARAM="TWENTY-FIRST" $(MAKE) print_stage
-	cd twenty-first && cargo build && cargo test futhark
-
-clean:
-	cd futhark-library && cargo clean
-	cd generated_lib && cargo clean
-	cd twenty-first && cargo clean
-
-update:
-	cd futhark-library && cargo update
-	cd generated_lib && cargo update
-	cd twenty-first && cargo update
-
-RELEASE := 0.22.2
-NAME := futhark-$(RELEASE)-linux-x86_64
+FUTHARK_RELEASE := 0.22.2
+NAME := futhark-$(FUTHARK_RELEASE)-linux-x86_64
 TAR := $(NAME).tar.xz
+
 get-futhark:
 	curl https://futhark-lang.org/releases/$(TAR) --output $(TAR)
 	tar -xf $(TAR)
