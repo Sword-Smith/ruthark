@@ -1,4 +1,4 @@
-default: help
+default: all
 
 help:
 	cat Makefile
