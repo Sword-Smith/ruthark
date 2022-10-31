@@ -4,7 +4,7 @@ Since we are generating a lot of code, and since we are using git repositories t
 0. Enter your workspace: `$ cd <your workspace>`
 1. Clone this repo: `$ git clone ssh://git@neptune.builders:2222/ulrik-dk/gpu-accelerator.git`
 2. Clone the generated repo: `$ git clone ssh://git@neptune.builders:2222/ulrik-dk/ruthark.git`
-3. Create a symbolic link, which could look like this: `$ ln -s /home/ulrik/workspace/gpu-accelerator/ /home/ulrik/workspace/ruthark/`
+3. Make sure the symbolic link `ruthark/gpu-accelerator` points to `../gpu-accelerator/`, and that you have cloned this repository.
 
 ## How do I add a kernel to this project?
 0. Set up the repos. See above.
