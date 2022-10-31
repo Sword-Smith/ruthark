@@ -3,4 +3,3 @@ futhark-library/generated_lib
 futhark-library/target
 twenty-first/target
 target
-gpu-accelerator
