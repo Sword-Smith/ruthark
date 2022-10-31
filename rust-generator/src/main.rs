@@ -12,6 +12,6 @@ fn main() {
         version: "0.1.0".to_string(),
         license: "NONE".to_string(),
         description: "Futhark accelerator for Neptune".to_string(),
-        backend: Backend::C,
+        backend: Backend::Cuda,
     })
 }
