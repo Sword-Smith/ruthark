@@ -1,37 +1,36 @@
--- Helpers
-def fst (a,_) = a
-def snd (_,b) = b
-
-
+module LinAlg = import "lib/github.com/diku-dk/linalg/linalg"
+import "Utils"
 -- Types and constants
-
 type BFieldElement = u64
+
+-- U128 related
 type U128 = (u64, u64)
 def u128_from (x: u64) : U128 = (0u64, x)
-def u64_from (x: U128) : u64 = snd x
+def u64_from (x: U128) : u64 = assert (fst x == 0) (snd x)
 
 
 -- 2^32 - 1
 def lower32bit : u64 = 0xffff_ffff
 -- 2^64 - 2^32 + 1
 -- let prime : BFieldElement = 2**64 - 2**32 + 1
-def prime : BFieldElement = 0xffff_ffff_0000_0001u64
-def quotient : BFieldElement = 0xffff_ffff_0000_0001u64
-def MAX : BFieldElement = quotient - 1
--- let prime : BFieldElement = 101
+def prime : u64 = 0xffff_ffff_0000_0001u64
+def quotient : u64 = prime
 def zero : BFieldElement = 0
 def one  : BFieldElement = 1
+def two  : BFieldElement = 2
+def minus_one : BFieldElement = quotient - 1
+def MAX : BFieldElement = minus_one
 
 def canonicalize (n: BFieldElement) : BFieldElement = n % prime
 
-def new (n: u64) : BFieldElement = canonicalize n
-
 -- Futhark's naming convention: BFieldElement.bool : bool -> BFieldElement
+-- TODO: test these
+def new (n: u64) : BFieldElement = canonicalize n
 def bool (x: bool) : BFieldElement = u64.bool x
-def U64 (x: u64) : BFieldElement = canonicalize x
+def U64 (x: u64) : BFieldElement = new x
 def U32 (x: u32) : BFieldElement = U64 (u64.u32 x)
-def I32 (x: i32) : BFieldElement = U64 (u64.i32 x)
---def newmod (n: i32): BFieldElement = canonicalize (u64.i32 n)
+def I64 (x: i64) : BFieldElement = if x < 0 then prime - (u64.i64 (-x)) else u64.i64 x
+def I32 (x: i32) : BFieldElement = if x < 0 then prime - (u64.i32 (-x)) else u64.i32 x
 
 def overflowing_sub (minuend: u64) (subtrahend: u64) : (u64, bool) =
   (minuend - subtrahend, subtrahend > minuend)
@@ -159,15 +158,23 @@ def redmod (x: U128) : u64 =
         in ret
 
 def fastmul (a: u64) (b: u64): u64 = redmod (u64_mul a b)
-def mulmod (a: u64) (b: u64): BFieldElement = canonicalize (fastmul a b)
-def mul = fastmul
+def mulmod  (a: u64) (b: u64): BFieldElement = canonicalize (fastmul a b)
+def mul = mulmod
 
--- Todo:  repeated squaring
-def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
+def powmodslow (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
   fst <| loop (acc, exp) = (one, exponent) while 0 < exp do
     (redmod <| u64_mul acc base, exp - 1)
 
----- Todo: Winterfell's
+def powmodrepsqr (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
+  let (_, _, result) = loop (x, i, result) = (base, exponent, one) while i > 0 do
+      if i % 2 == 1
+      then (mulmod x x, i>>1, mulmod x result)
+      else (mulmod x x, i>>1, result)
+   in result
+
+def powmod = powmodrepsqr
+
+-- TODO: Switch to Winterfell's
 def invmod (b: BFieldElement): BFieldElement = powmod b (prime-2)
 def divmod (a: BFieldElement) (b: BFieldElement): BFieldElement = mulmod a (invmod b)
 
@@ -194,100 +201,3 @@ entry main2  =
 
 def mainnext : bool =
   (powmod 11 3253254) == 4407581000591417503
-
-
--- Tests from Rust documentation:
--- https://doc.rust-lang.org/std/primitive.u64.html#method.overflowing_add
--- u64.highest = 18446744073709551615u64
-
-
--- Test the `overflowing_sub` function.
---
--- assert_eq!(5u64.overflowing_sub(2), (3, false));
--- assert_eq!(0u64.overflowing_sub(1), (u64::MAX, true));
--- ==
--- entry: overflowing_sub_test
--- input { 5u64 2u64 }
--- output { 3u64 false }
--- input { 0u64 1u64 }
--- output { 18446744073709551615u64 true }
-
-entry overflowing_sub_test (minuend: u64) (subtrahend: u64) : (u64, bool) =
-  overflowing_sub minuend subtrahend
-
-
--- Test the `wrapping_sub` function.
---
--- assert_eq!(100u64.wrapping_sub(100), 0);
--- assert_eq!(100u64.wrapping_sub(u64::MAX), 101);
--- ==
--- entry: wrapping_sub_test
--- input { 100u64 100u64 }
--- output { 0u64 }
--- input { 100u64 18446744073709551615u64 }
--- output { 101u64 }
-
-entry wrapping_sub_test (minuend: u64) (subtrahend: u64) : u64 =
-  wrapping_sub minuend subtrahend
-
-
--- Test the `overflowing_add` function.
---
--- assert_eq!(5u64.overflowing_add(2), (7, false));
--- assert_eq!(u64::MAX.overflowing_add(1), (0, true));
--- ==
--- entry: overflowing_add_test
--- input { 5u64 2u64 }
--- output { 7u64 false }
--- input { 18446744073709551615u64 1u64 }
--- output { 0u64 true }
-
-entry overflowing_add_test (augend: u64) (addend: u64) : (u64, bool) =
-  overflowing_add augend addend
-
-
--- Test the `wrapping_add` function.
---
--- assert_eq!(200u64.wrapping_add(55), 255);
--- assert_eq!(200u64.wrapping_add(u32::MAX), 199);
--- ==
--- entry: wrapping_add_test
--- input { 200u64 55u64 }
--- output { 255u64 }
--- input { 200u64 18446744073709551615u64 }
--- output { 199u64 }
-
-entry wrapping_add_test (augend: u64) (addend: u64) : u64 =
-  wrapping_add augend addend
-
-
--- The following test are original
-
--- Test u64_mul
--- ==
--- entry: u64_mul_test
--- input  { 1u64 1u64 }
--- output { 0u64 1u64 }
--- input  { 999u64 999u64 }
--- output { 0u64 998001u64 }
--- input  { 0x1ffffff23ffffff4u64 0x5888888678888889u64 }
--- output { 0xb11110c0dbbbbd4u64 0x44445699999994u64  }
--- input  { 0x0u64 0xffffffffffffffffu64 }
--- output { 0x0u64 0x0u64 }
--- input  { 0xffffffffffffffffu64 0x0u64 }
--- output { 0x0u64 0x0u64 }
--- input  { 0xf000000000000000u64 0xf000000000000000u64 }
--- output { 0xe100000000000000u64 0x0u64 }
--- input  { 0xffffffffffffffffu64 0xffffffffffffffffu64 }
--- output { 0xfffffffffffffffeu64 0x1u64 }
-entry u64_mul_test (a: u64) (b: u64) : (u64, u64) =
-  u64_mul a b
-
-
--- Test multest
--- ==
--- entry: thorkil_mul_test
--- input  { 0x200000000000u64 0x200000000000u64 }
--- output { 288230376084602880u64 }
-entry thorkil_mul_test (a: u64) (b: u64) : u64 =
- redmod (u64_mul a b)

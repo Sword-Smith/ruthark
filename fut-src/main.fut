@@ -4,7 +4,7 @@ module XFieldElement = import "XFieldElement"
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
 
--- Everything below this is boring entry-point wrapping 
+-- Everything below this is boring entry-point wrapping
 ---It only exists because XFieldElement is a triple instead of a [3]BFieldElement
 
 type XFieldElement_flat = [3]BFieldElement
@@ -115,3 +115,9 @@ entry kernel_segmented_reduce_with_flags
     let inner_coefficient_2d = map outer_to_inner coefficient_1d_seg
     let inner_res = kernel_segmented_reduce_with_flags_impl inner_zerofier_inverse_1d inner_evaluation_point_2d inner_exp_3d inner_coefficient_2d flags : [n][p]XFieldElement
     in map (map inner_to_outer) inner_res
+
+module RescuePrime = import "RescuePrime"
+def parameteres = RescuePrime.parameters
+entry rescue_prime_hash = RescuePrime.rescue_prime_hash parameteres -- this is not the one you want
+entry rescue_prime_hash_10 = RescuePrime.rescue_prime_hash_10 parameteres
+entry rescue_prime_hash_varlen = RescuePrime.rescue_prime_hash_varlen parameteres

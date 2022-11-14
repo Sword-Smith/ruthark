@@ -11,3 +11,7 @@ check: $(TESTS_FILES)
 test: $(TESTS_FILES)
 	futhark test $^
 
+
+opencl:
+	futhark test --backend=opencl RescuePrimeTests.fut
+

@@ -1,3 +1,6 @@
+def fst (a, _b) = a
+def snd (_a, b) = b
+
 def segments_start_indices_i32 [n] (reps:[n]i32) : [n]i32 =
   let reps = map (\rep -> assert (rep > 0) rep) reps
   let reps = assert (n > 0) reps
