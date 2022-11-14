@@ -40,7 +40,7 @@ rl: #rust library
 	@PARAM="COMPILING LIBRARY" $(MAKE) print_stage
 	RUSTFLAGS=-Awarnings cargo build -p $(GENERATED)
 
-FUTHARK_RELEASE := 0.22.2
+FUTHARK_RELEASE := 0.22.4
 NAME := futhark-$(FUTHARK_RELEASE)-linux-x86_64
 TAR := $(NAME).tar.xz
 
