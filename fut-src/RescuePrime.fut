@@ -39,7 +39,7 @@ def rescue_XLIX_round
   -- MDS
   let state2 : State = matvecmul parameters.MDS state1
   -- 1st Round Constants
-  let offset1 = i*2*m
+  let offset1 : i64 = i*2*m
   let round_constants_1st = parameters.round_constants[offset1:offset1+m] :> State
   let state3 : State = vecadd state2 round_constants_1st
   -- Inverse S-Box
@@ -97,6 +97,7 @@ entry rescue_prime_hash_10
   let final_state = rescue_XLIX_permutation parameters init_state
    in final_state[:Parameters.rescue_prime_digest_length] :> RescuePrimeDigest
 
+entry rescue_prime_hash_10_default_parameters = rescue_prime_hash_10 parameters
 
 entry rescue_prime_hash_varlen
   (parameters : DefaultParameters)

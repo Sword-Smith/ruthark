@@ -1,2 +1,2 @@
 [workspace]
-members = ["rust-generator", "gpu-accelerator"]
+members = ["rust-generator", "gpu-accelerator", "accelerators"]

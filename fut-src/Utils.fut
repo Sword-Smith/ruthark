@@ -82,3 +82,6 @@ def segmented_scan_add [n] (flags:[n]bool) (vals:[n]i32) : [n]i32 =
 def map2d [m] [n] 't 'u (f : t -> u) (mtx : [m][n]t) : [m][n]u = map (map f) mtx
 
 def zipWith [p] 't (f : t -> t -> t) (v1 : [p]t) (v2 : [p]t) : [p]t = map2 f v1 v2
+
+-- https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
+def is_power_of_two v = bool.i64 v && ! bool.i64 (v & (v - 1))

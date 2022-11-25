@@ -1624,7 +1624,9 @@ dependencies = [
 
 [[package]]
 name = "twenty-first"
-version = "0.6.0"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ba30bf6d0ccbee304e228c8d8fbb902c87be591bea1e33ceadf63e19682a0ad8"
 dependencies = [
  "anyhow",
  "bincode",

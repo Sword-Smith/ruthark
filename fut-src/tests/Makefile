@@ -15,3 +15,7 @@ test: $(TESTS_FILES)
 opencl:
 	futhark test --backend=opencl RescuePrimeTests.fut
 
+
+cldevices:
+	clinfo --human
+

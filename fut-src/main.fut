@@ -118,6 +118,11 @@ entry kernel_segmented_reduce_with_flags
 
 module RescuePrime = import "RescuePrime"
 def parameteres = RescuePrime.parameters
-entry rescue_prime_hash = RescuePrime.rescue_prime_hash parameteres -- this is not the one you want
-entry rescue_prime_hash_10 = RescuePrime.rescue_prime_hash_10 parameteres
-entry rescue_prime_hash_varlen = RescuePrime.rescue_prime_hash_varlen parameteres
+entry kernel_rescue_prime_hash = RescuePrime.rescue_prime_hash parameteres -- this is not the one you want
+entry kernel_rescue_prime_hash_10 = RescuePrime.rescue_prime_hash_10 parameteres -- it is this one
+entry kernel_rescue_prime_hash_varlen = RescuePrime.rescue_prime_hash_varlen parameteres
+
+module MerkleTree = import "MerkleTree"
+entry kernel_merkle_root_2d = MerkleTree.kernel_merkle_root_2d
+entry kernel_merkle_root_inplace = MerkleTree.kernel_merkle_root_inplace
+entry kernel_merkle_tree_full = MerkleTree.kernel_merkle_tree_full

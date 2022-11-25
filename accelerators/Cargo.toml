@@ -1,0 +1,23 @@
+[package]
+name = "accelerators"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+twenty-first = { version = "0.7.2" }
+rand = { version = "0.8", features = ["min_const_gen"] }
+itertools = "0.10"
+gpu-accelerator = { path = "../gpu-accelerator" }
+
+[dev-dependencies.criterion]
+version = "0.4"
+features = ["html_reports"]
+
+
+[[bench]]
+name = "merkle_tree_gpu"
+harness = false
+
+
