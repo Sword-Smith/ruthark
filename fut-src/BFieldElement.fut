@@ -1,68 +1,68 @@
-module LinAlg = import "lib/github.com/diku-dk/linalg/linalg"
-import "Utils"
+-- module LinAlg = import "lib/github.com/diku-dk/linalg/linalg"
+-- import "Utils"
+-- Helpers
+def fst (a,_) = a
+def snd (_,b) = b
+
 -- Types and constants
 type BFieldElement = u64
 
 -- U128 related
 type U128 = (u64, u64)
 def u128_from (x: u64) : U128 = (0u64, x)
-def u64_from (x: U128) : u64 = assert (fst x == 0) (snd x)
-
+def u64_from (x: U128) : u64 = snd x
 
 -- 2^32 - 1
 def lower32bit : u64 = 0xffff_ffff
 -- 2^64 - 2^32 + 1
--- let prime : BFieldElement = 2**64 - 2**32 + 1
-def prime : u64 = 0xffff_ffff_0000_0001u64
-def quotient : u64 = prime
+-- let P : BFieldElement = 2**64 - 2**32 + 1
+def P : BFieldElement = 0xffff_ffff_0000_0001u64
+def R2: u64 = 0xffff_fffe_0000_0001
+def MAX : BFieldElement = P - 1
 def zero : BFieldElement = 0
 def one  : BFieldElement = 1
-def two  : BFieldElement = 2
-def minus_one : BFieldElement = quotient - 1
-def MAX : BFieldElement = minus_one
-
-def canonicalize (n: BFieldElement) : BFieldElement = n % prime
-
--- Futhark's naming convention: BFieldElement.bool : bool -> BFieldElement
--- TODO: test these
-def new (n: u64) : BFieldElement = canonicalize n
-def bool (x: bool) : BFieldElement = u64.bool x
-def U64 (x: u64) : BFieldElement = new x
-def U32 (x: u32) : BFieldElement = U64 (u64.u32 x)
-def I64 (x: i64) : BFieldElement = if x < 0 then prime - (u64.i64 (-x)) else u64.i64 x
-def I32 (x: i32) : BFieldElement = if x < 0 then prime - (u64.i32 (-x)) else u64.i32 x
-
-def overflowing_sub (minuend: u64) (subtrahend: u64) : (u64, bool) =
-  (minuend - subtrahend, subtrahend > minuend)
-
-
-def wrapping_sub (minuend: u64) (subtrahend: u64) : u64 =
-  minuend - subtrahend
-
 
 def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
   let sum = augend + addend
   in (sum, sum < augend)
 
+def wrapping_sub (minuend: u64) (subtrahend: u64) : u64 =
+  minuend - subtrahend
+
+def overflowing_sub (minuend: u64) (subtrahend: u64) : (u64, bool) =
+  (minuend - subtrahend, subtrahend > minuend)
 
 def wrapping_add (augend: u64) (addend: u64) : u64 =
   augend + addend
 
-def add (a: BFieldElement) (b: BFieldElement): BFieldElement =
-  let (result, overflow) = overflowing_add a b
-  let vala = wrapping_sub result (quotient * (u64.bool overflow)) in
-  if vala > MAX then vala - quotient else vala
+def montyred (x: U128) : u64 =
+  let xl = u64_from x
+  let xh = fst x
+  let (a, e) = overflowing_add xl (xl << 32)
+  let b = wrapping_sub (wrapping_sub a (a >> 32)) (u64.bool e)
+  let (r, c) = overflowing_sub xh b
+  in (wrapping_sub r (1 + !P) * (u64.bool c))
 
+def new (n: u64) : BFieldElement = (montyred (u128_from n)) * R2
 
---TODO: what happens when b > a
--- def submod (a: BFieldElement) (b: BFieldElement): BFieldElement = (a - b) % prime
-def sub (a: BFieldElement) (b: BFieldElement): BFieldElement =
-  let (result, overflow) = overflowing_sub a (canonicalize b)
-  in wrapping_add result (prime * u64.bool overflow)
+def value (self: BFieldElement): u64 =
+  montyred (u128_from self)
 
-def rem (a: BFieldElement) (b: BFieldElement): BFieldElement = canonicalize (a % b)
+-- -- Futhark's naming convention: BFieldElement.bool : bool -> BFieldElement
+-- def bool (x: bool) : BFieldElement = u64.bool x
+-- def U64 (x: u64) : BFieldElement = canonicalize x
+-- def U32 (x: u32) : BFieldElement = U64 (u64.u32 x)
+-- def I32 (x: i32) : BFieldElement = U64 (u64.i32 x)
+-- --def newmod (n: i32): BFieldElement = canonicalize (u64.i32 n)
 
-def neg (n: BFieldElement) : BFieldElement = prime - canonicalize n
+def add (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
+  let (x1, c1) = overflowing_sub (lhs) (P - rhs)
+  let adj = 0 - (u32.bool c1)
+  in wrapping_sub x1 (u64.u32 adj)
+
+def sub (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
+  let (x1, c1) = overflowing_sub lhs rhs
+  in wrapping_sub x1 ((1 + !P) * u64.bool c1)
 
 -- Multiplication of two u64.
 -- Instead of trying to debug in Futhark, have a look at `u64_mul.py` that
@@ -120,84 +120,83 @@ def u64_mul (a: u64) (b: u64) : U128 =
 
   in (hi, lo)
 
+def mul (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
+  montyred (u64_mul lhs rhs)
 
+-- -- Todo:  repeated squaring
+-- def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
+--   fst <| loop (acc, exp) = (one, exponent) while 0 < exp do
+--     (redmod <| u64_mul acc base, exp - 1)
 
-
--- This reduces for prime 2^64 - 2^32 + 1
--- improvement let _sub return u64 directly
--- inline arithmetic operations
-def redmod (x: U128) : u64 =
-        let (xh, xl) : (u64, u64) = x
-        -- Copied from (MIT licensed):
-        --
-        -- assume x consists of four 32-bit values: a, b, c, d such that a contains 32 least
-        -- significant bits and d contains 32 most significant bits. we break x into corresponding
-        -- values as shown below
-        -- let ab = x as u64;
-        let ab : u64 = xl
-        -- let cd = (x >> 64) as u64;
-        let cd : u64 = xh
-        -- let c = (cd as u32) as u64;
-        let c : u64 = u64.u32 (u32.u64 cd)
-        -- alternatively
-        -- let c = cd & lower32bit
-        let d : u64 = cd >> 32
-
-        -- compute ab - d; because d may be greater than ab we need to handle potential underflow
-        let (tmp0, under) : (u64, bool) = overflowing_sub ab d
-        --let tmp1 = tmp0.wrapping_sub(Self::LOWER_MASK * (under as u64));
-        let tmp1 : u64 = wrapping_sub tmp0 (lower32bit  * (u64.bool under))
-
-        -- compute c * 2^32 - c; this is guaranteed not to underflow
-        let tmp2 : u64 = (c << 32) - c
-
-        -- add temp values and return the result; because each of the temp may be up to 64 bits,
-        -- we need to handle potential overflow
-        let (result, over) : (u64, bool) = overflowing_add tmp1 tmp2
-        let ret = wrapping_add result (lower32bit * (u64.bool over))
-        in ret
-
-def fastmul (a: u64) (b: u64): u64 = redmod (u64_mul a b)
-def mulmod  (a: u64) (b: u64): BFieldElement = canonicalize (fastmul a b)
-def mul = mulmod
-
-def powmodslow (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
-  fst <| loop (acc, exp) = (one, exponent) while 0 < exp do
-    (redmod <| u64_mul acc base, exp - 1)
-
-def powmodrepsqr (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
-  let (_, _, result) = loop (x, i, result) = (base, exponent, one) while i > 0 do
-      if i % 2 == 1
-      then (mulmod x x, i>>1, mulmod x result)
-      else (mulmod x x, i>>1, result)
-   in result
-
-def powmod = powmodrepsqr
-
--- TODO: Switch to Winterfell's
-def invmod (b: BFieldElement): BFieldElement = powmod b (prime-2)
-def divmod (a: BFieldElement) (b: BFieldElement): BFieldElement = mulmod a (invmod b)
+-- ---- Todo: Winterfell's
+-- def invmod (b: BFieldElement): BFieldElement = powmod b (P-2)
+-- def divmod (a: BFieldElement) (b: BFieldElement): BFieldElement = mulmod a (invmod b)
 
 entry main : bool =
   let a : u64 = 0x1ffffff23ffffff4 -- 18446744073709551615u64
   let b : u64 = 0x5888888678888889 -- 18156523423432432234u64
-  let res = canonicalize <| redmod <| u64_mul a b
+  -- let res = canonicalize <| redmod <| u64_mul a b
+  let res = mul a b
   in res == 1008806499080522932 -- from Python3: a * b % 0xffff_ffff_0000_0001
 
-entry main2  =
-  let a : u64 = 0xffffffffffffffff
-  let b : u64 = 0xffffffffffffffff
-  let res = u64_mul a b
-  in res
+-- Test montyred_works
+-- ==
+-- entry: montyred_test
+-- input  { 1u64 }
+-- output { 18446744065119617025u64 }
+-- input  { 2u64 }
+-- output { 18446744060824649729u64 }
+-- input  { 3u64 }
+-- output { 18446744056529682433u64 }
+-- input  { 10000000000u64 }
+-- output { 12390559248243752963u64 }
+-- input  { 4545u64 }
+-- output { 18446724548788224001u64 }
+-- input  { 18446744069414584320u64 }
+-- output { 4294967296u64 }
+-- input  { 18446744069414584319u64 }
+-- output { 8589934592u64 }
+entry montyred_test (a: u64) : u64 =
+  montyred (u128_from a)
 
--- Verify output tuple with:
--- a = 0x1ffffff23ffffff4
--- b = 0x5888888678888889
--- expected = hex(a*b)
 
--- def pp(a,b):
---     print(f'{a:#0{16+2}x}{b:0{16}x}')
--- actual = pp($OUTPUT1, $OUTPUT2)
+-- Test new_is_inverse_of_value
+-- ==
+-- entry: new_is_inverse_of_value_test
+-- input  {  1u64 }
+-- output { 1u64 }
+-- input  { 10000000000u64 }
+-- output { 10000000000u64 }
+entry new_is_inverse_of_value_test (a: u64) : u64 =
+  value (new a)
 
-def mainnext : bool =
-  (powmod 11 3253254) == 4407581000591417503
+-- The following test are original
+
+-- Test u64_mul
+-- ==
+-- entry: u64_mul_test
+-- input  { 1u64 1u64 }
+-- output { 0u64 1u64 }
+-- input  { 999u64 999u64 }
+-- output { 0u64 998001u64 }
+-- input  { 0x1ffffff23ffffff4u64 0x5888888678888889u64 }
+-- output { 0xb11110c0dbbbbd4u64 0x44445699999994u64  }
+-- input  { 0x0u64 0xffffffffffffffffu64 }
+-- output { 0x0u64 0x0u64 }
+-- input  { 0xffffffffffffffffu64 0x0u64 }
+-- output { 0x0u64 0x0u64 }
+-- input  { 0xf000000000000000u64 0xf000000000000000u64 }
+-- output { 0xe100000000000000u64 0x0u64 }
+-- input  { 0xffffffffffffffffu64 0xffffffffffffffffu64 }
+-- output { 0xfffffffffffffffeu64 0x1u64 }
+entry u64_mul_test (a: u64) (b: u64) : (u64, u64) =
+  u64_mul a b
+
+
+-- Test multest
+-- ==
+-- entry: thorkil_mul_test
+-- input  { 0x200u64 0x3000u64 }
+-- output { 0x3200u64 }
+entry thorkil_mul_test (a: u64) (b: u64) : u64 =
+ montyred (u64_mul a b)
