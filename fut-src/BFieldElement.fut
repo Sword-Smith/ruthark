@@ -158,6 +158,11 @@ def to_the_power_of_power_of_2 (base: BFieldElement) (log2_exponent: i64) : BFie
   in res
 
 def inverse (x: BFieldElement): BFieldElement =
+  -- counter-intuitive name for this helper function but it gives the correct error if execution
+  -- halts here.
+  let div_by_zero (x: BFieldElement): bool = !(is_zero x)
+
+  let x = assert (div_by_zero x) x
   let bin_2_ones = (square x) *^ x
   let bin_3_ones = (square bin_2_ones) *^ x
   let bin_6_ones = (to_the_power_of_power_of_2 bin_3_ones 3) *^ bin_3_ones
@@ -229,6 +234,8 @@ entry mul_small_no_wrap (a: u32) (b: u32) : bool =
 -- output { true }
 -- random input { u64 }
 -- output { true }
+-- input { 0u64 }
+-- error: div_by_zero
 entry mul_with_inverse_yields_one (x: u64) : bool =
   let x = new x
   let should_be_one = (inverse x) *^ x
