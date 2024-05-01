@@ -19,6 +19,8 @@ def lower32bit : u64 = 0xffff_ffff
 def P : u64 = 0xffff_ffff_0000_0001u64
 def MAX : u64 = P - 1
 def R2: u64 = 0xffff_fffe_0000_0001
+def zero: BFieldElement = {0 = 0}
+def one: BFieldElement = {0 = R2}
 
 def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
   let sum = augend + addend
@@ -35,12 +37,17 @@ def montyred (x: U128) : u64 =
   let (r, c) = overflowing_sub xh b
   in r - (1 + !P) * (u64.bool c)
 
+def eq (a: BFieldElement) (b: BFieldElement): bool =
+  a.0 == b.0
+
+def (a: BFieldElement) ==^ (b: BFieldElement): bool =
+  eq a b
+
 def add (a: BFieldElement) (b: BFieldElement): BFieldElement =
   let (x1, c1) = overflowing_sub a.0 (P - b.0)
   let adj = 0 - (u32.bool c1)
   in {0 = x1 - (u64.u32 adj)}
 
--- Define infix plus
 def (a: BFieldElement) +^ (b: BFieldElement): BFieldElement =
   add a b
 
@@ -48,9 +55,11 @@ def sub (a: BFieldElement) (b: BFieldElement): BFieldElement =
   let (x1, c1) = overflowing_sub a.0 b.0
   in {0 = (x1 - ((1u64 + !P) * u64.bool c1))}
 
--- Define infix minus
 def (lhs: BFieldElement) -^ (rhs: BFieldElement): BFieldElement =
   sub lhs rhs
+
+def neg (a: BFieldElement): BFieldElement =
+  zero -^ a
 
 def u64_mul (lhs: u64) (rhs: u64) : U128 =
   -- TODO: Is it better to represent these as u32s?
@@ -83,9 +92,9 @@ def value (self: BFieldElement): u64 =
 def mul (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
   {0 = montyred (u64_mul lhs.0 rhs.0)}
 
--- Define infix mul
 def (a: BFieldElement) *^ (b: BFieldElement): BFieldElement =
   mul a b
+
 
 -- -- Todo:  repeated squaring
 -- def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
@@ -108,6 +117,28 @@ entry main (a: u64) : u64 =
 entry new_is_inverse_of_value_pbt (a: u64) : bool =
   (value (new a)) == a
 
+-- ==
+-- entry: neg_plus_self_is_zero
+-- random input { u64 }
+-- output { true }
+entry neg_plus_self_is_zero (a: u64) : bool =
+  let a = new a
+  in value (add (neg a) a) == 0
+
+-- ==
+-- entry: one_is_one
+-- random input { }
+-- output { true }
+entry one_is_one: bool =
+  value one == (new 1).0
+
+-- ==
+-- entry: zero_is_zero
+-- random input { }
+-- output { true }
+entry zero_is_zero: bool =
+  value zero == (new 0).0
+
 -- Test that multiplying small numbers does not wrap around
 -- ==
 -- entry: mul_small_no_wrap
@@ -125,6 +156,7 @@ entry infix_notation_works (a: u64) (b: u64) : bool =
   let a_bfe: BFieldElement = new a
   let b_bfe: BFieldElement = new b
   in add (mul a_bfe b_bfe) (sub a_bfe b_bfe) == (a_bfe *^ b_bfe +^ (a_bfe -^ b_bfe))
+    && a_bfe ==^ a_bfe
 
 -- Test u64_mul
 -- ==
