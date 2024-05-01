@@ -26,99 +26,53 @@ def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
   let sum = augend + addend
   in (sum, sum < augend)
 
-def wrapping_sub (minuend: u64) (subtrahend: u64) : u64 =
-  minuend - subtrahend
-
 def overflowing_sub (minuend: u64) (subtrahend: u64) : (u64, bool) =
   (minuend - subtrahend, subtrahend > minuend)
-
-def wrapping_add (augend: u64) (addend: u64) : u64 =
-  augend + addend
 
 def montyred (x: U128) : u64 =
   let xl = u64_from x
   let xh = fst x
   let (a, e) = overflowing_add xl (xl << 32)
-  let b = wrapping_sub (wrapping_sub a (a >> 32)) (u64.bool e)
+  let b = (a - (a >> 32)) - (u64.bool e)
   let (r, c) = overflowing_sub xh b
-  in (wrapping_sub r (1 + !P) * (u64.bool c))
-
-def new (n: u64) : BFieldElement = (montyred (u128_from n)) * R2
-
-def value (self: BFieldElement): u64 =
-  montyred (u128_from self)
-
--- -- Futhark's naming convention: BFieldElement.bool : bool -> BFieldElement
--- def bool (x: bool) : BFieldElement = u64.bool x
--- def U64 (x: u64) : BFieldElement = canonicalize x
--- def U32 (x: u32) : BFieldElement = U64 (u64.u32 x)
--- def I32 (x: i32) : BFieldElement = U64 (u64.i32 x)
--- --def newmod (n: i32): BFieldElement = canonicalize (u64.i32 n)
+  in r - (1 + !P) * (u64.bool c)
 
 def add (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
   let (x1, c1) = overflowing_sub (lhs) (P - rhs)
   let adj = 0 - (u32.bool c1)
-  in wrapping_sub x1 (u64.u32 adj)
+  in x1 - (u64.u32 adj)
 
 def sub (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
   let (x1, c1) = overflowing_sub lhs rhs
-  in wrapping_sub x1 ((1 + !P) * u64.bool c1)
+  in x1 - ((1 + !P) * u64.bool c1)
 
--- Multiplication of two u64.
--- Instead of trying to debug in Futhark, have a look at `u64_mul.py` that
--- prints all intermediate values in a readable form.
---
--- This is needed because multiplication
---    #[inline]
---    fn mul(self, other: Self) -> Self {
---        let val: u64 = Self::mod_reduce(self.0 as u128 * other.0 as u128);
---        Self(val)
---
--- The math:
---   [ahi][alo]             * [bhi][blo]
--- = ([ahi] * 2^64 + [alo]) * ([bhi] * 2^64 + [blo])
--- assert ahi == bhi == 0
---   [alo]                                                  * [blo]
--- =([ah] * 2^32 + [al])                                    *([bh] * 2^32 + [bl])
--- = [ah] * 2^32 * ([bh] * 2^32 + [bl])                     + [al] * ([bh] * 2^32 + [bl])
--- = [ah] * 2^32 * [bh] * 2^32      + [ah] * 2^32 * [bl]    + [al] * [bh] * 2^32 + [al] * [bl]
--- = [ah] * [bh] * 2^32 * 2^32      + [ah] * [bl] * 2^32    + [al] * [bh] * 2^32 + [al] * [bl]
--- = [ah] * [bh] * 2^64             + [ah] * [bl] * 2^32    + [al] * [bh] * 2^32 + [al] * [bl]
--- = [ah] * [bh] * 2^64             +([ah] * [bl] + [al] * [bh] ) * 2^32         + [al] * [bl]
--- = [hi       ]                     [loh                       ]                  [lol      ]
---                                   [lo                                                     ]
-def u64_mul (a: u64) (b: u64) : U128 =
-  -- let (ahi, alo) : (u64, u64) = a
-  -- let (bhi, blo) : (u64, u64) = b
-  -- let _ = assert ahi 0u64
-  -- let _ = assert bhi 0u64
-
-  let alo = a
-  let blo = b
-
-  let ah : u64 = alo >> 32
-  let al : u64 = alo & lower32bit
-  let bh : u64 = blo >> 32
-  let bl : u64 = blo & lower32bit
+def u64_mul (lhs: u64) (rhs: u64) : U128 =
+  -- TODO: Is it better to represent these as u32s?
+  let lhs_lo : u64 = lhs & lower32bit
+  let lhs_hi : u64 = lhs >> 32
+  let rhs_lo : u64 = rhs & lower32bit
+  let rhs_hi : u64 = rhs >> 32
 
   -- start from least significant bits to allow for carry
-  let lol : u64 = al * bl
-  let lolh : u64 = lol >> 32
-  let loll : u64 = lol & lower32bit
+  let a : u64 = lhs_lo * rhs_lo
+  let carry0 : u64 = a >> 32
+  let prod0 : u64 = a & lower32bit
 
-  -- this may need 2^65
-  -- let loh : u64 = ah * bl + al * bh + lolh
-  let loh1 : u64 = ah * bl
-  let loh2 : u64 = al * bh
-  let lohh : u64 = (loh1 >> 32) + (loh2 >> 32) + (lolh >> 32)
-  let lohl : u64 = (loh1 & lower32bit) + (loh2 & lower32bit) + (lolh & lower32bit)
-  let lohlh : u64 = lohl >> 32
-  let lohll : u64 = lohl & lower32bit
+  let loh1 : u64 = lhs_hi * rhs_lo
+  let loh2 : u64 = lhs_lo * rhs_hi
+  let b : u64 = (loh1 & lower32bit) + (loh2 & lower32bit) + carry0
+  let prod1 : u64 = b & lower32bit
+  let carry1 : u64 = b >> 32
 
-  let hi : u64 = ah * bh + lohh + lohlh
-  let lo : u64 = (lohll << 32) | loll
+  let hi : u64 = (loh1 >> 32) + (loh2 >> 32) + lhs_hi * rhs_hi + carry1
+  let lo : u64 = (prod1 << 32) | prod0
 
   in (hi, lo)
+
+def new (n: u64) : BFieldElement = montyred (u64_mul n R2)
+
+def value (self: BFieldElement): u64 =
+  montyred (u128_from self)
 
 def mul (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
   montyred (u64_mul lhs rhs)
@@ -132,45 +86,25 @@ def mul (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
 -- def invmod (b: BFieldElement): BFieldElement = powmod b (P-2)
 -- def divmod (a: BFieldElement) (b: BFieldElement): BFieldElement = mulmod a (invmod b)
 
-entry main : bool =
-  let a : u64 = 0x1ffffff23ffffff4 -- 18446744073709551615u64
-  let b : u64 = 0x5888888678888889 -- 18156523423432432234u64
-  -- let res = canonicalize <| redmod <| u64_mul a b
-  let res = mul a b
-  in res == 1008806499080522932 -- from Python3: a * b % 0xffff_ffff_0000_0001
-
--- Test montyred_works
--- ==
--- entry: montyred_test
--- input  { 1u64 }
--- output { 18446744065119617025u64 }
--- input  { 2u64 }
--- output { 18446744060824649729u64 }
--- input  { 3u64 }
--- output { 18446744056529682433u64 }
--- input  { 10000000000u64 }
--- output { 12390559248243752963u64 }
--- input  { 4545u64 }
--- output { 18446724548788224001u64 }
--- input  { 18446744069414584320u64 }
--- output { 4294967296u64 }
--- input  { 18446744069414584319u64 }
--- output { 8589934592u64 }
-entry montyred_test (a: u64) : u64 =
-  montyred (u128_from a)
-
+entry main (a: u64) : u64 =
+  let res = mul (new a) (new a)
+  in value res
 
 -- Test new_is_inverse_of_value
 -- ==
--- entry: new_is_inverse_of_value_test
--- input  {  1u64 }
--- output { 1u64 }
--- input  { 10000000000u64 }
--- output { 10000000000u64 }
-entry new_is_inverse_of_value_test (a: u64) : u64 =
-  value (new a)
+-- entry: new_is_inverse_of_value_pbt
+-- random input { u64 }
+-- output { true }
+entry new_is_inverse_of_value_pbt (a: u64) : bool =
+  (value (new a)) == a
 
--- The following test are original
+-- Test that multiplying small numbers does not wrap around
+-- ==
+-- entry: mul_small_no_wrap
+-- random input { u32 u32 }
+-- output { true }
+entry mul_small_no_wrap (a: u32) (b: u32) : bool =
+  value (mul (new (u64.u32 a)) (new (u64.u32 a))) == (u64.u32 a) * (u64.u32 b)
 
 -- Test u64_mul
 -- ==
@@ -192,11 +126,46 @@ entry new_is_inverse_of_value_test (a: u64) : u64 =
 entry u64_mul_test (a: u64) (b: u64) : (u64, u64) =
   u64_mul a b
 
+-- Montyred mul test
+-- ==
+-- entry: montyred_mul_test
+-- input  { 1u64 1u64 }
+-- output { 18446744065119617025u64 }
+-- input  { 2u64 2u64 }
+-- output { 18446744052234715137u64 }
+-- input  { 10u64 20u64 }
+-- output { 18446743210421125121u64 }
+entry montyred_mul_test (lhs: u64) (rhs: u64) : u64 =
+  montyred (u64_mul lhs rhs)
 
 -- Test multest
 -- ==
--- entry: thorkil_mul_test
+-- entry: unit_test_mul
 -- input  { 0x200u64 0x3000u64 }
--- output { 0x3200u64 }
-entry thorkil_mul_test (a: u64) (b: u64) : u64 =
- montyred (u64_mul a b)
+-- output { 0x600000u64 }
+-- input  { 0xffffffffu64 0xffffffffu64 }
+-- output { 18446744065119617025u64 }
+-- input  { 4294967295u64 4294967283u64 }
+-- output { 18446744013580009485u64 }
+entry unit_test_mul (a: u64) (b: u64) : u64 =
+ value (mul (new a) (new b))
+
+-- Test montyred_works
+-- ==
+-- entry: montyred_test
+-- input  { 1u64 }
+-- output { 18446744065119617025u64 }
+-- input  { 2u64 }
+-- output { 18446744060824649729u64 }
+-- input  { 3u64 }
+-- output { 18446744056529682433u64 }
+-- input  { 10000000000u64 }
+-- output { 12390559248243752963u64 }
+-- input  { 4545u64 }
+-- output { 18446724548788224001u64 }
+-- input  { 18446744069414584320u64 }
+-- output { 4294967296u64 }
+-- input  { 18446744069414584319u64 }
+-- output { 8589934592u64 }
+entry montyred_test (a: u64) : u64 =
+  montyred (u128_from a)

@@ -1,4 +1,4 @@
 require {
   github.com/Ulrik-dk/segmented 0.1.0 #d7aadf8d2cca19076d723c369f8ab7629bfcbbda
-  github.com/diku-dk/linalg 0.4.3 #1d412b7cd9d9f95ed99169c696b6736ab24c551d
+  github.com/diku-dk/linalg 0.5.1 #02ac17238bda19049b037fd7e5e49453afef1b59
 }
