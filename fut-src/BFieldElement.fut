@@ -95,7 +95,7 @@ def mul (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
 def (a: BFieldElement) *^ (b: BFieldElement): BFieldElement =
   mul a b
 
-def mod_pow (base: BFieldElement) (exponent: u64): BFieldElement =
+def mod_pow_i64 (base: BFieldElement) (exponent: i64): BFieldElement =
   let (_, _, result) = loop (x, i, result) = (base, exponent, one) while i > 0 do
     if i % 2 == 1
       then (mul x x, i >> 1, mul x result)
@@ -232,17 +232,17 @@ entry unit_test_mul (a: u64) (b: u64) : u64 =
 entry montyred_test (a: u64) : u64 =
   montyred (u128_from a)
 
--- Test mod_pow for BFEs
+-- Test mod_pow_i64 for BFEs
 -- ==
--- entry: mod_pow_unit_test
--- input  { 1u64 0u64 }
+-- entry: mod_pow_i64_unit_test
+-- input  { 1u64 0i64 }
 -- output { 1u64 }
--- input  { 1u64 1u64 }
+-- input  { 1u64 1i64 }
 -- output { 1u64 }
--- input  { 0xffff_ffff_0000_0000u64 2u64 }
+-- input  { 0xffff_ffff_0000_0000u64 2i64 }
 -- output { 1u64 }
--- input  { 281474976710656u64 4u64 }
+-- input  { 281474976710656u64 4i64 }
 -- output { 1u64 }
-entry mod_pow_unit_test (base: u64) (exponent: u64) =
+entry mod_pow_i64_unit_test (base: u64) (exponent: i64) =
   let base = new base
-  in value (mod_pow base exponent)
+  in value (mod_pow_i64 base exponent)
