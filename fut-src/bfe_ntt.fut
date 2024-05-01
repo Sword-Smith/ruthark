@@ -9,26 +9,25 @@ let radix = 2i64
 let concat_to 'a (m: i64) (a: []a) (b: []a) : [m]a =
   a ++ b :> [m]a
 
-
--- TODO: Add `forward` parameter to function signature
-def bfe_ntt_iteration [n] (m: i64) (data: [n]BFieldElement) (w_m: BFieldElement) (j: i64) : (i64, BFieldElement, i64, BFieldElement) =
-    let w = BFieldElement.mod_pow_i64 w_m (j % m)
+def bfe_ntt_iteration [n] (log2m: i64) (data: [n]BFieldElement) (w_m: BFieldElement) (j: i64) : (i64, BFieldElement, i64, BFieldElement) =
+    let m = 1 << log2m
+    let bitmask = m - 1
+    let w = BFieldElement.mod_pow_i64 w_m (j & bitmask)
     let (u, v) = (data[j],
                   data[j + n / radix] BFieldElement.*^ w)
     let (u, v) = (u BFieldElement.+^ v, u BFieldElement.-^ v)
-    let idxD = ((j / m) * m * radix) + (j % m) -- TODO: Consider using bit-shifting here instead, as `ns` is power of 2.
+    let idxD = ((j & !bitmask) * radix) + (j & bitmask)
     in (idxD, u, idxD + m, v)
 
--- TODO: Attempt to use more bit-masks and less mul and div-remainder here. Should be possible.
 def bfe_ntt' [n] (bits: i64) (omega: BFieldElement) (input: [n]BFieldElement): [n]BFieldElement =
     let input = copy input
     let output = copy input
     let ix = iota (n / radix)
-    let NS = map (radix **) (iota bits)
+    let log2ms = iota bits
     let (res,_) =
-        loop (input': *[n]BFieldElement, output': *[n]BFieldElement) = (input, output) for m in NS do
-            let w_m = BFieldElement.mod_pow_i64 omega (n / (radix * m))
-            let (i0s, us, i1s, vs) = unzip4 (map (bfe_ntt_iteration m input' w_m) ix)
+        loop (input': *[n]BFieldElement, output': *[n]BFieldElement) = (input, output) for log2m in log2ms do
+            let w_m = BFieldElement.mod_pow_i64 omega (n / (radix << log2m))
+            let (i0s, us, i1s, vs) = unzip4 (map (bfe_ntt_iteration log2m input' w_m) ix)
             in (scatter output'
                 (concat_to n i0s i1s)
                 (us ++ vs :> [n]BFieldElement),
