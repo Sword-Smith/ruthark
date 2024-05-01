@@ -1,3 +1,5 @@
+module shared = import "shared"
+
 -- module LinAlg = import "lib/github.com/diku-dk/linalg/linalg"
 -- import "Utils"
 -- Helpers
@@ -21,6 +23,12 @@ def MAX : u64 = P - 1
 def R2: u64 = 0xffff_fffe_0000_0001
 def zero: BFieldElement = {0 = 0}
 def one: BFieldElement = {0 = 4294967295} -- inner representation of one, montyred(R2)
+
+def is_zero (x: BFieldElement): bool =
+  x.0 == zero.0
+
+def is_one (x: BFieldElement): bool =
+  x.0 == one.0
 
 def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
   let sum = augend + addend
@@ -86,6 +94,44 @@ def u64_mul (lhs: u64) (rhs: u64) : U128 =
 
 def new (n: u64) : BFieldElement = {0 = montyred (u64_mul n R2) }
 
+def primitive_root (order: i64) : BFieldElement =
+  match order
+    case 0i64 -> assert false zero
+    case 1i64 -> new 1u64
+    case 2i64 -> new 18446744069414584320u64
+    case 4i64 -> new 281474976710656u64
+    case 8i64 -> new 18446744069397807105u64
+    case 16i64 -> new 17293822564807737345u64
+    case 32i64 -> new 70368744161280u64
+    case 64i64 -> new 549755813888u64
+    case 128i64 -> new 17870292113338400769u64
+    case 256i64 -> new 13797081185216407910u64
+    case 512i64 -> new 1803076106186727246u64
+    case 1024i64 -> new 11353340290879379826u64
+    case 2048i64 -> new 455906449640507599u64
+    case 4096i64 -> new 17492915097719143606u64
+    case 8192i64 -> new 1532612707718625687u64
+    case 16384i64 -> new 16207902636198568418u64
+    case 32768i64 -> new 17776499369601055404u64
+    case 65536i64 -> new 6115771955107415310u64
+    case 131072i64 -> new 12380578893860276750u64
+    case 262144i64 -> new 9306717745644682924u64
+    case 524288i64 -> new 18146160046829613826u64
+    case 1048576i64 -> new 3511170319078647661u64
+    case 2097152i64 -> new 17654865857378133588u64
+    case 4194304i64 -> new 5416168637041100469u64
+    case 8388608i64 -> new 16905767614792059275u64
+    case 16777216i64 -> new 9713644485405565297u64
+    case 33554432i64 -> new 5456943929260765144u64
+    case 67108864i64 -> new 17096174751763063430u64
+    case 134217728i64 -> new 1213594585890690845u64
+    case 268435456i64 -> new 6414415596519834757u64
+    case 536870912i64 -> new 16116352524544190054u64
+    case 1073741824i64 -> new 9123114210336311365u64
+    case 2147483648i64 -> new 4614640910117430873u64
+    case 4294967296i64 -> new 1753635133440165772u64
+    case _ -> assert false zero
+
 def value (self: BFieldElement): u64 =
   montyred (u128_from self.0)
 
@@ -140,14 +186,14 @@ entry neg_plus_self_is_zero (a: u64) : bool =
 -- random input { }
 -- output { true }
 entry one_is_one: bool =
-  value one == value (new 1)
+  value one == value (new 1) && is_one one
 
 -- ==
 -- entry: zero_is_zero
 -- random input { }
 -- output { true }
 entry zero_is_zero: bool =
-  value zero == value (new 0)
+  value zero == value (new 0) && is_zero zero
 
 -- Test that multiplying small numbers does not wrap around
 -- ==
@@ -246,3 +292,22 @@ entry montyred_test (a: u64) : u64 =
 entry mod_pow_i64_unit_test (base: u64) (exponent: i64) =
   let base = new base
   in value (mod_pow_i64 base exponent)
+
+-- ==
+-- entry: primitive_roots_are_roots
+-- input  { 33i64 }
+entry primitive_roots_are_roots (max_log2_order: i64): bool =
+  let i = 1i64
+  let acc: bool = true
+  let (_, res) = loop (i, acc) for i < max_log2_order do
+    let order = 1i64 << i
+    let primitive_root = primitive_root order
+    let should_be_one = mod_pow_i64 primitive_root order
+    let is_primitive = if i == 1
+      then true
+      else
+        let half_order = 1i64 << (i - 1)
+        let should_not_be_one = mod_pow_i64 primitive_root half_order
+        in !(is_one should_not_be_one)
+    in (i + 1, acc && is_one should_be_one && is_primitive)
+  in res
