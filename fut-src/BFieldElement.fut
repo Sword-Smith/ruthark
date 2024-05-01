@@ -335,6 +335,10 @@ entry montyred_test (a: u64) : u64 =
 -- output { 1u64 }
 -- input  { 281474976710656u64 4i64 }
 -- output { 1u64 }
+-- input  { 281474976710656u64 0i64 }
+-- output { 1u64 }
+-- input { 1234567890123u64 0i64 }
+-- output { 1u64 }
 entry mod_pow_i64_unit_test (base: u64) (exponent: i64) =
   let base = new base
   in value (mod_pow_i64 base exponent)
