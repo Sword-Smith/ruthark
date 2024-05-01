@@ -148,6 +148,28 @@ def mod_pow_i64 (base: BFieldElement) (exponent: i64): BFieldElement =
       else (mul x x, i >> 1, result)
     in result
 
+def square (x: BFieldElement): BFieldElement =
+  x *^ x
+
+-- Calculate the value $base ^ {2 ^ i}$
+def to_the_power_of_power_of_2 (base: BFieldElement) (log2_exponent: i64) : BFieldElement =
+  let (res, _) = loop (acc, i) = (base, log2_exponent) while i > 0 do
+    (acc *^ acc, i - 1)
+  in res
+
+def inverse (x: BFieldElement): BFieldElement =
+  let bin_2_ones = (square x) *^ x
+  let bin_3_ones = (square bin_2_ones) *^ x
+  let bin_6_ones = (to_the_power_of_power_of_2 bin_3_ones 3) *^ bin_3_ones
+  let bin_12_ones = (to_the_power_of_power_of_2 bin_6_ones 6) *^ bin_6_ones
+  let bin_24_ones = (to_the_power_of_power_of_2 bin_12_ones 12) *^ bin_12_ones
+  let bin_30_ones = (to_the_power_of_power_of_2 bin_24_ones 6) *^ bin_6_ones
+  let bin_31_ones = (square bin_30_ones) *^ x
+  let bin_31_ones_1_zero = square bin_31_ones
+  let bin_32_ones = (square bin_31_ones) *^ x
+
+  in (to_the_power_of_power_of_2 bin_31_ones_1_zero 32) *^ bin_32_ones
+
 -- -- Todo:  repeated squaring
 -- def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
 --   fst <| loop (acc, exp) = (one, exponent) while 0 < exp do
@@ -202,6 +224,21 @@ entry zero_is_zero: bool =
 -- output { true }
 entry mul_small_no_wrap (a: u32) (b: u32) : bool =
   value (mul (new (u64.u32 a)) (new (u64.u32 a))) == (u64.u32 a) * (u64.u32 b)
+
+-- ==
+-- entry: mul_with_inverse_yields_one
+-- input  { 1u64 }
+-- output { true }
+-- input  { 2u64 }
+-- output { true }
+-- input  { 0xffff_ffff_0000_0000u64 }
+-- output { true }
+-- random input { u64 }
+-- output { true }
+entry mul_with_inverse_yields_one (x: u64) : bool =
+  let x = new x
+  let should_be_one = (inverse x) *^ x
+  in is_one should_be_one
 
 -- ==
 -- entry: infix_notation_works
@@ -295,7 +332,7 @@ entry mod_pow_i64_unit_test (base: u64) (exponent: i64) =
 
 -- ==
 -- entry: primitive_roots_are_roots
--- input  { 33i64 }
+-- input  { 32i64 }
 entry primitive_roots_are_roots (max_log2_order: i64): bool =
   let i = 1i64
   let acc: bool = true
@@ -310,4 +347,18 @@ entry primitive_roots_are_roots (max_log2_order: i64): bool =
         let should_not_be_one = mod_pow_i64 primitive_root half_order
         in !(is_one should_not_be_one)
     in (i + 1, acc && is_one should_be_one && is_primitive)
+  in res
+
+-- ==
+-- entry: to_the_power_of_power_of_2_test
+-- random input { u64 }
+-- output { true }
+entry to_the_power_of_power_of_2_test (base: u64): bool =
+  let base = new base
+  let max_log2_power = 6
+  let i = 0i64
+  let acc: bool = true
+  let (_, res) = loop (i, acc) for i < max_log2_power do
+    let power = 1i64 << i
+    in (i + 1, (mod_pow_i64 base power) ==^ (to_the_power_of_power_of_2 base i))
   in res
