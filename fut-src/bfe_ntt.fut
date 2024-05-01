@@ -1,4 +1,5 @@
 module BFieldElement = import "BFieldElement"
+module shared = import "shared"
 
 type BFieldElement = BFieldElement.BFieldElement
 
@@ -34,9 +35,6 @@ def bfe_ntt' [n] (bits: i64) (omega: BFieldElement) (input: [n]BFieldElement): [
                 input')
     in res
 
--- Constant-time log2 (depending on architecture, I guess)
-def ilog2 (n: i64) : i64 = i64.i32 (63 - i64.clz n)
-
 -- ==
 -- entry: test_bfe_fft'
 -- input { [10u64] 1u64 }
@@ -49,4 +47,4 @@ def ilog2 (n: i64) : i64 = i64.i32 (63 - i64.clz n)
 -- output { [5u64, 1125899906842625u64, 18446744069414584318u64, 18445618169507741698u64] }
 entry test_bfe_fft' [n] (input: [n]u64) (omega: u64): [n]u64 =
     -- map BFieldElement.value (bfe_ntt' 0i64 (map BFieldElement.new input) BFieldElement.one)
-    map BFieldElement.new input |> bfe_ntt' (ilog2 n) (BFieldElement.new omega) |> map BFieldElement.value
+    map BFieldElement.new input |> bfe_ntt' (shared.ilog2 n) (BFieldElement.new omega) |> map BFieldElement.value
