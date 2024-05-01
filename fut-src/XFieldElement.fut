@@ -150,8 +150,8 @@ def mul_bfe (lhs : XFieldElement) (bfe : BFieldElement) : XFieldElement =
 
 -- ==
 -- entry: unit_test_add
--- input  { 2u64 3u64 4u64 10u64 13u64 17u64 }
--- output { 12u64 16u64 21u64 }
+-- input  { 2u64 3u64 4u64 100u64 130u64 170u64 }
+-- output { 102u64 133u64 174u64 }
 -- input  { 0xfffffffefffffffeu64 12u64 4u64 2u64 45000u64 0xfffffffefffffffdu64 }
 -- output { 0xffffffff00000000u64 45012u64 0u64 }
 entry unit_test_add (a0: u64) (a1: u64) (a2: u64) (b0: u64) (b1: u64) (b2: u64) : (u64, u64, u64)  =
@@ -168,6 +168,8 @@ entry unit_test_add (a0: u64) (a1: u64) (a2: u64) (b0: u64) (b1: u64) (b2: u64) 
 -- entry: unit_test_mul
 -- input  { 13u64 2u64 3u64 19u64 0u64 5u64 }
 -- output { 237u64 33u64 137u64 }
+-- input  { 2u64 5u64 7u64 53u64 57u64 73u64 }
+-- output { 18446744069414583663u64 632u64 1313u64 }
 entry unit_test_mul (a0: u64) (a1: u64) (a2: u64) (b0: u64) (b1: u64) (b2: u64) : (u64, u64, u64)  =
  let a: XFieldElement = {
   coefficients = (BFieldElement.new a0, BFieldElement.new a1, BFieldElement.new a2 )
