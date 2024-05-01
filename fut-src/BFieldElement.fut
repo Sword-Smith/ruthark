@@ -20,7 +20,7 @@ def P : u64 = 0xffff_ffff_0000_0001u64
 def MAX : u64 = P - 1
 def R2: u64 = 0xffff_fffe_0000_0001
 def zero: BFieldElement = {0 = 0}
-def one: BFieldElement = {0 = R2}
+def one: BFieldElement = {0 = 4294967295} -- inner representation of one, montyred(R2)
 
 def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
   let sum = augend + addend
@@ -95,6 +95,12 @@ def mul (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
 def (a: BFieldElement) *^ (b: BFieldElement): BFieldElement =
   mul a b
 
+def mod_pow (base: BFieldElement) (exponent: u64): BFieldElement =
+  let (_, _, result) = loop (x, i, result) = (base, exponent, one) while i > 0 do
+    if i % 2 == 1
+      then (mul x x, i >> 1, mul x result)
+      else (mul x x, i >> 1, result)
+    in result
 
 -- -- Todo:  repeated squaring
 -- def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
@@ -112,6 +118,10 @@ entry main (a: u64) : u64 =
 -- Test new_is_inverse_of_value
 -- ==
 -- entry: new_is_inverse_of_value_pbt
+-- input  { 1u64 }
+-- output { true }
+-- input  { 0xffff_ffff_0000_0000u64 }
+-- output { true }
 -- random input { u64 }
 -- output { true }
 entry new_is_inverse_of_value_pbt (a: u64) : bool =
@@ -130,14 +140,14 @@ entry neg_plus_self_is_zero (a: u64) : bool =
 -- random input { }
 -- output { true }
 entry one_is_one: bool =
-  value one == (new 1).0
+  value one == value (new 1)
 
 -- ==
 -- entry: zero_is_zero
 -- random input { }
 -- output { true }
 entry zero_is_zero: bool =
-  value zero == (new 0).0
+  value zero == value (new 0)
 
 -- Test that multiplying small numbers does not wrap around
 -- ==
@@ -221,3 +231,18 @@ entry unit_test_mul (a: u64) (b: u64) : u64 =
 -- output { 8589934592u64 }
 entry montyred_test (a: u64) : u64 =
   montyred (u128_from a)
+
+-- Test mod_pow for BFEs
+-- ==
+-- entry: mod_pow_unit_test
+-- input  { 1u64 0u64 }
+-- output { 1u64 }
+-- input  { 1u64 1u64 }
+-- output { 1u64 }
+-- input  { 0xffff_ffff_0000_0000u64 2u64 }
+-- output { 1u64 }
+-- input  { 281474976710656u64 4u64 }
+-- output { 1u64 }
+entry mod_pow_unit_test (base: u64) (exponent: u64) =
+  let base = new base
+  in value (mod_pow base exponent)
