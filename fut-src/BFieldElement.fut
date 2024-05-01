@@ -5,7 +5,7 @@ def fst (a,_) = a
 def snd (_,b) = b
 
 -- Types and constants
-type BFieldElement = u64
+type BFieldElement = { 0: u64 }
 
 -- U128 related
 type U128 = (u64, u64)
@@ -16,11 +16,9 @@ def u64_from (x: U128) : u64 = snd x
 def lower32bit : u64 = 0xffff_ffff
 -- 2^64 - 2^32 + 1
 -- let P : BFieldElement = 2**64 - 2**32 + 1
-def P : BFieldElement = 0xffff_ffff_0000_0001u64
+def P : u64 = 0xffff_ffff_0000_0001u64
+def MAX : u64 = P - 1
 def R2: u64 = 0xffff_fffe_0000_0001
-def MAX : BFieldElement = P - 1
-def zero : BFieldElement = 0
-def one  : BFieldElement = 1
 
 def overflowing_add (augend: u64) (addend: u64) : (u64, bool) =
   let sum = augend + addend
@@ -37,14 +35,22 @@ def montyred (x: U128) : u64 =
   let (r, c) = overflowing_sub xh b
   in r - (1 + !P) * (u64.bool c)
 
-def add (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
-  let (x1, c1) = overflowing_sub (lhs) (P - rhs)
+def add (a: BFieldElement) (b: BFieldElement): BFieldElement =
+  let (x1, c1) = overflowing_sub a.0 (P - b.0)
   let adj = 0 - (u32.bool c1)
-  in x1 - (u64.u32 adj)
+  in {0 = x1 - (u64.u32 adj)}
 
-def sub (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
-  let (x1, c1) = overflowing_sub lhs rhs
-  in x1 - ((1 + !P) * u64.bool c1)
+-- Define infix plus
+def (a: BFieldElement) +^ (b: BFieldElement): BFieldElement =
+  add a b
+
+def sub (a: BFieldElement) (b: BFieldElement): BFieldElement =
+  let (x1, c1) = overflowing_sub a.0 b.0
+  in {0 = (x1 - ((1u64 + !P) * u64.bool c1))}
+
+-- Define infix minus
+def (lhs: BFieldElement) -^ (rhs: BFieldElement): BFieldElement =
+  sub lhs rhs
 
 def u64_mul (lhs: u64) (rhs: u64) : U128 =
   -- TODO: Is it better to represent these as u32s?
@@ -69,13 +75,17 @@ def u64_mul (lhs: u64) (rhs: u64) : U128 =
 
   in (hi, lo)
 
-def new (n: u64) : BFieldElement = montyred (u64_mul n R2)
+def new (n: u64) : BFieldElement = {0 = montyred (u64_mul n R2) }
 
 def value (self: BFieldElement): u64 =
-  montyred (u128_from self)
+  montyred (u128_from self.0)
 
 def mul (lhs: BFieldElement) (rhs: BFieldElement): BFieldElement =
-  montyred (u64_mul lhs rhs)
+  {0 = montyred (u64_mul lhs.0 rhs.0)}
+
+-- Define infix mul
+def (a: BFieldElement) *^ (b: BFieldElement): BFieldElement =
+  mul a b
 
 -- -- Todo:  repeated squaring
 -- def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
@@ -105,6 +115,16 @@ entry new_is_inverse_of_value_pbt (a: u64) : bool =
 -- output { true }
 entry mul_small_no_wrap (a: u32) (b: u32) : bool =
   value (mul (new (u64.u32 a)) (new (u64.u32 a))) == (u64.u32 a) * (u64.u32 b)
+
+-- ==
+-- entry: infix_notation_works
+-- random input { u64 u64 }
+-- output { true }
+entry infix_notation_works (a: u64) (b: u64) : bool =
+  -- value (mul (new (u64.u32 a)) (new (u64.u32 a))) == (u64.u32 a) * (u64.u32 b)
+  let a_bfe: BFieldElement = new a
+  let b_bfe: BFieldElement = new b
+  in add (mul a_bfe b_bfe) (sub a_bfe b_bfe) == (a_bfe *^ b_bfe +^ (a_bfe -^ b_bfe))
 
 -- Test u64_mul
 -- ==
