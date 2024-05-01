@@ -170,14 +170,8 @@ def inverse (x: BFieldElement): BFieldElement =
 
   in (to_the_power_of_power_of_2 bin_31_ones_1_zero 32) *^ bin_32_ones
 
--- -- Todo:  repeated squaring
--- def powmod (base: BFieldElement) (exponent: BFieldElement): BFieldElement =
---   fst <| loop (acc, exp) = (one, exponent) while 0 < exp do
---     (redmod <| u64_mul acc base, exp - 1)
-
--- ---- Todo: Winterfell's
--- def invmod (b: BFieldElement): BFieldElement = powmod b (P-2)
--- def divmod (a: BFieldElement) (b: BFieldElement): BFieldElement = mulmod a (invmod b)
+def (lhs: BFieldElement) /^ (rhs: BFieldElement): BFieldElement =
+  mul lhs (inverse rhs)
 
 entry main (a: u64) : u64 =
   let res = mul (new a) (new a)
@@ -240,6 +234,14 @@ entry mul_with_inverse_yields_one (x: u64) : bool =
   let should_be_one = (inverse x) *^ x
   in is_one should_be_one
 
+-- random input { u64 u64 }
+-- output { true }
+entry mul_then_div_is_identity (x: u64) (y: u64) : bool =
+  let x = new x
+  let y = new y
+  let should_be_x = (x *^ y) /^ y
+  in should_be_x ==^ x
+
 -- ==
 -- entry: infix_notation_works
 -- random input { u64 u64 }
@@ -249,7 +251,7 @@ entry infix_notation_works (a: u64) (b: u64) : bool =
   let a_bfe: BFieldElement = new a
   let b_bfe: BFieldElement = new b
   in add (mul a_bfe b_bfe) (sub a_bfe b_bfe) == (a_bfe *^ b_bfe +^ (a_bfe -^ b_bfe))
-    && a_bfe ==^ a_bfe
+    && a_bfe ==^ a_bfe && is_one (a_bfe /^ a_bfe)
 
 -- Test u64_mul
 -- ==
