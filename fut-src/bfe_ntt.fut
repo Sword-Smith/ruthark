@@ -14,19 +14,19 @@ def bfe_ntt_iteration [n] (log2m: i64) (data: [n]BFieldElement) (w_m: BFieldElem
     let bitmask = m - 1
     let w = BFieldElement.mod_pow_i64 w_m (j & bitmask)
     let (u, v) = (data[j],
-                  data[j + n / radix] BFieldElement.*^ w)
+                  data[j + (n >> 1)] BFieldElement.*^ w)
     let (u, v) = (u BFieldElement.+^ v, u BFieldElement.-^ v)
-    let idxD = ((j & !bitmask) * radix) + (j & bitmask)
+    let idxD = ((j & !bitmask) << 1) + (j & bitmask)
     in (idxD, u, idxD + m, v)
 
 def bfe_ntt' [n] (bits: i64) (omega: BFieldElement) (input: [n]BFieldElement): [n]BFieldElement =
     let input = copy input
     let output = copy input
-    let ix = iota (n / radix)
+    let ix = iota (n >> 1)
     let log2ms = iota bits
     let (res,_) =
         loop (input': *[n]BFieldElement, output': *[n]BFieldElement) = (input, output) for log2m in log2ms do
-            let w_m = BFieldElement.mod_pow_i64 omega (n / (radix << log2m))
+            let w_m = BFieldElement.mod_pow_i64 omega (n >> (log2m + 1))
             let (i0s, us, i1s, vs) = unzip4 (map (bfe_ntt_iteration log2m input' w_m) ix)
             in (scatter output'
                 (concat_to n i0s i1s)
