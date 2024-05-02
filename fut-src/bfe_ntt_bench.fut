@@ -6,7 +6,7 @@ type BFieldElement = BFieldElement.BFieldElement
 
 -- ==
 -- entry: bench_bfe_ntt
--- random input { [1048576]u64 }
+-- random input { [8388608]u64 }
 entry bench_bfe_ntt [n] (input: [n]u64): [n]BFieldElement =
     let input = map BFieldElement.new input
     in bfe_ntt input
