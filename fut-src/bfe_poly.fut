@@ -21,7 +21,7 @@ def scale [n] (alpha: BFieldElement) (poly: BfePolynomial [n]): BfePolynomial [n
 def evaluate [n] (poly: BfePolynomial [n]) (x: BFieldElement): BFieldElement =
     -- TODO: Do we want to implement this with Horner evaluation?
     let powers_of_x = map (BFieldElement.mod_pow_i64 x) (iota n)
-    in reduce (BFieldElement.+^) BFieldElement.zero (map2 (BFieldElement.*^) poly.coefficients powers_of_x) -- <-- works
+    in reduce (BFieldElement.+^) BFieldElement.zero (map2 (BFieldElement.*^) poly.coefficients powers_of_x)
 
 def fast_coset_interpolate [n] (offset: BFieldElement) (values: [n]BFieldElement): BfePolynomial[n] =
   -- TODO: Consider writing a new function for `bfe_intt` since we already have an `omega`/generator
@@ -33,6 +33,12 @@ def fast_coset_evaluate [n] (offset: BFieldElement) (order: i64) (poly: BfePolyn
     let coefficients = (scale offset poly).coefficients
     let coefficients = coefficients ++ (replicate (order - n) BFieldElement.zero) :> [order]BFieldElement
     in bfe_ntt coefficients
+
+-- Low-degree extend a single column
+def low_degree_extend [n] (offset: BFieldElement) (extension_factor: i64) (randomized_trace: [n]BFieldElement): ([extension_factor * n]BFieldElement, BfePolynomial[n]) =
+    let interpolation_polynomial = fast_coset_interpolate offset randomized_trace
+    let lde_codeword = fast_coset_evaluate offset (extension_factor * n) interpolation_polynomial
+    in (lde_codeword, interpolation_polynomial)
 
  -- P(3) = 1 + 3*1 = 4
  -- P'(1) = 1 + 1*3 = 4
@@ -110,3 +116,13 @@ entry fast_coset_evaluate_and_interpolate_is_identity_different_sizes [n] (coeff
     let (should_be_coefficients_again, should_be_zeros) =
       (coefficients_again[0:n], coefficients_again[n:n+n] :> [n]BFieldElement)
     in shared.eq_arr BFieldElement.eq should_be_coefficients_again coefficients && and (map BFieldElement.is_zero should_be_zeros)
+
+-- ==
+-- entry: low_degree_extend_test
+-- input { [12u64, 12u64] 2i64 }
+-- output { [12u64, 12u64, 12u64, 12u64] [12u64, 0u64] }
+entry low_degree_extend_test [n] (trace: [n]u64) (extension_factor: i64): ([extension_factor*n]u64, [n]u64) =
+    let trace = map BFieldElement.new trace
+    let (lde_codeword, interpolant) = low_degree_extend (BFieldElement.new 7) extension_factor trace
+    let interpolant_coefficients = map BFieldElement.value interpolant.coefficients
+    in (map BFieldElement.value lde_codeword, interpolant_coefficients)
