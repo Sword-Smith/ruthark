@@ -94,6 +94,9 @@ def u64_mul (lhs: u64) (rhs: u64) : U128 =
 
 def new (n: u64) : BFieldElement = {0 = montyred (u64_mul n R2) }
 
+def from_raw_u64 (raw_u64: u64) : BFieldElement =
+  { 0 = raw_u64 }
+
 def primitive_root (order: i64) : BFieldElement =
   match order
     case 0i64 -> assert false zero
