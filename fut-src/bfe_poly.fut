@@ -35,8 +35,13 @@ def fast_coset_evaluate [n] (offset: BFieldElement) (order: i64) (poly: BfePolyn
     in bfe_ntt coefficients
 
 -- Low-degree extend a single column
-def low_degree_extend [n] (offset: BFieldElement) (extension_factor: i64) (randomized_trace: [n]BFieldElement): ([extension_factor * n]BFieldElement, BfePolynomial[n]) =
-    let interpolation_polynomial = fast_coset_interpolate offset randomized_trace
+def low_degree_extend
+    [n]
+    (offset: BFieldElement)
+    (extension_factor: i64)
+    (randomized_trace: [n]BFieldElement)
+    : ([extension_factor * n]BFieldElement, BfePolynomial[n]) =
+    let interpolation_polynomial = fast_coset_interpolate BFieldElement.one randomized_trace
     let lde_codeword = fast_coset_evaluate offset (extension_factor * n) interpolation_polynomial
     in (lde_codeword, interpolation_polynomial)
 
