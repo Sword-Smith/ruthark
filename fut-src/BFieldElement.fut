@@ -184,10 +184,6 @@ def inverse (x: BFieldElement): BFieldElement =
 def (lhs: BFieldElement) /^ (rhs: BFieldElement): BFieldElement =
   mul lhs (inverse rhs)
 
-entry main (a: u64) : u64 =
-  let res = mul (new a) (new a)
-  in value res
-
 -- Test new_is_inverse_of_value
 -- ==
 -- entry: new_is_inverse_of_value_pbt
