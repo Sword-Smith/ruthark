@@ -355,7 +355,7 @@ entry mod_pow_i64_unit_test (base: u64) (exponent: i64) =
 entry primitive_roots_are_roots (max_log2_order: i64): bool =
   let i = 1i64
   let acc: bool = true
-  let (_, res) = loop (i, acc) for i < max_log2_order do
+  let (_, res) = loop (i, acc) while i < max_log2_order do
     let order = 1i64 << i
     let primitive_root = primitive_root order
     let should_be_one = mod_pow_i64 primitive_root order
@@ -377,7 +377,7 @@ entry to_the_power_of_power_of_2_test (base: u64): bool =
   let max_log2_power = 6
   let i = 0i64
   let acc: bool = true
-  let (_, res) = loop (i, acc) for i < max_log2_power do
+  let (_, res) = loop (i, acc) while i < max_log2_power do
     let power = 1i64 << i
-    in (i + 1, (mod_pow_i64 base power) ==^ (to_the_power_of_power_of_2 base i))
+    in (i + 1, acc && (mod_pow_i64 base power) ==^ (to_the_power_of_power_of_2 base i))
   in res
