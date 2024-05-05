@@ -346,9 +346,9 @@ entry mod_pow_i64_unit_test (base: u64) (exponent: i64) =
   in value (mod_pow_i64 base exponent)
 
 -- ==
--- entry: primitive_roots_are_roots
+-- entry: primitive_roots_are_primitive_roots
 -- input  { 32i64 }
-entry primitive_roots_are_roots (max_log2_order: i64): bool =
+entry primitive_roots_are_primitive_roots (max_log2_order: i64): bool =
   let i = 1i64
   let acc: bool = true
   let (_, res) = loop (i, acc) while i < max_log2_order do
