@@ -25,6 +25,18 @@ def i64_to_bytes_le (x: i64): [8]u8 =
   let byte7 = u8.i64(x >> 56)
   in [byte0, byte1, byte2, byte3, byte4, byte5, byte6, byte7]
 
+-- Convert an array of 8 bytes (little-endian) to a 64-bit integer 
+def bytes_le_to_i64 (x: [8]u8 ): i64=
+  let byte0 = i64.u8(x[0]) << 0
+  let byte1 = i64.u8(x[1]) << 8
+  let byte2 = i64.u8(x[2]) << 16
+  let byte3 = i64.u8(x[3]) << 24
+  let byte4 = i64.u8(x[4]) << 32
+  let byte5 = i64.u8(x[5]) << 40
+  let byte6 = i64.u8(x[6]) << 48
+  let byte7 = i64.u8(x[7]) << 56
+  in byte0 + byte1 + byte2 + byte3 + byte4 + byte5 + byte6 + byte7
+
 -- ==
 -- entry: test_i64_to_bytes_le
 -- input  { 0i64 }
@@ -35,3 +47,14 @@ def i64_to_bytes_le (x: i64): [8]u8 =
 -- output { [141u8, 247u8, 141u8, 0u8, 0u8, 0u8, 0u8, 0u8] }
 entry test_i64_to_bytes_le (x: i64): [8]u8 =
   i64_to_bytes_le(x)
+
+-- ==
+-- entry: test_bytes_to_i64
+-- input  { [0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8] }
+-- output { 0i64 }
+-- input  { [115u8, 92u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8] }
+-- output { 89203i64 }
+-- input  { [141u8, 247u8, 141u8, 0u8, 0u8, 0u8, 0u8, 0u8] }
+-- output { 9303949i64 }
+entry test_bytes_to_i64 (x: [8]u8): i64 =
+  bytes_le_to_i64(x)
