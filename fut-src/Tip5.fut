@@ -141,6 +141,21 @@ def offset_fermat_cube_map (x: u16): u16 =
   let result = (xxx + 256) % 257
   in u16.u64(result)   
 
+-- split and lookup
+def split_and_lookup 
+  (element: BFieldElement)
+  : BFieldElement = 
+  -- convert field element value to bytes
+  let bytes: [8]u8 = shared.u64_to_bytes_le element.0
+  -- Perform lookup 
+  let updated_bytes = 
+    loop bytes_acc = bytes for i in 0..<8 do
+      let index = i32.u8(bytes_acc[i])
+      let new_val = LOOKUP_TABLE[index]
+      in (bytes_acc with [i] = new_val)
+  -- convert to u64, return
+  in { 0 = shared.bytes_le_to_u64 updated_bytes }
+
 def round
   (round_index: i64)
   (self: Tip5)
@@ -187,3 +202,19 @@ entry lookup_table_is_correct : bool =
   let generated_table : [256]u8 = 
     map (\i -> u8.u16(offset_fermat_cube_map(u16.i64(i)))) (iota 256)
   in reduce (&&) true (map2 (==) LOOKUP_TABLE generated_table)
+
+-- ==
+-- entry: test_split_and_lookup
+-- input { 48592u64 }
+-- output { 46905u64 }
+-- input { 593284u64 }
+-- output { 14986571u64 }
+-- input { 5324675u64 }
+-- output { 6685552u64 }
+entry test_split_and_lookup (x: u64) : u64 = 
+  let field_element = BFieldElement.new x 
+  let out = split_and_lookup field_element
+  in BFieldElement.value(out)
+
+
+
