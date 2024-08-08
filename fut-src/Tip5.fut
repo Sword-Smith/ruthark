@@ -155,6 +155,26 @@ def split_and_lookup
       in (bytes_acc with [i] = new_val)
   -- convert to u64, return
   in { 0 = shared.bytes_le_to_u64 updated_bytes }
+  
+  -- sbox
+def sbox_layer 
+  (self: *Tip5) -- * == pass ownership
+  : Tip5 = 
+  -- get alias for state
+  let state = self.state
+  -- split and lookup 
+  let state = loop state for i in 0..<NUM_SPLIT_AND_LOOKUP do
+      let updated_element = split_and_lookup state[i]
+      in (state with [i] = updated_element)
+  -- power map 
+  let state = loop state for i in NUM_SPLIT_AND_LOOKUP..<STATE_SIZE do
+    let x: BFieldElement = state[i]
+    let sq = BFieldElement.mul x x
+    let qu = BFieldElement.mul sq sq
+    let updated_element = BFieldElement.mul x ( BFieldElement.mul sq  qu)
+    in (state with [i] = updated_element)
+  in { state = state } :> Tip5 
+
 
 def round
   (round_index: i64)
@@ -216,5 +236,12 @@ entry test_split_and_lookup (x: u64) : u64 =
   let out = split_and_lookup field_element
   in BFieldElement.value(out)
 
-
-
+-- ==
+-- entry: test_sbox_layer
+-- input { }
+-- output { [0u64, 1u64, 8u64, 27u64, 16384u64, 78125u64, 279936u64, 823543u64, 2097152u64, 4782969u64, 10000000u64, 19487171u64, 35831808u64, 62748517u64, 105413504u64, 170859375u64] }
+entry test_sbox_layer : [STATE_SIZE]u64 =
+  let zero_to_fifteen: [STATE_SIZE]u64 = map u64.i64 (iota STATE_SIZE)
+  let state: [STATE_SIZE]BFieldElement = map BFieldElement.new (zero_to_fifteen)
+  let performed_sbox: Tip5 = sbox_layer { state = state } :> Tip5
+  in map BFieldElement.value performed_sbox.state
