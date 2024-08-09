@@ -14,6 +14,18 @@ type U128 = (u64, u64)
 def u128_from (x: u64) : U128 = (0u64, x)
 def u64_from (x: U128) : u64 = snd x
 
+-- U128 addition
+def u128_add (x: U128) (y: U128) : U128 =
+  let (x_hi, x_lo) = x
+  let (y_hi, y_lo) = y
+  -- add lo values
+  let lo = x_lo + y_lo
+  -- check for overflow
+  let carry = if lo < x_lo then 1u64 else 0u64
+  -- add hi values and any carry
+  let hi = x_hi + y_hi + carry
+  in (hi, lo)
+
 -- U128 left shift
 def u128_left_shift (x: U128) (shift: u64) : U128 =
   let (hi, lo) = x
@@ -423,4 +435,16 @@ entry u128_left_shift_test (l_u128: u64) (r_u128: u64) (shift: u64) : (u64, u64)
 -- output { 28823037615171174u64 7379278046493061120u64 }
 entry u128_right_shift_test (l_u128: u64) (r_u128: u64) (shift: u64) : (u64, u64) =
   let out = u128_right_shift (l_u128, r_u128) shift
+  in (fst out, snd out)
+
+-- ==
+-- entry: u128_add_test
+-- input  { 0u64 1u64 0u64 1u64 }
+-- output { 0u64 2u64 }
+-- input  { 0u64 18446744073709551615u64 0u64 1u64 }
+-- output { 1u64 0u64 }
+-- input { 16777215u64 18446744073709551615u64 34359738367u64 18446744073709551615u64 }
+-- output { 34376515583u64 18446744073709551614u64}
+entry u128_add_test (l_hi: u64) (l_lo: u64) (r_hi: u64) (r_lo: u64) : (u64, u64) =
+  let out = u128_add (l_hi, l_lo) (r_hi, r_lo)
   in (fst out, snd out)
