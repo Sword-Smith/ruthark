@@ -217,22 +217,26 @@ def sbox_layer
   in { state = state } :> Tip5 
 
 
+-- round 
 def round
   (round_index: i64)
-  (self: Tip5)
+  (self: *Tip5)
   : Tip5 =
-  -- TODO: Call `sbox_layer` and `mds_generate`
+  -- call sbox_layer and mds_generated
+  let self = sbox_layer self
+  let self = mds_generated self
 
   let rounds_rc_indices = map ((+) (round_index * STATE_SIZE)) (iota STATE_SIZE)
   let rounds_rc = shared.gather ROUND_CONSTANTS rounds_rc_indices :> [STATE_SIZE]BFieldElement
   in {state = map2 (BFieldElement.+^) self.state rounds_rc }
 
-
+-- permutation calls round func NUM_ROUNDS times
 def permutation
- (self: Tip5)
+ (self: *Tip5)
  : Tip5 =
  loop sponge = self for i < NUM_ROUNDS do
   round i sponge
+
 
 def hash_pair
  (left: Digest)
@@ -295,4 +299,24 @@ entry test_mds_generated (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
   let state: [STATE_SIZE]BFieldElement = map BFieldElement.new input
   let tip5: Tip5 = { state = state }
   let tip5: Tip5 = mds_generated tip5
+  in map BFieldElement.value tip5.state
+
+-- == 
+-- entry: test_round
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64, 8u64, 9u64, 10u64, 11u64, 12u64, 13u64, 14u64, 15u64, 16u64] }
+-- output { [13630787642203001902u64, 16896947564003473633u64, 10379470073464134983u64, 1965427456556198464u64, 15232567016277269303u64, 15892661416395869245u64, 3989155112214343120u64, 2851440915057620430u64, 8709159127100967584u64, 3694883791534778133u64, 12692463329003091445u64, 10722336274544247558u64, 12745456772474232568u64, 17932443119992221648u64, 7558121867372096151u64, 15551071123497955001u64] }
+entry test_round (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
+  let state: [STATE_SIZE]BFieldElement = map BFieldElement.new input
+  let tip5: Tip5 = { state = state }
+  let tip5: Tip5 = round 0 tip5
+  in map BFieldElement.value tip5.state
+
+-- == 
+-- entry: test_permutation
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64, 8u64, 9u64, 10u64, 11u64, 12u64, 13u64, 14u64, 15u64, 16u64] }
+-- output { [3738715405479954556u64, 16991178370001441009u64, 1342414182333913173u64, 3805445081528134291u64, 16691165090776765767u64, 12310760454738969197u64, 12434079818696690066u64, 4565885946143111712u64, 10837812882172880148u64, 2010441594153163076u64, 16902475684635846384u64, 6159046892226671443u64, 13255912557551608855u64, 223433057183395922u64, 17068148105184310368u64, 357496177803468966u64]}
+entry test_permutation (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
+  let state: [STATE_SIZE]BFieldElement = map BFieldElement.new input
+  let tip5: Tip5 = { state = state }
+  let tip5: Tip5 = permutation tip5
   in map BFieldElement.value tip5.state
