@@ -1,6 +1,7 @@
 module Digest = import "Digest"
 module BFieldElement = import "BFieldElement"
 module shared = import "shared"
+module mds = import "mds"
 
 type Digest = Digest.Digest
 type BFieldElement = BFieldElement.BFieldElement
@@ -156,6 +157,46 @@ def split_and_lookup
   -- convert to u64, return
   in { 0 = shared.bytes_le_to_u64 updated_bytes }
   
+-- mds generated
+def mds_generated 
+  (self: *Tip5)  -- * == pass ownership to modify in place
+  : Tip5 =
+  -- init lo and hi arrs
+  let lo: [STATE_SIZE]u64 = map (\_ -> 0u64) (iota STATE_SIZE)
+  let hi: [STATE_SIZE]u64 = map (\_ -> 0u64) (iota STATE_SIZE)
+  -- fill w/ lo and hi bits
+  let (lo, hi): ([STATE_SIZE]u64, [STATE_SIZE]u64) =
+    loop (lo, hi) = (lo, hi) for i < STATE_SIZE do
+      let b: u64 = BFieldElement.to_raw_u64 self.state[i]
+      let new_hi: u64 = b >> 32
+      let new_lo: u64 = b & 0xffffffffu64
+      in (lo with [i] = new_lo, hi with [i] = new_hi)
+  -- call mds generated function on each
+  let lo = mds.generated_function lo
+  let hi = mds.generated_function hi
+  -- Update state arr
+  let new_state =
+    loop state = self.state for r < STATE_SIZE do
+      -- isolate lhs and rhs of the addition s
+      let s_lhs: BFieldElement.U128 = BFieldElement.u128_from(lo[r] >> 4)
+      let hi_u128: BFieldElement.U128 =  BFieldElement.u128_from(hi[r])
+      let s_rhs: BFieldElement.U128 =  BFieldElement.u128_left_shift hi_u128 28
+      -- s = lhs + rhs
+      let s: BFieldElement.U128 = BFieldElement.u128_add s_lhs s_rhs
+      -- split s bits into hi and lo
+      let s_hi: u64 = BFieldElement.u64_from(BFieldElement.u128_right_shift s 64)
+      let s_lo: u64 = BFieldElement.u64_from(s)
+      -- overflowing addition of hi and lo 
+      let (res, over) = BFieldElement.overflowing_add s_lo (s_hi * 0xffffffffu64)
+      -- update state[r] depending on overflow
+      in state with [r] =
+        if over then
+          BFieldElement.from_raw_u64(res + 0xffffffffu64)
+        else
+          BFieldElement.from_raw_u64(res)
+   -- Return the updated record with the new state
+  in { state = new_state } :> Tip5
+
   -- sbox
 def sbox_layer 
   (self: *Tip5) -- * == pass ownership
@@ -245,3 +286,13 @@ entry test_sbox_layer : [STATE_SIZE]u64 =
   let state: [STATE_SIZE]BFieldElement = map BFieldElement.new (zero_to_fifteen)
   let performed_sbox: Tip5 = sbox_layer { state = state } :> Tip5
   in map BFieldElement.value performed_sbox.state
+
+-- ==
+-- entry: test_mds_generated
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64, 8u64, 9u64, 10u64, 11u64, 12u64, 13u64, 14u64, 15u64, 16u64] }
+-- output {[3995122u64, 4502151u64, 4566908u64, 4550497u64, 4955990u64, 4788843u64, 4451760u64, 4783973u64, 4397514u64, 4481935u64, 4345076u64, 4215417u64, 4547838u64, 4117571u64, 4213560u64, 4452797u64]}
+entry test_mds_generated (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
+  let state: [STATE_SIZE]BFieldElement = map BFieldElement.new input
+  let tip5: Tip5 = { state = state }
+  let tip5: Tip5 = mds_generated tip5
+  in map BFieldElement.value tip5.state

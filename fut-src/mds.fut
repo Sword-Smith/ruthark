@@ -1,5 +1,5 @@
 
-def generated_function (input: [16]u64) : [16]u64 =
+def generated_function (input: []u64) : [16]u64 =
         -- u64 addition and sub are naturally wrapping around 
     let node_34 = input[0] + input[8]
     let node_38 = input[4] + input[12]
