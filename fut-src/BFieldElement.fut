@@ -27,6 +27,18 @@ def u128_left_shift (x: U128) (shift: u64) : U128 =
        let new_lo = lo << shift
        in (new_hi, new_lo)
 
+-- right shift for u128
+def u128_right_shift (x: U128) (shift: u64) : U128 =
+  let (hi, lo) = x
+   -- When shift is 64 or more, all bits move to the lower part
+  in if shift >= 64 
+    then (0u64, hi >> (shift - 64))  
+    else 
+     -- Regular shifting within 64 bits
+      let new_lo = (hi << (64 - shift)) | (lo >> shift)
+      let new_hi = hi >> shift
+      in (new_hi, new_lo)
+
 -- 2^32 - 1
 def lower32bit : u64 = 0xffff_ffff
 -- 2^64 - 2^32 + 1
@@ -392,13 +404,23 @@ entry to_the_power_of_power_of_2_test (base: u64): bool =
   in res
 
 -- ==
--- entry: u128_right_shift_test
+-- entry: u128_left_shift_test
 -- input  { 0u64 1u64 32u64 }
 -- output { 0u64 4294967296u64 }
 -- input  { 0u64 1u64 64u64 }
 -- output { 1u64 0u64 }
 -- input { 0u64 1u64 88u64 }
 -- output { 16777216u64 0u64 }
-entry u128_right_shift_test (l_u128: u64) (r_u128: u64) (shift: u64) : (u64, u64) =
+entry u128_left_shift_test (l_u128: u64) (r_u128: u64) (shift: u64) : (u64, u64) =
   let out = u128_left_shift (l_u128, r_u128) shift
+  in (fst out, snd out)
+
+-- ==
+-- entry: u128_right_shift_test
+-- input  { 0u64 1u64 32u64 }
+-- output { 0u64 0u64 }
+-- input { 1844674407370955161u64 11105193132817121280u64 6u64 }
+-- output { 28823037615171174u64 7379278046493061120u64 }
+entry u128_right_shift_test (l_u128: u64) (r_u128: u64) (shift: u64) : (u64, u64) =
+  let out = u128_right_shift (l_u128, r_u128) shift
   in (fst out, snd out)
