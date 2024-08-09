@@ -249,6 +249,16 @@ def hash_pair (left: Digest) (right: Digest) : Digest =
   let digest_values = take Digest.DIGEST_LENGTH sponge_state.state
   in { 0 = digest_values }
   
+-- Hashes 10 elements or two digests. There is no padding ibc input len is fixed
+def hash_10 (input: [10]BFieldElement) : [Digest.DIGEST_LENGTH]BFieldElement = 
+  -- init sponge state
+  let sponge_state = input ++ replicate (STATE_SIZE - 10) BFieldElement.one :> [STATE_SIZE]BFieldElement
+  -- package in Tip5 type
+  let sponge: Tip5 = { state = sponge_state }
+  -- permute
+  let sponge_state = permutation sponge
+  -- return the first DIGEST_LENGTH values 
+  in take Digest.DIGEST_LENGTH sponge_state.state
 
 -- ==
 -- entry: lookup_table_is_correct
@@ -323,3 +333,45 @@ entry hash_pair_test (left: [Digest.DIGEST_LENGTH]u64) (right: [Digest.DIGEST_LE
   let right_digest: Digest = { 0 = map BFieldElement.new right }
   let result: Digest = hash_pair left_digest right_digest
   in map BFieldElement.value result.0
+
+-- -- ==
+-- -- entry: hash10_test_vectors
+-- -- input {}
+-- -- output { [10869784347448351760u64, 1853783032222938415u64, 6856460589287344822u64, 17178399545409290325u64, 7650660984651717733u64] }
+entry hash10_test_vectors : bool =
+  -- create preimage
+  let preimage_init: [10]BFieldElement = map (\_ -> BFieldElement.zero) (iota 10)
+  
+  -- hash preimage multiple
+  let final_preimage =
+    loop (preimage) = (preimage_init) for i < 6 do
+      -- hash current preimage
+      let digest = hash_10 preimage
+      -- place digest in preimage
+      let prefix = take i preimage
+      let suffix = drop (i + Digest.DIGEST_LENGTH) preimage
+      let updated_preimage = prefix ++ digest ++ suffix
+      -- take the first 10 elements  (so compiler knows the length)
+      in take 10 updated_preimage
+
+  -- Compuute final hash and gather values
+  let last_digest = hash_10 final_preimage
+  let last_digest = map BFieldElement.value last_digest
+
+  -- Expected final hash values
+  let expected_final_digest = [
+    10869784347448351760u64,
+    1853783032222938415u64,
+    6856460589287344822u64,
+    17178399545409290325u64,
+    7650660984651717733u64
+  ]
+
+  -- Check if the final hash is correct
+  let check_0: bool = expected_final_digest[0] == last_digest[0]
+  let check_1: bool = expected_final_digest[1] == last_digest[1]
+  let check_2: bool = expected_final_digest[2] == last_digest[2]
+  let check_3: bool = expected_final_digest[3] == last_digest[3]
+  let check_4: bool = expected_final_digest[4] == last_digest[4]
+
+  in check_0 && check_1 && check_2 && check_3 && check_4
