@@ -237,27 +237,18 @@ def permutation
  loop sponge = self for i < NUM_ROUNDS do
   round i sponge
 
-
-def hash_pair
- (left: Digest)
- (right: Digest)
- : Digest =
---  let sponge_state = replicate STATE_SIZE BFieldElement.zero
-  let sponge_state =
-    left.0
-    ++ right.0
-    ++ replicate (STATE_SIZE - RATE) BFieldElement.one
-    :> [STATE_SIZE]BFieldElement
-  let sponge_state: Tip5 = { state = sponge_state }
-  let sponge_state = permutation sponge_state
-
-  -- TODO: Fix return value
-  in left
---  let sponge_state = scatter (sponge.state) (iota DIGEST_LENGTH) left.0
-
- -- set first DIGEST_LENGTH words of state from left values
- -- set next DIGEST_LENGTH words of state from right values
-
+-- hashes two digests, useful for merkle trees
+def hash_pair (left: Digest) (right: Digest) : Digest =
+  -- append digests and pad
+  let sponge_state = left.0 ++ right.0 ++ replicate (STATE_SIZE - RATE) BFieldElement.one :> [STATE_SIZE]BFieldElement
+  -- package in Tip5 type
+  let sponge: Tip5 = { state = sponge_state }
+  -- permute
+  let sponge_state = permutation sponge
+  -- extract the first DIGEST_LENGTH values for return
+  let digest_values = take Digest.DIGEST_LENGTH sponge_state.state
+  in { 0 = digest_values }
+  
 
 -- ==
 -- entry: lookup_table_is_correct
@@ -320,3 +311,15 @@ entry test_permutation (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
   let tip5: Tip5 = { state = state }
   let tip5: Tip5 = permutation tip5
   in map BFieldElement.value tip5.state
+
+-- == 
+-- entry: hash_pair_test
+-- input { [1u64, 1u64, 1u64, 1u64, 1u64] [2u64, 2u64, 2u64, 2u64, 2u64] }
+-- output { [8730289631809914998u64, 1009323861008521215u64, 58075149203029478u64, 10017054356005686881u64, 7147585122682319752u64] }
+-- input { [88u64, 88u64, 88u64, 88u64, 88u64] [123u64, 123u64, 123u64, 123u64, 123u64] }
+-- output { [580041251555676278u64, 16666865939069142333u64, 5272045431067232340u64, 5762991365971536457u64, 14581353241871598518u64] }
+entry hash_pair_test (left: [Digest.DIGEST_LENGTH]u64) (right: [Digest.DIGEST_LENGTH]u64) : [Digest.DIGEST_LENGTH]u64 =
+  let left_digest: Digest = { 0 = map BFieldElement.new left }
+  let right_digest: Digest = { 0 = map BFieldElement.new right }
+  let result: Digest = hash_pair left_digest right_digest
+  in map BFieldElement.value result.0
