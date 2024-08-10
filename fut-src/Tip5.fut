@@ -267,6 +267,21 @@ def absorb (self: Tip5) (input: [RATE]BFieldElement) : Tip5 =
   let new_state = map2 (\i x -> if i < RATE then input[i] else x) (iota STATE_SIZE) state
   in permutation { state = new_state } :> Tip5
 
+-- pad and absorb all (used within hash_varlen)
+def pad_and_absorb_all(self: Tip5) (input: []BFieldElement) : Tip5 =
+  -- pad input
+  let padded_length: i64 = shared.next_multiple_of ((length input) + 1) RATE
+  let padding = replicate (padded_length - length input) BFieldElement.zero
+  let padded_input = input ++ [BFieldElement.one] ++ padding -- [1, 0, 0, ...]
+  -- absorb all chunks
+  let num_chunks = padded_length // RATE
+  let self' = loop self' = self for i < num_chunks do
+    let chunk_start = i * RATE
+    let chunk = padded_input[chunk_start:(chunk_start + RATE)]
+    let chunk = take RATE chunk -- ensure length is RATE (compiler needs to know)
+    in absorb self' chunk
+  in self'
+
 -- ==
 -- entry: lookup_table_is_correct
 -- random input { }
@@ -394,3 +409,12 @@ entry absorb_test (input: [RATE]u64) : [STATE_SIZE]u64 =
   let tip5 = absorb tip5 input
   in map BFieldElement.value tip5.state
 
+-- ==
+-- entry: test_pad_and_absorb_all
+-- input { }
+-- output { [3588662367340377189u64, 1674308759493466027u64, 15812284298942888812u64, 7234362949470865885u64, 10691079157494539585u64, 9786430604252666752u64, 9603442183392290278u64, 8950705941670498115u64, 4433355208077567955u64, 1328443036119347625u64, 4821595268274838208u64, 7336820815704793185u64, 7436619006474582588u64, 744124146292718456u64, 2683076373473407838u64, 12204837371088226891u64] }
+entry test_pad_and_absorb_all : [STATE_SIZE]u64 = 
+  let sponge = new #variable_length
+  let input = map (\_ -> BFieldElement.one) (iota (RATE * 7 + 3))
+  let state = pad_and_absorb_all sponge input
+  in map BFieldElement.value state.state
