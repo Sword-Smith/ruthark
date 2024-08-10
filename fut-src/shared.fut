@@ -37,6 +37,16 @@ def bytes_le_to_u64 (x: [8]u8 ): u64=
   let byte7 = u64.u8(x[7]) << 56
   in byte0 + byte1 + byte2 + byte3 + byte4 + byte5 + byte6 + byte7
 
+-- next multiple of m greater than or equal to x
+let next_multiple_of (x: i64) (m: i64) : i64 =
+  if m <= 0 then
+    0
+  else if x >= 0 then
+    ((x + m - 1) // m) * m
+  else
+    let base_multiple = ((-x + m - 1) // m) * m
+    in -base_multiple
+
 -- ==
 -- entry: test_u64_to_bytes_le
 -- input  { 0u64 }
@@ -58,3 +68,16 @@ entry test_u64_to_bytes_le (x: u64): [8]u8 =
 -- output { 9303949u64 }
 entry test_bytes_to_u64 (x: [8]u8): u64 =
   bytes_le_to_u64(x)
+
+-- ==
+-- entry: test_next_multiple_of
+-- input  { 0i64 1i64 }
+-- output { 0i64 }
+-- input  { 1i64 1i64 }
+-- output { 1i64 }
+-- input  { 7i64 4i64 }
+-- output { 8i64 }
+-- input  { 7i64 0i64 }
+-- output { 0i64 }
+entry test_next_multiple_of (x: i64) (m: i64): i64 =
+  next_multiple_of x m
