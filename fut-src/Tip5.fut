@@ -260,6 +260,13 @@ def hash_10 (input: [10]BFieldElement) : [Digest.DIGEST_LENGTH]BFieldElement =
   -- return the first DIGEST_LENGTH values 
   in take Digest.DIGEST_LENGTH sponge_state.state
 
+-- absorb for sponge
+def absorb (self: Tip5) (input: [RATE]BFieldElement) : Tip5 =
+  -- replace first RATE elements of state w/ input and permute
+  let state = self.state
+  let new_state = map2 (\i x -> if i < RATE then input[i] else x) (iota STATE_SIZE) state
+  in permutation { state = new_state } :> Tip5
+
 -- ==
 -- entry: lookup_table_is_correct
 -- random input { }
@@ -375,3 +382,15 @@ entry hash10_test_vectors : bool =
   let check_4: bool = expected_final_digest[4] == last_digest[4]
 
   in check_0 && check_1 && check_2 && check_3 && check_4
+
+
+-- == 
+-- entry: absorb_test
+-- input { [1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64] }
+-- output { [12276694923556208976u64, 7756442493947946745u64, 13743817057173723560u64, 3999954619626529058u64, 3348872667620553407u64, 11714074877412406751u64, 15106843309009503369u64, 9639208608967363300u64, 11549119483956107222u64, 5833668434441772619u64, 12025854796187829337u64, 15309005811211805093u64, 14033860760017979716u64, 2166987574418210223u64, 9392502802113476128u64, 6462878597501194570u64]}
+entry absorb_test (input: [RATE]u64) : [STATE_SIZE]u64 =
+  let input = map BFieldElement.new input
+  let tip5 = new #variable_length
+  let tip5 = absorb tip5 input
+  in map BFieldElement.value tip5.state
+
