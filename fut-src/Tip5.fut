@@ -290,6 +290,16 @@ def pad_and_absorb_all(self: Tip5) (input: []BFieldElement) : Tip5 =
     in absorb self' chunk
   in self'
 
+-- hashes variable length input
+def hash_varlen (input: []BFieldElement) : Digest =
+  -- init sponge state w/ variable len
+  let sponge = new #variable_length
+  -- pad, absorb, squeeze
+  let sponge: Tip5 = pad_and_absorb_all sponge input
+  let (produce, _) = squeeze (copy sponge)
+  -- -- package into digest
+  in { 0 = take Digest.DIGEST_LENGTH produce } :> Digest
+
 -- ==
 -- entry: lookup_table_is_correct
 -- random input { }
@@ -437,3 +447,13 @@ entry test_pad_and_absorb_all : [STATE_SIZE]u64 =
   let input = map (\_ -> BFieldElement.one) (iota (RATE * 7 + 3))
   let state = pad_and_absorb_all sponge input
   in map BFieldElement.value state.state
+
+-- == 
+-- entry: hash_varlen_test
+-- input { }
+-- output {[3588662367340377189u64, 1674308759493466027u64, 15812284298942888812u64, 7234362949470865885u64, 10691079157494539585u64]}
+entry hash_varlen_test : [Digest.DIGEST_LENGTH]u64 =
+  let input = map (\_ -> BFieldElement.one) (iota (RATE * 7 + 3))
+  let digest = hash_varlen input
+  in map BFieldElement.value digest.0
+
