@@ -216,7 +216,6 @@ def sbox_layer
     in (state with [i] = updated_element)
   in { state = state } :> Tip5 
 
-
 -- round 
 def round
   (round_index: i64)
@@ -266,6 +265,15 @@ def absorb (self: Tip5) (input: [RATE]BFieldElement) : Tip5 =
   let state = self.state
   let new_state = map2 (\i x -> if i < RATE then input[i] else x) (iota STATE_SIZE) state
   in permutation { state = new_state } :> Tip5
+
+-- squeeze for sponge
+def squeeze (self: *Tip5) : ([RATE]BFieldElement, Tip5) =
+  -- clone first RATE elements of state
+  let produce = map (\x -> x) (take RATE self.state)
+  -- permute the original state
+  let permuted = permutation self
+  -- return both
+  in (produce, permuted)
 
 -- pad and absorb all (used within hash_varlen)
 def pad_and_absorb_all(self: Tip5) (input: []BFieldElement) : Tip5 =
@@ -408,6 +416,17 @@ entry absorb_test (input: [RATE]u64) : [STATE_SIZE]u64 =
   let tip5 = new #variable_length
   let tip5 = absorb tip5 input
   in map BFieldElement.value tip5.state
+
+-- == 
+-- entry: squeeze_test
+-- input { }
+-- output { [9513097171871388188u64, 3642894535466991979u64, 11900176395730479649u64, 2833868294984721560u64, 13162030402806853734u64, 7298820437337462149u64, 7309960967578619849u64, 5771961918525632945u64, 9033987145334062528u64, 17091107411642127967u64, 14491063761991657932u64, 921297860939203994u64, 14761216787163201376u64, 4658636456911727154u64, 16629099993905651428u64, 13073621988708012208u64] [0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64] }
+entry squeeze_test : ([STATE_SIZE]u64, [RATE]u64) = 
+  let sponge = new #variable_length
+  let (produce, tip5) = squeeze sponge 
+  let tip5_values = map BFieldElement.value tip5.state
+  let produce_values = map BFieldElement.value produce
+  in (tip5_values, produce_values)
 
 -- ==
 -- entry: test_pad_and_absorb_all
