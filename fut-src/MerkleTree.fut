@@ -1,3 +1,61 @@
+module Tip5 = import "Tip5"
+module Digest = import "Digest"
+module BFieldElement = import "BFieldElement"
+
+type Digest = Digest.Digest
+type BFieldElement = BFieldElement.BFieldElement
+type~ MerkleTree = { nodes: []Digest }
+
+let ROOT_INDEX: i64 = 1
+
+def default_digest : Digest = 
+    { 0 = map (\_ -> BFieldElement.zero) (iota Digest.DIGEST_LENGTH) } 
+
+def is_power_of_two (n: i64) : bool =
+    n > 0 && (n & (n - 1)) == 0
+
+-- requires number of digests be a power of 2 and non-zero
+def from_digests (digests: []Digest) : MerkleTree  = 
+    -- -- TODO: fix asserts. Compiler not recognizing them?
+    -- assert (length digests > 0) "digests empty"
+    -- assert (is_power_of_two (length digests)) "digests not power of 2"
+
+    let leafs_count: i64 = length digests
+    -- init nodes as current digests
+    let nodes = copy digests
+
+    -- digest calculation
+    let (nodes, _) =
+        loop (nodes, node_count_on_this_level) = (nodes, leafs_count) while node_count_on_this_level > 1 do
+            -- update node count
+            let node_count_on_next_level = node_count_on_this_level // 2
+            -- hash pairs
+            let collect_and_hash = \i ->
+                let left = nodes[i]
+                let right = nodes[i+1]
+                in Tip5.hash_pair left right 
+            let local_digests = map collect_and_hash (iota node_count_on_next_level)
+            -- append to current nodes
+            let nodes = local_digests ++ nodes
+            in (nodes, node_count_on_next_level)
+    -- append unused nodes[0] to make length a power of 2
+    let nodes = [default_digest] ++ nodes
+    in { nodes = nodes } :> MerkleTree
+
+-- ==
+-- entry: test_from_digests
+-- input {}
+-- output { [[0u64, 0u64, 0u64, 0u64, 0u64], [15724892667502592618u64, 13850510571775421807u64, 14944926317937857992u64, 6071698931099546034u64, 9307566280769432565u64],  [8579641722220975599u64, 5018131886603910658u64, 13340051286813984917u64, 5143956232014806794u64, 10347107528309608227u64], [8579641722220975599u64, 5018131886603910658u64, 13340051286813984917u64, 5143956232014806794u64, 10347107528309608227u64], [18008192845958902073u64, 10900893521032121856u64, 5391490908942574506u64, 4714723590141826241u64, 12579287558637076295u64],  [18008192845958902073u64, 10900893521032121856u64, 5391490908942574506u64, 4714723590141826241u64, 12579287558637076295u64],  [18008192845958902073u64, 10900893521032121856u64, 5391490908942574506u64, 4714723590141826241u64, 12579287558637076295u64],  [18008192845958902073u64, 10900893521032121856u64, 5391490908942574506u64, 4714723590141826241u64, 12579287558637076295u64],  [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [941080798860502477u64, 5295886365985465639u64, 14728839126885177993u64, 10358449902914633406u64, 14220746792122877272u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64], [0u64, 0u64, 0u64, 0u64, 0u64]] }
+entry test_from_digests : [32][Digest.DIGEST_LENGTH]u64 = 
+    let initial_digests: [16]Digest = map (\_ -> copy default_digest) (iota 16)
+    let tree = from_digests initial_digests
+
+    let convert_digest_to_values = \d -> map BFieldElement.value d.0
+    let out =  map convert_digest_to_values tree.nodes
+    let out: [32][Digest.DIGEST_LENGTH]u64 = take 32 out
+    in out
+
+
 -- module RescuePrime = import "RescuePrime"
 -- module BFieldElement = import "BFieldElement"
 -- module Utils = import "Utils"
