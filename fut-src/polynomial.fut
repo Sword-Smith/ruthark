@@ -28,6 +28,14 @@ def eq (p1: Polynomial) (p2: Polynomial) : bool =
         -- check if the coefficients are the same
         let check = (map2 BFieldElement.eq (coeffs_1) (coeffs_2))        
         in reduce (\x y -> x && y) true check
+-- zero
+def zero : Polynomial = { coefficients = [] }
+def is_zero (p: Polynomial) : bool = eq p zero
+
+-- one
+def one : Polynomial = { coefficients = [BFieldElement.one] }
+def is_one (p: Polynomial) : bool = 
+    (degree p) == 0 && (BFieldElement.eq (p.coefficients[0]) BFieldElement.one)
 
 -- polynomial addition
 def add (p1: Polynomial) (p2: Polynomial) : Polynomial = 
@@ -42,6 +50,21 @@ def add (p1: Polynomial) (p2: Polynomial) : Polynomial =
     in { coefficients = map2 BFieldElement.add (take max_len coeffs1) (take max_len coeffs2) }
 
 
+-- == 
+-- entry: test_zero
+-- input {}
+-- output { true }
+entry test_zero : bool = 
+    let p = zero
+    in is_zero p
+
+-- == 
+-- entry: test_one
+-- input {}
+-- output { true }
+entry test_one : bool = 
+    let p = one
+    in is_one p
 
 -- == 
 -- entry: test_degree
