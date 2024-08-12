@@ -3,6 +3,8 @@ module BFieldElement = import "BFieldElement"
 type BFieldElement = BFieldElement.BFieldElement
 type~ Polynomial = { coefficients: []BFieldElement }
 
+let FAST_MULTIPLY_CUTOFF_THRESHOLD: i64 = 1 << 8
+
 --constructor
 def new (coefficients: []BFieldElement) : Polynomial = 
     { coefficients = coefficients }
@@ -48,6 +50,97 @@ def add (p1: Polynomial) (p2: Polynomial) : Polynomial =
     let coeffs2 = p2.coefficients ++ replicate (max_len - len2) BFieldElement.zero
     -- Add corresponding coefficients (telling compiler the lengths are the same)
     in { coefficients = map2 BFieldElement.add (take max_len coeffs1) (take max_len coeffs2) }
+
+-- Naive polynomial multiplication
+let naive_multiply (p1: Polynomial) (p2: Polynomial) : Polynomial =
+  let deg_lhs = degree p1
+  let deg_rhs = degree p2
+  in if deg_lhs < 0 || deg_rhs < 0 then
+    copy zero
+  else
+    let init_product = replicate (deg_lhs + deg_rhs + 1) BFieldElement.zero
+    in let final_product = loop product = init_product for i in 0 ... deg_lhs do
+          loop product = product for j in 0 ... deg_rhs do
+            let new_coeff = BFieldElement.mul (p1.coefficients[i]) (p2.coefficients[j])
+            let current_coeff = product[i + j]
+            let updated_coeff = BFieldElement.add current_coeff new_coeff
+            in product with [i + j] = updated_coeff
+    in { coefficients = final_product }
+
+-- multiplication dispatcher
+def multiply (p1: Polynomial) (p2: Polynomial) : Polynomial =
+    naive_multiply p1 p2
+    -- if (degree p1) + (degree p2) < FAST_MULTIPLY_CUTOFF_THRESHOLD 
+    -- then naive_multiply p1 p2
+    -- else fast_multiply p1 p2
+
+-- == 
+-- entry: polynomial_zero_is_neutral_element_for_addition
+-- input { [1u64, 2u64, 3u64] }
+-- output { true }
+entry polynomial_zero_is_neutral_element_for_addition (a: []u64) : bool = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = zero
+    let sum = add p1 p2
+    in eq p1 sum
+
+-- == 
+-- entry: polynomial_one_is_neutral_element_for_multiplication
+-- input { [1u64, 2u64, 3u64] }
+-- output { true }
+entry polynomial_one_is_neutral_element_for_multiplication (a: []u64) : bool = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = one
+    let product = multiply p1 p2
+    in eq p1 product
+
+-- == 
+-- entry: naive_multiply_test_vector
+-- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64, 8u64, 12u64] }
+-- output { [4u64, 13u64, 28u64, 35u64, 46u64, 48u64, 36u64] }
+entry naive_multiply_test_vector (a: []u64) (b: []u64) : []u64 = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    let p3 = naive_multiply p1 p2
+    in map BFieldElement.value p3.coefficients    
+
+-- == 
+-- entry: multiplication_by_zero_is_zero
+-- input { [1u64, 2u64, 3u64] }
+-- output { true }
+entry multiplication_by_zero_is_zero (a: []u64) : bool = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = zero
+    let product = multiply p1 p2
+    in eq product zero
+
+-- ==
+-- entry: polynomial_multiplication_is_associative
+-- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] [7u64, 8u64, 9u64] }
+-- output { true }
+entry polynomial_multiplication_is_associative (a: []u64) (b: []u64) (c: []u64) : bool = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    let p3 = new (map BFieldElement.new c)
+    -- (p1 * p2) * p3 == p1 * (p2 * p3)
+    let product_1 = multiply (multiply p1 p2) p3
+    let product_2 = multiply p1 (multiply p2 p3)
+    -- check if the coefficients are the same
+    in eq product_1 product_2
+
+-- == 
+-- entry: polynomial_multiplication_is_commutative
+-- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] }
+-- output { true }
+entry polynomial_multiplication_is_commutative (a: []u64) (b: []u64) : bool = 
+    -- init polys
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    -- should be the same
+    let product_1 = multiply p1 p2
+    let product_2 = multiply p2 p1
+    -- check if the coefficients are the same
+    in eq product_1 product_2
 
 
 -- == 
