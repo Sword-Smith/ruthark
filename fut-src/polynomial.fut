@@ -7,6 +7,28 @@ type~ Polynomial = { coefficients: []BFieldElement }
 def new (coefficients: []BFieldElement) : Polynomial = 
     { coefficients = coefficients }
 
+-- degree
+let degree (p: Polynomial) : i64 =
+    -- determine highest degre (mod trailing zeros)
+    let len: i64 = (length p.coefficients) - 1
+    in let new_deg = 
+    loop (deg) = (len) 
+    while (deg >= 0) && (BFieldElement.eq (p.coefficients[deg]) BFieldElement.zero) do
+        deg - 1
+    in new_deg
+
+-- equality
+def eq (p1: Polynomial) (p2: Polynomial) : bool =
+      if (degree p1) != (degree p2) then false
+      else 
+        -- ensure compiler knows the lengths are the same
+        let shared_len = length p1.coefficients
+        let coeffs_1 = take shared_len p1.coefficients
+        let coeffs_2 = take shared_len p2.coefficients
+        -- check if the coefficients are the same
+        let check = (map2 BFieldElement.eq (coeffs_1) (coeffs_2))        
+        in reduce (\x y -> x && y) true check
+
 -- polynomial addition
 def add (p1: Polynomial) (p2: Polynomial) : Polynomial = 
     -- determine longer polynomial
@@ -16,12 +38,31 @@ def add (p1: Polynomial) (p2: Polynomial) : Polynomial =
     -- Extend both coefficient arrays to the maximum length with zeros
     let coeffs1 = p1.coefficients ++ replicate (max_len - len1) BFieldElement.zero
     let coeffs2 = p2.coefficients ++ replicate (max_len - len2) BFieldElement.zero
-    -- Add corresponding coefficients
-    let coeffs1 = take max_len coeffs1 -- tell compiler the lengths are the same
-    let coeffs2 = take max_len coeffs2
-    let summed = map2 BFieldElement.add coeffs1 coeffs2 
+    -- Add corresponding coefficients (telling compiler the lengths are the same)
+    in { coefficients = map2 BFieldElement.add (take max_len coeffs1) (take max_len coeffs2) }
 
-    in { coefficients = summed }
+
+
+-- == 
+-- entry: test_degree
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] }
+-- output { 5i64 }
+-- input { [1u64, 2u64, 0u64, 0u64, 0u64, 0u64] }
+-- output { 1i64 }
+entry test_degree (a: []u64) : i64 = degree (new (map BFieldElement.new a))
+
+-- ==
+-- entry: test_eq
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] }
+-- output { true }
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 2u64, 3u64, 4u64] }
+-- output { false }
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64] [1u64, 2u64, 3u64, 4u64, 7u64] }
+-- output { false }
+entry test_eq (a: []u64) (b: []u64) : bool = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    in eq p1 p2
 
 -- == 
 -- entry: polynomial_addition_is_associative 
