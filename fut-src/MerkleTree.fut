@@ -16,11 +16,11 @@ def is_power_of_two (n: i64) : bool =
 
 -- requires number of digests be a power of 2 and non-zero
 def from_digests (digests: []Digest) : MerkleTree  = 
-    -- -- TODO: fix asserts. Compiler not recognizing them?
-    -- assert (length digests > 0) "digests empty"
-    -- assert (is_power_of_two (length digests)) "digests not power of 2"
+    
+    -- ensure valid input when getting leaf count
+    let valid_digests: bool = (length digests > 0) && (is_power_of_two (length digests))
+    let leafs_count: i64 = assert (valid_digests) (length digests)
 
-    let leafs_count: i64 = length digests
     -- init nodes as current digests
     let nodes = copy digests
 
