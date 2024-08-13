@@ -47,6 +47,34 @@ let next_multiple_of (x: i64) (m: i64) : i64 =
     let base_multiple = ((-x + m - 1) // m) * m
     in -base_multiple
 
+def next_power_of_two (x : u64) : u64 =
+  if x <= 1 then 1 
+  else 
+    -- set all bits right of mbs 
+    let x = x - 1  -- rightmost bit to 1
+    let x = x | (x >> 1)
+    let x = x | (x >> 2)
+    let x = x | (x >> 4)
+    let x = x | (x >> 8)
+    let x = x | (x >> 16)
+    let x = x | (x >> 32) 
+    -- roll over to the next power of two 
+    in x + 1
+
+-- == 
+-- entry: test_next_power_of_two
+-- input  { 0u64 }
+-- output { 1u64 }
+-- input  { 1u64 }
+-- output { 1u64 }
+-- input  { 2u64 }
+-- output { 2u64 }
+-- input  { 3u64 }
+-- output { 4u64 }
+-- input  { 62u64 }
+-- output { 64u64 }
+entry test_next_power_of_two (x: u64): u64 =
+  next_power_of_two x
 -- ==
 -- entry: test_u64_to_bytes_le
 -- input  { 0u64 }
