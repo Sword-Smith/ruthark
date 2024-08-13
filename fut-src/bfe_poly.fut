@@ -107,6 +107,29 @@ def multiply [n] [m] (p1: BfePolynomial [n]) (p2: BfePolynomial [m]) : BfePolyno
     then naive_multiply p1 p2
     else fast_multiply p1 p2
     
+-- chunks polynomial coefficients into chunks of a given length
+-- smaller than chunk_length chunks are padded with zeros
+def chunk_coefficients [n] (poly: BfePolynomial [n]) (chunk_length: i64) : [][]BFieldElement =
+    let num_chunks = (n + chunk_length - 1) // chunk_length
+
+    -- Initialize an empty array to hold the chunks
+    let chunks = loop chunks = [] while num_chunks > length chunks do
+        let i = length chunks
+        let chunk_start = i * chunk_length
+        let chunk_end = i64.min ((i + 1) * chunk_length) n
+
+        -- Slice the chunk of coefficients
+        let chunk_coeffs = poly.coefficients[chunk_start:chunk_end]
+
+        -- pad chunks smaller than chunk_length w/ zeroes, and tell compiler the length
+        let chunk_coeffs = 
+            chunk_coeffs ++ replicate (chunk_length - length chunk_coeffs) BFieldElement.zero
+        let chunk_coeffs = take chunk_length chunk_coeffs
+
+        -- Append
+        in chunks ++ [chunk_coeffs]
+
+    in chunks
 
 -- Given a polynomial P(x), produce P'(x) := P(α·x)
 -- Evaluating P'(x) corresponds to evaluating P(α·x)
@@ -138,6 +161,7 @@ def low_degree_extend
     (extension_factor: i64)
     (randomized_trace: [n]BFieldElement)
     : ([extension_factor * n]BFieldElement, BfePolynomial[n]) =
+
     let interpolation_polynomial = fast_coset_interpolate BFieldElement.one randomized_trace
     let lde_codeword = fast_coset_evaluate offset (extension_factor * n) interpolation_polynomial
     in (lde_codeword, interpolation_polynomial)
@@ -374,3 +398,19 @@ entry polynomial_multiplication_is_commutative (a: []u64) (b: []u64) : bool =
     let product_1 = multiply p1 p2
     let product_2 = multiply p2 p1
     in eq product_1 product_2
+
+-- ==
+-- entry: chunk_coefficients_unit_test
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64, 8u64] 3i64 }
+-- output { [[1u64, 2u64, 3u64], [4u64, 5u64, 6u64], [7u64, 8u64, 0u64]] }
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64, 8u64] 4i64 }
+-- output { [[1u64, 2u64, 3u64, 4u64], [5u64, 6u64, 7u64, 8u64]] }
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64] 2i64 }
+-- output { [[1u64, 2u64], [3u64, 4u64], [5u64, 6u64], [7u64, 0u64]] }
+-- input { [1u64] 7i64 }
+-- output { [[1u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64]] }
+entry chunk_coefficients_unit_test [n] (coefficients: [n]u64) (chunk_length: i64) : [][]u64 =
+    let coefficients = map BFieldElement.new coefficients
+    let poly = new coefficients
+    in map (map BFieldElement.value) (chunk_coefficients poly chunk_length)
+
