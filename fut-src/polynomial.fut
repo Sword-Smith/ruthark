@@ -1,4 +1,6 @@
 module BFieldElement = import "BFieldElement"
+module ntt = import "bfe_ntt"
+module shared = import "shared"
 
 type BFieldElement = BFieldElement.BFieldElement
 type~ Polynomial = { coefficients: []BFieldElement }
@@ -66,13 +68,61 @@ let naive_multiply (p1: Polynomial) (p2: Polynomial) : Polynomial =
             let updated_coeff = BFieldElement.add current_coeff new_coeff
             in product with [i + j] = updated_coeff
     in { coefficients = final_product }
+-- Function to extend array to the next power of two size with zeros
+let extend_with_zeros (coeffs : []BFieldElement) (desired_length : i64) : []BFieldElement =
+  let current_length = length coeffs
+  let zeros_to_add = desired_length - current_length
+  let zeros = replicate zeros_to_add BFieldElement.zero
+  in coeffs ++ zeros
 
--- multiplication dispatcher
+-- Fast polynomial multiplication using NTT
+let fast_multiply (p1: Polynomial) (p2: Polynomial) : Polynomial = 
+    let degree: i64 = (degree p1) + (degree p2)
+    in if degree < 0 then
+        copy zero
+    else   
+        -- get order for NTT
+        let order = shared.next_power_of_two_i64 (degree + 1)
+        -- pad coeffs to order w/ zeros
+        let lhs_coeffs = take order (extend_with_zeros p1.coefficients order)
+        let rhs_coeffs = take order (extend_with_zeros p2.coefficients order)
+        -- apply number theoretic transform
+        let lhs_ntt = ntt.bfe_ntt lhs_coeffs
+        let rhs_ntt = ntt.bfe_ntt rhs_coeffs
+        -- element wise mul in the NTT domain
+        let hadamard_product = map2 BFieldElement.mul lhs_ntt rhs_ntt
+        -- invert the ntt
+        let intt = ntt.bfe_intt hadamard_product
+        -- truncate to the correct degree
+        let final_coeffs = take (degree + 1) intt
+        in { coefficients = final_coeffs } :> Polynomial
+
+-- multiplication
 def multiply (p1: Polynomial) (p2: Polynomial) : Polynomial =
-    naive_multiply p1 p2
-    -- if (degree p1) + (degree p2) < FAST_MULTIPLY_CUTOFF_THRESHOLD 
-    -- then naive_multiply p1 p2
-    -- else fast_multiply p1 p2
+    if (degree p1) + (degree p2) < FAST_MULTIPLY_CUTOFF_THRESHOLD 
+    then naive_multiply p1 p2
+    else fast_multiply p1 p2
+    
+-- == 
+-- entry: fast_multiply_test_vector
+-- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64, 8u64, 12u64] }
+-- output { [4u64, 13u64, 28u64, 35u64, 46u64, 48u64, 36u64] }
+entry fast_multiply_test_vector (a: []u64) (b: []u64) : []u64 = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    let p3 = fast_multiply p1 p2
+    in map BFieldElement.value p3.coefficients
+
+-- == 
+-- entry: fast_multiply_same_as_naive 
+-- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] }
+-- output { true }
+entry fast_multiply_same_as_naive (a: []u64) (b: []u64) : bool = 
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    let product_1 = fast_multiply p1 p2
+    let product_2 = naive_multiply p1 p2
+    in eq product_1 product_2
 
 -- == 
 -- entry: polynomial_zero_is_neutral_element_for_addition

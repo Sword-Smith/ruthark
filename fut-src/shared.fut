@@ -47,11 +47,25 @@ let next_multiple_of (x: i64) (m: i64) : i64 =
     let base_multiple = ((-x + m - 1) // m) * m
     in -base_multiple
 
-def next_power_of_two (x : u64) : u64 =
+def next_power_of_two_u64 (x : u64) : u64 =
   if x <= 1 then 1 
   else 
-    -- set all bits right of mbs 
-    let x = x - 1  -- rightmost bit to 1
+    let x = x - 1 
+    -- modify so that all bits right of mbs are set
+    let x = x | (x >> 1)
+    let x = x | (x >> 2)
+    let x = x | (x >> 4)
+    let x = x | (x >> 8)
+    let x = x | (x >> 16)
+    let x = x | (x >> 32) 
+    -- roll over to the next power of two 
+    in x + 1
+
+def next_power_of_two_i64 (x : i64) : i64 =
+  if x <= 1 then 1 
+  else 
+    let x = x - 1 
+    -- modify so that all bits right of mbs are set
     let x = x | (x >> 1)
     let x = x | (x >> 2)
     let x = x | (x >> 4)
@@ -62,7 +76,22 @@ def next_power_of_two (x : u64) : u64 =
     in x + 1
 
 -- == 
--- entry: test_next_power_of_two
+-- entry: test_next_power_of_two_i64
+-- input  { 0i64 }
+-- output { 1i64 }
+-- input  { 1i64 }
+-- output { 1i64 }
+-- input  { 2i64 }
+-- output { 2i64 }
+-- input  { 3i64 }
+-- output { 4i64 }
+-- input  { 62i64 }
+-- output { 64i64 }
+entry test_next_power_of_two_i64 (x: i64): i64 =
+  next_power_of_two_i64 x
+
+-- == 
+-- entry: test_next_power_of_two_u64
 -- input  { 0u64 }
 -- output { 1u64 }
 -- input  { 1u64 }
@@ -73,8 +102,9 @@ def next_power_of_two (x : u64) : u64 =
 -- output { 4u64 }
 -- input  { 62u64 }
 -- output { 64u64 }
-entry test_next_power_of_two (x: u64): u64 =
-  next_power_of_two x
+entry test_next_power_of_two_u64 (x: u64): u64 =
+  next_power_of_two_u64 x
+  
 -- ==
 -- entry: test_u64_to_bytes_le
 -- input  { 0u64 }
