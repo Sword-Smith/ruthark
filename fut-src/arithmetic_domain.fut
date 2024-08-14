@@ -66,6 +66,10 @@ def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : []
 
     in final_values
 
+-- interpolation
+def interpolate (domain: ArithmeticDomain) (values: []BFieldElement) : BfePolynomial [] =
+    bfe_poly.fast_coset_interpolate domain.offset values
+
 -- compute the n'th element in the domain
 def domain_value (domain: ArithmeticDomain) (n: i64) : BFieldElement = 
     BFieldElement.mul domain.offset (BFieldElement.mod_pow_i64 domain.generator n)
@@ -120,6 +124,7 @@ entry test_domain_values : bool =
         -- evaluate polynomial over the domain
         let values = evaluate b_domain poly
 
+
         -- assert not equal to x cubed coefficients
         let length_values = length values
         let length_x_cubed_coefficients = length x_cubed_coefficients
@@ -135,5 +140,10 @@ entry test_domain_values : bool =
 
             -- different lengths, so can't be equal, return success
             else success
+
+        -- interpolate and compare 
+        let interpolant = interpolate b_domain values
+        let success = success && (bfe_poly.eq interpolant poly)
+
         in success
     in success
