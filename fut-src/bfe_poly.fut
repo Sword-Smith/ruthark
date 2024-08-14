@@ -26,15 +26,16 @@ let degree [n] (p: BfePolynomial [n]) : i64 =
 
 -- equality
 def eq [n] [m] (p1: BfePolynomial [n]) (p2: BfePolynomial [m]) : bool =
-      if (degree p1) != (degree p2) then false
-      else 
-        -- ensure compiler knows the lengths are the same
-        let shared_len = length p1.coefficients -- TODO: trailing zeros would affect this
-        let coeffs_1 = take shared_len p1.coefficients
-        let coeffs_2 = take shared_len p2.coefficients
-        -- check if the coefficients are the same
-        let check = (map2 BFieldElement.eq (coeffs_1) (coeffs_2))        
-        in reduce (\x y -> x && y) true check
+    -- pad shorter polynomial with zeros
+    let n_len = length p1.coefficients
+    let m_len = length p2.coefficients
+    let max_len = if n_len > m_len then n_len else m_len
+    -- Extend both polynomials to the maximum length by appending zeros if necessary
+    let coeffs_1 = p1.coefficients ++ replicate (max_len - n_len) BFieldElement.zero
+    let coeffs_2 = p2.coefficients ++ replicate (max_len - m_len) BFieldElement.zero
+    -- Check if the extended coefficients are the same
+    let check = map2 BFieldElement.eq (take max_len coeffs_1) (take max_len coeffs_2)
+    in reduce (\x y -> x && y) true check
 
 -- zero
 def zero : BfePolynomial [0] = { coefficients = [] }
