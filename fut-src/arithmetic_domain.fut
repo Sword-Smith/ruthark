@@ -30,6 +30,42 @@ def of_length (len: i64) : ArithmeticDomain =
 def with_offset (domain: ArithmeticDomain) (offset: BFieldElement) : ArithmeticDomain = 
     domain with offset = offset
 
+-- evaluate a polynomial over the domain
+def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : [n]BFieldElement =
+    -- unpack domain attributes
+    let offset: BFieldElement = domain.offset
+    let len: i64 = domain.len
+
+    -- Anonymous function to evaluate polynomial chunk over the domain
+    let evaluate_from [m] (chunked_coeffs: [m]BFieldElement) : [len]BFieldElement =
+        let chunk_poly = bfe_poly.new chunked_coeffs
+        in bfe_poly.fast_coset_evaluate offset len chunk_poly
+
+    -- chunk polynomial into domain length sized chunks
+    let chunked_coeffs: [][]BFieldElement = bfe_poly.chunk_coefficients polynomial len
+
+    -- Initial values: handle empty or single chunk case
+    let initial_values: [len]BFieldElement = 
+        if (length chunked_coeffs == 0)
+        then replicate len BFieldElement.zero
+        else evaluate_from (chunked_coeffs[0])
+
+    -- Parallel loop to process each chunk with the appropriate scaled offset
+    let final_values =
+        loop values = initial_values for chunk_i in 1..<length chunked_coeffs do
+            let chunk = chunked_coeffs[chunk_i]
+            let coefficient_index = chunk_i * len
+            let scaled_offset = BFieldElement.mod_pow_i64 offset coefficient_index
+            let evaluations = evaluate_from chunk
+
+            -- Scale and add evaluations to running totals
+            let scale_and_add =  \value eval ->
+                let scaled_eval = BFieldElement.mul eval scaled_offset
+                in BFieldElement.add value scaled_eval
+            in map2 scale_and_add values evaluations
+
+    in take n final_values
+
 -- compute the n'th element in the domain
 def domain_value (domain: ArithmeticDomain) (n: i64) : BFieldElement = 
     BFieldElement.mul domain.offset (BFieldElement.mod_pow_i64 domain.generator n)
@@ -67,7 +103,7 @@ entry test_domain_values : bool =
         -- generator, offset, domain (w/ offset applied)
         let generator = BFieldElement.primitive_root order   
         let offset = BFieldElement.generator
-        let b_domain = with_offset (of_length order) offset
+        let b_domain: ArithmeticDomain = with_offset (of_length order) offset
 
         -- expected
         let expected_b_values =
@@ -81,7 +117,11 @@ entry test_domain_values : bool =
         let success = success && (reduce (&&) true (map2 BFieldElement.eq expected_b_values actual_b_values_1 )) 
         let success = success && (reduce (&&) true (map2 BFieldElement.eq expected_b_values actual_b_values_2 ))
         
-        -- TODO continue w/ poly eval
-    
+        -- evaluate polynomial over the domain
+        let values = evaluate b_domain poly
+
+        -- assert not eqeal to x cubed coefficients
+        let success = success && !(reduce (&&) true (map2 BFieldElement.eq values x_cubed_coefficients))
+
         in success
     in success
