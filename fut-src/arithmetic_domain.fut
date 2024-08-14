@@ -124,7 +124,6 @@ entry test_domain_values : bool =
         -- evaluate polynomial over the domain
         let values = evaluate b_domain poly
 
-
         -- assert not equal to x cubed coefficients
         let length_values = length values
         let length_x_cubed_coefficients = length x_cubed_coefficients
@@ -144,6 +143,12 @@ entry test_domain_values : bool =
         -- interpolate and compare 
         let interpolant = interpolate b_domain values
         let success = success && (bfe_poly.eq interpolant poly)
+        
+        -- Verify that batch-evaluated values match a manual evaluation
+        let success = loop success = success for i in (iota order) do 
+            let manual_eval = domain_value b_domain i |> bfe_poly.evaluate poly
+            let computed_eval = values[i]
+            in success && (manual_eval == computed_eval)
 
         in success
     in success
