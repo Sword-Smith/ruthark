@@ -31,7 +31,7 @@ def with_offset (domain: ArithmeticDomain) (offset: BFieldElement) : ArithmeticD
     domain with offset = offset
 
 -- evaluate a polynomial over the domain
-def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : [n]BFieldElement =
+def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : []BFieldElement =
     -- unpack domain attributes
     let offset: BFieldElement = domain.offset
     let len: i64 = domain.len
@@ -64,7 +64,7 @@ def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : [n
                 in BFieldElement.add value scaled_eval
             in map2 scale_and_add values evaluations
 
-    in take n final_values
+    in final_values
 
 -- compute the n'th element in the domain
 def domain_value (domain: ArithmeticDomain) (n: i64) : BFieldElement = 
@@ -120,8 +120,20 @@ entry test_domain_values : bool =
         -- evaluate polynomial over the domain
         let values = evaluate b_domain poly
 
-        -- assert not eqeal to x cubed coefficients
-        let success = success && !(reduce (&&) true (map2 BFieldElement.eq values x_cubed_coefficients))
+        -- assert not equal to x cubed coefficients
+        let length_values = length values
+        let length_x_cubed_coefficients = length x_cubed_coefficients
+        let success = 
+            -- same lengths, so can compare
+            if length_values == length_x_cubed_coefficients
+            then 
+                -- tell compiler these are the same len
+                let values = take (length_values) values
+                let x_cubed_coefficients = take (length_values) x_cubed_coefficients 
+                -- ensure the values ae not equal to the x cubed coefficients
+                in success && !(reduce (&&) true (map2 BFieldElement.eq values x_cubed_coefficients)) 
 
+            -- different lengths, so can't be equal, return success
+            else success
         in success
     in success
