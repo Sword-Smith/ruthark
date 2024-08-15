@@ -79,6 +79,16 @@ def halve (domain: ArithmeticDomain) : ArithmeticDomain =
 def interpolate (domain: ArithmeticDomain) (values: []BFieldElement) : BfePolynomial [] =
     bfe_poly.fast_coset_interpolate domain.offset values
 
+-- low degree extension
+def low_degree_extension 
+    (self_domain: ArithmeticDomain) 
+    (codeword: []BFieldElement) 
+    (target_domain: ArithmeticDomain) 
+    : []BFieldElement =
+    -- interpolate the codeword over self.domain, then eval it over the target domain
+    let interpolation = interpolate self_domain codeword
+    in evaluate target_domain interpolation
+
 -- compute the n'th element in the domain
 def domain_value (domain: ArithmeticDomain) (n: i64) : BFieldElement = 
     BFieldElement.mul domain.offset (BFieldElement.mod_pow_i64 domain.generator n)
@@ -198,3 +208,38 @@ entry halving_domain_squares_all_points (order: i64) (offset: u64) : bool =
 --     let domain = with_offset (of_length order) (BFieldElement.new offset)
 --     let halved_domain = halve domain
 --     in domain.len == 1 && halved_domain.len == 1
+
+-- == 
+-- entry: test_low_degree_extension
+-- input {}
+-- output { true }
+entry test_low_degree_extension : bool =
+    --domain lengths
+    let short_domain_len = 32
+    let long_domain_len = 128
+    let unit_distance = long_domain_len / short_domain_len
+    -- create domains
+    let short_domain = of_length short_domain_len 
+    let long_domain = of_length long_domain_len
+
+    -- create poly 1 + 2x + 3x^2 + 4x^3
+    let coefficients = map (\i -> i+1 |> u64.i64 |> BFieldElement.new) (iota 4)
+    let polynomial = bfe_poly.new coefficients
+
+    -- eval codeword on short domain
+    let short_codeword = evaluate short_domain polynomial
+
+    -- low degree extend into the long domain
+    let long_codeword = low_degree_extension short_domain short_codeword long_domain
+    let success: bool = true && (length long_codeword == long_domain_len)
+
+    -- ensure short codeword is in the low degree extension
+    let long_codeword_sub_view = 
+        map (\i -> long_codeword[i * unit_distance]) (iota short_domain_len) 
+        |> take short_domain.len
+    let success = 
+        map2 BFieldElement.eq short_codeword long_codeword_sub_view
+        |> reduce (&&) true
+        |> \x -> x && success 
+    
+    in success
