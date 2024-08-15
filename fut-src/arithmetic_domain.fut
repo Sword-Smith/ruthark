@@ -66,6 +66,15 @@ def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : []
 
     in final_values
 
+-- halve the domain
+def halve (domain: ArithmeticDomain) : ArithmeticDomain = 
+    let domain = assert (domain.len >= 2) domain
+    -- update values
+    let new_offset = BFieldElement.square domain.offset
+    let new_generator = BFieldElement.square domain.generator
+    let new_len = domain.len / 2
+    in {offset = new_offset, generator = new_generator, len = new_len}
+
 -- interpolation
 def interpolate (domain: ArithmeticDomain) (values: []BFieldElement) : BfePolynomial [] =
     bfe_poly.fast_coset_interpolate domain.offset values
@@ -143,7 +152,7 @@ entry test_domain_values : bool =
         -- interpolate and compare 
         let interpolant = interpolate b_domain values
         let success = success && (bfe_poly.eq interpolant poly)
-        
+
         -- Verify that batch-evaluated values match a manual evaluation
         let success = loop success = success for i in (iota order) do 
             let manual_eval = domain_value b_domain i |> bfe_poly.evaluate poly
@@ -152,3 +161,40 @@ entry test_domain_values : bool =
 
         in success
     in success
+
+-- == 
+-- entry: halving_domain_squares_all_points
+-- input { 2i64 8u64 }
+-- output { true }
+-- input { 4i64 99u64 }
+-- output { true }
+-- input { 8i64 0u64 }
+-- output { true }
+entry halving_domain_squares_all_points (order: i64) (offset: u64) : bool =
+    -- make og and halved domain
+    let domain = with_offset (of_length order) (BFieldElement.new offset)
+    let half_domain = halve domain   
+    -- ensure domain is halved
+    let success = domain.len / 2 == half_domain.len
+    -- compute domain values for each
+    let domain_points = domain_values domain
+    let half_domain_points = domain_values half_domain
+    -- verify that each point in the domain is squared in the halved domain
+    let success = loop success = success for i in 0..<half_domain.len do
+        let domain_point = domain_points[i]
+        let halved_domain_point = half_domain_points[i]
+        in success && BFieldElement.eq (BFieldElement.square domain_point) halved_domain_point
+    in success
+
+-- -- NOTE This test should fail due to: "Error: Assertion is false: (domain.len >= 2)"
+-- -- Futhark doesn't currently have a way to expect errors in testing
+-- -- == 
+-- -- entry: too_small_domains_cannot_be_halved
+-- -- input { 1i64 0u64 }
+-- -- output {  }
+-- -- input { 0i64 0u64 }
+-- -- output {  }
+-- entry too_small_domains_cannot_be_halved (order: i64) (offset: u64)  =
+--     let domain = with_offset (of_length order) (BFieldElement.new offset)
+--     let halved_domain = halve domain
+--     in domain.len == 1 && halved_domain.len == 1
