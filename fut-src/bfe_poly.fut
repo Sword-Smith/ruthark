@@ -129,8 +129,14 @@ def chunk_coefficients [n] (poly: BfePolynomial [n]) (chunk_length: i64) : [][]B
 
         -- Append
         in chunks ++ [chunk_coeffs]
-
     in chunks
+
+-- determines leading coefficient
+-- returns a tuple w/ leading coeff and a flag indicating ig the poly is zero
+-- The flag is implemented bc futhark does not have Options/Maybes
+def leading_coefficient [n] (poly: BfePolynomial [n]) : (BFieldElement, bool) =
+    let deg: i64 = degree poly 
+    in if (deg == -1) then (BFieldElement.zero, false) else (poly.coefficients[deg], true)
 
 -- Given a polynomial P(x), produce P'(x) := P(α·x)
 -- Evaluating P'(x) corresponds to evaluating P(α·x)
@@ -415,3 +421,31 @@ entry chunk_coefficients_unit_test [n] (coefficients: [n]u64) (chunk_length: i64
     let poly = new coefficients
     in map (map BFieldElement.value) (chunk_coefficients poly chunk_length)
 
+-- ==
+-- entry: leading_coefficient_of_non_zero_polynomial_is_some
+-- input { [1u64, 2u64, 3u64] 3u64 9i64 }
+-- output { true }
+entry leading_coefficient_of_non_zero_polynomial_is_some
+    (coeffs: []u64) (leading_coeff: u64) (num_trailing_zeros: i64) : bool = 
+
+    -- -- setup poly w/ the given leading coeff and trailing zeros
+    let lc_actual = BFieldElement.new leading_coeff
+    let bfe_coeffs: []BFieldElement = 
+        map BFieldElement.new coeffs
+        |> \init_coeffs -> init_coeffs 
+                           ++ [lc_actual] 
+                           ++ (replicate num_trailing_zeros BFieldElement.zero)
+    let poly = new bfe_coeffs
+
+    -- get leading coeff using lc func and compare
+    let lc_found = leading_coefficient poly |> \(lc, some_flag) -> assert some_flag lc
+    in BFieldElement.eq lc_actual lc_found
+
+-- ==
+-- entry: leading_coefficient_of_zero_polynomial_is_none
+-- input { 87i64 }
+-- output { true }
+entry leading_coefficient_of_zero_polynomial_is_none (num_trailing_zeros: i64) : bool = 
+    let poly = new (replicate num_trailing_zeros BFieldElement.zero)
+    let (lc, has_lc_flag) = leading_coefficient poly
+    in not has_lc_flag
