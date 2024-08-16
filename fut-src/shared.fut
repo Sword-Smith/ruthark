@@ -75,6 +75,18 @@ def next_power_of_two_i64 (x : i64) : i64 =
     -- roll over to the next power of two 
     in x + 1
 
+-- handles umderflow only
+let saturating_sub_u64 (x: u64) (y: u64) : u64 =
+  if x < y then 0u64 else x - y
+
+-- ==
+-- entry: test_saturating_sub
+-- input {}
+-- output { true }
+entry test_saturating_sub: bool =
+    saturating_sub_u64 0u64 1u64 == 0u64 &&
+    saturating_sub_u64 50 (0-1) == 0 
+
 -- == 
 -- entry: test_next_power_of_two_i64
 -- input  { 0i64 }
