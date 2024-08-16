@@ -224,6 +224,18 @@ def inverse (x: BFieldElement): BFieldElement =
 def (lhs: BFieldElement) /^ (rhs: BFieldElement): BFieldElement =
   mul lhs (inverse rhs)
 
+def reverse_array [n] (arr: [n]BFieldElement) : [n]BFieldElement =
+    map (\i -> arr[n - 1 - i]) (iota n)
+
+-- == 
+-- entry: reverse_array_test
+-- input  { [0u64, 1u64, 2u64] }
+-- output { [2u64, 1u64, 0u64] }
+-- input { [0u64] }
+-- output { [0u64] }
+entry reverse_array_test (values_arr: []u64) : []u64 =
+  map new values_arr |> reverse_array |> map value
+
 -- Test new_is_inverse_of_value
 -- ==
 -- entry: new_is_inverse_of_value_pbt
