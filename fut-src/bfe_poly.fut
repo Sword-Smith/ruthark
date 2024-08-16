@@ -136,7 +136,15 @@ def chunk_coefficients [n] (poly: BfePolynomial [n]) (chunk_length: i64) : [][]B
 -- The flag is implemented bc futhark does not have Options/Maybes
 def leading_coefficient [n] (poly: BfePolynomial [n]) : (BFieldElement, bool) =
     let deg: i64 = degree poly 
-    in if (deg == -1) then (BFieldElement.zero, false) else (poly.coefficients[deg], true)
+    in if (deg == -1) 
+        then (BFieldElement.zero, false) 
+        else (poly.coefficients[deg], true)
+
+-- removes trailing zeros
+def normalize [n] (poly: BfePolynomial [n]) : BfePolynomial [] =
+    let deg: i64 = degree poly
+    in if deg < 0
+    then copy zero else { coefficients = take (deg + 1) poly.coefficients }
 
 -- Given a polynomial P(x), produce P'(x) := P(α·x)
 -- Evaluating P'(x) corresponds to evaluating P(α·x)
@@ -449,3 +457,20 @@ entry leading_coefficient_of_zero_polynomial_is_none (num_trailing_zeros: i64) :
     let poly = new (replicate num_trailing_zeros BFieldElement.zero)
     let (lc, has_lc_flag) = leading_coefficient poly
     in not has_lc_flag
+
+-- ==
+-- entry: normalize_unit_test
+-- input { [1u64, 2u64, 3u64, 0u64, 0u64, 0u64] }
+-- output { [1u64, 2u64, 3u64] }
+-- input { [0u64, 0u64, 0u64] }
+-- output { [0u64] }
+-- input { [1u64, 2u64, 3u64] }
+-- output { [1u64, 2u64, 3u64] }
+entry normalize_unit_test [n] (coefficients: [n]u64) : []u64 =
+    let coefficients = map BFieldElement.new coefficients
+    let poly = new coefficients
+    let normalized = normalize poly
+    in 
+        if is_zero normalized 
+        then [0u64]  -- [] not recognized in test case
+        else map BFieldElement.value normalized.coefficients
