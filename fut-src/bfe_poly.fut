@@ -56,6 +56,14 @@ def add [n] [m] (p1: BfePolynomial [n]) (p2: BfePolynomial [m]) : BfePolynomial 
     -- Add corresponding coefficients (telling compiler the lengths are the same)
     in { coefficients = map2 BFieldElement.add (take max_len coeffs1) (take max_len coeffs2) }
 
+-- negation
+def neg [n] (p: BfePolynomial [n]) : BfePolynomial [n] =
+    { coefficients = map BFieldElement.neg p.coefficients }
+
+-- subtraction
+def sub (p1: BfePolynomial []) (p2: BfePolynomial []) : BfePolynomial [] =
+    add p1 (neg p2) 
+
 -- Naive polynomial multiplication
 let naive_multiply [n] [m] (p1: BfePolynomial [n]) (p2: BfePolynomial [m]) : BfePolynomial [] =
   let deg_lhs = degree p1
@@ -455,7 +463,7 @@ entry leading_coefficient_of_non_zero_polynomial_is_some
 -- output { true }
 entry leading_coefficient_of_zero_polynomial_is_none (num_trailing_zeros: i64) : bool = 
     let poly = new (replicate num_trailing_zeros BFieldElement.zero)
-    let (lc, has_lc_flag) = leading_coefficient poly
+    let (_, has_lc_flag) = leading_coefficient poly
     in not has_lc_flag
 
 -- ==
@@ -474,3 +482,44 @@ entry normalize_unit_test [n] (coefficients: [n]u64) : []u64 =
         if is_zero normalized 
         then [0u64]  -- [] not recognized in test case
         else map BFieldElement.value normalized.coefficients
+
+-- ==
+-- entry: a_plus_neg_a_is_zero
+-- input { [1u64, 2u64, 3u64] }
+-- output { true }
+entry a_plus_neg_a_is_zero (coeffs: []u64) : bool =
+    let poly = new (map BFieldElement.new coeffs)
+    let poly_neg = neg poly
+    let sum = add poly poly_neg
+    in is_zero sum
+
+-- == 
+-- entry: a_minus_a_is_zero
+-- input { [1u64, 2u64, 3u64] }
+-- output { true }
+entry a_minus_a_is_zero (coeffs: []u64) : bool =
+    let poly = new (map BFieldElement.new coeffs)
+    let sum = sub poly poly
+    in is_zero sum
+    
+
+-- ==
+-- entry: subtraction_is_not_commutative
+-- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] }
+-- output { false }
+entry subtraction_is_not_commutative (a: []u64) (b: []u64) : bool =
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    in eq (sub p1 p2) (sub p2 p1)
+
+-- == 
+-- entry: subtraction_is_not_associative
+-- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] [7u64, 8u64, 9u64] }
+-- output { false }
+entry subtraction_is_not_associative (a: []u64) (b: []u64) (c: []u64) : bool =
+    let p1 = new (map BFieldElement.new a)
+    let p2 = new (map BFieldElement.new b)
+    let p3 = new (map BFieldElement.new c)
+    let lhs = sub (sub p1 p2) p3
+    let rhs = sub p1 (sub p2 p3)
+    in eq lhs rhs
