@@ -56,14 +56,6 @@ def add [n] [m] (p1: BfePolynomial [n]) (p2: BfePolynomial [m]) : BfePolynomial 
     -- Add corresponding coefficients (telling compiler the lengths are the same)
     in { coefficients = map2 BFieldElement.add (take max_len coeffs1) (take max_len coeffs2) }
 
--- negation
-def neg [n] (p: BfePolynomial [n]) : BfePolynomial [n] =
-    { coefficients = map BFieldElement.neg p.coefficients }
-
--- subtraction
-def sub (p1: BfePolynomial []) (p2: BfePolynomial []) : BfePolynomial [] =
-    add p1 (neg p2) 
-
 -- Naive polynomial multiplication
 let naive_multiply [n] [m] (p1: BfePolynomial [n]) (p2: BfePolynomial [m]) : BfePolynomial [] =
   let deg_lhs = degree p1
@@ -115,6 +107,54 @@ def multiply [n] [m] (p1: BfePolynomial [n]) (p2: BfePolynomial [m]) : BfePolyno
     if (degree p1) + (degree p2) < FAST_MULTIPLY_CUTOFF_THRESHOLD 
     then naive_multiply p1 p2
     else fast_multiply p1 p2
+
+-- negation
+def neg [n] (p: BfePolynomial [n]) : BfePolynomial [n] =
+    { coefficients = map BFieldElement.neg p.coefficients }
+
+-- subtraction
+def sub (p1: BfePolynomial []) (p2: BfePolynomial []) : BfePolynomial [] =
+    add p1 (neg p2) 
+
+-- Division of polynomials using NTT
+def ntt_divide [n] [m]
+  (dividend: BfePolynomial [n]) (divisor: BfePolynomial [m]) 
+  : (BfePolynomial [], BfePolynomial []) =
+
+    -- isolate coefficients
+    let dividend_coeffs = dividend.coefficients
+    let divisor_coeffs = divisor.coefficients
+
+    -- get max len of dividend and divisor
+    let dividend_len: i64 = length dividend_coeffs
+    let divisor_len: i64 = length divisor_coeffs
+    let max_len: i64 = i64.max dividend_len divisor_len
+
+    -- get next power of two 
+    let ntt_domain_len: i64 = shared.next_power_of_two_i64 max_len
+    
+    -- pad to ntt domain len
+    let dividend_coeffs_padded = 
+        dividend_coeffs ++ (replicate (ntt_domain_len - dividend_len) BFieldElement.zero)
+    let divisor_coeffs_padded = 
+        divisor_coeffs ++ (replicate (ntt_domain_len - divisor_len) BFieldElement.zero)
+
+    -- apply ntt
+    let dividend_ntt = bfe_ntt dividend_coeffs_padded
+    let divisor_ntt = bfe_ntt divisor_coeffs_padded
+
+    -- element wise division in ntt domain
+    let quotient_ntt = map2 (\x y -> BFieldElement.mul x (BFieldElement.inverse y))
+                            (take ntt_domain_len dividend_ntt)
+                            (take ntt_domain_len divisor_ntt)
+    -- apply intt
+    let quotient_coeffs = bfe_intt quotient_ntt
+    let quotient = { coefficients = take max_len quotient_coeffs }
+
+    -- compute remainder
+    let remainder = multiply quotient divisor
+                    |> \x -> sub dividend x
+    in (quotient, remainder)
     
 -- chunks polynomial coefficients into chunks of a given length
 -- smaller than chunk_length chunks are padded with zeros
@@ -523,3 +563,39 @@ entry subtraction_is_not_associative (a: []u64) (b: []u64) (c: []u64) : bool =
     let lhs = sub (sub p1 p2) p3
     let rhs = sub p1 (sub p2 p3)
     in eq lhs rhs
+
+-- == 
+-- entry: ntt_division_result_can_reproduce_dividend_and_divisor
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 2u64, 3u64] }
+-- output { true }
+entry ntt_division_result_can_reproduce_dividend_and_divisor
+      (a: []u64) (b: []u64) : bool =
+      let a_poly = new (map BFieldElement.new a)
+      let b_poly = new (map BFieldElement.new b)
+      let (quot, rem) = ntt_divide a_poly b_poly
+      -- ensure reconstructed dividend is the same as the original dividend
+      let reconstructed_a_poly = add (multiply quot b_poly) rem
+      in eq a_poly reconstructed_a_poly
+
+-- == 
+-- entry: ntt_division_result_has_zero_remainder
+-- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 0u64, 3u64] }
+-- output { true }
+entry ntt_division_result_has_zero_remainder (a: []u64) (b: []u64) : bool =
+    let a_poly = new (map BFieldElement.new a)
+    let b_poly = new (map BFieldElement.new b)
+    let product = multiply a_poly b_poly
+    let (_, rem_1) = ntt_divide product a_poly
+    let (_, rem_2) = ntt_divide product b_poly
+    in (is_zero rem_1) && (is_zero rem_2)
+
+-- -- NOTE This should produce an error
+-- -- == 
+-- -- entry: ntt_div_by_zero
+-- -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] }
+-- -- output { true }
+-- entry ntt_div_by_zero (a: []u64) : bool =
+--     let a_poly = new (map BFieldElement.new a)
+--     let b_poly = zero
+--     let (_, rem) = ntt_divide a_poly b_poly
+--     in is_zero rem
