@@ -31,6 +31,32 @@ def eq [n] [m] (p1: XfePolynomial [n]) (p2: XfePolynomial [m]) : bool =
     let check = map2 XFieldElement.eq (take max_len coeffs_1) (take max_len coeffs_2)
     in reduce (\x y -> x && y) true check
 
+-- zero
+def zero : XfePolynomial [0] = new []
+def is_zero [n] (p: XfePolynomial [n]) : bool = eq p zero
+
+-- one 
+def one : XfePolynomial [1] = { coefficients = [XFieldElement.one]}
+def is_one [n] (p: XfePolynomial [n]) : bool =
+    (degree p) == 0 && (XFieldElement.eq (p.coefficients[0]) XFieldElement.one)
+
+
+-- == 
+-- entry: test_zero
+-- input {}
+-- output { true }
+entry test_zero : bool = 
+    let p = zero
+    in is_zero p
+
+-- == 
+-- entry: test_one
+-- input {}
+-- output { true }
+entry test_one : bool = 
+    let p = one
+    in is_one p
+
 -- == 
 -- entry: test_degree
 -- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64, 3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64]] }
