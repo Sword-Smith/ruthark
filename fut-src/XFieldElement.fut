@@ -55,7 +55,7 @@ def from_i32 (number: i32) : XFieldElement =
 def sub (a: XFieldElement) (b: XFieldElement) : XFieldElement =
   add a (neg b)
 
-def xfexfemul (lhs : XFieldElement) (rhs: XFieldElement) : XFieldElement =
+def xfe_xfe_mul (lhs : XFieldElement) (rhs: XFieldElement) : XFieldElement =
   let c0 = lhs.coefficients.0
   let b0 = lhs.coefficients.1
   let a0 = lhs.coefficients.2
@@ -119,12 +119,20 @@ def xfe_bfe_mul (x: XFieldElement) (b: BFieldElement) : XFieldElement =
 -- Not supported https://futhark-book.readthedocs.io/en/latest/language.html#parametric-polymorphism
 -- def mod_pow 't (element : XFieldElement) (exponent: t) : XFieldElement =
 
--- def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
---   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
---       if i % 2 == 1
---       then (mul x x, i>>1, mul x result)
---       else (mul x x, i>>1, result)
---   in result
+def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
+  let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
+      if i % 2 == 1
+      then (
+        xfe_xfe_mul x x, 
+        i>>1, 
+        xfe_xfe_mul x result
+        )
+      else (
+        xfe_xfe_mul x x, 
+        i>>1, 
+        result
+        )
+  in result
 
 -- def mod_pow_u32 (element : XFieldElement) (exponent: u32) : XFieldElement =
 --   let (_, _, result) = loop (x, i, result) = (element, exponent, one) while i > 0 do
@@ -179,7 +187,7 @@ entry unit_test_mul (a0: u64) (a1: u64) (a2: u64) (b0: u64) (b1: u64) (b2: u64) 
   let b: XFieldElement = {
   coefficients = (BFieldElement.new b0, BFieldElement.new b1, BFieldElement.new b2 )
   }
-  let c: XFieldElement = xfexfemul a b
+  let c: XFieldElement = xfe_xfe_mul a b
   in (BFieldElement.value c.coefficients.0, BFieldElement.value c.coefficients.1, BFieldElement.value c.coefficients.2)
 
 -- == 
@@ -196,3 +204,25 @@ entry mul_xfe_with_bfe_pnt (x_coeffs: []u64) (b_val: u64) : bool =
        res_mul.coefficients.0 == (x.coefficients.0 |*| b)
     && res_mul.coefficients.1 == (x.coefficients.1 |*| b)
     && res_mul.coefficients.2 == (x.coefficients.2 |*| b)
+
+-- ==
+-- entry: xfe_mod_pow_u64_zero_is_one
+-- input  { }
+-- output { true }
+entry xfe_mod_pow_u64_zero_is_one : bool =
+  (eq one (mod_pow_u64 zero 0)) && (eq one (mod_pow_u64 one 0))
+  
+-- ==
+-- entry: xfe_mod_pow_u64_test
+-- input { 88u64 12i64 }
+-- output { true }
+-- input { 25341u64 77i64 }
+-- output { true }
+entry xfe_mod_pow_u64_test (base_u64: u64) (exponent: i64) : bool =
+  let base = from_u64 base_u64
+  let exponents_u64 = iota exponent |> map u64.i64
+  let (success, _) = loop (success, acc) = (true, one) for i in exponents_u64 do
+    let success = success && (eq acc (mod_pow_u64 base i))
+    let acc =  xfe_xfe_mul acc base
+    in (success, acc)
+  in success
