@@ -40,6 +40,33 @@ def one : XfePolynomial [1] = { coefficients = [XFieldElement.one]}
 def is_one [n] (p: XfePolynomial [n]) : bool =
     (degree p) == 0 && (XFieldElement.eq (p.coefficients[0]) XFieldElement.one)
 
+-- polynomial addition
+def add [n] [m] (p1: XfePolynomial [n]) (p2: XfePolynomial [m]) : XfePolynomial [] = 
+    -- determine longer polynomial
+    let max_len = if n > m then n else m
+    -- Extend both coefficient arrays to the maximum length with zeros
+    let coeffs1 = p1.coefficients ++ replicate (max_len - n) XFieldElement.zero
+    let coeffs2 = p2.coefficients ++ replicate (max_len - m) XFieldElement.zero
+    -- Add corresponding coefficients (telling compiler the lengths are the same)
+    in { coefficients = map2 XFieldElement.add (take max_len coeffs1) (take max_len coeffs2) }
+
+-- == 
+-- entry: polynomial_addition_is_associative 
+-- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64,3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64]] [[7u64, 7u64, 7u64], [8u64, 8u64, 8u64], [9u64, 9u64, 9u64]] [[10u64, 10u64, 10u64], [11u64, 11u64, 11u64], [12u64, 12u64, 12u64], [13u64, 13u64, 13u64]] }
+-- output { true }
+entry polynomial_addition_is_associative (a: [][3]u64) (b: [][3]u64) (c: [][3]u64) : bool = 
+    let p1 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) a |> map XFieldElement.new |> new
+    let p2 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) b |> map XFieldElement.new |> new
+    let p3 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) c |> map XFieldElement.new |> new
+    in eq ( add (add p1 p2) p3 ) ( add p1 (add p2 p3) )
+-- == 
+-- entry: polynomial_addition_is_commutative
+-- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64,3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64]] [[7u64, 7u64, 7u64], [8u64, 8u64, 8u64], [9u64, 9u64, 9u64]] }
+-- output { true }
+entry polynomial_addition_is_commutative (a: [][3]u64) (b: [][3]u64) : bool = 
+    let p1 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) a |> map XFieldElement.new |> new
+    let p2 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) b |> map XFieldElement.new |> new
+    in eq ( add p1 p2 ) ( add p2 p1 )
 
 -- == 
 -- entry: test_zero
