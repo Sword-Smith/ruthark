@@ -5,8 +5,15 @@ type XFieldElement = XFieldElement.XFieldElement
 
 type XfePolynomial [n] = { coefficients: [n]XFieldElement }
 
+-- constructor from XFieldElement array
 def new [n] (coefficients: [n]XFieldElement) : XfePolynomial [n] =
   {coefficients = coefficients}
+
+-- constructor from u64 array
+def new_from_arr_u64 [n] (coeffs: [n][3]u64) : XfePolynomial [n] =
+    map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) coeffs
+    |> map XFieldElement.new 
+    |> new
 
 -- degree
 let degree [n] (p: XfePolynomial [n]) : i64 =
@@ -55,17 +62,17 @@ def add [n] [m] (p1: XfePolynomial [n]) (p2: XfePolynomial [m]) : XfePolynomial 
 -- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64,3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64]] [[7u64, 7u64, 7u64], [8u64, 8u64, 8u64], [9u64, 9u64, 9u64]] [[10u64, 10u64, 10u64], [11u64, 11u64, 11u64], [12u64, 12u64, 12u64], [13u64, 13u64, 13u64]] }
 -- output { true }
 entry polynomial_addition_is_associative (a: [][3]u64) (b: [][3]u64) (c: [][3]u64) : bool = 
-    let p1 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) a |> map XFieldElement.new |> new
-    let p2 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) b |> map XFieldElement.new |> new
-    let p3 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) c |> map XFieldElement.new |> new
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
+    let p3 = new_from_arr_u64 c
     in eq ( add (add p1 p2) p3 ) ( add p1 (add p2 p3) )
 -- == 
 -- entry: polynomial_addition_is_commutative
 -- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64,3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64]] [[7u64, 7u64, 7u64], [8u64, 8u64, 8u64], [9u64, 9u64, 9u64]] }
 -- output { true }
 entry polynomial_addition_is_commutative (a: [][3]u64) (b: [][3]u64) : bool = 
-    let p1 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) a |> map XFieldElement.new |> new
-    let p2 = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) b |> map XFieldElement.new |> new
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
     in eq ( add p1 p2 ) ( add p2 p1 )
 
 -- == 
@@ -90,10 +97,7 @@ entry test_one : bool =
 -- output { 5i64 }
 -- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [0u64, 0u64, 0u64], [0u64, 0u64, 0u64], [0u64, 0u64, 0u64]] }
 -- output { 1i64 }
-entry test_degree (a: [][3]u64) : i64 = 
-    let coefficients = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) a
-    let poly = new (map XFieldElement.new coefficients)
-    in degree poly
+entry test_degree (a: [][3]u64) : i64 = degree (new_from_arr_u64 a)
 
 -- ==
 -- entry: test_eq
@@ -103,9 +107,5 @@ entry test_degree (a: [][3]u64) : i64 =
 -- output { false }
 -- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64, 3u64], [4u64, 4u64, 4u64]] [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64, 3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64]] }
 -- output { false }
-entry test_eq (a: [][3]u64) (b: [][3]u64) : bool = 
-    let p1_coeffs = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) a
-    let p2_coeffs = map (\x -> (BFieldElement.new x[0], BFieldElement.new x[1], BFieldElement.new x[2])) b
-    let p1 = new (map XFieldElement.new p1_coeffs)
-    let p2 = new (map XFieldElement.new p2_coeffs)
-    in eq p1 p2
+entry test_eq (a: [][3]u64) (b: [][3]u64) : bool =
+    eq (new_from_arr_u64 a) (new_from_arr_u64 b)

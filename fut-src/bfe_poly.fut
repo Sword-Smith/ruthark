@@ -10,10 +10,14 @@ type BfePolynomial [n] = { coefficients: [n]BFieldElement }
 
 let FAST_MULTIPLY_CUTOFF_THRESHOLD: i64 = 1 << 8
 
--- constructor
+-- constructor form BFieldElement array
 def new [n] (coefficients: [n]BFieldElement): BfePolynomial[n] =
     {coefficients = coefficients}
 
+-- constructor from u64 array
+def new_from_arr_u64 (coefficients: []u64): BfePolynomial [] = 
+    map BFieldElement.new coefficients |> new
+    
 -- degree
 let degree [n] (p: BfePolynomial [n]) : i64 =
     -- determine highest degre (mod trailing zeros)
@@ -237,8 +241,7 @@ def low_degree_extend
 -- output { [1u64, 3u64, 0u64] }
 entry scale_unit_test [n] (coefficients: [n]u64) (alpha: u64) =
     let alpha = BFieldElement.new alpha
-    let coefficients = map BFieldElement.new coefficients
-    let poly = new coefficients
+    let poly = new_from_arr_u64 coefficients
     in map BFieldElement.value (scale alpha poly).coefficients
 
 -- ==
@@ -253,8 +256,7 @@ entry scale_unit_test [n] (coefficients: [n]u64) (alpha: u64) =
 -- output { 80u64 }
 entry evaluate_unit_test [n] (coefficients: [n]u64) (x: u64) =
     let x = BFieldElement.new x
-    let coefficients = map BFieldElement.new coefficients
-    let poly = new coefficients
+    let poly = new_from_arr_u64 coefficients
     in BFieldElement.value (evaluate poly x)
 
 -- ==
@@ -333,7 +335,7 @@ entry test_one : bool = is_one one
 -- input { [1u64, 2u64, 3u64] }
 -- output { true }
 entry polynomial_zero_is_neutral_element_for_addition (a: []u64) : bool = 
-    let poly = new (map BFieldElement.new a)
+    let poly = new_from_arr_u64 a
     in eq poly (add poly zero)
     
 -- == 
@@ -341,9 +343,9 @@ entry polynomial_zero_is_neutral_element_for_addition (a: []u64) : bool =
 -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [7u64, 8u64, 9u64] [10u64, 11u64, 12u64, 13u64] }
 -- output { true }
 entry polynomial_addition_is_associative (a: []u64) (b: []u64) (c: []u64) : bool = 
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
-    let p3 = new (map BFieldElement.new c)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
+    let p3 = new_from_arr_u64 c
     -- (p1 + p2) + p3 == p1 + (p2 + p3)
     let sum_1 = add (add p1 p2) p3
     let sum_2 = add p1 (add p2 p3)
@@ -354,10 +356,9 @@ entry polynomial_addition_is_associative (a: []u64) (b: []u64) (c: []u64) : bool
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] }
 -- output { true }
 entry polynomial_addition_is_commutative (a: []u64) (b: []u64) : bool = 
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
     in eq (add p1 p2) (add p2 p1)
-
 
 -- == 
 -- entry: polynomial_addition_test_vector
@@ -365,26 +366,26 @@ entry polynomial_addition_is_commutative (a: []u64) (b: []u64) : bool =
 -- output { true }
 entry polynomial_addition_test_vector : bool = 
     -- same length
-    let p1 = new [BFieldElement.new 1, BFieldElement.new 2, BFieldElement.new 3]
-    let p2 = new [BFieldElement.new 4, BFieldElement.new 5, BFieldElement.new 6]
+    let p1 = new_from_arr_u64 [1, 2, 3]
+    let p2 = new_from_arr_u64 [4, 5, 6]
     let p3_actual = add p1 p2
-    let p3_expected = new [BFieldElement.new 5, BFieldElement.new 7, BFieldElement.new 9]
+    let p3_expected = new_from_arr_u64 [5, 7, 9]
     -- check if the coefficients are the same
     let same_degree_check = eq p3_actual p3_expected
 
     -- longer lhs
-    let p1 = new [BFieldElement.new 1, BFieldElement.new 2, BFieldElement.new 3, BFieldElement.new 4]
-    let p2 = new [BFieldElement.new 4, BFieldElement.new 5, BFieldElement.new 6]
+    let p1 = new_from_arr_u64 [1, 2, 3, 4]
+    let p2 = new_from_arr_u64 [4, 5, 6]
     let p3_actual = add p1 p2
-    let p3_expected = new [BFieldElement.new 5, BFieldElement.new 7, BFieldElement.new 9, BFieldElement.new 4]
+    let p3_expected = new_from_arr_u64 [5, 7, 9, 4]
     -- check if the coefficients are the same
     let larger_lhs_degree_check = eq p3_actual p3_expected
 
     -- longer rhs
-    let p1 = new [BFieldElement.new 1, BFieldElement.new 2, BFieldElement.new 3]
-    let p2 = new [BFieldElement.new 4, BFieldElement.new 5, BFieldElement.new 6, BFieldElement.new 7]
+    let p1 = new_from_arr_u64 [1, 2, 3]
+    let p2 = new_from_arr_u64 [4, 5, 6, 7]
     let p3_actual = add p1 p2
-    let p3_expected = new [BFieldElement.new 5, BFieldElement.new 7, BFieldElement.new 9, BFieldElement.new 7]
+    let p3_expected = new_from_arr_u64 [5, 7, 9, 7]
     -- check if the coefficients are the same
     let larger_rhs_degree_check  = eq p3_actual p3_expected
 
@@ -396,8 +397,8 @@ entry polynomial_addition_test_vector : bool =
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64, 8u64, 12u64] }
 -- output { [4u64, 13u64, 28u64, 35u64, 46u64, 48u64, 36u64] }
 entry fast_multiply_test_vector (a: []u64) (b: []u64) : []u64 = 
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
     let p3 = fast_multiply p1 p2
     in map BFieldElement.value p3.coefficients
 
@@ -406,8 +407,8 @@ entry fast_multiply_test_vector (a: []u64) (b: []u64) : []u64 =
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] }
 -- output { true }
 entry fast_multiply_same_as_naive (a: []u64) (b: []u64) : bool = 
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
     in eq (fast_multiply p1 p2) (naive_multiply p1 p2)
 
 -- == 
@@ -415,7 +416,7 @@ entry fast_multiply_same_as_naive (a: []u64) (b: []u64) : bool =
 -- input { [1u64, 2u64, 3u64] }
 -- output { true }
 entry polynomial_one_is_neutral_element_for_multiplication (a: []u64) : bool = 
-    let poly = new (map BFieldElement.new a)
+    let poly = new_from_arr_u64 a
     in eq poly (multiply poly one)
 
 -- == 
@@ -423,7 +424,7 @@ entry polynomial_one_is_neutral_element_for_multiplication (a: []u64) : bool =
 -- input { [1u64, 2u64, 3u64] }
 -- output { true }
 entry multiplication_by_zero_is_zero (a: []u64) : bool = 
-    let poly = new (map BFieldElement.new a)
+    let poly = new_from_arr_u64 a
     in eq zero (multiply poly zero)
 
 -- == 
@@ -431,8 +432,8 @@ entry multiplication_by_zero_is_zero (a: []u64) : bool =
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64, 8u64, 12u64] }
 -- output { [4u64, 13u64, 28u64, 35u64, 46u64, 48u64, 36u64] }
 entry naive_multiply_test_vector (a: []u64) (b: []u64) : []u64 = 
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
     let p3 = naive_multiply p1 p2
     in map BFieldElement.value p3.coefficients    
 
@@ -441,9 +442,9 @@ entry naive_multiply_test_vector (a: []u64) (b: []u64) : []u64 =
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] [7u64, 8u64, 9u64] }
 -- output { true }
 entry polynomial_multiplication_is_associative (a: []u64) (b: []u64) (c: []u64) : bool = 
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
-    let p3 = new (map BFieldElement.new c)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
+    let p3 = new_from_arr_u64 c
     -- (p1 * p2) * p3 == p1 * (p2 * p3)
     let product_1 = multiply (multiply p1 p2) p3
     let product_2 = multiply p1 (multiply p2 p3)
@@ -454,9 +455,8 @@ entry polynomial_multiplication_is_associative (a: []u64) (b: []u64) (c: []u64) 
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] }
 -- output { true }
 entry polynomial_multiplication_is_commutative (a: []u64) (b: []u64) : bool = 
-    -- init polys
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
     -- p1 * p2 == p2 * p1
     let product_1 = multiply p1 p2
     let product_2 = multiply p2 p1
@@ -473,8 +473,7 @@ entry polynomial_multiplication_is_commutative (a: []u64) (b: []u64) : bool =
 -- input { [1u64] 7i64 }
 -- output { [[1u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64]] }
 entry chunk_coefficients_unit_test [n] (coefficients: [n]u64) (chunk_length: i64) : [][]u64 =
-    let coefficients = map BFieldElement.new coefficients
-    let poly = new coefficients
+    let poly = new_from_arr_u64 coefficients
     in map (map BFieldElement.value) (chunk_coefficients poly chunk_length)
 
 -- ==
@@ -515,8 +514,7 @@ entry leading_coefficient_of_zero_polynomial_is_none (num_trailing_zeros: i64) :
 -- input { [1u64, 2u64, 3u64] }
 -- output { [1u64, 2u64, 3u64] }
 entry normalize_unit_test [n] (coefficients: [n]u64) : []u64 =
-    let coefficients = map BFieldElement.new coefficients
-    let poly = new coefficients
+    let poly = new_from_arr_u64 coefficients
     let normalized = normalize poly
     in 
         if is_zero normalized 
@@ -528,7 +526,7 @@ entry normalize_unit_test [n] (coefficients: [n]u64) : []u64 =
 -- input { [1u64, 2u64, 3u64] }
 -- output { true }
 entry a_plus_neg_a_is_zero (coeffs: []u64) : bool =
-    let poly = new (map BFieldElement.new coeffs)
+    let poly = new_from_arr_u64 coeffs
     let poly_neg = neg poly
     let sum = add poly poly_neg
     in is_zero sum
@@ -538,7 +536,7 @@ entry a_plus_neg_a_is_zero (coeffs: []u64) : bool =
 -- input { [1u64, 2u64, 3u64] }
 -- output { true }
 entry a_minus_a_is_zero (coeffs: []u64) : bool =
-    let poly = new (map BFieldElement.new coeffs)
+    let poly = new_from_arr_u64 coeffs
     let sum = sub poly poly
     in is_zero sum
     
@@ -548,8 +546,8 @@ entry a_minus_a_is_zero (coeffs: []u64) : bool =
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] }
 -- output { false }
 entry subtraction_is_not_commutative (a: []u64) (b: []u64) : bool =
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
     in eq (sub p1 p2) (sub p2 p1)
 
 -- == 
@@ -557,9 +555,9 @@ entry subtraction_is_not_commutative (a: []u64) (b: []u64) : bool =
 -- input { [1u64, 2u64, 3u64] [4u64, 5u64, 6u64] [7u64, 8u64, 9u64] }
 -- output { false }
 entry subtraction_is_not_associative (a: []u64) (b: []u64) (c: []u64) : bool =
-    let p1 = new (map BFieldElement.new a)
-    let p2 = new (map BFieldElement.new b)
-    let p3 = new (map BFieldElement.new c)
+    let p1 = new_from_arr_u64 a
+    let p2 = new_from_arr_u64 b
+    let p3 = new_from_arr_u64 c
     let lhs = sub (sub p1 p2) p3
     let rhs = sub p1 (sub p2 p3)
     in eq lhs rhs
@@ -568,22 +566,21 @@ entry subtraction_is_not_associative (a: []u64) (b: []u64) (c: []u64) : bool =
 -- entry: ntt_division_result_can_reproduce_dividend_and_divisor
 -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 2u64, 3u64] }
 -- output { true }
-entry ntt_division_result_can_reproduce_dividend_and_divisor
-      (a: []u64) (b: []u64) : bool =
-      let a_poly = new (map BFieldElement.new a)
-      let b_poly = new (map BFieldElement.new b)
-      let (quot, rem) = ntt_divide a_poly b_poly
-      -- ensure reconstructed dividend is the same as the original dividend
-      let reconstructed_a_poly = add (multiply quot b_poly) rem
-      in eq a_poly reconstructed_a_poly
+entry ntt_division_result_can_reproduce_dividend_and_divisor (a: []u64) (b: []u64) : bool =
+    let a_poly = new_from_arr_u64 a
+    let b_poly = new_from_arr_u64 b
+    let (quot, rem) = ntt_divide a_poly b_poly
+    -- ensure reconstructed dividend is the same as the original dividend
+    let reconstructed_a_poly = add (multiply quot b_poly) rem
+    in eq a_poly reconstructed_a_poly
 
 -- == 
 -- entry: ntt_division_result_has_zero_remainder
 -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 0u64, 3u64] }
 -- output { true }
 entry ntt_division_result_has_zero_remainder (a: []u64) (b: []u64) : bool =
-    let a_poly = new (map BFieldElement.new a)
-    let b_poly = new (map BFieldElement.new b)
+    let a_poly = new_from_arr_u64 a
+    let b_poly = new_from_arr_u64 b
     let product = multiply a_poly b_poly
     let (_, rem_1) = ntt_divide product a_poly
     let (_, rem_2) = ntt_divide product b_poly
@@ -595,7 +592,7 @@ entry ntt_division_result_has_zero_remainder (a: []u64) (b: []u64) : bool =
 -- -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] }
 -- -- output { true }
 -- entry ntt_div_by_zero (a: []u64) : bool =
---     let a_poly = new (map BFieldElement.new a)
+--     let a_poly = new_from_arr_u64 a
 --     let b_poly = zero
 --     let (_, rem) = ntt_divide a_poly b_poly
 --     in is_zero rem
