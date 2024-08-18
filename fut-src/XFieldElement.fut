@@ -103,12 +103,14 @@ def (x: BFieldElement) |*| (y: BFieldElement) = BFieldElement.mul x y
 --           if (a1 == 0) && (b1 == 0) then xfebfemul (c0, b0, a0) (c1, b1, a1)
 --           else xfexfemul (c0, b0, a0) (c1, b1, a1)
 
-def mul_bfe (lhs : XFieldElement) (bfe : BFieldElement) : XFieldElement =
-  { coefficients = ( BFieldElement.mul lhs.coefficients.0 bfe
-  , BFieldElement.mul lhs.coefficients.1 bfe
-  , BFieldElement.mul lhs.coefficients.2 bfe
-  )}
-
+-- Multiply XFieldElement by BFieldElement
+def xfe_bfe_mul (x: XFieldElement) (b: BFieldElement) : XFieldElement =
+  { coefficients = (
+      x.coefficients.0 |*| b,
+      x.coefficients.1 |*| b,
+      x.coefficients.2 |*| b 
+      )
+  }
 
 -- def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
 --  mul a (inverse b)
@@ -179,3 +181,18 @@ entry unit_test_mul (a0: u64) (a1: u64) (a2: u64) (b0: u64) (b1: u64) (b2: u64) 
   }
   let c: XFieldElement = xfexfemul a b
   in (BFieldElement.value c.coefficients.0, BFieldElement.value c.coefficients.1, BFieldElement.value c.coefficients.2)
+
+-- == 
+-- entry: mul_xfe_with_bfe_pnt
+-- input { [1u64, 2u64, 3u64] 8u64}
+-- output { true }
+-- input { [1u64, 2u64, 3u64] 0u64}
+-- output { true }
+entry mul_xfe_with_bfe_pnt (x_coeffs: []u64) (b_val: u64) : bool =
+  let x = (map BFieldElement.new x_coeffs) |> \x -> new (x[0], x[1], x[2])
+  let b = BFieldElement.new b_val
+  let res_mul = xfe_bfe_mul x b
+  in
+       res_mul.coefficients.0 == (x.coefficients.0 |*| b)
+    && res_mul.coefficients.1 == (x.coefficients.1 |*| b)
+    && res_mul.coefficients.2 == (x.coefficients.2 |*| b)
