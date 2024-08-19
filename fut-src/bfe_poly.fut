@@ -610,3 +610,14 @@ entry naive_division_result_has_zero_remainder (a: []u64) (b: []u64) : bool =
     let (_, rem_1) = naive_divide product a_poly
     let (_, rem_2) = naive_divide product b_poly
     in (is_zero rem_1) && (is_zero rem_2)
+
+-- -- NOTE This should produce an error
+-- -- == 
+-- -- entry: naive_div_by_zero
+-- -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] }
+-- -- output { true }
+-- entry naive_div_by_zero (a: []u64) : bool =
+--     let a_poly = new_from_arr_u64 a
+--     let b_poly = zero
+--     let (_, rem) = naive_divide a_poly b_poly
+--     in is_zero rem
