@@ -197,6 +197,33 @@ def naive_divide [n] [m] (dividend: BfePolynomial [n]) (divisor: BfePolynomial [
     
     in if quotient_degree < 0 then (copy zero, dividend) -- indivisible
     else naive_divide' dividend divisor quotient_degree divisor_lc_inv
+
+-- extended euclidean algorithm
+def xgcd (x: BfePolynomial []) (y: BfePolynomial [])
+    : (BfePolynomial [], BfePolynomial [], BfePolynomial []) =
+
+    let (a_factor, a1) = (one, zero)
+    let (b_factor, b1) = (zero, one)
+
+    let (x, _, a_factor, _, b_factor, _) = 
+        loop (x, y, a_factor, a1, b_factor, b1) = (x, y, a_factor, a1, b_factor, b1)
+        while not (is_zero y) do
+            let (quotient, remainder) = naive_divide x y
+            let c = sub a_factor (multiply quotient a1)
+            let d = sub b_factor (multiply quotient b1)
+
+            -- reorder bindings
+            in (y, remainder, a1, c, b1, d)
+
+    -- normalizes result to ensure the gcd. _i.e_, 'x' has leading coefficient 1
+    let lc_inv = 
+        leading_coefficient x 
+        |> \(lc, some) -> if some then lc else BFieldElement.one
+        |> BFieldElement.inverse
+    let normalizer [n] (poly: BfePolynomial [n]) : BfePolynomial[n] = 
+        map (BFieldElement.mul lc_inv) poly.coefficients |> new
+    let (x, a, b) = (normalizer x, normalizer a_factor, normalizer b_factor)
+    in (x, a, b)
     
 -- chunks polynomial coefficients into chunks of a given length
 -- smaller than chunk_length chunks are padded with zeros
@@ -621,3 +648,26 @@ entry naive_division_result_has_zero_remainder (a: []u64) (b: []u64) : bool =
 --     let b_poly = zero
 --     let (_, rem) = naive_divide a_poly b_poly
 --     in is_zero rem
+
+-- ==
+-- entry: xgcd_b_field_pol_test 
+-- input { [1u64, 2u64, 7u64, 9u64, 88u64, 99u64, 1208423u64] [4u64, 5u64, 6u64, 8u64, 12u64] }
+-- output { true }
+-- input { [1u64, 1u64] [1u64, 1u64] }
+-- output { true }
+-- input { [2u64, 2u64] [2u64, 2u64, 2u64, 5u64]}
+-- output { true }
+entry xgcd_b_field_pol_test (x: []u64) (y: []u64) : bool = 
+    let x_poly = new_from_arr_u64 x
+    let y_poly = new_from_arr_u64 y
+    let (gcd, a, b) = xgcd x_poly y_poly
+    let reconstructed = add (multiply a x_poly) (multiply b y_poly)
+    in eq gcd reconstructed
+
+-- ==
+-- entry: xgcd_does_not_panic_on_input_zero
+-- input { }
+-- output { true }
+entry xgcd_does_not_panic_on_input_zero : bool =
+    let (gcd, _, _) = xgcd zero zero 
+    in eq zero gcd
