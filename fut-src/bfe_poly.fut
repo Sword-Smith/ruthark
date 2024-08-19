@@ -10,7 +10,7 @@ type BfePolynomial [n] = { coefficients: [n]BFieldElement }
 
 let FAST_MULTIPLY_CUTOFF_THRESHOLD: i64 = 1 << 8
 
--- constructor form BFieldElement array
+-- constructor from BFieldElement array
 def new [n] (coefficients: [n]BFieldElement): BfePolynomial[n] =
     {coefficients = coefficients}
 
@@ -120,45 +120,83 @@ def neg [n] (p: BfePolynomial [n]) : BfePolynomial [n] =
 def sub (p1: BfePolynomial []) (p2: BfePolynomial []) : BfePolynomial [] =
     add p1 (neg p2) 
 
--- Division of polynomials using NTT
-def ntt_divide [n] [m]
-  (dividend: BfePolynomial [n]) (divisor: BfePolynomial [m]) 
-  : (BfePolynomial [], BfePolynomial []) =
+-- determines leading coefficient
+-- returns a tuple w/ leading coeff and a flag indicating ig the poly is zero
+-- The flag is implemented bc futhark does not have Options/Maybes
+def leading_coefficient [n] (poly: BfePolynomial [n]) : (BFieldElement, bool) =
+    let deg: i64 = degree poly 
+    in if (deg == -1) 
+    then (BFieldElement.zero, false)
+    else (poly.coefficients[deg], true)
 
-    -- isolate coefficients
-    let dividend_coeffs = dividend.coefficients
-    let divisor_coeffs = divisor.coefficients
+-- removes trailing zeros
+def normalize [n] (poly: BfePolynomial [n]) : BfePolynomial [] =
+    let deg: i64 = degree poly
+    in if deg < 0
+    then copy zero
+    else { coefficients = take (deg + 1) poly.coefficients }
 
-    -- get max len of dividend and divisor
-    let dividend_len: i64 = length dividend_coeffs
-    let divisor_len: i64 = length divisor_coeffs
-    let max_len: i64 = i64.max dividend_len divisor_len
+def naive_divide'' 
+  (rev_quotient: []BFieldElement) 
+  (remainder: BfePolynomial []) 
+  (normal_rev_divisor: []BFieldElement)
+  (divisor_lc_inv: BFieldElement)
+  : ([]BFieldElement, BfePolynomial[]) =
+  -- pop
+  let remainder_lc = remainder.coefficients[length remainder.coefficients-1] 
+  let remainder = take (length remainder.coefficients - 1) remainder.coefficients |> new
+  -- compute and push quotient coefficient
+  let quotient_coeff = BFieldElement.mul remainder_lc divisor_lc_inv
+  let rev_quotient = rev_quotient ++ [quotient_coeff]
 
-    -- get next power of two 
-    let ntt_domain_len: i64 = shared.next_power_of_two_i64 max_len
+  in if BFieldElement.is_zero quotient_coeff then (rev_quotient, remainder)
+  else 
+    let remainder_degree = (length remainder.coefficients) |> u64.i64 |> \x -> shared.saturating_sub_u64 x 1 |> i64.u64
+    let (_, remainder_coeffs) = 
+      loop (i, remainder_coeffs) = (0i64, copy remainder.coefficients) 
+      for divisor_coeff in (drop 1 normal_rev_divisor) do
+        let remainder_coeffs = remainder_coeffs with [remainder_degree - i] = 
+          BFieldElement.mul quotient_coeff divisor_coeff
+          |> \x -> BFieldElement.sub remainder_coeffs[remainder_degree - i] x
+
+          in (i+1, remainder_coeffs)
+
+    let remainder = new remainder_coeffs 
+    in (rev_quotient, remainder)
     
-    -- pad to ntt domain len
-    let dividend_coeffs_padded = 
-        dividend_coeffs ++ (replicate (ntt_domain_len - dividend_len) BFieldElement.zero)
-    let divisor_coeffs_padded = 
-        divisor_coeffs ++ (replicate (ntt_domain_len - divisor_len) BFieldElement.zero)
+def naive_divide' [n] [m] 
+    (dividend: BfePolynomial [n]) 
+    (divisor: BfePolynomial [m]) 
+    (quotient_degree: i64) 
+    (divisor_lc_inv: BFieldElement)
+    : (BfePolynomial [], BfePolynomial []) = 
 
-    -- apply ntt
-    let dividend_ntt = bfe_ntt dividend_coeffs_padded
-    let divisor_ntt = bfe_ntt divisor_coeffs_padded
+    -- quotient is built from back to fron, must be reversed later
+    let rev_quotient = [] :> []BFieldElement
+    let remainder = normalize dividend
 
-    -- element wise division in ntt domain
-    let quotient_ntt = map2 (\x y -> BFieldElement.mul x (BFieldElement.inverse y))
-                            (take ntt_domain_len dividend_ntt)
-                            (take ntt_domain_len divisor_ntt)
-    -- apply intt
-    let quotient_coeffs = bfe_intt quotient_ntt
-    let quotient = { coefficients = take max_len quotient_coeffs }
+    -- The divisor is also iterated back to front
+    let divisor_coefficients =  divisor.coefficients
+    let rev_divisor =  BFieldElement.reverse_array divisor_coefficients
+    let normal_rev_divisor = normalize (new rev_divisor)
 
-    -- compute remainder
-    let remainder = multiply quotient divisor
-                    |> \x -> sub dividend x
-    in (quotient, remainder)
+    let (rev_quotient, remainder) =
+        loop (rev_quotient, remainder) = (rev_quotient, remainder) for _ in 0...quotient_degree do
+            naive_divide'' rev_quotient remainder normal_rev_divisor.coefficients divisor_lc_inv
+
+    -- reverse and convert to poly
+    let quotieint = BFieldElement.reverse_array rev_quotient |> new
+    in (quotieint, remainder)
+
+def naive_divide [n] [m] (dividend: BfePolynomial [n]) (divisor: BfePolynomial [m]) 
+    : (BfePolynomial [], BfePolynomial []) = 
+    -- expect divisor should be non-zero
+    let divisor_lc :BFieldElement = leading_coefficient divisor |> \(lc, some) -> assert (some) lc 
+    let divisor_lc_inv :BFieldElement = BFieldElement.inverse divisor_lc
+    let quotient_degree: i64 = (degree dividend) - (degree divisor)
+    
+    in if quotient_degree < 0 then (copy zero, dividend) -- indivisible
+    else naive_divide' dividend divisor quotient_degree divisor_lc_inv
     
 -- chunks polynomial coefficients into chunks of a given length
 -- smaller than chunk_length chunks are padded with zeros
@@ -182,21 +220,7 @@ def chunk_coefficients [n] (poly: BfePolynomial [n]) (chunk_length: i64) : [][]B
         -- Append
         in chunks ++ [chunk_coeffs]
     in chunks
-
--- determines leading coefficient
--- returns a tuple w/ leading coeff and a flag indicating ig the poly is zero
--- The flag is implemented bc futhark does not have Options/Maybes
-def leading_coefficient [n] (poly: BfePolynomial [n]) : (BFieldElement, bool) =
-    let deg: i64 = degree poly 
-    in if (deg == -1) 
-        then (BFieldElement.zero, false) 
-        else (poly.coefficients[deg], true)
-
--- removes trailing zeros
-def normalize [n] (poly: BfePolynomial [n]) : BfePolynomial [] =
-    let deg: i64 = degree poly
-    in if deg < 0
-    then copy zero else { coefficients = take (deg + 1) poly.coefficients }
+    
 
 -- Given a polynomial P(x), produce P'(x) := P(α·x)
 -- Evaluating P'(x) corresponds to evaluating P(α·x)
@@ -563,36 +587,26 @@ entry subtraction_is_not_associative (a: []u64) (b: []u64) (c: []u64) : bool =
     in eq lhs rhs
 
 -- == 
--- entry: ntt_division_result_can_reproduce_dividend_and_divisor
+-- entry: naive_division_result_can_reproduce_dividend_and_divisor
 -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 2u64, 3u64] }
 -- output { true }
-entry ntt_division_result_can_reproduce_dividend_and_divisor (a: []u64) (b: []u64) : bool =
+-- input { [4u64, 8u64, 9u64] [12u64, 88u64, 1u64, 3u64]}
+entry naive_division_result_can_reproduce_dividend_and_divisor (a: []u64) (b: []u64) : bool =
     let a_poly = new_from_arr_u64 a
     let b_poly = new_from_arr_u64 b
-    let (quot, rem) = ntt_divide a_poly b_poly
+    let (quot, rem) = naive_divide a_poly b_poly
     -- ensure reconstructed dividend is the same as the original dividend
     let reconstructed_a_poly = add (multiply quot b_poly) rem
     in eq a_poly reconstructed_a_poly
 
 -- == 
--- entry: ntt_division_result_has_zero_remainder
+-- entry: naive_division_result_has_zero_remainder
 -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] [1u64, 0u64, 3u64] }
 -- output { true }
-entry ntt_division_result_has_zero_remainder (a: []u64) (b: []u64) : bool =
+entry naive_division_result_has_zero_remainder (a: []u64) (b: []u64) : bool =
     let a_poly = new_from_arr_u64 a
     let b_poly = new_from_arr_u64 b
     let product = multiply a_poly b_poly
-    let (_, rem_1) = ntt_divide product a_poly
-    let (_, rem_2) = ntt_divide product b_poly
+    let (_, rem_1) = naive_divide product a_poly
+    let (_, rem_2) = naive_divide product b_poly
     in (is_zero rem_1) && (is_zero rem_2)
-
--- -- NOTE This should produce an error
--- -- == 
--- -- entry: ntt_div_by_zero
--- -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64] }
--- -- output { true }
--- entry ntt_div_by_zero (a: []u64) : bool =
---     let a_poly = new_from_arr_u64 a
---     let b_poly = zero
---     let (_, rem) = ntt_divide a_poly b_poly
---     in is_zero rem
