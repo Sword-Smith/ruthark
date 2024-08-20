@@ -1,6 +1,8 @@
 module BFieldElement = import "BFieldElement"
+module bfe_poly = import "bfe_poly"
 
 type BFieldElement = BFieldElement.BFieldElement
+type BfePolynomial [n] = bfe_poly.BfePolynomial [n]
 
 type XFieldElement = { coefficients: (BFieldElement, BFieldElement, BFieldElement) }
 
@@ -158,6 +160,18 @@ def mod_pow_u64 (element : XFieldElement) (exponent: u64) : XFieldElement =
 --   let (res, _) = unzip pairs
 --    in res
 
+def shah_polynomial : BfePolynomial [4] =
+  bfe_poly.new_from_arr_u64 [1, 18446744069414584320, 0, 1] 
+
+def inverse (x: XFieldElement) : XFieldElement = 
+  -- cannot invert zero element in extension field
+  let x = assert (not (is_zero x)) x 
+  --convert Xfe to poly, xgcd w/ shah poly, convert back to Xfe 
+  let x_as_poly = bfe_poly.new [x.coefficients.0, x.coefficients.1, x.coefficients.2]
+  let (_, a, _) = bfe_poly.xgcd x_as_poly shah_polynomial
+  let a_coeffs = take 3 a.coefficients
+  in new (a_coeffs[0], a_coeffs[1], a_coeffs[2]) 
+
 -- ==
 -- entry: unit_test_add
 -- input  { 2u64 3u64 4u64 100u64 130u64 170u64 }
@@ -226,3 +240,20 @@ entry xfe_mod_pow_u64_test (base_u64: u64) (exponent: i64) : bool =
     let acc =  xfe_xfe_mul acc base
     in (success, acc)
   in success
+
+-- -- == 
+-- entry: xfe_inverse_test
+-- input {  }
+-- output { true }
+entry xfe_inverse_test : bool =
+  let x: XFieldElement = new (BFieldElement.new 1, BFieldElement.new 2, BFieldElement.new 3)
+  let x_inv = inverse x
+  in eq (one) (xfe_xfe_mul x x_inv)
+
+-- -- == 
+-- entry: shah_polynomial_is_correct
+-- input { }
+-- output { [1u64, 18446744069414584320u64, 0u64, 1u64] }
+entry shah_polynomial_is_correct : [4]u64 =
+    let shah_poly = shah_polynomial
+    in map BFieldElement.value shah_poly.coefficients
