@@ -1,10 +1,16 @@
 module XFieldElement = import "XFieldElement"
 module BFieldElement = import "BFieldElement"
+module xfe_ntt_module = import "xfe_ntt"
 
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
 
+let xfe_ntt = xfe_ntt_module.xfe_ntt
+let xfe_intt = xfe_ntt_module.xfe_intt
+
 type XfePolynomial [n] = { coefficients: [n]XFieldElement }
+
+
 
 -- constructor from XFieldElement array
 def new [n] (coefficients: [n]XFieldElement) : XfePolynomial [n] =
@@ -70,6 +76,18 @@ def evaluate [n] (poly: XfePolynomial [n]) (x: XFieldElement): XFieldElement =
     -- TODO: Do we want to implement this with Horner evaluation?
     let powers_of_x = iota n  |> map u64.i64 |> map (\i -> XFieldElement.mod_pow_u64 x i)
     in reduce (XFieldElement.+^) XFieldElement.zero (map2 (XFieldElement.*^) poly.coefficients powers_of_x)        
+
+-- XFieldElement values to XfePolynomial
+def fast_coset_interpolate [n] (offset: BFieldElement) (values: [n]XFieldElement): XfePolynomial[n] =
+  let unscaled = xfe_intt values
+  let poly = new unscaled
+  in scale (BFieldElement.inverse offset) poly
+
+def fast_coset_evaluate [n] (offset: BFieldElement) (order: i64) (poly: XfePolynomial[n]): [order]XFieldElement =
+    let coefficients = (scale offset poly).coefficients
+    let coefficients = coefficients ++ (replicate (order - n) XFieldElement.zero) :> [order]XFieldElement
+    in xfe_ntt coefficients
+
 
 -- == 
 -- entry: polynomial_addition_is_associative 
@@ -165,3 +183,26 @@ entry evaluating_scaled_polynomial_is_equvalant_to_evaluating_original_int_offse
     -- evaluate original poly on scaled x
     let unscaled_result = evaluate xfe_polynomial scaled_input
     in XFieldElement.eq scaled_result unscaled_result
+
+-- ==
+-- entry: fast_coset_interpolate_and_evaluate_is_identity_pbt
+-- random input { [1]u64 }
+-- output { true }
+-- random input { [2]u64 }
+-- output { true }
+-- random input { [4]u64 }
+-- output { true }
+-- random input { [8]u64 }
+-- output { true }
+-- random input { [16]u64 }
+-- output { true }
+-- random input { [32]u64 }
+-- output { true }
+-- random input { [64]u64 }
+-- output { true }
+entry fast_coset_interpolate_and_evaluate_is_identity_pbt [n] (input: [n]u64): bool =
+    let offset = BFieldElement.new 7
+    let input = map BFieldElement.new input |> map XFieldElement.new_const
+    let poly = fast_coset_interpolate offset input
+    let values_again = fast_coset_evaluate offset n poly
+    in map2 XFieldElement.eq values_again input |> reduce (==) true 
