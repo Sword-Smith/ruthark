@@ -2,6 +2,7 @@ module XFieldElement = import "XFieldElement"
 module BFieldElement = import "BFieldElement"
 
 type XFieldElement = XFieldElement.XFieldElement
+type BFieldElement = BFieldElement.BFieldElement
 
 type XfePolynomial [n] = { coefficients: [n]XFieldElement }
 
@@ -57,6 +58,19 @@ def add [n] [m] (p1: XfePolynomial [n]) (p2: XfePolynomial [m]) : XfePolynomial 
     -- Add corresponding coefficients (telling compiler the lengths are the same)
     in { coefficients = map2 XFieldElement.add (take max_len coeffs1) (take max_len coeffs2) }
 
+
+-- Given a polynomial P(x), produce P'(x) := P(α·x)
+-- Evaluating P'(x) corresponds to evaluating P(α·x)
+def scale [n] (alpha: BFieldElement) (poly: XfePolynomial [n]): XfePolynomial [n] =
+    let powers_of_alpha = map (BFieldElement.mod_pow_i64 alpha) (iota n)
+    let new_coefficients = map2 XFieldElement.xfe_bfe_mul poly.coefficients powers_of_alpha
+    in { coefficients = new_coefficients }
+
+def evaluate [n] (poly: XfePolynomial [n]) (x: XFieldElement): XFieldElement =
+    -- TODO: Do we want to implement this with Horner evaluation?
+    let powers_of_x = iota n  |> map u64.i64 |> map (\i -> XFieldElement.mod_pow_u64 x i)
+    in reduce (XFieldElement.+^) XFieldElement.zero (map2 (XFieldElement.*^) poly.coefficients powers_of_x)        
+
 -- == 
 -- entry: polynomial_addition_is_associative 
 -- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64,3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64]] [[7u64, 7u64, 7u64], [8u64, 8u64, 8u64], [9u64, 9u64, 9u64]] [[10u64, 10u64, 10u64], [11u64, 11u64, 11u64], [12u64, 12u64, 12u64], [13u64, 13u64, 13u64]] }
@@ -109,3 +123,45 @@ entry test_degree (a: [][3]u64) : i64 = degree (new_from_arr_u64 a)
 -- output { false }
 entry test_eq (a: [][3]u64) (b: [][3]u64) : bool =
     eq (new_from_arr_u64 a) (new_from_arr_u64 b)
+
+-- ==
+-- entry: evaluate_unit_test
+-- input { [1u64, 2u64, 3u64] [1u64, 2u64, 3u64] }
+-- output { 18446744069414584291u64 25u64 63u64 }
+-- input { [988u64, 324u64, 3135135u64, 123u64, 123u64] [ 88u64, 99u64, 22u64]}
+-- output { 18446744007089048948u64 134492625432u64 137077922784u64 }
+entry evaluate_unit_test (poly_coeffs: []u64) (input_coeffs: [3]u64): (u64, u64, u64) =
+    let xfe_polynomial = 
+        map BFieldElement.new poly_coeffs 
+        |> map XFieldElement.new_const 
+        |> new
+    let x = XFieldElement.new (
+        BFieldElement.new input_coeffs[0], 
+        BFieldElement.new input_coeffs[1], 
+        BFieldElement.new input_coeffs[2]
+        )
+    let result = evaluate xfe_polynomial x
+    in (
+        BFieldElement.value result.coefficients.0,
+        BFieldElement.value result.coefficients.1,
+        BFieldElement.value result.coefficients.2
+        )
+
+-- == 
+-- entry: evaluating_scaled_polynomial_is_equvalant_to_evaluating_original_int_offset_point
+-- input {}
+-- output { true }
+entry evaluating_scaled_polynomial_is_equvalant_to_evaluating_original_int_offset_point : bool =
+    let alpha = BFieldElement.new 3
+    let xfe_polynomial = 
+      map XFieldElement.new_const [BFieldElement.new 1, BFieldElement.new 2, BFieldElement.new 3] |> new
+    -- scaled and unscaled input
+    let x = XFieldElement.new_const (BFieldElement.new 9)
+    let scaled_input = XFieldElement.xfe_bfe_mul x alpha
+    -- scaled poly
+    let scaled_poly = scale alpha xfe_polynomial
+    -- evaluate scaled poly on og x
+    let scaled_result = evaluate scaled_poly x
+    -- evaluate original poly on scaled x
+    let unscaled_result = evaluate xfe_polynomial scaled_input
+    in XFieldElement.eq scaled_result unscaled_result
