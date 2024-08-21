@@ -114,6 +114,15 @@ def xfe_bfe_mul (x: XFieldElement) (b: BFieldElement) : XFieldElement =
       )
   }
 
+def (a: XFieldElement) *^ (b: XFieldElement): XFieldElement =
+  xfe_xfe_mul a b
+
+def (a: XFieldElement) +^ (b: XFieldElement): XFieldElement =
+  add a b
+
+def (lhs: XFieldElement) -^ (rhs: XFieldElement): XFieldElement =
+  sub lhs rhs
+
 -- def div (a: XFieldElement) (b: XFieldElement) : XFieldElement =
 --  mul a (inverse b)
 
