@@ -1,4 +1,5 @@
 require {
   github.com/Ulrik-dk/segmented 0.1.0 #d7aadf8d2cca19076d723c369f8ab7629bfcbbda
   github.com/diku-dk/linalg 0.5.1 #02ac17238bda19049b037fd7e5e49453afef1b59
+  github.com/diku-dk/containers 0.0.0-20240606092309+efbe2d8b74cf291c7058bbc09d11bd40a9c4516f
 }

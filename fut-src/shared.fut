@@ -1,3 +1,11 @@
+-- library imports
+module array_module = import "./lib/github.com/diku-dk/containers/array"
+module merge_sort_module = import "./lib/github.com/diku-dk/sorts/merge_sort"
+
+let merge_sort = merge_sort_module.merge_sort
+let dedup = array_module.dedup
+let hash_i64 = array_module.hash_i64
+
 -- Constant-time log2 (depending on architecture, I guess)
 def ilog2 (n: i64) : i64 = i64.i32 (63 - i64.clz n)
 
@@ -79,6 +87,44 @@ def next_power_of_two_i64 (x : i64) : i64 =
 let saturating_sub_u64 (x: u64) (y: u64) : u64 =
   if x < y then 0u64 else x - y
 
+
+
+-- performs: arrayA - arrayB = { x | x in arrayA and x not in arrayB }
+-- Requires arrays be sorted and deduped
+def sorted_deduped_set_difference_i64 [n] [m] 
+  (sortedA: [n]i64)  (sortedB: [m]i64)
+  : []i64 =
+
+  let init_res: [0]i64 = []
+  let (result, _, _) =
+    loop (res, i, j) = (init_res, 0, 0) while i < (length sortedA) do -- && j < (length sortedB) do
+      -- subtrahend empty, rest in result
+      if j >= length sortedB then 
+        (concat res [sortedA[i]], i+1, j)
+      -- not in B
+      else if sortedA[i] < sortedB[j] then
+        (concat res [sortedA[i]], i + 1, j)
+      -- in B
+      else if sortedA[i] == sortedB[j] then
+        (res, i+1, j)
+      -- in B
+      else  
+        (res, i, j+1)
+  in result
+
+
+-- performs: arrayA - arrayB = { x | x in arrayA and x not in arrayB }
+-- Does not require sets to be sorted. Can handle duplicates
+def unsorted_set_difference_i64 [n] [m] (arrayA: [n]i64) (arrayB: [m]i64) : []i64 = 
+  -- dedup arrays
+  let deduplicatedA = dedup hash_i64 (==) arrayA
+  let deduplicatedB = dedup hash_i64 (==) arrayB
+  -- sort
+  let sortedA = merge_sort (<=) deduplicatedA
+  let sortedB = merge_sort (<=) deduplicatedB
+  -- set diff
+  in sorted_deduped_set_difference_i64 sortedA sortedB
+
 -- ==
 -- entry: test_saturating_sub
 -- input {}
@@ -151,3 +197,26 @@ entry test_bytes_to_u64 (x: [8]u8): u64 =
 -- output { 0i64 }
 entry test_next_multiple_of (x: i64) (m: i64): i64 =
   next_multiple_of x m
+
+-- == 
+-- entry: sorted_deduped_set_difference_i64_test
+-- input {[1i64, 3i64, 8i64, 9i64, 11i64] [1i64, 9i64] }
+-- output {[3i64, 8i64, 11i64] }
+entry sorted_deduped_set_difference_i64_test (lhs: []i64) (rhs: []i64) : []i64 =
+  sorted_deduped_set_difference_i64 lhs rhs
+
+-- == 
+-- entry: sorted_deduped_set_diff_with_larger_subtrahend_produces_null_set
+-- input { [1i64] [1i64, 3i64, 5i64]}
+-- output { true }
+entry sorted_deduped_set_diff_with_larger_subtrahend_produces_null_set (lhs: []i64) (rhs: []i64) : bool = 
+ length (sorted_deduped_set_difference_i64 lhs rhs) == 0
+
+-- == 
+-- entry: unsorted_set_difference_i64_test
+-- input { [1i64, 2i64, 3i64, 4i64, 5i64, 6i64, 7i64, 8i64, 9i64, 10i64] [1i64, 2i64, 4i64, 5i64, 7i64, 8i64, 9i64, 10i64] } 
+-- output {[3i64, 6i64]}
+-- input { [8i64, 7i64, 2i64, 6i64, 8i64] [7i64, 8i64]}
+-- output { [2i64, 6i64] }
+entry unsorted_set_difference_i64_test (lhs: []i64) (rhs: []i64) : []i64 =
+  unsorted_set_difference_i64 lhs rhs
