@@ -11,6 +11,9 @@ check: $(SRC_FILES)
 test:
 	$(MAKE) -C tests
 
+sync:
+	futhark pkg sync
+
 .PHONY: clean
 clean:
 	git clean -Xi
