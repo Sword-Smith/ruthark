@@ -7,27 +7,30 @@ type BFieldElement = BFieldElement.BFieldElement
 
 let fri_domain_offset = BFieldElement.new 7
 
-entry lde_single_column
-  [n]
-  (extension_factor: i64)
-  (randomized_trace: [n]u64)
-  : ([extension_factor * n]u64, [n]u64) =
-  let randomized_trace = map (BFieldElement.from_raw_u64) randomized_trace
-  let (extended_column, poly) = low_degree_extend fri_domain_offset extension_factor randomized_trace
-  in (map (BFieldElement.to_raw_u64) extended_column, map (BFieldElement.to_raw_u64) poly.coefficients)
+entry test_gpu_kernel (number: u64) : u64 =
+  number + 1
 
-entry lde_multiple_columns
-  [m][n]
-  (extension_factor: i64)
-  (randomized_traces: [m][n]u64)
-  : ([extension_factor * n][m]u64, [m][n]u64) =
-  let randomized_traces = map (map (BFieldElement.from_raw_u64)) randomized_traces
-  let (extended_columns, polys) =
-    unzip2
-    (map (low_degree_extend fri_domain_offset extension_factor) randomized_traces)
-  let extended_columns = map (map BFieldElement.to_raw_u64) extended_columns
-  let polys = map (\poly -> map BFieldElement.to_raw_u64 poly.coefficients) polys
-  in (transpose extended_columns, polys)
+-- entry lde_single_column
+--   [n]
+--   (extension_factor: i64)
+--   (randomized_trace: [n]u64)
+--   : ([extension_factor * n]u64, [n]u64) =
+--   let randomized_trace = map (BFieldElement.from_raw_u64) randomized_trace
+--   let (extended_column, poly) = low_degree_extend fri_domain_offset extension_factor randomized_trace
+--   in (map (BFieldElement.to_raw_u64) extended_column, map (BFieldElement.to_raw_u64) poly.coefficients)
+
+-- entry lde_multiple_columns
+--   [m][n]
+--   (extension_factor: i64)
+--   (randomized_traces: [m][n]u64)
+--   : ([extension_factor * n][m]u64, [m][n]u64) =
+--   let randomized_traces = map (map (BFieldElement.from_raw_u64)) randomized_traces
+--   let (extended_columns, polys) =
+--     unzip2
+--     (map (low_degree_extend fri_domain_offset extension_factor) randomized_traces)
+--   let extended_columns = map (map BFieldElement.to_raw_u64) extended_columns
+--   let polys = map (\poly -> map BFieldElement.to_raw_u64 poly.coefficients) polys
+--   in (transpose extended_columns, polys)
 
 -- Everything below this is boring entry-point wrapping
 ---It only exists because XFieldElement is a triple instead of a [3]BFieldElement
