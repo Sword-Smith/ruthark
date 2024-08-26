@@ -1,2 +1,8 @@
 [workspace]
-members = ["rust-generator", "gpu-accelerator", "accelerators"]
+
+# NOTE: comment out "accelerators" and "gpu-accelerator" if generating the library from scratch
+# NOTE: If there is an error within the rust-generated code, the rust-generator will not be
+# NOTE: able to compile when running cargo run from the root. 
+members = ["rust-generator", "accelerators", "gpu-accelerator]
+
+
