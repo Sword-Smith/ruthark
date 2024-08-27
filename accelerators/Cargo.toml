@@ -10,6 +10,7 @@ twenty-first = { version = "0.7.2" }
 rand = { version = "0.8", features = ["min_const_gen"] }
 itertools = "0.10"
 gpu-accelerator = { path = "../gpu-accelerator" }
+triton-vm = { path = "../triton-vm" }
 
 [dev-dependencies.criterion]
 version = "0.4"

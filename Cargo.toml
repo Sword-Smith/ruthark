@@ -1,8 +1,122 @@
 [workspace]
+members = ["triton-vm", "constraint-evaluation-generator", "gpu-accelerator", "accelerators" ] # "rust-generator"
+resolver = "2"
 
-# NOTE: comment out "accelerators" and "gpu-accelerator" if generating the library from scratch
-# NOTE: If there is an error within the rust-generated code, the rust-generator will not be
-# NOTE: able to compile when running cargo run from the root. 
-members = ["rust-generator", "accelerators", "gpu-accelerator]
+[profile.test]
+opt-level = 1
 
+[profile.release]
+lto = "thin"
 
+[profile.bench]
+lto = "thin"
+
+[workspace.package]
+version = "0.42.0-alpha.9"
+edition = "2021"
+authors = ["Triton Software AG"]
+license = "Apache-2.0"
+homepage = "https://triton-vm.org/"
+repository = "https://github.com/TritonVM/triton-vm"
+readme = "README.md"
+documentation = "https://triton-vm.org/spec/"
+
+[workspace.dependencies]
+anyhow = "1.0"
+arbitrary = { version = "1", features = ["derive"] }
+assert2 = "0.3"
+colored = "2.1"
+clap = { version = "4", features = ["derive", "cargo", "wrap_help", "unicode", "string"] }
+criterion = { version = "0.5", features = ["html_reports"] }
+directories = "5"
+fs-err = "2.11.0"
+get-size = "0.1.4"
+indexmap = "2.2.6"
+itertools = "0.13"
+lazy_static = "1.5"
+ndarray = { version = "0.16", features = ["rayon"] }
+nom = "7.1"
+num-traits = "0.2"
+prettyplease = "0.2"
+pretty_assertions = "1.4"
+proc-macro2 = "1.0"
+proptest = "1.5"
+proptest-arbitrary-interop = "0.1"
+quote = "1.0"
+rand = "0.8.5"
+rand_core = "0.6.4"
+rayon = "1.10"
+serde = { version = "1", features = ["derive"] }
+serde_derive = "1"
+serde_json = "1.0"
+strum = { version = "0.26", features = ["derive"] }
+syn = "2.0"
+test-strategy = "0.4.0"
+thiserror = "1.0"
+trybuild = "1.0"
+twenty-first = "0.42.0-alpha.9"
+unicode-width = "0.1"
+
+[workspace.lints.clippy]
+cast_lossless = "warn"
+cloned_instead_of_copied = "warn"
+copy_iterator = "warn"
+default_trait_access = "warn"
+doc_link_with_quotes = "warn"
+expl_impl_clone_on_copy = "warn"
+explicit_deref_methods = "warn"
+explicit_into_iter_loop = "warn"
+explicit_iter_loop = "warn"
+filter_map_next = "warn"
+flat_map_option = "warn"
+fn_params_excessive_bools = "warn"
+from_iter_instead_of_collect = "warn"
+if_not_else = "warn"
+implicit_clone = "warn"
+inconsistent_struct_constructor = "warn"
+inefficient_to_string = "warn"
+invalid_upcast_comparisons = "warn"
+items_after_statements = "warn"
+large_digit_groups = "warn"
+macro_use_imports = "warn"
+manual_assert = "warn"
+manual_instant_elapsed = "warn"
+manual_let_else = "warn"
+manual_ok_or = "warn"
+manual_string_new = "warn"
+many_single_char_names = "warn"
+map_unwrap_or = "warn"
+match_wild_err_arm = "warn"
+match_wildcard_for_single_variants = "warn"
+mismatching_type_param_order = "warn"
+mut_mut = "warn"
+needless_continue = "warn"
+needless_for_each = "warn"
+no_effect_underscore_binding = "warn"
+option_option = "warn"
+range_minus_one = "warn"
+range_plus_one = "warn"
+redundant_else = "warn"
+ref_binding_to_reference = "warn"
+ref_option_ref = "warn"
+return_self_not_must_use = "warn"
+same_functions_in_if_condition = "warn"
+should_panic_without_expect = "warn"
+stable_sort_primitive = "warn"
+struct_field_names = "warn"
+trivially_copy_pass_by_ref = "warn"
+unchecked_duration_subtraction = "warn"
+uninlined_format_args = "warn"
+unnecessary_box_returns = "warn"
+unnecessary_join = "warn"
+unnecessary_wraps = "warn"
+unnested_or_patterns = "warn"
+#unreadable_literal = "warn"
+unused_async = "warn"
+used_underscore_binding = "warn"
+verbose_bit_mask = "warn"
+
+[workspace.dependencies.cargo-husky]
+version = "1.5"
+default-features = false
+features = ["precommit-hook", "run-cargo-clippy", "run-cargo-fmt"]
