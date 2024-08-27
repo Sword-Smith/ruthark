@@ -1,9 +1,13 @@
 module BFieldElement = import "BFieldElement"
+module XFieldElement = import "XFieldElement"
 module shared = import "shared"  
 module bfe_poly = import "bfe_poly"
+module xfe_poly = import "xfe_poly"
 
 type BFieldElement = BFieldElement.BFieldElement
+type XFieldElement = XFieldElement.XFieldElement
 type BfePolynomial [n] = bfe_poly.BfePolynomial [n]
+type XfePolynomial [n] = xfe_poly.XfePolynomial [n]
 
 type ArithmeticDomain = {
     offset: BFieldElement,
@@ -75,9 +79,13 @@ def halve (domain: ArithmeticDomain) : ArithmeticDomain =
     let new_len = domain.len / 2
     in {offset = new_offset, generator = new_generator, len = new_len}
 
--- interpolation
-def interpolate (domain: ArithmeticDomain) (values: []BFieldElement) : BfePolynomial [] =
+-- interpolate bfe values over the domain
+def interpolate_bfe_values [n] (domain: ArithmeticDomain) (values: [n]BFieldElement) : BfePolynomial [] =
     bfe_poly.fast_coset_interpolate domain.offset values
+
+-- interpolate xfe values over the domain
+def interpolate_xfe_values [n] (domain: ArithmeticDomain) (values: [n]XFieldElement) :XfePolynomial [] =
+    xfe_poly.fast_coset_interpolate domain.offset values
 
 -- low degree extension
 def low_degree_extension 
@@ -86,7 +94,7 @@ def low_degree_extension
     (target_domain: ArithmeticDomain) 
     : []BFieldElement =
     -- interpolate the codeword over self.domain, then eval it over the target domain
-    let interpolation = interpolate self_domain codeword
+    let interpolation = interpolate_bfe_values self_domain codeword
     in evaluate target_domain interpolation
 
 -- compute the n'th element in the domain
@@ -160,7 +168,7 @@ entry test_domain_values : bool =
             else success
 
         -- interpolate and compare 
-        let interpolant = interpolate b_domain values
+        let interpolant = interpolate_bfe_values b_domain values
         let success = success && (bfe_poly.eq interpolant poly)
 
         -- Verify that batch-evaluated values match a manual evaluation
@@ -242,4 +250,50 @@ entry test_low_degree_extension : bool =
         |> reduce (&&) true
         |> \x -> x && success 
     
+    in success
+
+-- == 
+-- entry: interpolation_xfield_unit_test
+-- input {}
+-- output { true }
+entry interpolation_xfield_unit_test : bool =
+
+    -- init domain
+    let len = 32
+    let offset = BFieldElement.new 88u64
+    let domain = with_offset (of_length len) offset
+    
+    -- get values
+    let values : [len]XFieldElement =
+        iota len
+        |> map u64.i64
+        |> map (\i -> (BFieldElement.new i, BFieldElement.new i, BFieldElement.new i))
+        |> map (\(a, b, c) -> XFieldElement.new (a, b, c))
+
+    -- interpolate over the domain
+    let interpolant = interpolate_xfe_values domain values
+
+    -- evaluate the interpolant over the domain for comparison 
+    let evaluated_interpolant: []XFieldElement = xfe_poly.fast_coset_evaluate offset len interpolant
+
+    -- ensure interpolant matches input values and values 
+    -- are correct given how they were created
+    let (success, _) : (bool, i64) = loop (success, i) = (true, 0) while i < len do
+
+        -- get coeff values from the evaluated interpolant at i
+        let interp_vals = evaluated_interpolant[i].coefficients
+                   |> \(a, b, c) -> map BFieldElement.value [a, b, c]
+
+        -- get coeff values from the input values at i
+        let og_vals = values[i].coefficients 
+                   |> \(a, b, c) -> map BFieldElement.value [a, b, c]
+
+        -- All coeff values at the i'th idx should be i
+        let i_u64 = u64.i64 i
+
+        let success = success 
+                      && (interp_vals[0] == og_vals[0]) && (interp_vals[0] == i_u64) 
+                      && (interp_vals[1] == og_vals[1]) && (interp_vals[1] == i_u64)
+                      && (interp_vals[2] == og_vals[2]) && (interp_vals[2] == i_u64)
+        in (success, i + 1)
     in success
