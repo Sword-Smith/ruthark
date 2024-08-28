@@ -537,7 +537,7 @@ impl Stark {
     /// polynomials. Concretely, the maximal degree of a polynomial over the quotient domain is at
     /// most only slightly larger than the maximal degree allowed in the STARK proof, and could be
     /// equal. This makes computation for the prover much faster.
-    pub(crate) fn quotient_domain(
+    pub fn quotient_domain(
         fri_domain: ArithmeticDomain,
         max_degree: isize,
     ) -> Result<ArithmeticDomain, ProvingError> {
