@@ -6,12 +6,22 @@ type BfePolynomial [n] = bfe_poly.BfePolynomial [n]
 
 type XFieldElement = { coefficients: (BFieldElement, BFieldElement, BFieldElement) }
 
+-- packages Bfe directly into Xfe
 def new (coefficients: (BFieldElement, BFieldElement, BFieldElement)) : XFieldElement =
   {coefficients = coefficients}
 
+-- Packages provided Bfe into 0'th idx of Xfe, rest 0
 def new_const (element: BFieldElement) : XFieldElement = new (element, BFieldElement.zero, BFieldElement.zero)
 
-def from_u64 (number: u64) : XFieldElement = BFieldElement.new number |> new_const
+-- Applies BFieldElement.new to u64 (alters raw coeffs) and packages into Xfe w/ new_const
+def new_const_from_u64 (number: u64) : XFieldElement = 
+  BFieldElement.new number |> new_const
+
+-- Packages raw u64 arr directly into Bfe (not modifying raw coeffs) 
+-- and packages directly into Xfe 
+def new_from_raw_u64_arr (raw_coefficients: [3]u64) : XFieldElement =
+  let coeffs = map (\x -> {0 = x} :> BFieldElement) raw_coefficients
+  in { coefficients = (coeffs[0], coeffs[1], coeffs[2]) } :> XFieldElement
 
 def eq (a : XFieldElement) (b : XFieldElement) : bool =
   a.coefficients.0 == b.coefficients.0
@@ -242,7 +252,7 @@ entry xfe_mod_pow_u64_zero_is_one : bool =
 -- input { 25341u64 77i64 }
 -- output { true }
 entry xfe_mod_pow_u64_test (base_u64: u64) (exponent: i64) : bool =
-  let base = from_u64 base_u64
+  let base = new_const_from_u64 base_u64
   let exponents_u64 = iota exponent |> map u64.i64
   let (success, _) = loop (success, acc) = (true, one) for i in exponents_u64 do
     let success = success && (eq acc (mod_pow_u64 base i))
@@ -266,3 +276,11 @@ entry xfe_inverse_test : bool =
 entry shah_polynomial_is_correct : [4]u64 =
     let shah_poly = shah_polynomial
     in map BFieldElement.value shah_poly.coefficients
+
+-- == 
+-- entry: xfe_new_from_raw_u64_arr_test
+-- input { [1u64, 2u64, 3u64] }
+-- output { 1u64 2u64 3u64 }
+entry xfe_new_from_raw_u64_arr_test (raw_coeffs: [3]u64) : (u64, u64, u64) =
+  let x = new_from_raw_u64_arr raw_coeffs
+  in (x.coefficients.0.0, x.coefficients.1.0, x.coefficients.2.0)
