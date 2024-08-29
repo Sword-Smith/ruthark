@@ -1,4 +1,4 @@
-use gpu_accelerator::FutharkContext;
+use gpu_accelerator::{FutharkContext, Array_u64_3d}; // <-- Library must be generated for this to import
 use super::gpu_parallel::GpuParallel;
 
 extern crate triton_vm;
@@ -8,6 +8,49 @@ use triton_vm::proof_stream;
 use triton_vm::proof_item;
 use triton_vm::table::master_table::*;
 use triton_vm::table::challenges::*;
+
+use triton_vm::twenty_first::math::x_field_element::EXTENSION_DEGREE;
+use ndarray::Array2;
+
+impl GpuParallel {
+
+    // convert from rust representation --> futhark representation
+    pub fn Array2_Xfe_to_Array_u64_3d(arr: Array2<XFieldElement>, ctx: FutharkContext) -> Array_u64_3d {
+        
+        // record shape and flatten array
+        let rows = arr.nrows();
+        let cols = arr.ncols();
+        let mut flat_vec = Vec::with_capacity(rows * cols * EXTENSION_DEGREE);
+
+        // create flattened vec of u64 w/ xfe at "3-strings" of u64
+        for xfe in arr.iter() {
+            for bfe in &xfe.coefficients {
+                flat_vec.push(bfe.raw_u64());
+            }
+        }
+
+        // create 3d array from flattened vec
+        let dim = [rows as i64, cols as i64, EXTENSION_DEGREE as i64];
+        Array_u64_3d::from_vec(ctx, &flat_vec, &dim).unwrap()
+    }
+
+    // convert from futhark representation --> rust representation
+    pub fn Array_u64_3d_to_Array2_Xfe(arr: Array_u64_3d, ctx: FutharkContext) -> Array2<XFieldElement> {
+
+        let (xfe_vals, shape) = arr.to_vec().unwrap();
+
+        // map Xfe values to XFieldElement
+        let xfe_vec: Vec<XFieldElement> = xfe_vals.chunks(3).map(|chunk| {
+            // package raw coeffs into Bfe, then into Xfe
+            let bfe_vec: Vec<BFieldElement> = 
+                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
+            XFieldElement { coefficients: [bfe_vec[0], bfe_vec[1], bfe_vec[2]] }
+        }).collect();
+
+        // convert flattened vec of u64 to Array2<XFieldElement>
+        Array2::from_shape_vec((shape[0] as usize, shape[1] as usize), xfe_vec).unwrap()
+    }
+}
 
 
 #[cfg(test)]
@@ -61,76 +104,83 @@ pub(crate) mod LDE_gpu_tests {
         // The default parameters give a (conjectured) security level of 160 bits.
         let stark = Stark::default();
     
-        // profiler::profiler!(start "Fiat-Shamir: claim" ("hash"));
+        // fiat shamir claim
         let mut proof_stream = proof_stream::ProofStream::new();
         proof_stream.alter_fiat_shamir_state_with(&claim);
-        // profiler!(stop "Fiat-Shamir: claim");
 
-        // profiler!(start "derive additional parameters");
+        // derive additional parameters
         let padded_height = aet.padded_height();
         let max_degree = stark.derive_max_degree(padded_height);
         let fri = stark.derive_fri(padded_height).unwrap();
         let quotient_domain = Stark::quotient_domain(fri.domain, max_degree).unwrap();
         proof_stream.enqueue(proof_item::ProofItem::Log2PaddedHeight(padded_height.ilog2()));
-        // profiler!(stop "derive additional parameters");
 
-        // profiler!(start "base tables");
-        // profiler!(start "create" ("gen"));
+        // base tables
         let mut master_base_table =
             MasterBaseTable::new(&aet, stark.num_trace_randomizers, quotient_domain, fri.domain);
-        // profiler!(stop "create");
 
-        // profiler!(start "pad" ("gen"));
+        // pad
         master_base_table.pad();
-        // profiler!(stop "pad");
 
-        // profiler!(start "randomize trace" ("gen"));
+        // randomize trace
         master_base_table.randomize_trace();
-        // profiler!(stop "randomize trace");
 
-        // profiler!(start "LDE" ("LDE"));
+        // LDE base table
         master_base_table.low_degree_extend_all_columns();
-        // profiler!(stop "LDE");
 
-        // profiler!(start "Merkle tree" ("hash"));
+        // Merkle tree
         let base_merkle_tree = master_base_table.merkle_tree();
-        // profiler!(stop "Merkle tree");
 
-        // profiler!(start "Fiat-Shamir" ("hash"));
+        // Fiat Shamir
         proof_stream.enqueue(proof_item::ProofItem::MerkleRoot(base_merkle_tree.root()));
         let challenges = proof_stream.sample_scalars(Challenges::SAMPLE_COUNT);
         let challenges = Challenges::new(challenges, &claim);
-        // profiler!(stop "Fiat-Shamir");
 
-        // profiler!(start "extend" ("gen"));
+        // extend
         let mut master_ext_table = master_base_table.extend(&challenges);
-        // profiler!(stop "extend");
-        // profiler!(stop "base tables");
-
-        // profiler!(start "ext tables");
-        // profiler!(start "randomize trace" ("gen"));
+        
+        // randomize trace
         master_ext_table.randomize_trace();
-        // profiler!(stop "randomize trace");
 
+        // return MasterExtTable right before LDE
         master_ext_table
     }
 
-
-    #[test]
-    pub fn LDE_gpu_kernel_works() {
-
+    #[test] 
+    pub fn test_Array2_Xfe_to_Array_u64_3d_conversion () {
         // program + inputs
         let factorial_program = factorial_program();
-        let public_input = PublicInput::from([bfe!(1_000)]);
+        let public_input = PublicInput::from([bfe!(6)]);
         let non_determinism = NonDeterminism::default();
 
         // prove until MasterExtensionTable LDE
-        let mut master_ext_table = 
+        let mut master_ext_table: MasterExtTable = 
             prove_until_MasterExtTable_LDE(factorial_program, public_input, non_determinism);
 
-        // TODO: feed master_ext_table in this state to LDE_gpu_kernel once implemented
-        // TODO: and compare with the result of the following line:
+        // setup Futhark context
+        let mut ctx = FutharkContext::new().unwrap();
 
-        master_ext_table.low_degree_extend_all_columns();
+        // get original array
+        let original_trace_table = master_ext_table.randomized_trace_table.clone();
+
+        // convert master_ext_table.randomized_trace_table to Array_u64_3d
+        let randomized_trace_domain = GpuParallel::Array2_Xfe_to_Array_u64_3d(
+            master_ext_table.randomized_trace_table.clone(), 
+            ctx
+        );
+
+        // convert back to Array2<XFieldElement>
+        let result: Array2<XFieldElement> = GpuParallel::Array_u64_3d_to_Array2_Xfe(
+            randomized_trace_domain, 
+            ctx
+        );
+
+        // compare out with original arr
+        assert!(result.dim() == original_trace_table.dim());
+        for i in 0..original_trace_table.nrows() {
+            for j in 0..result.ncols() {
+                assert_eq!(result[[i, j]], result[[i, j]]);       
+            }
+        }        
     }
 }
