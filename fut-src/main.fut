@@ -1,14 +1,29 @@
 -- Math foundation
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
-import "bfe_poly"
+module bfe_poly = import "bfe_poly"
+module ArithmeticDomain = import "arithmetic_domain"
+
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
+type ArithmeticDomain = ArithmeticDomain.ArithmeticDomain
 
 let fri_domain_offset = BFieldElement.new 7
 
 entry test_gpu_kernel (number: u64) : u64 =
   number + 1
+
+-- test that conversion from  Array2<XFieldElement> to Array_u64_3d to [][]XFieldElement 
+-- to [][][]u64 back and back to Array2<XFieldElement> does not change the original data
+entry test_Array2_Xfe_conversion_gets_to_futhark_correctly_kernel
+  (randomized_trace_table: [][][3]u64) -- 2d Xfe array encoding
+  : [][][3]u64 = 
+    -- [][][3]u64 -> [][]XFieldElement
+    let randomized_trace_table : [][]XFieldElement = 
+      map (map (\x -> XFieldElement.new_from_raw_u64_arr x)) randomized_trace_table
+    -- convert back to raw u64
+    in map (map (\x -> XFieldElement.to_raw_u64_arr x)) randomized_trace_table
+
 
 -- entry lde_single_column
 --   [n]
