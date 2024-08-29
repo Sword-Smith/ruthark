@@ -17,6 +17,10 @@ def new_const (element: BFieldElement) : XFieldElement = new (element, BFieldEle
 def new_const_from_u64 (number: u64) : XFieldElement = 
   BFieldElement.new number |> new_const
 
+-- Convert to arr of raw coefficient terms without modifying raw coeffs
+def to_raw_u64_arr (x: XFieldElement) : [3]u64 =
+  [x.coefficients.0.0, x.coefficients.1.0, x.coefficients.2.0] 
+
 -- Packages raw u64 arr directly into Bfe (not modifying raw coeffs) 
 -- and packages directly into Xfe 
 def new_from_raw_u64_arr (raw_coefficients: [3]u64) : XFieldElement =
@@ -284,3 +288,11 @@ entry shah_polynomial_is_correct : [4]u64 =
 entry xfe_new_from_raw_u64_arr_test (raw_coeffs: [3]u64) : (u64, u64, u64) =
   let x = new_from_raw_u64_arr raw_coeffs
   in (x.coefficients.0.0, x.coefficients.1.0, x.coefficients.2.0)
+
+-- == 
+-- entry: xfe_to_raw_u64_arr_test
+-- input { [1u64, 2u64, 3u64] }
+-- output { [1u64, 2u64, 3u64] }
+entry xfe_to_raw_u64_arr_test (raw_coeffs: [3]u64) : [3]u64 =
+  let x = new_from_raw_u64_arr raw_coeffs
+  in to_raw_u64_arr x
