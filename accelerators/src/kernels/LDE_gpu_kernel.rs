@@ -29,8 +29,8 @@ impl GpuParallel {
         let rows = arr.nrows();
         let cols = arr.ncols();
         let mut flat_vec = Vec::with_capacity(rows * cols * EXTENSION_DEGREE);
-
-        // create flattened vec of u64 w/ xfe at "3-strings" of u64
+        
+        // create flattened vec of u64 w/ xfe at each "3-string" of u64
         for xfe in arr.iter() {
             for bfe in &xfe.coefficients {
                 flat_vec.push(bfe.raw_u64());
@@ -39,9 +39,9 @@ impl GpuParallel {
 
         // create 3d array from flattened vec
         let dim = [rows as i64, cols as i64, EXTENSION_DEGREE as i64];
-        let encoding = Array_u64_3d::from_vec(ctx, &flat_vec, &dim)?;
+        let encoded = Array_u64_3d::from_vec(ctx, &flat_vec, &dim)?;
 
-        Ok(encoding)
+        Ok(encoded)
     }
 
     // convert from futhark type [][][]u64 into rust type Array2<XFieldElement>
@@ -53,6 +53,7 @@ impl GpuParallel {
 
         // u64 to xfe
         let (xfe_vals, shape) = arr.to_vec()?;
+        // map Xfe values to XFieldElement
         let xfe_vec: Vec<XFieldElement> = GpuParallel::u64_vec_to_xfe_vec(&xfe_vals)?;
 
         // return w/ original shape
@@ -61,6 +62,24 @@ impl GpuParallel {
         Ok(original)
     }
 
+    // vec<u64> to vec<XFieldElement>
+    #[allow(dead_code)]
+    fn u64_vec_to_xfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<XFieldElement>, &'static str> {
+        if xfe_vals.len() % 3 != 0 {
+            return Err("xfe u64 values vec must be a multiple of 3");
+        }
+
+        // map Xfe values to XFieldElement
+        let xfe_vec: Vec<XFieldElement> = xfe_vals.chunks(3).map(|chunk| {
+            // package raw coeffs into Bfe, then into Xfe
+            let bfe_vec: Vec<BFieldElement> = 
+                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
+            XFieldElement { coefficients: [bfe_vec[0], bfe_vec[1], bfe_vec[2]] }
+        }).collect();
+
+        Ok(xfe_vec)
+    }
+    
     // convert from futhark type [][][]u64 into rust type Vec<Polynomial<XFieldElement>>
     #[allow(dead_code)]
     fn array_u64_3d_to_array_xfe_polynomial(
@@ -80,26 +99,57 @@ impl GpuParallel {
         Ok(poly_vec)
     }
 
-    // vec<u64> to vec<XFieldElement>
-    fn u64_vec_to_xfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<XFieldElement>, &'static str> {
-        if xfe_vals.len() % 3 != 0 {
-            return Err("xfe u64 values vec must be a multiple of 3");
-        }
+    // Recieves MasterExtTable prior to LDE, unpacks it and does conversion, calls LDE_gpu_kernel
+    pub fn master_ext_table_lde(master_ext_table: MasterExtTable) -> Result<Vec<Polynomial<XFieldElement>>, Box<dyn Error>> {
+        let mut ctx = FutharkContext::new()?;
 
-        // map Xfe values to XFieldElement
-        let xfe_vec: Vec<XFieldElement> = xfe_vals.chunks(3).map(|chunk| {
-            // package raw coeffs into Bfe, then into Xfe
-            let bfe_vec: Vec<BFieldElement> = 
-                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
-            XFieldElement { coefficients: [bfe_vec[0], bfe_vec[1], bfe_vec[2]] }
-        }).collect();
+        // create 3d u64 array from flattened vec
+        let randomized_trace_domain = GpuParallel::array2_xfe_to_array_u64_3d(
+            &master_ext_table.randomized_trace_table, 
+            ctx
+        )?;
 
-        Ok(xfe_vec)
+        // call Gpu kernel
+        let result: Array_u64_3d = ctx.lde_master_ext_table_kernel(
+
+            // num trace randomizers
+            master_ext_table.num_trace_randomizers as i64,  
+
+            // trace domain
+            master_ext_table.trace_domain.offset.raw_u64(),
+            master_ext_table.trace_domain.generator.raw_u64(),
+            master_ext_table.trace_domain.length as i64,
+
+            // randomized trace domain
+            master_ext_table.randomized_trace_domain.offset.raw_u64(),
+            master_ext_table.randomized_trace_domain.generator.raw_u64(),
+            master_ext_table.randomized_trace_domain.length as i64,
+
+            // quotient domain
+            master_ext_table.quotient_domain.offset.raw_u64(),
+            master_ext_table.quotient_domain.generator.raw_u64(),
+            master_ext_table.quotient_domain.length as i64,
+
+            // fri domain
+            master_ext_table.fri_domain.offset.raw_u64(),
+            master_ext_table.fri_domain.generator.raw_u64(),
+            master_ext_table.fri_domain.length as i64,
+
+            // randomized_trace_table
+            randomized_trace_domain,
+        )?;
+
+        // convert to Vec<Polynomial<XFieldElement>>
+        let interpolant_polynomials = 
+            GpuParallel::array_u64_3d_to_array_xfe_polynomial(&result)?;
+
+        Ok(interpolant_polynomials)
     }
 }
 
+
 #[cfg(test)]
-pub(crate) mod lde_gpu_tests {
+pub(crate) mod LDE_gpu_tests {
     use super::*;  
 
     pub fn factorial_program() -> Program {
@@ -125,6 +175,15 @@ pub(crate) mod lde_gpu_tests {
                 swap 1          // n-1 acc·n
                 recurse
             )
+    }
+
+    fn arbitrary_arr_u64_3d() -> Array_u64_3d {
+        let mut ctx = FutharkContext::new().unwrap();
+        Array_u64_3d::from_vec(
+            ctx,
+            &(0..108).collect::<Vec<u64>>(),
+            &[6, 6, 3]
+        ).unwrap()
     }
 
     // runs stark prove on a given program, stops proving right before 
@@ -193,37 +252,39 @@ pub(crate) mod lde_gpu_tests {
 
     #[test] 
     pub fn test_array2_xfe_to_array_u64_3d_conversion () {
-        // program + inputs
-        let factorial_program = factorial_program();
-        let public_input = PublicInput::from([bfe!(6)]);
-        let non_determinism = NonDeterminism::default();
 
-        // prove until MasterExtensionTable LDE
+        // run stark prove until right before LDE
+        let factorial_program = factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
         let master_ext_table: MasterExtTable = 
             prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
 
-        // setup Futhark context
-        let ctx = FutharkContext::new().unwrap();
+        // retrieve array 2 from master_ext_table
+        let original_table: Array2<XFieldElement> = 
+            master_ext_table.randomized_trace_table.clone();
+        
 
-        // get original array
-        let original_trace_table = master_ext_table.randomized_trace_table.clone();
+        // setup futharl context
+        let mut ctx = FutharkContext::new().unwrap();
+
 
         // convert master_ext_table.randomized_trace_table to Array_u64_3d
-        let randomized_trace_domain = GpuParallel::array2_xfe_to_array_u64_3d(
-            &master_ext_table.randomized_trace_table, 
+        let table_as_array2 = GpuParallel::array2_xfe_to_array_u64_3d(
+            &original_table, 
             ctx
         ).unwrap();
 
         // convert back to Array2<XFieldElement>
         let result: Array2<XFieldElement> = GpuParallel::array_u64_3d_to_array2_xfe(
-            &randomized_trace_domain
+            &table_as_array2
         ).unwrap();
 
         // compare out with original arr
-        assert!(result.dim() == original_trace_table.dim());
-        for i in 0..original_trace_table.nrows() {
-            for j in 0..result.ncols() {
-                assert_eq!(result[[i, j]], result[[i, j]]);       
+        assert!(result.dim() == original_table.dim());
+        for i in 0..original_table.nrows() {
+            for j in 0..original_table.ncols() {
+                assert_eq!(result[[i, j]], original_table[[i, j]]);       
             }
         }        
     }
@@ -234,11 +295,7 @@ pub(crate) mod lde_gpu_tests {
         let mut ctx = FutharkContext::new().unwrap();
 
         // create 3d array
-        let arr_u64_3d = Array_u64_3d::from_vec(
-            ctx,
-            &(0..108).collect::<Vec<u64>>(),
-            &[6, 6, 3]
-        ).unwrap(); 
+        let arr_u64_3d = arbitrary_arr_u64_3d();
 
         // convert to 2d array of XFieldElement
         let xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&arr_u64_3d).unwrap();
@@ -252,6 +309,122 @@ pub(crate) mod lde_gpu_tests {
                 assert_eq!(coeff, xfe);
             }
         }
+    }
 
+
+    #[test]
+    pub fn from_vec_to_vec_doesnt_modify_array(){
+
+        // create 3d array
+        let original_array_u64_3d = arbitrary_arr_u64_3d();  
+        
+        // convert to vec
+        let (original_vec, original_shape) = original_array_u64_3d.to_vec().unwrap();
+
+        // convert back to array
+        let mut ctx = FutharkContext::new().unwrap();
+        let returned = Array_u64_3d::from_vec(
+            ctx,
+            &original_vec,
+            &original_shape
+        ).unwrap();
+
+        // convert back to vec
+        let (returned_vec, returned_shape) = returned.to_vec().unwrap();
+
+        // ensure data integrity
+        assert_eq!(original_shape, returned_shape);
+        for (a, b) in original_vec.iter().zip(returned_vec.iter()) {
+            assert_eq!(a, b);
+        }
+    }
+
+
+    // test that [][][3]u64 --> [][]XFieldElement --> [][][3]u64 conversion does not modify data
+    #[test]
+    pub fn test_futhark_array_conversion_do_not_modify_data() {
+
+        // create 3d array
+        let mut ctx = FutharkContext::new().unwrap();
+        let original = arbitrary_arr_u64_3d();
+        let (original_vec, original_shape) = original.to_vec().unwrap();
+        
+        // send and return  
+        let returned = ctx.test_array_conversion_does_not_change_data(original).unwrap();
+        let (returned_vec, returned_shape) = returned.to_vec().unwrap();
+
+        // ensure data integrity
+        assert_eq!(original_shape, returned_shape);
+        for (a, b) in original_vec.iter().zip(returned_vec.iter()) {
+            assert_eq!(a, b);
+        }
+    }
+
+    #[test]
+    pub fn test_rust_conversion_then_futhark_conversion_does_not_modify_data() {
+        let mut ctx = FutharkContext::new().unwrap();
+
+        // create 3d array
+        let original = arbitrary_arr_u64_3d();
+        let (original_vec, original_shape) = original.to_vec().unwrap();
+            
+        // convert to 2d array of XFieldElement
+        let xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&original).unwrap();
+
+        // from array 2, convert to 3d array
+        let u64_arr_3d = GpuParallel::array2_xfe_to_array_u64_3d(&xfe_arr_2d, ctx).unwrap();
+        
+        // send and return w/ futhark conversions
+        let returned_u64_arr_3d = ctx.test_array_conversion_does_not_change_data(u64_arr_3d).unwrap();
+        let (returned_vec, returned_shape) = returned_u64_arr_3d.to_vec().unwrap();
+
+        // convert back to Array_u6
+        let returned_xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&returned_u64_arr_3d).unwrap();
+
+        // ensure data integrity
+        // assert_eq!(original_shape, returned_shape);
+        for (a, b) in original_vec.iter().zip(returned_vec.iter()) {
+            assert_eq!(a, b);
+        }
+    }
+
+    #[test]
+    pub fn futhark_lde_is_rust_lde() {
+
+        // program + inputs
+        let factorial_program = factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+
+        // run stark prover until right before MasterExtensionTable LDE
+        let mut master_ext_table: MasterExtTable = 
+            prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+
+        // perform low degree extension using futhark implementation
+        let interpolant_polynomials: Vec<Polynomial<XFieldElement>> = 
+            GpuParallel::master_ext_table_lde(master_ext_table.clone()).unwrap();
+
+        // perform low degree extension using rust implementation
+        master_ext_table.low_degree_extend_all_columns();    
+        let rust_interpolant_polys = 
+            master_ext_table.interpolation_polynomials.clone().unwrap();
+        
+        // ensure all columns interpolated
+        assert_eq!(
+            interpolant_polynomials.len(),
+            rust_interpolant_polys.len(), 
+            "incorrect number of polynomials from futhark"
+        );
+
+        // compare rust and futhark interpolant polynomials
+        for (rust_poly, futhark_poly) in rust_interpolant_polys.iter().zip(interpolant_polynomials.iter()) {
+
+            println!("rust poly num coeffs: {:?}", rust_poly.coefficients.len());
+            println!("futhark poly num coeffs: {:?}", futhark_poly.coefficients.len());
+
+            // assert same coeff len
+            assert_eq!(rust_poly.degree(), futhark_poly.degree());
+            assert_eq!(rust_poly, futhark_poly);
+        }
     }
 }
