@@ -2,28 +2,93 @@
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
 module bfe_poly = import "bfe_poly"
+module xfe_polynomial = import "xfe_poly"
 module ArithmeticDomain = import "arithmetic_domain"
+module master_ext_table = import "master_ext_table"
 
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
+type XfePolynomial [n] = xfe_polynomial.XfePolynomial [n]
 type ArithmeticDomain = ArithmeticDomain.ArithmeticDomain
+type MasterExtTable [rows] [cols] = master_ext_table.MasterExtTable [rows] [cols]
+
+let NUM_COLUMNS = master_ext_table.NUM_COLUMNS
 
 let fri_domain_offset = BFieldElement.new 7
 
-entry test_gpu_kernel (number: u64) : u64 =
-  number + 1
+-- test rust-futhark interop
+entry test_gpu_kernel (number: u64) : u64 = number + 1
 
--- test that conversion from  Array2<XFieldElement> to Array_u64_3d to [][]XFieldElement 
--- to [][][]u64 back and back to Array2<XFieldElement> does not change the original data
-entry test_Array2_Xfe_conversion_gets_to_futhark_correctly_kernel
-  (randomized_trace_table: [][][3]u64) -- 2d Xfe array encoding
-  : [][][3]u64 = 
+-- converts [][][3]u64 to [][]XFieldElement 
+entry test_array_conversion_does_not_change_data (u64_table: [][][3]u64) : [][][3]u64 = 
+    -- [][][3]u64 -> [][]XFieldElement
+    let xfe_table : [][]XFieldElement = 
+      map (map (\x -> XFieldElement.new_from_raw_u64_arr x)) u64_table
+    -- [][]XFieldElement --> [][][3]u64
+    in map (map (\x -> XFieldElement.to_raw_u64_arr x)) xfe_table
+
+-- Note, the u64 values passed into this kernel are raw coefficient values for Xfe/Bfe/...
+-- This is not that same as what is returned by .value()/BFieldElement.value() 
+entry lde_master_ext_table_kernel  
+  (num_trace_randomizers: i64)
+  (trace_domain_offset: u64) (trace_domain_gen: u64) (trace_domain_len: i64) -- "ArithmeticDomain"
+  (randomized_trace_domain_offset: u64) (randomized_trace_domain_gen: u64) (randomized_trace_domain_len: i64)
+  (quotient_domain_offset: u64) (quotient_domain_gen: u64) (quotient_domain_len: i64)
+  (fri_domain_offset: u64) (fri_domain_gen: u64) (fri_domain_len:i64)
+  (randomized_trace_table: [][][3]u64) -- 2d Xfe array
+  : [][][3]u64 = -- encoded version of [NUM_COLUMNS][rows]XfePolynomial[] 
+   
+    -- unpack trace domain
+    let trace_domain: ArithmeticDomain = {
+      offset = { 0 = trace_domain_offset} :> BFieldElement,
+      generator = {0 = trace_domain_gen } :> BFieldElement,
+      len = trace_domain_len
+    }
+    -- unpack randomized trace domain
+    let randomized_trace_domain: ArithmeticDomain = {
+      offset = { 0 = randomized_trace_domain_offset} :> BFieldElement,
+      generator = {0 = randomized_trace_domain_gen } :> BFieldElement,
+      len = randomized_trace_domain_len
+    }
+    -- unpack quotient domain
+    let quotient_domain: ArithmeticDomain = {
+      offset = { 0 = quotient_domain_offset} :> BFieldElement,
+      generator = {0 = quotient_domain_gen } :> BFieldElement,
+      len = quotient_domain_len
+    }
+    -- unpack fri domain
+    let fri_domain: ArithmeticDomain = {
+      offset = { 0 = fri_domain_offset} :> BFieldElement,
+      generator = {0 = fri_domain_gen } :> BFieldElement,
+      len = fri_domain_len
+    }
     -- [][][3]u64 -> [][]XFieldElement
     let randomized_trace_table : [][]XFieldElement = 
       map (map (\x -> XFieldElement.new_from_raw_u64_arr x)) randomized_trace_table
-    -- convert back to raw u64
-    in map (map (\x -> XFieldElement.to_raw_u64_arr x)) randomized_trace_table
 
+    -- package into MasterExtTable
+    let master_extension_table = {   
+        num_trace_randomizers,
+        trace_domain,
+        randomized_trace_domain,
+        quotient_domain,
+        fri_domain,
+        randomized_trace_table
+    } :> MasterExtTable [] []
+
+    -- interpolate on larger domain
+    let interpolant_polynomials =
+      master_ext_table.low_degree_extend_all_columns master_extension_table
+
+    -- conversion for return into rust program
+    -- NOTE: the rows of the major axis each contain a polynomial represented
+    -- as encoded coefficients of [][3]u64
+    let poly_coeff_values: [][][3]u64 = 
+      map 
+      (\poly -> map XFieldElement.to_raw_u64_arr poly.coefficients)
+      interpolant_polynomials    
+
+    in poly_coeff_values
 
 -- entry lde_single_column
 --   [n]
