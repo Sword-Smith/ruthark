@@ -531,14 +531,14 @@ pub struct MasterBaseTable {
 pub struct MasterExtTable {
     pub num_trace_randomizers: usize,
 
-    trace_domain: ArithmeticDomain,
-    randomized_trace_domain: ArithmeticDomain,
-    quotient_domain: ArithmeticDomain,
-    fri_domain: ArithmeticDomain,
-
-    randomized_trace_table: Array2<XFieldElement>,
-    low_degree_extended_table: Option<Array2<XFieldElement>>,
-    interpolation_polynomials: Option<Array1<Polynomial<XFieldElement>>>,
+    pub trace_domain: ArithmeticDomain,
+    pub randomized_trace_domain: ArithmeticDomain,
+    pub quotient_domain: ArithmeticDomain,
+    pub fri_domain: ArithmeticDomain,
+    
+    pub randomized_trace_table: Array2<XFieldElement>,
+    pub low_degree_extended_table: Option<Array2<XFieldElement>>,
+    pub interpolation_polynomials: Option<Array1<Polynomial<XFieldElement>>>,
 }
 
 impl MasterTable<BFieldElement> for MasterBaseTable {
