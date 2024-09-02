@@ -151,6 +151,7 @@ impl GpuParallel {
 #[cfg(test)]
 pub(crate) mod LDE_gpu_tests {
     use super::*;  
+    use std::time::Instant;
 
     pub fn factorial_program() -> Program {
         triton_program!(
@@ -425,6 +426,164 @@ pub(crate) mod LDE_gpu_tests {
             // assert same coeff len
             assert_eq!(rust_poly.degree(), futhark_poly.degree());
             assert_eq!(rust_poly, futhark_poly);
+        }
+    }
+
+    // This test times the entire process of converting rust types to genfut types, running 
+    // lde on the GPU, and converting the output returned from the kernel to the GPU back to 
+    // rust types.
+    #[test]
+    pub fn full_process_bench_gpu(){
+
+        let powers_of_two: u64 = 9; // currently factorial(1 << 10) causes ram to overflow
+
+        for n in 0..powers_of_two {
+
+            let input = 1 << n;
+
+            // program + inputs
+            let factorial_program = factorial_program();
+            let public_input = PublicInput::from([bfe!(input)]);
+            let non_determinism = NonDeterminism::default();
+
+            // run stark prover until right before MasterExtensionTable LDE
+            let master_ext_table: MasterExtTable = 
+                prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+            let dim = master_ext_table.clone().randomized_trace_table.dim();
+
+            // perform low degree extension using futhark implementation
+            let start = Instant::now();
+            let _: Vec<Polynomial<XFieldElement>> = 
+                GpuParallel::master_ext_table_lde(master_ext_table).unwrap();
+            let duration = start.elapsed();
+
+            // print results
+            println!("GPU: Factorial(2 ** {}): {} s / {} ms -- randomize_trace_table dim: {:?}", 
+                n, 
+                duration.as_secs(), 
+                duration.as_millis(),
+                dim
+            );
+        }
+    }
+
+    // This test prints the times for conversions to and from genfut/futhark types
+    // In addition to the raw time it takes to run on the GPU.
+    #[test]
+    pub fn individual_components_bench_gpu(){
+
+        let powers_of_two: u64 = 9; // currently factorial( 1 << 10 ) causes ram to overflow
+
+        for n in 0..powers_of_two {
+
+            let input = 1 << n;
+
+            // program + inputs
+            let factorial_program = factorial_program();
+            let public_input = PublicInput::from([bfe!(input)]);
+            let non_determinism = NonDeterminism::default();
+
+            // run stark prover until right before MasterExtensionTable LDE
+            let master_ext_table: MasterExtTable = 
+                prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+            let dim = master_ext_table.clone().randomized_trace_table.dim();
+
+            // setup futhark context
+            let mut ctx = FutharkContext::new().unwrap();
+
+            // time rust -> genfut type conversion
+            let start = Instant::now();
+            let randomized_trace_domain = GpuParallel::array2_xfe_to_array_u64_3d(
+                &master_ext_table.randomized_trace_table, 
+                ctx
+            ).unwrap();
+            let duration = start.elapsed();
+            println!("Randomized Trace Table Conversion to Genfut Types: {} s / {} ms",             
+                duration.as_secs(), 
+                duration.as_millis()
+            );
+    
+            // call Gpu kernel
+            let start = Instant::now();
+            let result: Array_u64_3d = ctx.lde_master_ext_table_kernel(
+    
+                // num trace randomizers
+                master_ext_table.num_trace_randomizers as i64,  
+    
+                // trace domain
+                master_ext_table.trace_domain.offset.raw_u64(),
+                master_ext_table.trace_domain.generator.raw_u64(),
+                master_ext_table.trace_domain.length as i64,
+    
+                // randomized trace domain
+                master_ext_table.randomized_trace_domain.offset.raw_u64(),
+                master_ext_table.randomized_trace_domain.generator.raw_u64(),
+                master_ext_table.randomized_trace_domain.length as i64,
+    
+                // quotient domain
+                master_ext_table.quotient_domain.offset.raw_u64(),
+                master_ext_table.quotient_domain.generator.raw_u64(),
+                master_ext_table.quotient_domain.length as i64,
+    
+                // fri domain
+                master_ext_table.fri_domain.offset.raw_u64(),
+                master_ext_table.fri_domain.generator.raw_u64(),
+                master_ext_table.fri_domain.length as i64,
+    
+                // randomized_trace_table
+                randomized_trace_domain,
+            ).unwrap();
+            let duration = start.elapsed();
+            println!("GPU: Factorial(2 ** {}): {} s / {} ms -- randomize_trace_table dim: {:?}", 
+                n, 
+                duration.as_secs(), 
+                duration.as_millis(),
+                dim
+            );
+    
+            // convert to Vec<Polynomial<XFieldElement>>
+            let start = Instant::now();
+            let interpolant_polynomials = 
+                GpuParallel::array_u64_3d_to_array_xfe_polynomial(&result).unwrap();
+            let duration = start.elapsed();
+            println!("Conversion Back to Rust Types: {} s / {} ms\n",             
+                duration.as_secs(), 
+                duration.as_millis()
+            );
+        }
+    }
+
+    #[test]
+    pub fn bench_cpu(){
+
+        let powers_of_two: u64 = 10;
+
+        for n in 0..powers_of_two {
+
+            let input = 1 << n;
+
+            // program + inputs
+            let factorial_program = factorial_program();
+            let public_input = PublicInput::from([bfe!(input)]);
+            let non_determinism = NonDeterminism::default();
+
+            // run stark prover until right before MasterExtensionTable LDE
+            let mut master_ext_table: MasterExtTable = 
+                prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+
+
+            // perform low degree extension using futhark implementation
+            let start = Instant::now();
+            master_ext_table.low_degree_extend_all_columns();
+            let duration = start.elapsed();
+
+            // print results
+            println!("CPU: Factorial(2 ** {}): {} s / {} ms -- randomize_trace_table dim: {:?}", 
+                n, 
+                duration.as_secs(), 
+                duration.as_millis(),
+                master_ext_table.randomized_trace_table.dim()
+            );
         }
     }
 }
