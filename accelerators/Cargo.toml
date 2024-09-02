@@ -11,6 +11,7 @@ rand = { version = "0.8", features = ["min_const_gen"] }
 itertools = "0.10"
 gpu-accelerator = { path = "../gpu-accelerator" }
 triton-vm = { path = "../triton-vm" }
+ndarray = { version = "0.16", features = ["rayon"] }
 
 [dev-dependencies.criterion]
 version = "0.4"
