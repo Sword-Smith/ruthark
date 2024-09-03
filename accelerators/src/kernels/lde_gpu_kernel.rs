@@ -3,11 +3,7 @@ use super::gpu_parallel::GpuParallel;
 
 extern crate triton_vm;
 use triton_vm::prelude::*;    
-use triton_vm::profiler;
-use triton_vm::proof_stream;
-use triton_vm::proof_item;
 use triton_vm::table::master_table::*;
-use triton_vm::table::challenges::*;
 
 
 use triton_vm::twenty_first::math::x_field_element::EXTENSION_DEGREE;
@@ -149,117 +145,20 @@ impl GpuParallel {
 
 
 #[cfg(test)]
-pub(crate) mod LDE_gpu_tests {
+pub(crate) mod lde_gpu_tests {
     use super::*;  
+    use crate::kernels::shared;
     use std::time::Instant;
-
-    pub fn factorial_program() -> Program {
-        triton_program!(
-            // op stack:
-            read_io 1           // n
-            push 1              // n accumulator
-            call factorial      // 0 accumulator!
-            write_io 1          // 0
-            halt
-                    
-            factorial:          // n acc
-                // if n == 0: return
-                dup 1           // n acc n
-                push 0 eq       // n acc n==0
-                skiz            // n acc
-                return      // 0 acc
-                // else: multiply accumulator with n and recurse
-                dup 1           // n acc n
-                mul             // n acc·n
-                swap 1          // acc·n n
-                push -1 add     // acc·n n-1
-                swap 1          // n-1 acc·n
-                recurse
-            )
-    }
-
-    fn arbitrary_arr_u64_3d() -> Array_u64_3d {
-        let mut ctx = FutharkContext::new().unwrap();
-        Array_u64_3d::from_vec(
-            ctx,
-            &(0..108).collect::<Vec<u64>>(),
-            &[6, 6, 3]
-        ).unwrap()
-    }
-
-    // runs stark prove on a given program, stops proving right before 
-    // LDE of the master ExtTable is reached. Returns the MasterExtTable 
-    // at that point.
-    pub fn prove_until_master_ext_table_lde(
-        program: Program, 
-        public_input: PublicInput, 
-        non_determinism: NonDeterminism
-    ) -> MasterExtTable {
-
-        // pre-flight
-        let (aet, public_output) = program.trace_execution(public_input.clone(), non_determinism).unwrap();
-
-        // claim 
-        let claim = Claim {
-            program_digest: program.hash(),
-            input: public_input.individual_tokens,
-            output: public_output,
-        };
-    
-        // The default parameters give a (conjectured) security level of 160 bits.
-        let stark = Stark::default();
-    
-        // fiat shamir claim
-        let mut proof_stream = proof_stream::ProofStream::new();
-        proof_stream.alter_fiat_shamir_state_with(&claim);
-
-        // derive additional parameters
-        let padded_height = aet.padded_height();
-        let max_degree = stark.derive_max_degree(padded_height);
-        let fri = stark.derive_fri(padded_height).unwrap();
-        let quotient_domain = Stark::quotient_domain(fri.domain, max_degree).unwrap();
-        proof_stream.enqueue(proof_item::ProofItem::Log2PaddedHeight(padded_height.ilog2()));
-
-        // base tables
-        let mut master_base_table =
-            MasterBaseTable::new(&aet, stark.num_trace_randomizers, quotient_domain, fri.domain);
-
-        // pad
-        master_base_table.pad();
-
-        // randomize trace
-        master_base_table.randomize_trace();
-
-        // LDE base table
-        master_base_table.low_degree_extend_all_columns();
-
-        // Merkle tree
-        let base_merkle_tree = master_base_table.merkle_tree();
-
-        // Fiat Shamir
-        proof_stream.enqueue(proof_item::ProofItem::MerkleRoot(base_merkle_tree.root()));
-        let challenges = proof_stream.sample_scalars(Challenges::SAMPLE_COUNT);
-        let challenges = Challenges::new(challenges, &claim);
-
-        // extend
-        let mut master_ext_table = master_base_table.extend(&challenges);
-        
-        // randomize trace
-        master_ext_table.randomize_trace();
-
-        // return MasterExtTable right before LDE
-        master_ext_table
-    }
 
     #[test] 
     pub fn test_array2_xfe_to_array_u64_3d_conversion () {
 
         // run stark prove until right before LDE
-        let factorial_program = factorial_program();
+        let factorial_program = shared::factorial_program();
         let public_input = PublicInput::from([bfe!(3)]);
         let non_determinism = NonDeterminism::default();
         let master_ext_table: MasterExtTable = 
-            prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+            shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
 
         // retrieve array 2 from master_ext_table
         let original_table: Array2<XFieldElement> = 
@@ -267,7 +166,7 @@ pub(crate) mod LDE_gpu_tests {
         
 
         // setup futharl context
-        let mut ctx = FutharkContext::new().unwrap();
+        let ctx = FutharkContext::new().unwrap();
 
 
         // convert master_ext_table.randomized_trace_table to Array_u64_3d
@@ -293,10 +192,9 @@ pub(crate) mod LDE_gpu_tests {
     #[test]
     pub fn test_array_u64_3d_to_array_xfe_polynomial(){
         
-        let mut ctx = FutharkContext::new().unwrap();
 
         // create 3d array
-        let arr_u64_3d = arbitrary_arr_u64_3d();
+        let arr_u64_3d = shared::arbitrary_arr_u64_3d();
 
         // convert to 2d array of XFieldElement
         let xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&arr_u64_3d).unwrap();
@@ -317,13 +215,13 @@ pub(crate) mod LDE_gpu_tests {
     pub fn from_vec_to_vec_doesnt_modify_array(){
 
         // create 3d array
-        let original_array_u64_3d = arbitrary_arr_u64_3d();  
+        let original_array_u64_3d = shared::arbitrary_arr_u64_3d();  
         
         // convert to vec
         let (original_vec, original_shape) = original_array_u64_3d.to_vec().unwrap();
 
         // convert back to array
-        let mut ctx = FutharkContext::new().unwrap();
+        let ctx = FutharkContext::new().unwrap();
         let returned = Array_u64_3d::from_vec(
             ctx,
             &original_vec,
@@ -347,7 +245,7 @@ pub(crate) mod LDE_gpu_tests {
 
         // create 3d array
         let mut ctx = FutharkContext::new().unwrap();
-        let original = arbitrary_arr_u64_3d();
+        let original = shared::arbitrary_arr_u64_3d();
         let (original_vec, original_shape) = original.to_vec().unwrap();
         
         // send and return  
@@ -366,7 +264,7 @@ pub(crate) mod LDE_gpu_tests {
         let mut ctx = FutharkContext::new().unwrap();
 
         // create 3d array
-        let original = arbitrary_arr_u64_3d();
+        let original = shared::arbitrary_arr_u64_3d();
         let (original_vec, original_shape) = original.to_vec().unwrap();
             
         // convert to 2d array of XFieldElement
@@ -383,7 +281,7 @@ pub(crate) mod LDE_gpu_tests {
         let returned_xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&returned_u64_arr_3d).unwrap();
 
         // ensure data integrity
-        // assert_eq!(original_shape, returned_shape);
+        assert_eq!(original_shape, returned_shape);
         for (a, b) in original_vec.iter().zip(returned_vec.iter()) {
             assert_eq!(a, b);
         }
@@ -393,13 +291,13 @@ pub(crate) mod LDE_gpu_tests {
     pub fn futhark_lde_is_rust_lde() {
 
         // program + inputs
-        let factorial_program = factorial_program();
+        let factorial_program = shared::factorial_program();
         let public_input = PublicInput::from([bfe!(3)]);
         let non_determinism = NonDeterminism::default();
 
         // run stark prover until right before MasterExtensionTable LDE
         let mut master_ext_table: MasterExtTable = 
-            prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+            shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
 
         // perform low degree extension using futhark implementation
         let interpolant_polynomials: Vec<Polynomial<XFieldElement>> = 
@@ -442,13 +340,13 @@ pub(crate) mod LDE_gpu_tests {
             let input = 1 << n;
 
             // program + inputs
-            let factorial_program = factorial_program();
+            let factorial_program = shared::factorial_program();
             let public_input = PublicInput::from([bfe!(input)]);
             let non_determinism = NonDeterminism::default();
 
             // run stark prover until right before MasterExtensionTable LDE
             let master_ext_table: MasterExtTable = 
-                prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+                shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
             let dim = master_ext_table.clone().randomized_trace_table.dim();
 
             // perform low degree extension using futhark implementation
@@ -479,13 +377,13 @@ pub(crate) mod LDE_gpu_tests {
             let input = 1 << n;
 
             // program + inputs
-            let factorial_program = factorial_program();
+            let factorial_program = shared::factorial_program();
             let public_input = PublicInput::from([bfe!(input)]);
             let non_determinism = NonDeterminism::default();
 
             // run stark prover until right before MasterExtensionTable LDE
             let master_ext_table: MasterExtTable = 
-                prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+                shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
             let dim = master_ext_table.clone().randomized_trace_table.dim();
 
             // setup futhark context
@@ -563,13 +461,13 @@ pub(crate) mod LDE_gpu_tests {
             let input = 1 << n;
 
             // program + inputs
-            let factorial_program = factorial_program();
+            let factorial_program = shared::factorial_program();
             let public_input = PublicInput::from([bfe!(input)]);
             let non_determinism = NonDeterminism::default();
 
             // run stark prover until right before MasterExtensionTable LDE
             let mut master_ext_table: MasterExtTable = 
-                prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+                shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
 
 
             // perform low degree extension using futhark implementation
