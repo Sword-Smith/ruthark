@@ -10,8 +10,6 @@ let xfe_intt = xfe_ntt_module.xfe_intt
 
 type XfePolynomial [n] = { coefficients: [n]XFieldElement }
 
-
-
 -- constructor from XFieldElement array
 def new [n] (coefficients: [n]XFieldElement) : XfePolynomial [n] =
   {coefficients = coefficients}
@@ -88,6 +86,28 @@ def fast_coset_evaluate [n] (offset: BFieldElement) (order: i64) (poly: XfePolyn
     let coefficients = coefficients ++ (replicate (order - n) XFieldElement.zero) :> [order]XFieldElement
     in xfe_ntt coefficients
 
+-- chunks polynomial coefficients into chunks of a given length
+-- smaller than chunk_length chunks are padded with zeros
+def chunk_coefficients [n] (poly: XfePolynomial [n]) (chunk_length: i64) : [][]XFieldElement =
+    let num_chunks = (n + chunk_length - 1) // chunk_length
+
+    -- Initialize an empty array to hold the chunks
+    let chunks = loop chunks = [] while num_chunks > length chunks do
+        let i = length chunks
+        let chunk_start = i * chunk_length
+        let chunk_end = i64.min ((i + 1) * chunk_length) n
+
+        -- Slice the chunk of coefficients
+        let chunk_coeffs = poly.coefficients[chunk_start:chunk_end]
+
+        -- pad chunks smaller than chunk_length w/ zeroes, and tell compiler the length
+        let chunk_coeffs = 
+            chunk_coeffs ++ replicate (chunk_length - length chunk_coeffs) XFieldElement.zero
+        let chunk_coeffs = take chunk_length chunk_coeffs
+
+        -- Append
+        in chunks ++ [chunk_coeffs]
+    in chunks
 
 -- == 
 -- entry: polynomial_addition_is_associative 
@@ -206,3 +226,15 @@ entry fast_coset_interpolate_and_evaluate_is_identity_pbt [n] (input: [n]u64): b
     let poly = fast_coset_interpolate offset input
     let values_again = fast_coset_evaluate offset n poly
     in map2 XFieldElement.eq values_again input |> reduce (==) true 
+
+-- ==
+-- entry: chunk_coefficients_unit_test
+-- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64, 3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64], [7u64, 7u64, 7u64], [8u64, 8u64, 8u64]] 3i64 }
+-- output { [[[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64, 3u64]], [[4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64]], [[7u64, 7u64, 7u64], [8u64, 8u64, 8u64], [0u64, 0u64, 0u64]]] }
+-- input { [[1u64, 1u64, 1u64], [2u64, 2u64, 2u64], [3u64, 3u64, 3u64], [4u64, 4u64, 4u64], [5u64, 5u64, 5u64], [6u64, 6u64, 6u64], [7u64, 7u64, 7u64]] 2i64 }
+-- output { [[[1u64, 1u64, 1u64], [2u64, 2u64, 2u64]], [[3u64, 3u64, 3u64], [4u64, 4u64, 4u64]], [[5u64, 5u64, 5u64], [6u64, 6u64, 6u64]], [[7u64, 7u64, 7u64], [0u64, 0u64, 0u64]]] }
+-- input { [[1u64, 1u64, 1u64]] 7i64 }
+-- output { [[[1u64, 1u64, 1u64], [0u64, 0u64, 0u64], [0u64, 0u64, 0u64], [0u64, 0u64, 0u64], [0u64, 0u64, 0u64], [0u64, 0u64, 0u64], [0u64, 0u64, 0u64]]] }
+entry chunk_coefficients_unit_test [n] (coefficients: [n][3]u64) (chunk_length: i64) : [][][3]u64 =
+    let poly = new_from_arr_u64 coefficients
+    in map (map XFieldElement.to_values_u64_arr) (chunk_coefficients poly chunk_length)
