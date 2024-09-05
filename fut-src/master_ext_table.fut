@@ -72,15 +72,15 @@ type SpongeWithPendingAbsorb = {
     pending_input: [RATE]BFieldElement,
     num_symbols_pending: i64
 }   
--- methods for 
+
 module SpongeWithPendingAbsorb = {
-    
-    -- constructor
+
     def new : SpongeWithPendingAbsorb = {
         sponge = Tip5.new #variable_length,
         pending_input = replicate RATE BFieldElement.zero,
         num_symbols_pending = 0
     } :> SpongeWithPendingAbsorb
+
 
     -- Similar to Tip5.absorb but buffers input elements until a full block is available.
     def absorb (self: SpongeWithPendingAbsorb) (input: []BFieldElement) : SpongeWithPendingAbsorb =
@@ -91,10 +91,10 @@ module SpongeWithPendingAbsorb = {
         -- put next symbol into pending input
         let pending_input = copy sponge.pending_input
         let updated_pending_input: [Tip5.RATE]BFieldElement = 
-          pending_input with [sponge.num_symbols_pending] = symbol  
+          pending_input with [sponge.num_symbols_pending] = symbol  -- class var update
 
         -- increment num symbols pending
-        let updated_num_symbols_pending: i64 = sponge.num_symbols_pending + 1
+        let updated_num_symbols_pending: i64 = sponge.num_symbols_pending + 1  --- class var update
 
         -- if we've reached RATE num symbols pending, 
         -- absorb and restart the above filling process 
@@ -111,12 +111,28 @@ module SpongeWithPendingAbsorb = {
             } :> SpongeWithPendingAbsorb
 
           else {
-                sponge = sponge.sponge,                           -- unchanged 
+                sponge = sponge.sponge, -- unchanged 
                 pending_input = take RATE updated_pending_input,  -- updated
                 num_symbols_pending = updated_num_symbols_pending -- updated
             }  :> SpongeWithPendingAbsorb
         in sponge
       in sponge
+
+    -- absorbs rest of pending input w/ zero padding
+    def finalize (self: SpongeWithPendingAbsorb) : Digest = -- should updated sponge also be returned?
+      
+      -- pad input w/ [one, zero ,zero ...]
+      let num_zeros_to_pad = RATE - (1 + self.num_symbols_pending)
+      let pending_input = take self.num_symbols_pending self.pending_input
+                          |> (\x -> x ++ [BFieldElement.one])
+                          |> (\x -> x ++ (replicate num_zeros_to_pad BFieldElement.zero))
+                          |> take Tip5.RATE
+
+      -- absorb and squeeze the sponge
+      let sponge: Tip5 = Tip5.absorb self.sponge pending_input
+      let (digest, _) = Tip5.squeeze (copy sponge) 
+      let digest =  take Digest.DIGEST_LENGTH digest -- tell compiler the size
+      in {0 = digest} :> Digest
     }
 
 -- == 
@@ -133,6 +149,7 @@ entry test_absorb_sponge_with_pending_absorb
     []u64, -- pending_input_after_two_absorbs
     i64) -- num_pending_sybols_after_two_absorbs
     = 
+
   -- convert substrings to Bfe arrays
   let substring_0: []BFieldElement = map BFieldElement.new substring_0_values
   let substring_1: []BFieldElement = map BFieldElement.new substring_1_values
@@ -150,13 +167,13 @@ entry test_absorb_sponge_with_pending_absorb
   let num_symbols_pending_after_one_absorb: i64 = sponge_one_absorb.num_symbols_pending
 
   -- call absorb again on the second substring
-  let sponge_one_absorb: SpongeWithPendingAbsorb = 
+  let sponge_two_absorbs: SpongeWithPendingAbsorb = 
     SpongeWithPendingAbsorb.absorb sponge_one_absorb substring_1
 
   -- get updates state for return
-  let sponge_state_after_two_absorbs: []u64 = map BFieldElement.value sponge_one_absorb.sponge.state
-  let pending_input_after_two_absorbs: []u64 = map BFieldElement.value sponge_one_absorb.pending_input 
-  let num_symbols_pending_after_two_absorbs: i64 = sponge_one_absorb.num_symbols_pending
+  let sponge_state_after_two_absorbs: []u64 = map BFieldElement.value sponge_two_absorbs.sponge.state
+  let pending_input_after_two_absorbs: []u64 = map BFieldElement.value sponge_two_absorbs.pending_input 
+  let num_symbols_pending_after_two_absorbs: i64 = sponge_two_absorbs.num_symbols_pending
 
   in (
     sponge_state_after_one_absorb,
@@ -167,3 +184,37 @@ entry test_absorb_sponge_with_pending_absorb
     num_symbols_pending_after_two_absorbs,
   )
 
+-- ==
+-- entry: check_final_digest_sponge_with_pending_absorb
+-- input { [0u64, 1u64, 2u64, 3u64] [4u64, 5u64, 6u64, 7u64, 8u64, 9u64, 10u64, 11u64, 12u64, 13u64] }
+-- output { true [12922749756431966115u64, 5852969553998012914u64, 10492382927995344180u64, 12751217697759846191u64, 12039120402859971306u64] }
+entry check_final_digest_sponge_with_pending_absorb  
+  (substring_0_values: []u64) 
+  (substring_1_values: []u64)
+  : (bool, []u64) = 
+
+  -- convert substrings to bfe arrs
+  let substring_0: []BFieldElement = map BFieldElement.new substring_0_values
+  let substring_1: []BFieldElement = map BFieldElement.new substring_1_values
+
+  -- init swpa
+  let init_sponge: SpongeWithPendingAbsorb = SpongeWithPendingAbsorb.new 
+ 
+  -- call absorb onces on the first substring
+  let sponge_one_absorb: SpongeWithPendingAbsorb =
+    SpongeWithPendingAbsorb.absorb init_sponge substring_0
+
+  -- call absorb again on the second substring
+  let sponge_two_absorbs: SpongeWithPendingAbsorb = 
+    SpongeWithPendingAbsorb.absorb sponge_one_absorb substring_1
+
+  --finalize hash
+  let digest: Digest = SpongeWithPendingAbsorb.finalize (copy sponge_two_absorbs)
+  let digest_values: []u64 = map BFieldElement.value digest.0
+
+  -- extexted digest should be the same as in hash_varlen
+  let expected_digest: Digest = Tip5.hash_varlen (substring_0 ++ substring_1)
+  let success = map2 BFieldElement.eq digest.0 expected_digest.0
+    |> reduce (==) true 
+
+  in (success, digest_values)
