@@ -27,6 +27,10 @@ def new_from_raw_u64_arr (raw_coefficients: [3]u64) : XFieldElement =
   let coeffs = map (\x -> {0 = x} :> BFieldElement) raw_coefficients
   in { coefficients = (coeffs[0], coeffs[1], coeffs[2]) } :> XFieldElement
 
+-- Convert to arr of readble values using BFieldElement.value on coeffs
+def to_values_u64_arr (x: XFieldElement) : [3]u64 = 
+  map BFieldElement.value [x.coefficients.0, x.coefficients.1, x.coefficients.2] 
+
 def eq (a : XFieldElement) (b : XFieldElement) : bool =
   a.coefficients.0 == b.coefficients.0
   && a.coefficients.1 == b.coefficients.1
@@ -296,3 +300,19 @@ entry xfe_new_from_raw_u64_arr_test (raw_coeffs: [3]u64) : (u64, u64, u64) =
 entry xfe_to_raw_u64_arr_test (raw_coeffs: [3]u64) : [3]u64 =
   let x = new_from_raw_u64_arr raw_coeffs
   in to_raw_u64_arr x
+
+-- ==
+-- entry: test_to_values_arr
+-- input { [1u64, 2u64, 3u64]}
+-- output { true }
+entry test_to_values_arr (in_values: [3]u64) : bool =
+  let x = { 
+    coefficients = 
+      (
+        BFieldElement.new in_values[0],
+        BFieldElement.new in_values[1], 
+        BFieldElement.new in_values[2]
+      )
+      }
+  let check_values = to_values_u64_arr x
+  in map2 (==) check_values in_values |> reduce (==) true 
