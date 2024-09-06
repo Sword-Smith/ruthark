@@ -34,8 +34,8 @@ def of_length (len: i64) : ArithmeticDomain =
 def with_offset (domain: ArithmeticDomain) (offset: BFieldElement) : ArithmeticDomain = 
     domain with offset = offset
 
--- evaluate a polynomial over the domain
-def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : []BFieldElement =
+-- evaluate a bfe polynomial over the domain
+def evaluate_bfe_poly_over_domain [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : []BFieldElement =
     -- unpack domain attributes
     let offset: BFieldElement = domain.offset
     let len: i64 = domain.len
@@ -70,6 +70,42 @@ def evaluate [n] (domain: ArithmeticDomain) (polynomial: BfePolynomial [n]) : []
 
     in final_values
 
+
+-- evaluate an xfe polynomial over the domain
+def evaluate_xfe_poly_over_domain [n] (domain: ArithmeticDomain) (polynomial: XfePolynomial [n]) : []XFieldElement =
+    -- unpack domain attributes
+    let offset: BFieldElement = domain.offset
+    let len: i64 = domain.len
+
+    -- Anonymous function to evaluate polynomial chunk over the domain
+    let evaluate_from [m] (chunked_coeffs: [m]XFieldElement) : [len]XFieldElement =
+        let chunk_poly = xfe_poly.new chunked_coeffs
+        in xfe_poly.fast_coset_evaluate offset len chunk_poly
+
+    -- chunk polynomial into domain length sized chunks
+    let chunked_coeffs: [][]XFieldElement = xfe_poly.chunk_coefficients polynomial len
+
+    -- Initial values: handle empty or single chunk case
+    let initial_values: [len]XFieldElement = 
+        if (length chunked_coeffs == 0)
+        then replicate len XFieldElement.zero
+        else evaluate_from (chunked_coeffs[0])
+
+    -- Parallel loop to process each chunk with the appropriate scaled offset
+    let final_values =
+        loop values = initial_values for chunk_i in 1..<length chunked_coeffs do
+            let chunk = chunked_coeffs[chunk_i]
+            let coefficient_index = chunk_i * len
+            let scaled_offset: BFieldElement = BFieldElement.mod_pow_i64 offset coefficient_index
+            let evaluations = evaluate_from chunk
+
+            -- Scale and add evaluations to running totals
+            let scale_and_add =  \value eval ->
+                let scaled_eval = XFieldElement.xfe_bfe_mul eval scaled_offset
+                in XFieldElement.add value scaled_eval
+            in map2 scale_and_add values evaluations
+    in final_values
+
 -- halve the domain
 def halve (domain: ArithmeticDomain) : ArithmeticDomain = 
     let domain = assert (domain.len >= 2) domain
@@ -95,7 +131,7 @@ def low_degree_extension
     : []BFieldElement =
     -- interpolate the codeword over self.domain, then eval it over the target domain
     let interpolation = interpolate_bfe_values self_domain codeword
-    in evaluate target_domain interpolation
+    in evaluate_bfe_poly_over_domain target_domain interpolation
 
 -- compute the n'th element in the domain
 def domain_value (domain: ArithmeticDomain) (n: i64) : BFieldElement = 
@@ -120,10 +156,10 @@ let domain_values (domain: ArithmeticDomain) : [domain.len]BFieldElement =
     in domain_values
 
 -- == 
--- entry: test_domain_values 
+-- entry: test_domain_values_bfe_over_domain
 -- input { }
 -- output { true }
-entry test_domain_values : bool =
+entry test_domain_values_bfe_over_domain : bool =
 
     let x_cubed_coefficients = [BFieldElement.zero, BFieldElement.zero, BFieldElement.zero, BFieldElement.one]
     let poly = bfe_poly.new x_cubed_coefficients
@@ -149,7 +185,7 @@ entry test_domain_values : bool =
         let success = success && (reduce (&&) true (map2 BFieldElement.eq expected_b_values actual_b_values_2 ))
         
         -- evaluate polynomial over the domain
-        let values = evaluate b_domain poly
+        let values = evaluate_bfe_poly_over_domain b_domain poly
 
         -- assert not equal to x cubed coefficients
         let length_values = length values
@@ -174,6 +210,40 @@ entry test_domain_values : bool =
         -- Verify that batch-evaluated values match a manual evaluation
         let success = loop success = success for i in (iota order) do 
             let manual_eval = domain_value b_domain i |> bfe_poly.evaluate poly
+            let computed_eval = values[i]
+            in success && (manual_eval == computed_eval)
+
+        in success
+    in success
+
+
+-- == 
+-- entry: test_domain_values_xfe_over_domain
+-- input { }
+-- output { true }
+entry test_domain_values_xfe_over_domain : bool =
+
+    let x_cubed_coefficients = [XFieldElement.zero, XFieldElement.zero, XFieldElement.zero, XFieldElement.one]
+    let poly = xfe_poly.new x_cubed_coefficients
+
+    let orders = [4, 8, 32]
+    let success = loop success = true for order in orders do
+
+        -- generator, offset, domain (w/ offset applied)
+        let generator = BFieldElement.primitive_root order   
+        let offset = BFieldElement.generator
+        let b_domain: ArithmeticDomain = with_offset (of_length order) offset
+
+        -- evaluate polynomial over the domain
+        let values = evaluate_xfe_poly_over_domain b_domain poly
+
+        -- interpolate and compare 
+        let interpolant = interpolate_xfe_values b_domain values
+        let success = success && (xfe_poly.eq interpolant poly)
+
+        -- Verify that batch-evaluated values match a manual evaluation
+        let success = loop success = success for i in (iota order) do 
+            let manual_eval = domain_value b_domain i |> XFieldElement.new_const |> xfe_poly.evaluate poly
             let computed_eval = values[i]
             in success && (manual_eval == computed_eval)
 
@@ -235,7 +305,7 @@ entry test_low_degree_extension : bool =
     let polynomial = bfe_poly.new coefficients
 
     -- eval codeword on short domain
-    let short_codeword = evaluate short_domain polynomial
+    let short_codeword = evaluate_bfe_poly_over_domain short_domain polynomial
 
     -- low degree extend into the long domain
     let long_codeword = low_degree_extension short_domain short_codeword long_domain
