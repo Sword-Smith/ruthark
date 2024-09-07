@@ -37,6 +37,55 @@ type MasterExtTable [rows] [cols] = {
     -- interpolated_polynomials: []XfePolynomial[NUM_EXT_COLUMNS]
 }
 
+-- accepts all data within MasterExtTable prior to LDE
+-- randomized_trace_table represented here as [][][3]u64, is converted to [][]XFieldElement
+def new 
+  (num_trace_randomizers: i64)
+  (trace_domain_offset: u64) (trace_domain_gen: u64) (trace_domain_len: i64) -- "ArithmeticDomain"
+  (randomized_trace_domain_offset: u64) (randomized_trace_domain_gen: u64) (randomized_trace_domain_len: i64)
+  (quotient_domain_offset: u64) (quotient_domain_gen: u64) (quotient_domain_len: i64)
+  (fri_domain_offset: u64) (fri_domain_gen: u64) (fri_domain_len:i64)
+  (randomized_trace_table: [][][3]u64) -- 2d Xfe array encoding
+  : MasterExtTable [][] = 
+
+  -- unpack trace domain
+    let trace_domain: ArithmeticDomain = {
+      offset = { 0 = trace_domain_offset} :> BFieldElement,
+      generator = {0 = trace_domain_gen } :> BFieldElement,
+      len = trace_domain_len
+    }
+    -- unpack randomized trace domain
+    let randomized_trace_domain: ArithmeticDomain = {
+      offset = { 0 = randomized_trace_domain_offset} :> BFieldElement,
+      generator = {0 = randomized_trace_domain_gen } :> BFieldElement,
+      len = randomized_trace_domain_len
+    }
+    -- unpack quotient domain
+    let quotient_domain: ArithmeticDomain = {
+      offset = { 0 = quotient_domain_offset} :> BFieldElement,
+      generator = {0 = quotient_domain_gen } :> BFieldElement,
+      len = quotient_domain_len
+    }
+    -- unpack fri domain
+    let fri_domain: ArithmeticDomain = {
+      offset = { 0 = fri_domain_offset} :> BFieldElement,
+      generator = {0 = fri_domain_gen } :> BFieldElement,
+      len = fri_domain_len
+    }
+    -- [][][3]u64 -> [][]XFieldElement
+    let randomized_trace_table : [][]XFieldElement = 
+      map (map (\x -> XFieldElement.new_from_raw_u64_arr x)) randomized_trace_table
+
+    -- package into MasterExtTable
+    in {   
+        num_trace_randomizers,
+        trace_domain,
+        randomized_trace_domain,
+        quotient_domain,
+        fri_domain,
+        randomized_trace_table
+    } :> MasterExtTable [] []
+
 -- same for MasterExtTable and MasterBaseTable 
 def evaluation_domain (table: MasterExtTable [] [] ) : ArithmeticDomain =
     if table.quotient_domain.len > table.fri_domain.len

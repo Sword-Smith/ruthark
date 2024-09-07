@@ -37,44 +37,15 @@ entry lde_master_ext_table_kernel
   (fri_domain_offset: u64) (fri_domain_gen: u64) (fri_domain_len:i64)
   (randomized_trace_table: [][][3]u64) -- 2d Xfe array
   : [][][3]u64 = -- encoded version of [NUM_COLUMNS][rows]XfePolynomial[] 
-   
-    -- unpack trace domain
-    let trace_domain: ArithmeticDomain = {
-      offset = { 0 = trace_domain_offset} :> BFieldElement,
-      generator = {0 = trace_domain_gen } :> BFieldElement,
-      len = trace_domain_len
-    }
-    -- unpack randomized trace domain
-    let randomized_trace_domain: ArithmeticDomain = {
-      offset = { 0 = randomized_trace_domain_offset} :> BFieldElement,
-      generator = {0 = randomized_trace_domain_gen } :> BFieldElement,
-      len = randomized_trace_domain_len
-    }
-    -- unpack quotient domain
-    let quotient_domain: ArithmeticDomain = {
-      offset = { 0 = quotient_domain_offset} :> BFieldElement,
-      generator = {0 = quotient_domain_gen } :> BFieldElement,
-      len = quotient_domain_len
-    }
-    -- unpack fri domain
-    let fri_domain: ArithmeticDomain = {
-      offset = { 0 = fri_domain_offset} :> BFieldElement,
-      generator = {0 = fri_domain_gen } :> BFieldElement,
-      len = fri_domain_len
-    }
-    -- [][][3]u64 -> [][]XFieldElement
-    let randomized_trace_table : [][]XFieldElement = 
-      map (map (\x -> XFieldElement.new_from_raw_u64_arr x)) randomized_trace_table
 
-    -- package into MasterExtTable
-    let master_extension_table = {   
-        num_trace_randomizers,
-        trace_domain,
-        randomized_trace_domain,
-        quotient_domain,
-        fri_domain,
-        randomized_trace_table
-    } :> MasterExtTable [] []
+    -- package into master ext table
+    let master_extension_table: MasterExtTable [][] = master_ext_table.new
+      num_trace_randomizers
+      trace_domain_offset trace_domain_gen trace_domain_len
+      randomized_trace_domain_offset randomized_trace_domain_gen randomized_trace_domain_len 
+      quotient_domain_offset quotient_domain_gen quotient_domain_len
+      fri_domain_offset fri_domain_gen fri_domain_len
+      randomized_trace_table
 
     -- interpolate on larger domain
     let interpolant_polynomials =
@@ -89,6 +60,9 @@ entry lde_master_ext_table_kernel
       interpolant_polynomials    
 
     in poly_coeff_values
+
+-- adaptation of master_ext_table.merkle_tree()
+-- entry master_ext_table_merkle_tree 
 
 -- entry lde_single_column
 --   [n]
