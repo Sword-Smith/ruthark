@@ -5,6 +5,7 @@ module BFieldElement = import "BFieldElement"
 module MerkleTree = import "MerkleTree"
 module Digest = import "Digest"
 module Tip5 = import "Tip5"
+module bfield_codec = import "bfield_codec"
 
 let NUM_BASE_COLUMNS: i64 = 375
 let NUM_COLUMNS: i64 = NUM_BASE_COLUMNS
@@ -134,6 +135,46 @@ module SpongeWithPendingAbsorb = {
       let digest =  take Digest.DIGEST_LENGTH digest -- tell compiler the size
       in {0 = digest} :> Digest
     }
+
+
+-- NOTE: in the rust implementation of this function, the number of threads available for parallelism
+-- is checked. It is then used to determine how many interpolant polynomials to hash in parallel during
+-- each iteration of JIT hashing. There are multiple ways this could be ported to futhark, such as 
+-- seting a constant number of threads for how many interpolants to process in parallel. The below
+-- port processes each interpolant in sequence, but this could be easily modified to more closely match
+-- that in the rust impelementation. The evaluation and hashing of each interpolant should still benefit
+-- from the parallelism that happens for those processes, though.
+def hash_all_fri_domain_rows_just_in_time
+    (interpolants: []XfePolynomial[]) 
+    (fri_domain: ArithmeticDomain)
+    : []Digest = 
+
+    -- init sponge states
+    let init_sponges: []SpongeWithPendingAbsorb = 
+      replicate fri_domain.len SpongeWithPendingAbsorb.new
+
+    -- absorb codewords into sponges just in time
+    let sponge_state = 
+      loop (sponges, i) = (init_sponges, 0) for interpolant in interpolants do
+
+        -- eval codeword over the fri domain
+        let codeword: []BFieldElement = 
+          ArithmeticDomain.evaluate_xfe_poly_over_domain fri_domain interpolant 
+          |> bfield_codec.encode_arr_xfe
+
+        -- absorb codeword into corresponding sponge
+        let sponge_absorbed = SpongeWithPendingAbsorb.absorb (copy sponges[i]) codeword
+        in (sponges with [i] = sponge_absorbed, i + 1)
+      
+    -- finalize codewords
+    in map SpongeWithPendingAbsorb.finalize sponge_state.0
+
+--  eval interpolants over fri domain and hash each row, merkleize resulting digests
+def merkle_tree (interpolants: []XfePolynomial[]) (fri_domain: ArithmeticDomain) : MerkleTree =
+    let hashed_rows: []Digest = 
+      hash_all_fri_domain_rows_just_in_time interpolants fri_domain 
+    in MerkleTree.from_digests hashed_rows
+
 
 -- == 
 -- entry: test_absorb_sponge_with_pending_absorb
