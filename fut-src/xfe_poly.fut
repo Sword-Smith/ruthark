@@ -20,6 +20,12 @@ def new_from_arr_u64 [n] (coeffs: [n][3]u64) : XfePolynomial [n] =
     |> map XFieldElement.new 
     |> new
 
+-- does not modify the internal representation of xfe coefficient values when placing into bfe
+def new_from_raw_u64_arr [n] (coeffs: [n][3]u64) : XfePolynomial [n] =
+    map (\x -> (BFieldElement.from_raw_u64 x[0], BFieldElement.from_raw_u64 x[1], BFieldElement.from_raw_u64 x[2])) coeffs
+    |> map XFieldElement.new 
+    |> new
+
 -- degree
 let degree [n] (p: XfePolynomial [n]) : i64 =
     -- determine highest degre (mod trailing zeros)
