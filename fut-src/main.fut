@@ -2,15 +2,18 @@
 module BFieldElement = import "BFieldElement"
 module XFieldElement = import "XFieldElement"
 module bfe_poly = import "bfe_poly"
-module xfe_polynomial = import "xfe_poly"
+module xfe_poly = import "xfe_poly"
 module ArithmeticDomain = import "arithmetic_domain"
 module master_ext_table = import "master_ext_table"
+module MerkleTree = import "MerkleTree"
+module Digest = import "Digest"
 
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
-type XfePolynomial [n] = xfe_polynomial.XfePolynomial [n]
+type XfePolynomial [n] = xfe_poly.XfePolynomial [n]
 type ArithmeticDomain = ArithmeticDomain.ArithmeticDomain
 type MasterExtTable [rows] [cols] = master_ext_table.MasterExtTable [rows] [cols]
+type Digest = Digest.Digest
 
 let NUM_COLUMNS = master_ext_table.NUM_COLUMNS
 
@@ -61,8 +64,24 @@ entry lde_master_ext_table_kernel
 
     in poly_coeff_values
 
--- adaptation of master_ext_table.merkle_tree()
--- entry master_ext_table_merkle_tree 
+-- NOTE: this entry point assumes it is receicing the Array_u64_3d that was output
+-- by the call of lde_master_ext_table_kernel above
+entry master_ext_table_merkle_tree_root 
+  (interpolants: [][][3]u64)
+  (fri_domain_offset: u64) (fri_domain_gen: u64) (fri_domain_len: i64)
+  : [Digest.DIGEST_LENGTH]u64 =  
+  -- convert data into correct format
+  let xfe_polys: []XfePolynomial[]  = 
+    map (\poly -> xfe_poly.new_from_raw_u64_arr poly) interpolants
+  let fri_domain = ArithmeticDomain.new 
+                  (BFieldElement.from_raw_u64 fri_domain_offset) 
+                  (BFieldElement.from_raw_u64 fri_domain_gen) 
+                  fri_domain_len
+  -- compute merkle tree and return root
+  let merkle_tree = master_ext_table.merkle_tree xfe_polys fri_domain
+  let root_node: Digest = merkle_tree.nodes[MerkleTree.ROOT_INDEX]
+  in map BFieldElement.to_raw_u64 root_node.0
+
 
 -- entry lde_single_column
 --   [n]
