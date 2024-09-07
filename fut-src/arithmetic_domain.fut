@@ -15,6 +15,9 @@ type ArithmeticDomain = {
     len: i64
 }
 
+def new (offset: BFieldElement) (generator: BFieldElement) (len: i64) : ArithmeticDomain = 
+    {offset, generator, len}
+
 -- derives generator for a domain of the given length
 -- Error if the length is not a power of two
 def generator_for_length(domain_length: i64) : BFieldElement = 
