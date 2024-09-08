@@ -1,4 +1,4 @@
-use gpu_accelerator::{FutharkContext, Array_u64_3d}; // <-- Library must be generated for this to import
+use gpu_accelerator::{FutharkContext, Array_u64_3d, Array_u64_1d}; // <-- Library must be generated for this to import
 use super::gpu_parallel::GpuParallel;
 
 extern crate triton_vm;
@@ -7,6 +7,7 @@ use triton_vm::table::master_table::*;
 
 
 use triton_vm::twenty_first::math::x_field_element::EXTENSION_DEGREE;
+use triton_vm::twenty_first::util_types::merkle_tree::*;
 use triton_vm::twenty_first::math::polynomial::*;
 use ndarray::Array2;
 use std::error::Error;
@@ -96,7 +97,7 @@ impl GpuParallel {
     }
 
     // Recieves MasterExtTable prior to LDE, unpacks it and does conversion, calls LDE_gpu_kernel
-    pub fn master_ext_table_lde(master_ext_table: MasterExtTable) -> Result<Vec<Polynomial<XFieldElement>>, Box<dyn Error>> {
+    pub fn master_ext_table_lde(master_ext_table: MasterExtTable) -> Result<Array_u64_3d, Box<dyn Error>> {
         let mut ctx = FutharkContext::new()?;
 
         // create 3d u64 array from flattened vec
@@ -106,7 +107,7 @@ impl GpuParallel {
         )?;
 
         // call Gpu kernel
-        let result: Array_u64_3d = ctx.lde_master_ext_table_kernel(
+        let result = ctx.lde_master_ext_table_kernel(
 
             // num trace randomizers
             master_ext_table.num_trace_randomizers as i64,  
@@ -134,14 +135,27 @@ impl GpuParallel {
             // randomized_trace_table
             randomized_trace_domain,
         )?;
-
-        // convert to Vec<Polynomial<XFieldElement>>
-        let interpolant_polynomials = 
-            GpuParallel::array_u64_3d_to_array_xfe_polynomial(&result)?;
-
-        Ok(interpolant_polynomials)
+        Ok(result)
     }
-}
+
+    pub fn master_ext_table_merkle_tree_root_gpu(
+        interpolants: Array_u64_3d,
+        fri_domain_offset: BFieldElement,
+        fri_domain_generator: BFieldElement,
+        fri_domain_length: i64,
+     ) -> Result<Array_u64_1d, Box<dyn Error>> {
+
+        let mut ctx = FutharkContext::new()?;
+        let result = ctx.master_ext_table_merkle_tree_root(
+            interpolants,
+            fri_domain_offset.raw_u64(),
+            fri_domain_generator.raw_u64(),
+            fri_domain_length
+        )?;
+        
+        Ok(result)
+    }
+}   
 
 
 #[cfg(test)]
@@ -288,7 +302,7 @@ pub(crate) mod lde_gpu_tests {
     }
 
     #[test]
-    pub fn futhark_lde_is_rust_lde() {
+    pub fn futhark_lde_same_as_rust() {
 
         // program + inputs
         let factorial_program = shared::factorial_program();
@@ -300,8 +314,12 @@ pub(crate) mod lde_gpu_tests {
             shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
 
         // perform low degree extension using futhark implementation
-        let interpolant_polynomials: Vec<Polynomial<XFieldElement>> = 
+        let raw_output: Array_u64_3d = 
             GpuParallel::master_ext_table_lde(master_ext_table.clone()).unwrap();
+
+        let interpolant_polynomials = 
+                GpuParallel::array_u64_3d_to_array_xfe_polynomial(&raw_output).unwrap();
+    
 
         // perform low degree extension using rust implementation
         master_ext_table.low_degree_extend_all_columns();    
@@ -327,6 +345,48 @@ pub(crate) mod lde_gpu_tests {
         }
     }
 
+    
+    #[test]
+    pub fn futhark_master_ext_table_merkle_same_as_rust() {
+
+        // program + inputs
+        let factorial_program = shared::factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+
+        // run stark prover until right before MasterExtensionTable LDE
+        let mut master_ext_table: MasterExtTable = 
+            shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+
+        // perform low degree extension using futhark implementation
+        let interpolant_polynomials: Array_u64_3d = 
+            GpuParallel::master_ext_table_lde(master_ext_table.clone()).unwrap();
+
+        // get merkle root
+        let root: Array_u64_1d = GpuParallel::master_ext_table_merkle_tree_root_gpu(
+            interpolant_polynomials, 
+            master_ext_table.fri_domain.offset,
+            master_ext_table.fri_domain.generator,
+            master_ext_table.fri_domain.length as i64
+        ).unwrap();
+        let (root_vec, _) = root.to_vec().unwrap();        
+
+
+        // perform lde and merklize w/ rust impl
+        master_ext_table.low_degree_extend_all_columns();
+        let merkle_tree: MerkleTree = master_ext_table.merkle_tree();
+        let root: Digest = merkle_tree.root();
+
+        // verify roots are the same
+        for i in 0..root.0.len() {
+            assert_eq!( 
+                root.0[i].value(),
+                root_vec[i]
+            )
+        }
+
+    }
+    
     // This test times the entire process of converting rust types to genfut types, running 
     // lde on the GPU, and converting the output returned from the kernel to the GPU back to 
     // rust types.
@@ -351,8 +411,10 @@ pub(crate) mod lde_gpu_tests {
 
             // perform low degree extension using futhark implementation
             let start = Instant::now();
-            let _: Vec<Polynomial<XFieldElement>> = 
+            let _: Array_u64_3d = 
                 GpuParallel::master_ext_table_lde(master_ext_table).unwrap();
+
+
             let duration = start.elapsed();
 
             // print results
