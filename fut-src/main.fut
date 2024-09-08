@@ -7,6 +7,7 @@ module ArithmeticDomain = import "arithmetic_domain"
 module master_ext_table = import "master_ext_table"
 module MerkleTree = import "MerkleTree"
 module Digest = import "Digest"
+module Tip5 = import "Tip5"
 
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
@@ -81,6 +82,10 @@ entry master_ext_table_merkle_tree_root
   let merkle_tree = master_ext_table.merkle_tree xfe_polys fri_domain
   let root_node: Digest = merkle_tree.nodes[MerkleTree.ROOT_INDEX]
   in map BFieldElement.to_raw_u64 root_node.0
+
+-- hashes a variable length input of raw bfe u64 internal values
+entry tip5_hash_varlen_kernel (input: []u64) : []u64 =
+  map BFieldElement.from_raw_u64 input |> Tip5.hash_varlen |> \x -> map BFieldElement.to_raw_u64 x.0
 
 
 -- entry lde_single_column
