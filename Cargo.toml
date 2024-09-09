@@ -4,9 +4,9 @@
 # NOTE: able to compile when running cargo run from the root. 
 [workspace]
 # for first generation
-# members = ["rust-generator"]
-# for once gpu-accelerator is generated
-members  = ["triton-vm", "constraint-evaluation-generator", "gpu-accelerator", "accelerators", "rust-generator"]
+members = ["rust-generator"]
+# for once gpu-accelerator is generated  
+# members  = ["triton-vm", "gpu-accelerator", "accelerators", "rust-generator"]
 
 
 resolver = "2"

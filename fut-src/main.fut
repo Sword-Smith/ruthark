@@ -5,6 +5,7 @@ module bfe_poly = import "bfe_poly"
 module xfe_poly = import "xfe_poly"
 module ArithmeticDomain = import "arithmetic_domain"
 module master_ext_table = import "master_ext_table"
+module SpongeWithPendingAbsorb = master_ext_table.SpongeWithPendingAbsorb
 module MerkleTree = import "MerkleTree"
 module Digest = import "Digest"
 module Tip5 = import "Tip5"
