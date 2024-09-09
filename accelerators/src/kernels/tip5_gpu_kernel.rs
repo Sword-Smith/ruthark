@@ -12,19 +12,16 @@ impl GpuParallel {
     // hashes variable len bfe array w/ tip5 on gpu
     #[allow(dead_code)]
     fn tip5_hash_varlen(input: &[BFieldElement]) -> Digest {
-
-        // conversions
         let mut ctx = FutharkContext::new().unwrap();
-        let input_u64_vec = input.iter().map(|b| b.raw_u64()).collect::<Vec<u64>>();
-        let input = Array_u64_1d::from_vec(ctx, &input_u64_vec, &[input_u64_vec.len() as i64]).unwrap();
+        let input = GpuParallel::bfe_vec_to_array_u64_1d(input, &mut ctx);
 
-        // run tip5 hash kernel in futhark
-        let (digest_u64, _) = ctx.tip5_hash_varlen_kernel(input).unwrap().to_vec().unwrap();
+        // run futhark hash
+        let (digest_u64, _) = ctx.tip5_hash_varlen_kernel(input).unwrap().to_vec().unwrap();      
         if digest_u64.len() != 5 {
             panic!("Expected exactly 5 elements for digest computation.");
         }
         
-        // package into digest and return
+        // convert back to digest
         let digest_array: [BFieldElement; 5] = [
             BFieldElement::from_raw_u64(digest_u64[0]),
             BFieldElement::from_raw_u64(digest_u64[1]),
@@ -35,6 +32,39 @@ impl GpuParallel {
         Digest::new(digest_array)
     }
 
+    // tip5 sponge w/ pending absorb
+    #[allow(dead_code)]
+    fn sponge_with_pending_absorb(input: &[BFieldElement]) -> Digest {
+        let mut ctx = FutharkContext::new().unwrap();
+        let input = GpuParallel::bfe_vec_to_array_u64_1d(input, &mut ctx);
+
+        
+        // run futhark hash
+        let (digest_u64, _) = ctx.sponge_with_pending_absorb_kernel(input).unwrap().to_vec().unwrap();      
+        if digest_u64.len() != 5 {
+            panic!("Expected exactly 5 elements for digest computation.");
+        }
+        
+        // convert back to digest
+        let digest_array: [BFieldElement; 5] = [
+            BFieldElement::from_raw_u64(digest_u64[0]),
+            BFieldElement::from_raw_u64(digest_u64[1]),
+            BFieldElement::from_raw_u64(digest_u64[2]),
+            BFieldElement::from_raw_u64(digest_u64[3]),
+            BFieldElement::from_raw_u64(digest_u64[4]),
+        ];
+        Digest::new(digest_array)
+
+    }
+
+    // rust to genfut type
+    #[allow(dead_code)]
+    fn bfe_vec_to_array_u64_1d(input: &[BFieldElement], ctx: &mut FutharkContext) -> Array_u64_1d {
+    
+        let input_u64_vec = input.iter().map(|b| b.raw_u64()).collect::<Vec<u64>>();
+        Array_u64_1d::from_vec(*ctx, &input_u64_vec, &[input_u64_vec.len() as i64]).unwrap()
+    }
+
 }   
 
 
@@ -43,6 +73,7 @@ pub(crate) mod lde_gpu_tests {
     use super::*;  
     use crate::kernels::shared;
     use std::time::Instant;
+    use triton_vm::table::master_table::*;
 
     // from twenty_first::util_types::algebraic_hasher
     fn hash_varlen(input: &[BFieldElement]) -> Digest {
@@ -69,6 +100,29 @@ pub(crate) mod lde_gpu_tests {
             let actual_digest = hash_varlen(&input);
             let futhark_digest = GpuParallel::tip5_hash_varlen(&input);
     
+            assert_eq!(actual_digest, futhark_digest);
+        }
+    }
+
+    #[test]
+    fn sponge_with_pending_absorb_gpu(){
+
+        // multiple checks for same final digest 
+        for i in 0..20 {
+            let mut input: Vec<BFieldElement> = vec![];
+            for j in 0..100 {
+    
+                input.push(bfe![i + j as u64]);
+            }
+            
+            // compute digest in rust
+            let mut sponge = SpongeWithPendingAbsorb::new();
+            sponge.absorb(input.clone());
+            let actual_digest: Digest = sponge.finalize();
+
+            // and in futhark
+            let futhark_digest = GpuParallel::sponge_with_pending_absorb(&input);
+            
             assert_eq!(actual_digest, futhark_digest);
         }
     }

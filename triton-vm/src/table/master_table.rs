@@ -452,7 +452,7 @@ where
 /// Helper struct and function to absorb however many elements are available; used in
 /// the context of hashing rows in a streaming fashion.
 #[derive(Clone)]
-struct SpongeWithPendingAbsorb {
+pub struct SpongeWithPendingAbsorb {
     sponge: Tip5,
 
     /// A re-usable buffer of pending input elements.

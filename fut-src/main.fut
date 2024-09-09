@@ -87,6 +87,15 @@ entry master_ext_table_merkle_tree_root
 entry tip5_hash_varlen_kernel (input: []u64) : []u64 =
   map BFieldElement.from_raw_u64 input |> Tip5.hash_varlen |> \x -> map BFieldElement.to_raw_u64 x.0
 
+-- tip5 sponge w/ pending absorb (for testing purposes)
+entry sponge_with_pending_absorb_kernel (input: []u64) : []u64 = 
+  let input: []BFieldElement = map BFieldElement.from_raw_u64 input
+ 
+  let sponge = SpongeWithPendingAbsorb.new 
+  let absorbed = SpongeWithPendingAbsorb.absorb sponge input
+  let finalized: Digest = SpongeWithPendingAbsorb.finalize absorbed
+  
+  in map BFieldElement.to_raw_u64 finalized.0
 
 -- entry lde_single_column
 --   [n]
