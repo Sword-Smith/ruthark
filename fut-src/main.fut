@@ -98,6 +98,16 @@ entry sponge_with_pending_absorb_kernel (input: []u64) : []u64 =
   
   in map BFieldElement.to_raw_u64 finalized.0
 
+
+-- computes merkle tree from set of digests, returns raw u64 node digest bfe values
+entry from_digest_tip5_kernel (input: [][]u64) : [][Digest.DIGEST_LENGTH]u64 = 
+  let input: []Digest = map (\x -> map BFieldElement.from_raw_u64 x) input
+                        |> map (take Digest.DIGEST_LENGTH)
+                        |> map (\x -> { 0 = x}) 
+  let merkle_tree = MerkleTree.from_digests input 
+  let nodes = map (\x -> map BFieldElement.to_raw_u64 x.0) merkle_tree.nodes
+  in nodes
+
 -- entry lde_single_column
 --   [n]
 --   (extension_factor: i64)
