@@ -8,7 +8,7 @@
 cd fut-src && futhark pkg sync && cd ..
 
 # clone modified version of triton-vm with certain private fields made public for testing
-git clone git@github.com:Holindauer/triton-vm.git
+git clone https://github.com/Holindauer/triton-vm.git
 
 # triton-vm setup / code generation
 mv triton-vm triton-vm-repository
