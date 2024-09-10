@@ -108,6 +108,31 @@ entry from_digest_tip5_kernel (input: [][]u64) : [][Digest.DIGEST_LENGTH]u64 =
   let nodes = map (\x -> map BFieldElement.to_raw_u64 x.0) merkle_tree.nodes
   in nodes
 
+-- compures fri domain rows using interpolation polynomials from lde of the 
+-- MasterExtTable, then computes the hash of each w/ SpongeWithPendingAbsorb
+-- (for testing purposes)
+entry hash_all_fri_domain_rows_just_in_time_kernel 
+  (interpolants: [][][3]u64)
+  (fri_domain_offset: u64) (fri_domain_gen: u64) (fri_domain_len:i64) 
+  : [][]u64 = 
+    -- correct data format
+    let interpolants: []XfePolynomial[] = 
+      map (map XFieldElement.new_from_raw_u64_arr) interpolants  
+      |> map xfe_poly.new 
+
+    let fri_domain = ArithmeticDomain.new 
+      (BFieldElement.from_raw_u64 fri_domain_offset) 
+      (BFieldElement.from_raw_u64 fri_domain_gen) 
+      fri_domain_len
+
+    -- hash all fri domain rows JIT
+    let result: []Digest = 
+      master_ext_table.hash_all_fri_domain_rows_just_in_time interpolants fri_domain
+
+    in map (\x -> map BFieldElement.to_raw_u64 x.0) result
+
+
+
 -- entry lde_single_column
 --   [n]
 --   (extension_factor: i64)

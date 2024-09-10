@@ -138,6 +138,37 @@ impl GpuParallel {
         Ok(result)
     }
 
+    // recieves output of master ext table, evluates rows of  
+    // fri domain using lde interpolants, hashes each row JIT
+    pub fn hash_all_fri_domain_rows_just_in_time_kernel(
+        interpolants: Array_u64_3d,
+        fri_domain_offset: BFieldElement,
+        fri_domain_generator: BFieldElement,
+        fri_domain_length: i64,
+    ) -> Result<Vec<Digest>, Box<dyn Error>> {
+
+        // run futhark kernel
+        let mut ctx = FutharkContext::new()?; 
+        let result: Array_u64_2d = ctx.hash_all_fri_domain_rows_just_in_time_kernel(
+            interpolants, 
+            fri_domain_offset.raw_u64(),
+            fri_domain_generator.raw_u64(),
+            fri_domain_length
+        )?;
+
+        // covnert raw output back to digests
+        let (flat_u64_result_vec, _) = result.to_vec()?;
+        let digests: Vec<Digest> =  flat_u64_result_vec.chunks(Digest::LEN).map(|chunk| {
+            // digest u64 vals -> bfe
+            let bfe_vec: Vec<BFieldElement> = 
+                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
+            // new digest
+            Digest::new([bfe_vec[0], bfe_vec[1], bfe_vec[2], bfe_vec[3], bfe_vec[4]])
+        }).collect();
+
+        Ok(digests)  
+    }
+
     pub fn master_ext_table_merkle_tree_root_gpu(
         interpolants: Array_u64_3d,
         fri_domain_offset: BFieldElement,
@@ -345,7 +376,40 @@ pub(crate) mod lde_gpu_tests {
         }
     }
 
-    
+    #[test]
+    pub fn futhark_hash_all_fri_domains_JIT_same_as_rust(){
+
+        // program + inputs
+        let factorial_program = shared::factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+
+        // run stark prover until right before MasterExtensionTable LDE
+        let mut master_ext_table: MasterExtTable = 
+            shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+
+        // perform low degree extension using futhark implementation
+        let interpolant_polynomials: Array_u64_3d = 
+            GpuParallel::master_ext_table_lde(master_ext_table.clone()).unwrap();
+
+        // get merkle root
+        let futhark_digests: Vec<Digest> = GpuParallel::hash_all_fri_domain_rows_just_in_time_kernel(
+            interpolant_polynomials, 
+            master_ext_table.fri_domain.offset,
+            master_ext_table.fri_domain.generator,
+            master_ext_table.fri_domain.length as i64
+        ).unwrap();
+        
+        // perform lde and hashing using rust implementation
+        master_ext_table.low_degree_extend_all_columns();  
+        let actual_digests: Vec<Digest> = master_ext_table.hash_all_fri_domain_rows_just_in_time();
+
+        // ensure same output
+        for i in 0..actual_digests.len() {
+            assert_eq!(futhark_digests[i], actual_digests[i]);
+        }
+    }
+
     #[test]
     pub fn futhark_master_ext_table_merkle_same_as_rust() {
 
