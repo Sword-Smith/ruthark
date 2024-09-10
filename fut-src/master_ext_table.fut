@@ -203,20 +203,21 @@ def hash_all_fri_domain_rows_just_in_time
       replicate fri_domain.len SpongeWithPendingAbsorb.new
 
     -- absorb codewords into sponges just in time
-    let sponge_state = 
+    let (sponges_absorbed, _) = 
       loop (sponges, i) = (init_sponges, 0) for interpolant in interpolants do
 
         -- eval codeword over the fri domain
-        let codeword: []BFieldElement = 
+        let xfe_codeword: []XFieldElement = 
           ArithmeticDomain.evaluate_xfe_poly_over_domain fri_domain interpolant 
-          |> bfield_codec.encode_arr_xfe
+        let bfe_encoded_codeword: [][]BFieldElement = map bfield_codec.encode_xfe xfe_codeword
 
-        -- absorb codeword into corresponding sponge
-        let sponge_absorbed = SpongeWithPendingAbsorb.absorb (copy sponges[i]) codeword
-        in (sponges with [i] = sponge_absorbed, i + 1)
+      -- Absorb each codeword into every sponge just in time
+        let updated_sponges = map2 SpongeWithPendingAbsorb.absorb sponges bfe_encoded_codeword
+
+        in (updated_sponges, i + 1)
       
     -- finalize codewords
-    in map SpongeWithPendingAbsorb.finalize sponge_state.0
+    in map SpongeWithPendingAbsorb.finalize sponges_absorbed
 
 --  eval interpolants over fri domain and hash each row, merkleize resulting digests
 def merkle_tree (interpolants: []XfePolynomial[]) (fri_domain: ArithmeticDomain) : MerkleTree =
