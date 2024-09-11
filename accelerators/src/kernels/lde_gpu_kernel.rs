@@ -409,9 +409,9 @@ pub(crate) mod lde_gpu_tests {
             assert_eq!(futhark_digests[i], actual_digests[i]);
         }
     }
-
+    
     #[test]
-    pub fn futhark_master_ext_table_merkle_same_as_rust() {
+    pub fn futhark_merkle_tree_same_as_rust() {
 
         // program + inputs
         let factorial_program = shared::factorial_program();
@@ -427,28 +427,22 @@ pub(crate) mod lde_gpu_tests {
             GpuParallel::master_ext_table_lde(master_ext_table.clone()).unwrap();
 
         // get merkle root
-        let root: Array_u64_1d = GpuParallel::master_ext_table_merkle_tree_root_gpu(
+        let futhark_nodes: Vec<Digest> = GpuParallel::master_ext_table_merkle_tree_kernel(
             interpolant_polynomials, 
             master_ext_table.fri_domain.offset,
             master_ext_table.fri_domain.generator,
             master_ext_table.fri_domain.length as i64
         ).unwrap();
-        let (root_vec, _) = root.to_vec().unwrap();        
-
 
         // perform lde and merklize w/ rust impl
         master_ext_table.low_degree_extend_all_columns();
         let merkle_tree: MerkleTree = master_ext_table.merkle_tree();
-        let root: Digest = merkle_tree.root();
+        let actual_nodes: Vec<Digest> = merkle_tree.nodes().to_vec();
 
-        // verify roots are the same
-        for i in 0..root.0.len() {
-            assert_eq!( 
-                root.0[i].value(),
-                root_vec[i]
-            )
+        // verify trees are the same
+        for i in 0..actual_nodes.len() {
+            assert_eq!(actual_nodes[i], futhark_nodes[i]);
         }
-
     }
     
     // This test times the entire process of converting rust types to genfut types, running 
