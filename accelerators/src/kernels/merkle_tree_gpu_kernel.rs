@@ -1,133 +1,85 @@
-// use gpu_accelerator::{Array_u64_2d, FutharkContext};
-// use std::marker::PhantomData;
-// use twenty_first::shared_math::b_field_element::BFieldElement;
-// use twenty_first::shared_math::other::is_power_of_two;
-// use twenty_first::shared_math::rescue_prime_digest::Digest;
-// use twenty_first::shared_math::rescue_prime_regular::{RescuePrimeRegular, DIGEST_LENGTH};
-// use twenty_first::util_types::merkle_tree::MerkleTree;
-// use twenty_first::util_types::merkle_tree_maker::MerkleTreeMaker;
+use gpu_accelerator::{Array_u64_2d, Array_u64_3d, FutharkContext}; // <-- Library must be generated for this to import
+use super::gpu_parallel::GpuParallel;
 
-// #[derive(Debug)]
-// pub struct GpuParallel;
+extern crate triton_vm;
+use triton_vm::prelude::*;    
+use triton_vm::table::master_table::*;
+use triton_vm::twenty_first::util_types::merkle_tree::*;
+use std::error::Error;
 
-// impl GpuParallel {
-//     #[allow(dead_code)]
-//     fn root_from_digests(digests: &[Digest]) -> Digest {
-//         let mut ctx = FutharkContext::new().unwrap();
-//         let dim_x = i64::try_from(digests.len()).unwrap();
-//         let dim_y = i64::try_from(DIGEST_LENGTH).unwrap();
-//         let leaves_dims = [dim_x, dim_y];
 
-//         let leaves_flat_bfe = digests.iter().flat_map(|digest| digest.values());
-//         let leaves_flat_u64: Vec<u64> = leaves_flat_bfe.map(|bfe| bfe.value()).collect();
-//         let leaves_flat_fut = Array_u64_2d::from_vec(ctx, &leaves_flat_u64, &leaves_dims).unwrap();
+impl GpuParallel {  
 
-//         let root_u64 = ctx
-//             .kernel_merkle_root_2d(leaves_flat_fut)
-//             .unwrap()
-//             .to_vec()
-//             .unwrap()
-//             .0
-//             .into_iter()
-//             .take(DIGEST_LENGTH);
+    #[allow(dead_code)]
+    fn from_digests_tip5_kernel(leafs: &[Digest]) -> Result<Vec<Digest>, Box<dyn Error>>{
+        let mut ctx = FutharkContext::new().unwrap();
 
-//         let root_bfe: [BFieldElement; DIGEST_LENGTH] = root_u64
-//             .map(BFieldElement::new)
-//             .collect::<Vec<_>>()
-//             .try_into()
-//             .unwrap();
+        // flatten digests into u64 vec
+        let flat_digests_u64: Vec<u64> = 
+        leafs.iter().flat_map(|digest| digest.0.iter())
+                   .map(|bfe| bfe.raw_u64()).collect();
 
-//         Digest::new(root_bfe)
-//     }
-// }
+        // to genfut type
+        let dim: &[i64] =  &[leafs.len() as i64, Digest::LEN as i64];
+        let input = Array_u64_2d::from_vec(ctx, &flat_digests_u64, dim)?;
 
-// impl MerkleTreeMaker<RescuePrimeRegular> for GpuParallel {
-//     /// Takes an array of digests and builds a MerkleTree over them.
-//     /// The digests are used copied over as the leaves of the tree.
-//     fn from_digests(digests: &[Digest]) -> MerkleTree<RescuePrimeRegular, GpuParallel> {
-//         let leaves_count = digests.len();
+        // run futhark kernel
+        let result = ctx.from_digest_tip5_kernel(input)?;
 
-//         assert!(
-//             is_power_of_two(leaves_count),
-//             "Size of input for Merkle tree must be a power of 2"
-//         );
+        // covnert raw output back to digests
+        let (flat_u64_result_vec, _) = result.to_vec().unwrap();
+        let digests: Vec<Digest> =  flat_u64_result_vec.chunks(Digest::LEN).map(|chunk| {
+            // digest u64 vals -> bfe
+            let bfe_vec: Vec<BFieldElement> = 
+                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
+            // new digest
+            Digest::new([bfe_vec[0], bfe_vec[1], bfe_vec[2], bfe_vec[3], bfe_vec[4]])
+        }).collect();
 
-//         let mut ctx = FutharkContext::new().unwrap();
-//         let dim_x = i64::try_from(digests.len()).unwrap();
-//         let dim_y = i64::try_from(DIGEST_LENGTH).unwrap();
-//         let leaves_dims = [dim_x, dim_y];
+        Ok(digests)
+    }   
 
-//         let leaves_flat_bfe = digests.iter().flat_map(|digest| digest.values());
-//         let leaves_flat_u64: Vec<u64> = leaves_flat_bfe.map(|bfe| bfe.value()).collect();
-//         let leaves_flat_fut = Array_u64_2d::from_vec(ctx, &leaves_flat_u64, &leaves_dims).unwrap();
+}
 
-//         let nodes_u64: Vec<u64> = ctx
-//             .kernel_merkle_tree_full(leaves_flat_fut)
-//             .unwrap()
-//             .to_vec()
-//             .unwrap()
-//             .0;
+#[cfg(test)]
+pub(crate) mod lde_gpu_tests {
+    use super::*;  
+    use crate::kernels::shared;
+    use std::time::Instant;
+    use triton_vm::table::master_table::*;
+    use triton_vm::twenty_first::math::b_field_element::*;
+    use triton_vm::twenty_first::util_types::algebraic_hasher::*;
 
-//         let nodes: Vec<Digest> = nodes_u64
-//             .into_iter()
-//             .map(BFieldElement::new)
-//             .collect::<Vec<_>>()
-//             .chunks_exact(DIGEST_LENGTH)
-//             .map(|chunk| {
-//                 let ch: Digest = chunk.try_into().unwrap();
-//                 ch
-//             })
-//             .collect();
+    // from twenty_first::util_types::algebraic_hasher
+    fn hash_varlen(input: &[BFieldElement]) -> Digest {
+        let mut sponge = Tip5::init();
+        sponge.pad_and_absorb_all(input);
+        let produce: [BFieldElement; RATE] = sponge.squeeze();
 
-//         MerkleTree {
-//             nodes,
-//             _hasher: PhantomData,
-//             _maker: PhantomData,
-//         }
-//     }
-// }
+        Digest::new((&produce[..Digest::LEN]).try_into().unwrap())
+    }
 
-// #[cfg(test)]
-// pub(crate) mod merkle_tree_gpu_tests {
-//     use super::GpuParallel;
-//     use twenty_first::{
-//         shared_math::{
-//             other::random_elements, rescue_prime_digest::Digest,
-//             rescue_prime_regular::RescuePrimeRegular,
-//         },
-//         util_types::{
-//             merkle_tree::{CpuParallel, MerkleTree},
-//             merkle_tree_maker::MerkleTreeMaker,
-//         },
-//     };
 
-//     #[test]
-//     pub fn gpu_cpu_roots_agree_test() {
-//         let exponent = 10;
-//         let size = usize::pow(2, exponent);
-//         let elements: Vec<Digest> = random_elements(size);
+    #[test]
+    fn futhark_tip5_from_digests_same_as_rust(){
 
-//         let cpu_tree: MerkleTree<RescuePrimeRegular, CpuParallel> =
-//             CpuParallel::from_digests(&elements[..]);
-//         let cpu_root = cpu_tree.get_root();
-//         let gpu_root = GpuParallel::root_from_digests(&elements[..]);
+        // multiple checks for same final digest from tip5
+        for i in 0..20 {
 
-//         println!("CPU: {cpu_root}, GPU: {gpu_root}");
-//         assert_eq!(cpu_root, gpu_root)
-//     }
+            // collect digests
+            let mut leafs: Vec<Digest> = vec![];
+            for j in 0..64 {
+                leafs.push(hash_varlen(&[bfe![i + j as u64]]));
+            }
+            
+            // compute digest both in rust and futhark
+            let actual_nodes: Vec<Digest> = MerkleTree::new::<CpuParallel>(&leafs).unwrap().nodes().to_vec();
+            let futhark_nodes: Vec<Digest> = GpuParallel::from_digests_tip5_kernel(&leafs).unwrap();
+            
+            for i in 0..actual_nodes.len() {
+                assert_eq!(actual_nodes[i], futhark_nodes[i]);
+            }
+        }
+    }
 
-//     #[test]
-//     pub fn gpu_cpu_trees_agree_test() {
-//         let exponent = 10;
-//         let size = usize::pow(2, exponent);
-//         let elements: Vec<Digest> = random_elements(size);
-
-//         let cpu_tree: MerkleTree<RescuePrimeRegular, CpuParallel> =
-//             CpuParallel::from_digests(&elements[..]);
-//         let cpu_nodes = cpu_tree.nodes;
-//         let gpu_tree = GpuParallel::from_digests(&elements[..]);
-//         let gpu_nodes = gpu_tree.nodes;
-
-//         assert_eq!(cpu_nodes, gpu_nodes)
-//     }
-// }
+}
