@@ -15,32 +15,22 @@ def is_power_of_two (n: i64) : bool =
     n > 0 && (n & (n - 1)) == 0
 
 -- requires number of digests be a power of 2 and non-zero
-def from_digests (digests: []Digest) : MerkleTree  = 
-    
-    -- ensure valid input when getting leaf count
-    let valid_digests: bool = (length digests > 0) && (is_power_of_two (length digests))
-    let leafs_count: i64 = assert (valid_digests) (length digests)
+def from_digests (digests: []Digest) : MerkleTree = 
 
-    -- init nodes as current digests
-    let nodes = copy digests
+  -- ensure valid input when getting leaf count 
+  let valid_input: bool = (length digests > 0) && (is_power_of_two (length digests))
+  let leaf_count: i64 = assert (valid_input) (length digests)
 
-    -- digest calculation
-    let (nodes, _) =
-        loop (nodes, node_count_on_this_level) = (nodes, leafs_count) while node_count_on_this_level > 1 do
-            -- update node count
-            let node_count_on_next_level = node_count_on_this_level // 2
-            -- hash pairs
-            let collect_and_hash = \i ->
-                let left = nodes[i]
-                let right = nodes[i+1]
-                in Tip5.hash_pair left right 
-            let local_digests = map collect_and_hash (iota node_count_on_next_level)
-            -- append to current nodes
-            let nodes = local_digests ++ nodes
-            in (nodes, node_count_on_next_level)
-    -- append unused nodes[0] to make length a power of 2
-    let nodes = [default_digest] ++ nodes
-    in { nodes = nodes } :> MerkleTree
+  -- intilize node state
+  let init_nodes: []Digest = (replicate (length digests) default_digest) ++ digests
+  
+  -- sequential method
+  let iter_through: []i64 = 1...(leaf_count - 1)
+  let iter_through_rev = reverse_array_i64 iter_through
+  let nodes = loop nodes = init_nodes for i in iter_through_rev do
+    nodes with [i] = Tip5.hash_pair (copy nodes[i * 2]) (copy nodes[(i * 2) + 1])
+  in { nodes = nodes } :> MerkleTree
+
 
 -- ==
 -- entry: test_from_digests
