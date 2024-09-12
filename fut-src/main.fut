@@ -6,7 +6,7 @@ module xfe_poly = import "xfe_poly"
 module ArithmeticDomain = import "arithmetic_domain"
 module master_base_table_module = import "master_base_table"
 module master_ext_table = import "master_ext_table"
-module SpongeWithPendingAbsorb = master_ext_table.SpongeWithPendingAbsorb
+module SpongeWithPendingAbsorb = import "sponge_with_pending_absorb"
 module MerkleTree = import "MerkleTree"
 module Digest = import "Digest"
 module Tip5 = import "Tip5"
@@ -20,6 +20,7 @@ type~ MasterBaseTable [rows] [cols] = master_base_table_module.MasterBaseTable [
 type MasterExtTable [rows] [cols] = master_ext_table.MasterExtTable [rows] [cols]
 type Digest = Digest.Digest
 type~ MerkleTree = MerkleTree.MerkleTree
+type SpongeWithPendingAbsorb = SpongeWithPendingAbsorb.SpongeWithPendingAbsorb
 
 let NUM_COLUMNS = master_ext_table.NUM_COLUMNS
 
