@@ -4,6 +4,7 @@ module XFieldElement = import "XFieldElement"
 module bfe_poly = import "bfe_poly"
 module xfe_poly = import "xfe_poly"
 module ArithmeticDomain = import "arithmetic_domain"
+module master_base_table_module = import "master_base_table"
 module master_ext_table = import "master_ext_table"
 module SpongeWithPendingAbsorb = master_ext_table.SpongeWithPendingAbsorb
 module MerkleTree = import "MerkleTree"
@@ -12,8 +13,10 @@ module Tip5 = import "Tip5"
 
 type XFieldElement = XFieldElement.XFieldElement
 type BFieldElement = BFieldElement.BFieldElement
+type BfePolynomial [n] = bfe_poly.BfePolynomial [n]
 type XfePolynomial [n] = xfe_poly.XfePolynomial [n]
 type ArithmeticDomain = ArithmeticDomain.ArithmeticDomain
+type~ MasterBaseTable [rows] [cols] = master_base_table_module.MasterBaseTable [rows] [cols]
 type MasterExtTable [rows] [cols] = master_ext_table.MasterExtTable [rows] [cols]
 type Digest = Digest.Digest
 
@@ -31,6 +34,42 @@ entry test_array_conversion_does_not_change_data (u64_table: [][][3]u64) : [][][
       map (map (\x -> XFieldElement.new_from_raw_u64_arr x)) u64_table
     -- [][]XFieldElement --> [][][3]u64
     in map (map (\x -> XFieldElement.to_raw_u64_arr x)) xfe_table
+
+-- low degree extension of master base table
+entry lde_master_base_table_kernel
+  (randomized_trace_domain_offset: u64) 
+  (randomized_trace_domain_gen: u64) 
+  (randomized_trace_domain_len: i64)
+  (randomized_trace_table: [][]u64)
+  : [][]u64 = 
+
+    -- [][]u64 -> [][]BFieldElement
+    let randomized_trace_table : [][]BFieldElement = 
+      map (map (\x -> BFieldElement.from_raw_u64 x)) randomized_trace_table
+
+    -- to arithmetic domain
+    let randomized_trace_domain: ArithmeticDomain = {
+      offset = { 0 = randomized_trace_domain_offset} :> BFieldElement,
+      generator = {0 = randomized_trace_domain_gen } :> BFieldElement,
+      len = randomized_trace_domain_len
+    }
+
+    -- package table
+    let master_base_table =  {   
+        randomized_trace_domain,
+        randomized_trace_table
+    } :> MasterBaseTable [] []
+
+    -- run lde
+    let interpolant_polynomials: []BfePolynomial[] =
+      master_base_table_module.low_degree_extend_all_columns master_base_table
+
+
+    let poly_coeff_values: [][]u64 = 
+      map (\poly -> map BFieldElement.to_raw_u64 poly.coefficients) interpolant_polynomials    
+
+    in poly_coeff_values
+
 
 -- Note, the u64 values passed into this kernel are raw coefficient values for Xfe/Bfe/...
 -- This is not that same as what is returned by .value()/BFieldElement.value() 
