@@ -43,6 +43,52 @@ pub fn arbitrary_arr_u64_3d() -> Array_u64_3d {
 }
 
 // runs stark prove on a given program, stops proving right before 
+// LDE of the MasterBaseTable is reached. Returns the MasterBaseTable 
+// at that point.
+pub fn prove_until_master_base_table_lde(
+    program: Program, 
+    public_input: PublicInput, 
+    non_determinism: NonDeterminism
+) -> MasterBaseTable {
+
+    // pre-flight
+    let (aet, public_output) = program.trace_execution(public_input.clone(), non_determinism).unwrap();
+
+    // claim 
+    let claim = Claim {
+        program_digest: program.hash(),
+        input: public_input.individual_tokens,
+        output: public_output,
+    };
+
+    // The default parameters give a (conjectured) security level of 160 bits.
+    let stark = Stark::default();
+
+    // fiat shamir claim
+    let mut proof_stream = proof_stream::ProofStream::new();
+    proof_stream.alter_fiat_shamir_state_with(&claim);
+
+    // derive additional parameters
+    let padded_height = aet.padded_height();
+    let max_degree = stark.derive_max_degree(padded_height);
+    let fri = stark.derive_fri(padded_height).unwrap();
+    let quotient_domain = Stark::quotient_domain(fri.domain, max_degree).unwrap();
+    proof_stream.enqueue(proof_item::ProofItem::Log2PaddedHeight(padded_height.ilog2()));
+
+    // base tables
+    let mut master_base_table =
+        MasterBaseTable::new(&aet, stark.num_trace_randomizers, quotient_domain, fri.domain);
+
+    // pad
+    master_base_table.pad();
+
+    // randomize trace
+    master_base_table.randomize_trace();
+
+    master_base_table
+}
+
+// runs stark prove on a given program, stops proving right before 
 // LDE of the master ExtTable is reached. Returns the MasterExtTable 
 // at that point.
 pub fn prove_until_master_ext_table_lde(

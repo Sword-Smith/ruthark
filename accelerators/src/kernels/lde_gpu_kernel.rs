@@ -14,6 +14,54 @@ use std::error::Error;
 
 impl GpuParallel {
 
+    // encode rust type Array2<BFieldElement> into futhark type [][]u64
+    // works in conjunction with [array_u64_2d_to_array2_bfe]
+    #[allow(dead_code)]
+    fn array2_bfe_to_array_u64_2d( 
+        arr: &Array2<BFieldElement>, 
+        ctx: FutharkContext
+    ) -> Result<Array_u64_2d, Box<dyn Error>> {
+        
+        // record shape and flatten array
+        let rows = arr.nrows();
+        let cols = arr.ncols();
+        let mut flat_vec = Vec::with_capacity(rows * cols);
+        
+        // create flattened vec of raw bfe u64 vals
+        for bfe in arr.iter() {
+            flat_vec.push(bfe.raw_u64());
+        }
+
+        // create 3d array from flattened vec
+        let dim = [rows as i64, cols as i64];
+        let encoded = Array_u64_2d::from_vec(ctx, &flat_vec, &dim)?;
+
+        Ok(encoded)
+    }
+
+    // convert from futhark type [][]u64 into rust type Array<BFieldElement>
+    // works in conjunction with [array2_bfe_to_array_u64_2d]
+    #[allow(dead_code)]
+    fn array_u64_2d_to_array2_bfe(
+        arr: &Array_u64_2d, 
+    ) -> Result<Array2<BFieldElement>,  Box<dyn Error>> {
+
+        // u64 to bfe
+        let (bfe_vals, shape) = arr.to_vec()?;
+        let xfe_vec: Vec<BFieldElement> = GpuParallel::u64_vec_to_bfe_vec(&bfe_vals)?;
+        let original = Array2::from_shape_vec((shape[0] as usize, shape[1] as usize), xfe_vec)?;
+
+        Ok(original)
+    }
+
+    // vec<u64> to vec<BFieldElement>
+    #[allow(dead_code)]
+    fn u64_vec_to_bfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<BFieldElement>, &'static str> {
+        let bfe_vec: Vec<BFieldElement> = 
+            xfe_vals.into_iter().map(|b| {BFieldElement::from_raw_u64(*b)}).collect();
+        Ok(bfe_vec)
+    }
+
     // encode rust type Array2<XFieldElement> into futhark type [][][]u64
     // works in conjunction with [Array_u64_3d_to_Array2_Xfe]
     #[allow(dead_code)]
@@ -194,6 +242,44 @@ pub(crate) mod lde_gpu_tests {
     use super::*;  
     use crate::kernels::shared;
     use std::time::Instant;
+
+    #[test] 
+    pub fn test_array2_bfe_to_array_u64_2d_conversion () {
+
+        // run stark prove until right before LDE
+        let factorial_program = shared::factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+        let master_base_table: MasterBaseTable = 
+            shared::prove_until_master_base_table_lde(factorial_program, public_input, non_determinism);
+
+        // retrieve array 2 from master_ext_table
+        let original_table: Array2<BFieldElement> = 
+            master_base_table.randomized_trace_table.clone();
+        
+
+        // setup futharl context
+        let ctx = FutharkContext::new().unwrap();
+
+        // convert master_ext_table.randomized_trace_table to Array_u64_3d
+        let table_as_array2 = GpuParallel::array2_bfe_to_array_u64_2d(
+            &original_table, 
+            ctx
+        ).unwrap();
+
+        // convert back to Array2<BFieldElement>
+        let result: Array2<BFieldElement> = GpuParallel::array_u64_2d_to_array2_bfe(
+            &table_as_array2
+        ).unwrap();
+
+        // compare out with original arr
+        assert!(result.dim() == original_table.dim());
+        for i in 0..original_table.nrows() {
+            for j in 0..original_table.ncols() {
+                assert_eq!(result[[i, j]], original_table[[i, j]]);       
+            }
+        }        
+    }
 
     #[test] 
     pub fn test_array2_xfe_to_array_u64_3d_conversion () {
