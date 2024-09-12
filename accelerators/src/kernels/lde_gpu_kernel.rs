@@ -87,22 +87,33 @@ impl GpuParallel {
         Ok(digests)  
     }
 
-    pub fn master_ext_table_merkle_tree_root_gpu(
+    pub fn master_ext_table_merkle_tree_kernel(
         interpolants: Array_u64_3d,
         fri_domain_offset: BFieldElement,
         fri_domain_generator: BFieldElement,
         fri_domain_length: i64,
-     ) -> Result<Array_u64_1d, Box<dyn Error>> {
+     ) -> Result<Vec<Digest>, Box<dyn Error>> {
 
-        let mut ctx = FutharkContext::new()?;
-        let result = ctx.master_ext_table_merkle_tree_root(
-            interpolants,
+        // run futhark kernel
+        let mut ctx = FutharkContext::new()?; 
+        let result: Array_u64_2d = ctx.master_ext_table_merkle_tree_kernel(
+            interpolants, 
             fri_domain_offset.raw_u64(),
             fri_domain_generator.raw_u64(),
             fri_domain_length
         )?;
-        
-        Ok(result)
+
+        // covnert raw output back to digests
+        let (flat_u64_result_vec, _) = result.to_vec()?;
+        let digests: Vec<Digest> =  flat_u64_result_vec.chunks(Digest::LEN).map(|chunk| {
+            // digest u64 vals -> bfe
+            let bfe_vec: Vec<BFieldElement> = 
+                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
+            // new digest
+            Digest::new([bfe_vec[0], bfe_vec[1], bfe_vec[2], bfe_vec[3], bfe_vec[4]])
+        }).collect();
+
+        Ok(digests)  
     }
 }   
 
