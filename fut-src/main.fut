@@ -19,6 +19,7 @@ type ArithmeticDomain = ArithmeticDomain.ArithmeticDomain
 type~ MasterBaseTable [rows] [cols] = master_base_table_module.MasterBaseTable [rows] [cols]
 type MasterExtTable [rows] [cols] = master_ext_table.MasterExtTable [rows] [cols]
 type Digest = Digest.Digest
+type~ MerkleTree = MerkleTree.MerkleTree
 
 let NUM_COLUMNS = master_ext_table.NUM_COLUMNS
 
@@ -105,23 +106,30 @@ entry lde_master_ext_table_kernel
 
     in poly_coeff_values
 
--- NOTE: this entry point assumes it is receicing the Array_u64_3d that was output
--- by the call of lde_master_ext_table_kernel above
-entry master_ext_table_merkle_tree_root 
+-- -- NOTE: this entry point assumes it is receicing the Array_u64_3d that was output
+-- -- by the call of lde_master_ext_table_kernel above
+entry master_ext_table_merkle_tree_kernel
   (interpolants: [][][3]u64)
   (fri_domain_offset: u64) (fri_domain_gen: u64) (fri_domain_len: i64)
-  : [Digest.DIGEST_LENGTH]u64 =  
-  -- convert data into correct format
-  let xfe_polys: []XfePolynomial[]  = 
-    map (\poly -> xfe_poly.new_from_raw_u64_arr poly) interpolants
-  let fri_domain = ArithmeticDomain.new 
-                  (BFieldElement.from_raw_u64 fri_domain_offset) 
-                  (BFieldElement.from_raw_u64 fri_domain_gen) 
-                  fri_domain_len
-  -- compute merkle tree and return root
-  let merkle_tree = master_ext_table.merkle_tree xfe_polys fri_domain
-  let root_node: Digest = merkle_tree.nodes[MerkleTree.ROOT_INDEX]
-  in map BFieldElement.to_raw_u64 root_node.0
+  : [][]u64 =  
+
+    -- correct data format
+    let interpolants: []XfePolynomial[] = 
+      map (map XFieldElement.new_from_raw_u64_arr) interpolants  
+      |> map xfe_poly.new 
+
+    let fri_domain = ArithmeticDomain.new 
+      (BFieldElement.from_raw_u64 fri_domain_offset) 
+      (BFieldElement.from_raw_u64 fri_domain_gen) 
+      fri_domain_len
+
+    -- hash all fri domain rows JIT
+    let hashed_rows: []Digest = 
+      master_ext_table.hash_all_fri_domain_rows_just_in_time interpolants fri_domain
+
+    -- compute merkle tree
+    let merkle_tree: MerkleTree = MerkleTree.from_digests hashed_rows
+    in map (\x -> map BFieldElement.to_raw_u64 x.0) merkle_tree.nodes
 
 -- hashes a variable length input of raw bfe u64 internal values
 entry tip5_hash_varlen_kernel (input: []u64) : []u64 =
