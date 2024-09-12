@@ -14,6 +14,9 @@ def default_digest : Digest =
 def is_power_of_two (n: i64) : bool =
     n > 0 && (n & (n - 1)) == 0
 
+def reverse_array_i64 [n] (arr: [n]i64) : [n]i64 =
+  map (\i -> arr[n - 1 - i]) (iota n)
+
 -- requires number of digests be a power of 2 and non-zero
 def from_digests (digests: []Digest) : MerkleTree = 
 
