@@ -1,4 +1,4 @@
-use gpu_accelerator::{FutharkContext, Array_u64_3d}; // <-- Library must be generated for this to import
+use gpu_accelerator::{FutharkContext, Array_u64_3d, Array_u64_2d}; // <-- Library must be generated for this to import
 
 extern crate triton_vm;
 use triton_vm::prelude::*;    
@@ -39,6 +39,15 @@ pub fn arbitrary_arr_u64_3d() -> Array_u64_3d {
         ctx,
         &(0..108).collect::<Vec<u64>>(),
         &[6, 6, 3]
+    ).unwrap()
+}
+
+pub fn arbitrary_arr_u64_2d() -> Array_u64_2d {
+    let ctx = FutharkContext::new().unwrap();
+    Array_u64_2d::from_vec(
+        ctx,
+        &(0..81).collect::<Vec<u64>>(),
+        &[9, 9]
     ).unwrap()
 }
 
