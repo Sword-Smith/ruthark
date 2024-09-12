@@ -13,6 +13,30 @@ use ndarray::Array2;
 use std::error::Error;
 
 impl GpuParallel {
+    
+    // Recieves MasterBaseTable prior to LDE, unpacks it and does conversion, calls futhark lde entry point
+    pub fn master_base_table_lde(master_base_table: MasterBaseTable) -> Result<Array_u64_2d, Box<dyn Error>> {
+        let mut ctx = FutharkContext::new()?;
+    
+        // create 2d u64 array from flattened vec
+        let randomized_trace_domain = GpuParallel::array2_bfe_to_array_u64_2d(
+            &master_base_table.randomized_trace_table, 
+            ctx
+        )?;
+    
+        // call Gpu kernel
+        let result = ctx.lde_master_base_table_kernel(
+    
+            // randomized trace domain
+            master_base_table.randomized_trace_domain.offset.raw_u64(),
+            master_base_table.randomized_trace_domain.generator.raw_u64(),
+            master_base_table.randomized_trace_domain.length as i64,
+    
+            // randomized_trace_table
+            randomized_trace_domain,
+        )?;
+        Ok(result)
+    }
 
     // Recieves MasterExtTable prior to LDE, unpacks it and does conversion, calls LDE_gpu_kernel
     pub fn master_ext_table_lde(master_ext_table: MasterExtTable) -> Result<Array_u64_3d, Box<dyn Error>> {
@@ -22,7 +46,7 @@ impl GpuParallel {
         let randomized_trace_domain = GpuParallel::array2_xfe_to_array_u64_3d(
             &master_ext_table.randomized_trace_table, 
             ctx
-        )?;
+        )?;        
 
         // call Gpu kernel
         let result = ctx.lde_master_ext_table_kernel(
@@ -125,7 +149,48 @@ pub(crate) mod lde_gpu_tests {
     use std::time::Instant;
 
     #[test]
-    pub fn futhark_lde_same_as_rust() {
+    pub fn futhark_master_base_table_lde_same_as_rust() {
+
+        // program + inputs
+        let factorial_program = shared::factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+
+        // run stark prover until right before MasterExtensionTable LDE
+        let mut master_base_table: MasterBaseTable = 
+            shared::prove_until_master_base_table_lde(factorial_program, public_input, non_determinism);
+
+        // perform low degree extension using futhark implementation
+        let raw_output: Array_u64_2d = 
+            GpuParallel::master_base_table_lde(master_base_table.clone()).unwrap();
+
+        let interpolant_polynomials = 
+                GpuParallel::array_u64_2d_to_array_bfe_polynomial(&raw_output).unwrap();
+    
+
+        // perform low degree extension using rust implementation
+        master_base_table.low_degree_extend_all_columns();    
+        let rust_interpolant_polys = 
+            master_base_table.interpolation_polynomials.clone().unwrap();
+        
+        // ensure all columns interpolated
+        assert_eq!(
+            interpolant_polynomials.len(),
+            rust_interpolant_polys.len(), 
+            "incorrect number of polynomials from futhark"
+        );
+
+        // compare rust and futhark interpolant polynomials
+        for (rust_poly, futhark_poly) in rust_interpolant_polys.iter().zip(interpolant_polynomials.iter()) {
+
+            // assert same coeff len
+            assert_eq!(rust_poly.degree(), futhark_poly.degree());
+            assert_eq!(rust_poly, futhark_poly);
+        }
+    }
+
+    #[test]
+    pub fn futhark_master_ext_table_lde_same_as_rust() {
 
         // program + inputs
         let factorial_program = shared::factorial_program();
@@ -158,9 +223,6 @@ pub(crate) mod lde_gpu_tests {
 
         // compare rust and futhark interpolant polynomials
         for (rust_poly, futhark_poly) in rust_interpolant_polys.iter().zip(interpolant_polynomials.iter()) {
-
-            println!("rust poly num coeffs: {:?}", rust_poly.coefficients.len());
-            println!("futhark poly num coeffs: {:?}", futhark_poly.coefficients.len());
 
             // assert same coeff len
             assert_eq!(rust_poly.degree(), futhark_poly.degree());
