@@ -1,4 +1,4 @@
-use gpu_accelerator::{FutharkContext, Array_u64_3d, Array_u64_1d}; // <-- Library must be generated for this to import
+use gpu_accelerator::{FutharkContext, Array_u64_3d, Array_u64_2d, Array_u64_1d}; // <-- Library must be generated for this to import
 use super::gpu_parallel::GpuParallel;
 
 extern crate triton_vm;

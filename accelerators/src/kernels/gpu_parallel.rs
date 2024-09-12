@@ -1,4 +1,12 @@
-use gpu_accelerator::FutharkContext;
+use gpu_accelerator::{FutharkContext, Array_u64_3d, Array_u64_2d, Array_u64_1d}; // <-- Library must be generated for this to import
+
+extern crate triton_vm;
+use triton_vm::prelude::*;    
+use triton_vm::twenty_first::math::x_field_element::EXTENSION_DEGREE;
+use triton_vm::twenty_first::math::polynomial::*;
+use ndarray::Array2;
+use std::error::Error;
+
 
 /**
  * GpuParallel is a struct with methods for interacting with GPU kernels 
@@ -24,7 +32,6 @@ use gpu_accelerator::FutharkContext;
 
 #[derive(Debug)]
 pub struct GpuParallel;
-extern crate triton_vm;
 
 impl GpuParallel {
 
@@ -39,7 +46,7 @@ impl GpuParallel {
     // encode rust type Array2<BFieldElement> into futhark type [][]u64
     // works in conjunction with [array_u64_2d_to_array2_bfe]
     #[allow(dead_code)]
-    fn array2_bfe_to_array_u64_2d( 
+    pub fn array2_bfe_to_array_u64_2d( 
         arr: &Array2<BFieldElement>, 
         ctx: FutharkContext
     ) -> Result<Array_u64_2d, Box<dyn Error>> {
@@ -64,7 +71,7 @@ impl GpuParallel {
     // convert from futhark type [][]u64 into rust type Array<BFieldElement>
     // works in conjunction with [array2_bfe_to_array_u64_2d]
     #[allow(dead_code)]
-    fn array_u64_2d_to_array2_bfe(
+    pub fn array_u64_2d_to_array2_bfe(
         arr: &Array_u64_2d, 
     ) -> Result<Array2<BFieldElement>,  Box<dyn Error>> {
 
@@ -78,7 +85,7 @@ impl GpuParallel {
 
     // vec<u64> to vec<BFieldElement>
     #[allow(dead_code)]
-    fn u64_vec_to_bfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<BFieldElement>, &'static str> {
+    pub fn u64_vec_to_bfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<BFieldElement>, &'static str> {
         let bfe_vec: Vec<BFieldElement> = 
             xfe_vals.into_iter().map(|b| {BFieldElement::from_raw_u64(*b)}).collect();
         Ok(bfe_vec)
@@ -87,7 +94,7 @@ impl GpuParallel {
     // encode rust type Array2<XFieldElement> into futhark type [][][]u64
     // works in conjunction with [Array_u64_3d_to_Array2_Xfe]
     #[allow(dead_code)]
-    fn array2_xfe_to_array_u64_3d(
+    pub fn array2_xfe_to_array_u64_3d(
         arr: &Array2<XFieldElement>, 
         ctx: FutharkContext
     ) -> Result<Array_u64_3d, Box<dyn Error>> {
@@ -114,7 +121,7 @@ impl GpuParallel {
     // convert from futhark type [][][]u64 into rust type Array2<XFieldElement>
     // works in conjunction with [Array2_Xfe_to_Array_u64_3d]
     #[allow(dead_code)]
-    fn array_u64_3d_to_array2_xfe(
+    pub fn array_u64_3d_to_array2_xfe(
         arr: &Array_u64_3d, 
     ) -> Result<Array2<XFieldElement>,  Box<dyn Error>> {
 
@@ -131,7 +138,7 @@ impl GpuParallel {
 
     // vec<u64> to vec<XFieldElement>
     #[allow(dead_code)]
-    fn u64_vec_to_xfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<XFieldElement>, &'static str> {
+    pub fn u64_vec_to_xfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<XFieldElement>, &'static str> {
         if xfe_vals.len() % 3 != 0 {
             return Err("xfe u64 values vec must be a multiple of 3");
         }
@@ -149,7 +156,7 @@ impl GpuParallel {
     
     // convert from futhark type [][][]u64 into rust type Vec<Polynomial<XFieldElement>>
     #[allow(dead_code)]
-    fn array_u64_3d_to_array_xfe_polynomial(
+    pub fn array_u64_3d_to_array_xfe_polynomial(
         arr: &Array_u64_3d, 
     ) -> Result <Vec<Polynomial<XFieldElement>>, Box<dyn Error>> {
 
@@ -168,7 +175,7 @@ impl GpuParallel {
 
     // bfe vec rust to genfut type
     #[allow(dead_code)]
-    fn bfe_vec_to_array_u64_1d(input: &[BFieldElement], ctx: &mut FutharkContext) -> Array_u64_1d {
+    pub fn bfe_vec_to_array_u64_1d(input: &[BFieldElement], ctx: &mut FutharkContext) -> Array_u64_1d {
         let input_u64_vec = input.iter().map(|b| b.raw_u64()).collect::<Vec<u64>>();
         Array_u64_1d::from_vec(*ctx, &input_u64_vec, &[input_u64_vec.len() as i64]).unwrap()
     }
