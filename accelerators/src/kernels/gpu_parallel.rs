@@ -201,12 +201,14 @@ impl GpuParallel {
     }
 }
 
+
 #[cfg(test)]
 pub(crate) mod gpu_kernel_tests {
-    use super::GpuParallel;
-    use triton_vm::prelude::*;
+    use super::*;
+    // use super::GpuParallel;
     use crate::kernels::shared;
-
+    use triton_vm::table::master_table::*;
+    use ndarray::Array2;
 
     #[test]
     pub fn gpu_kernel_works() {
@@ -214,7 +216,6 @@ pub(crate) mod gpu_kernel_tests {
         let number_plus_1 = GpuParallel::test_gpu_kernels(number);
         assert!(number_plus_1 == number + 1);
     }
-
 
     #[test]
     pub fn test_can_use_triton_vm_constructs() {
@@ -283,10 +284,10 @@ pub(crate) mod gpu_kernel_tests {
             println!("Executing the program took at most {upper_bound_of_execution_steps} cycles.");
     }
 
-
     #[test]
     pub fn test_array_u64_2d_to_array_bfe_polynomial(){
         
+
         // create 2d u64 array
         let arr_u64_2d = shared::arbitrary_arr_u64_2d();
 
@@ -301,6 +302,160 @@ pub(crate) mod gpu_kernel_tests {
             for (coeff, bfe) in poly.coefficients.iter().zip(row.iter()) {
                 assert_eq!(coeff, bfe);
             }
+        }
+    }
+
+    #[test] 
+    pub fn test_array2_bfe_to_array_u64_2d_conversion () {
+
+        // run stark prove until right before LDE
+        let factorial_program = shared::factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+        let master_base_table: MasterBaseTable = 
+            shared::prove_until_master_base_table_lde(factorial_program, public_input, non_determinism);
+
+        // retrieve array 2 from master_ext_table
+        let original_table: Array2<BFieldElement> = 
+            master_base_table.randomized_trace_table.clone();
+        
+
+        // setup futharl context
+        let ctx = FutharkContext::new().unwrap();
+
+        // convert master_ext_table.randomized_trace_table to Array_u64_3d
+        let table_as_array2 = GpuParallel::array2_bfe_to_array_u64_2d(
+            &original_table, 
+            ctx
+        ).unwrap();
+
+        // convert back to Array2<BFieldElement>
+        let result: Array2<BFieldElement> = GpuParallel::array_u64_2d_to_array2_bfe(
+            &table_as_array2
+        ).unwrap();
+
+        // compare out with original arr
+        assert!(result.dim() == original_table.dim());
+        for i in 0..original_table.nrows() {
+            for j in 0..original_table.ncols() {
+                assert_eq!(result[[i, j]], original_table[[i, j]]);       
+            }
+        }        
+    }
+
+    #[test] 
+    pub fn test_array2_xfe_to_array_u64_3d_conversion () {
+
+        // run stark prove until right before LDE
+        let factorial_program = shared::factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+        let master_ext_table: MasterExtTable = 
+            shared::prove_until_master_ext_table_lde(factorial_program, public_input, non_determinism);
+
+        // retrieve array 2 from master_ext_table
+        let original_table: Array2<XFieldElement> = 
+            master_ext_table.randomized_trace_table.clone();
+        
+
+        // setup futharl context
+        let ctx = FutharkContext::new().unwrap();
+
+
+        // convert master_ext_table.randomized_trace_table to Array_u64_3d
+        let table_as_array2 = GpuParallel::array2_xfe_to_array_u64_3d(
+            &original_table, 
+            ctx
+        ).unwrap();
+
+        // convert back to Array2<XFieldElement>
+        let result: Array2<XFieldElement> = GpuParallel::array_u64_3d_to_array2_xfe(
+            &table_as_array2
+        ).unwrap();
+
+        // compare out with original arr
+        assert!(result.dim() == original_table.dim());
+        for i in 0..original_table.nrows() {
+            for j in 0..original_table.ncols() {
+                assert_eq!(result[[i, j]], original_table[[i, j]]);       
+            }
+        }        
+    }
+
+    #[test]
+    pub fn test_array_u64_3d_to_array_xfe_polynomial(){
+        
+
+        // create 3d array
+        let arr_u64_3d = shared::arbitrary_arr_u64_3d();
+
+        // convert to 2d array of XFieldElement
+        let xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&arr_u64_3d).unwrap();
+
+        // convert to vex of xfe polys
+        let xfe_polynomials = GpuParallel::array_u64_3d_to_array_xfe_polynomial(&arr_u64_3d).unwrap();
+
+        // coefficients of each polynomial should be equal to the rows of the 2d array
+        for (poly, row) in xfe_polynomials.iter().zip(xfe_arr_2d.outer_iter()) {
+            for (coeff, xfe) in poly.coefficients.iter().zip(row.iter()) {
+                assert_eq!(coeff, xfe);
+            }
+        }
+    }
+
+
+    #[test]
+    pub fn from_vec_to_vec_doesnt_modify_array(){
+
+        // create 3d array
+        let original_array_u64_3d = shared::arbitrary_arr_u64_3d();  
+        
+        // convert to vec
+        let (original_vec, original_shape) = original_array_u64_3d.to_vec().unwrap();
+
+        // convert back to array
+        let ctx = FutharkContext::new().unwrap();
+        let returned = Array_u64_3d::from_vec(
+            ctx,
+            &original_vec,
+            &original_shape
+        ).unwrap();
+
+        // convert back to vec
+        let (returned_vec, returned_shape) = returned.to_vec().unwrap();
+
+        // ensure data integrity
+        assert_eq!(original_shape, returned_shape);
+        for (a, b) in original_vec.iter().zip(returned_vec.iter()) {
+            assert_eq!(a, b);
+        }
+    }
+
+    #[test]
+    pub fn test_rust_conversion_then_futhark_conversion_does_not_modify_data() {
+        let mut ctx = FutharkContext::new().unwrap();
+
+        // create 3d array
+        let original = shared::arbitrary_arr_u64_3d();
+        let (original_vec, original_shape) = original.to_vec().unwrap();
+            
+        // convert to 2d array of XFieldElement
+        let xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&original).unwrap();
+
+        // from array 2, convert to 3d array
+        let u64_arr_3d = GpuParallel::array2_xfe_to_array_u64_3d(&xfe_arr_2d, ctx).unwrap();
+        
+        // send and return w/ futhark conversions
+        let returned_u64_arr_3d = ctx.test_array_conversion_does_not_change_data(u64_arr_3d).unwrap();
+        let (returned_vec, returned_shape) = returned_u64_arr_3d.to_vec().unwrap();
+
+        // convert back to Array_u6
+        let returned_xfe_arr_2d = GpuParallel::array_u64_3d_to_array2_xfe(&returned_u64_arr_3d).unwrap();
+
+        // ensure data integrity
+        assert_eq!(original_shape, returned_shape);
+        for (a, b) in original_vec.iter().zip(returned_vec.iter()) {
+            assert_eq!(a, b);
         }
     }
 }
