@@ -153,7 +153,7 @@ impl GpuParallel {
 
         Ok(xfe_vec)
     }
-    
+
     // convert from futhark type [][][]u64 into rust type Vec<Polynomial<XFieldElement>>
     #[allow(dead_code)]
     pub fn array_u64_3d_to_array_xfe_polynomial(
@@ -173,6 +173,26 @@ impl GpuParallel {
         Ok(poly_vec)
     }
 
+    // convert from futhark type [][][]u64 into rust type Vec<Polynomial<XFieldElement>>
+    #[allow(dead_code)]
+    pub fn array_u64_2d_to_array_bfe_polynomial(
+        arr: &Array_u64_2d, 
+    ) -> Result <Vec<Polynomial<BFieldElement>>, Box<dyn Error>> {
+
+        // convert to 2d array of XFieldElement
+        let bfe_array = GpuParallel::array_u64_2d_to_array2_bfe(arr)?;
+
+        // convert each row to Polynomial<XFieldElement>
+        let mut poly_vec: Vec<Polynomial<BFieldElement>> = Vec::with_capacity(bfe_array.nrows());
+        for row in bfe_array.outer_iter() {
+                let poly = Polynomial { coefficients: row.to_vec(), };
+            poly_vec.push(poly);
+        }
+        
+        Ok(poly_vec)
+    }
+    
+
     // bfe vec rust to genfut type
     #[allow(dead_code)]
     pub fn bfe_vec_to_array_u64_1d(input: &[BFieldElement], ctx: &mut FutharkContext) -> Array_u64_1d {
@@ -185,6 +205,7 @@ impl GpuParallel {
 pub(crate) mod gpu_kernel_tests {
     use super::GpuParallel;
     use triton_vm::prelude::*;
+    use crate::kernels::shared;
 
 
     #[test]
@@ -262,4 +283,24 @@ pub(crate) mod gpu_kernel_tests {
             println!("Executing the program took at most {upper_bound_of_execution_steps} cycles.");
     }
 
+
+    #[test]
+    pub fn test_array_u64_2d_to_array_bfe_polynomial(){
+        
+        // create 2d u64 array
+        let arr_u64_2d = shared::arbitrary_arr_u64_2d();
+
+        // convert to 2d array of XFieldElement
+        let bfe_arr_2d = GpuParallel::array_u64_2d_to_array2_bfe(&arr_u64_2d).unwrap();
+
+        // convert to vex of xfe polys
+        let bfe_polynomials = GpuParallel::array_u64_2d_to_array_bfe_polynomial(&arr_u64_2d).unwrap();
+
+        // coefficients of each polynomial should be equal to the rows of the 2d array
+        for (poly, row) in bfe_polynomials.iter().zip(bfe_arr_2d.outer_iter()) {
+            for (coeff, bfe) in poly.coefficients.iter().zip(row.iter()) {
+                assert_eq!(coeff, bfe);
+            }
+        }
+    }
 }
