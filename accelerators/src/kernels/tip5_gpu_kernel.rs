@@ -56,15 +56,6 @@ impl GpuParallel {
         Digest::new(digest_array)
 
     }
-
-    // rust to genfut type
-    #[allow(dead_code)]
-    fn bfe_vec_to_array_u64_1d(input: &[BFieldElement], ctx: &mut FutharkContext) -> Array_u64_1d {
-    
-        let input_u64_vec = input.iter().map(|b| b.raw_u64()).collect::<Vec<u64>>();
-        Array_u64_1d::from_vec(*ctx, &input_u64_vec, &[input_u64_vec.len() as i64]).unwrap()
-    }
-
 }   
 
 

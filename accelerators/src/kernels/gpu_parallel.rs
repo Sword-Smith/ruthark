@@ -1,6 +1,5 @@
 use gpu_accelerator::FutharkContext;
 
-
 /**
  * GpuParallel is a struct with methods for interacting with GPU kernels 
  * written in Futhark. 
@@ -17,6 +16,10 @@ use gpu_accelerator::FutharkContext;
  * 
  * After this, the generated library (gpu_accelerator in this case) can be 
  * called from rust.
+ * 
+ * 
+ * Methods in the below implementation are either for testing or converting from 
+ * rust types to genfut rust-futahrk interop types.
  */
 
 #[derive(Debug)]
@@ -24,10 +27,150 @@ pub struct GpuParallel;
 extern crate triton_vm;
 
 impl GpuParallel {
+
+    // calls a futhark gpu kernel that adds 1 to a number
     #[allow(dead_code)]
     pub fn test_gpu_kernels(number: u64) -> u64 {
         let mut ctx = FutharkContext::new().unwrap();
         ctx.test_gpu_kernel(number).unwrap()
+    }
+
+
+    // encode rust type Array2<BFieldElement> into futhark type [][]u64
+    // works in conjunction with [array_u64_2d_to_array2_bfe]
+    #[allow(dead_code)]
+    fn array2_bfe_to_array_u64_2d( 
+        arr: &Array2<BFieldElement>, 
+        ctx: FutharkContext
+    ) -> Result<Array_u64_2d, Box<dyn Error>> {
+        
+        // record shape and flatten array
+        let rows = arr.nrows();
+        let cols = arr.ncols();
+        let mut flat_vec = Vec::with_capacity(rows * cols);
+        
+        // create flattened vec of raw bfe u64 vals
+        for bfe in arr.iter() {
+            flat_vec.push(bfe.raw_u64());
+        }
+
+        // create 3d array from flattened vec
+        let dim = [rows as i64, cols as i64];
+        let encoded = Array_u64_2d::from_vec(ctx, &flat_vec, &dim)?;
+
+        Ok(encoded)
+    }
+
+    // convert from futhark type [][]u64 into rust type Array<BFieldElement>
+    // works in conjunction with [array2_bfe_to_array_u64_2d]
+    #[allow(dead_code)]
+    fn array_u64_2d_to_array2_bfe(
+        arr: &Array_u64_2d, 
+    ) -> Result<Array2<BFieldElement>,  Box<dyn Error>> {
+
+        // u64 to bfe
+        let (bfe_vals, shape) = arr.to_vec()?;
+        let xfe_vec: Vec<BFieldElement> = GpuParallel::u64_vec_to_bfe_vec(&bfe_vals)?;
+        let original = Array2::from_shape_vec((shape[0] as usize, shape[1] as usize), xfe_vec)?;
+
+        Ok(original)
+    }
+
+    // vec<u64> to vec<BFieldElement>
+    #[allow(dead_code)]
+    fn u64_vec_to_bfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<BFieldElement>, &'static str> {
+        let bfe_vec: Vec<BFieldElement> = 
+            xfe_vals.into_iter().map(|b| {BFieldElement::from_raw_u64(*b)}).collect();
+        Ok(bfe_vec)
+    }
+
+    // encode rust type Array2<XFieldElement> into futhark type [][][]u64
+    // works in conjunction with [Array_u64_3d_to_Array2_Xfe]
+    #[allow(dead_code)]
+    fn array2_xfe_to_array_u64_3d(
+        arr: &Array2<XFieldElement>, 
+        ctx: FutharkContext
+    ) -> Result<Array_u64_3d, Box<dyn Error>> {
+        
+        // record shape and flatten array
+        let rows = arr.nrows();
+        let cols = arr.ncols();
+        let mut flat_vec = Vec::with_capacity(rows * cols * EXTENSION_DEGREE);
+        
+        // create flattened vec of u64 w/ xfe at each "3-string" of u64
+        for xfe in arr.iter() {
+            for bfe in &xfe.coefficients {
+                flat_vec.push(bfe.raw_u64());
+            }
+        }
+
+        // create 3d array from flattened vec
+        let dim = [rows as i64, cols as i64, EXTENSION_DEGREE as i64];
+        let encoded = Array_u64_3d::from_vec(ctx, &flat_vec, &dim)?;
+
+        Ok(encoded)
+    }
+
+    // convert from futhark type [][][]u64 into rust type Array2<XFieldElement>
+    // works in conjunction with [Array2_Xfe_to_Array_u64_3d]
+    #[allow(dead_code)]
+    fn array_u64_3d_to_array2_xfe(
+        arr: &Array_u64_3d, 
+    ) -> Result<Array2<XFieldElement>,  Box<dyn Error>> {
+
+        // u64 to xfe
+        let (xfe_vals, shape) = arr.to_vec()?;
+        // map Xfe values to XFieldElement
+        let xfe_vec: Vec<XFieldElement> = GpuParallel::u64_vec_to_xfe_vec(&xfe_vals)?;
+
+        // return w/ original shape
+        let original = Array2::from_shape_vec((shape[0] as usize, shape[1] as usize), xfe_vec)?;
+
+        Ok(original)
+    }
+
+    // vec<u64> to vec<XFieldElement>
+    #[allow(dead_code)]
+    fn u64_vec_to_xfe_vec(xfe_vals: &Vec<u64>) -> Result<Vec<XFieldElement>, &'static str> {
+        if xfe_vals.len() % 3 != 0 {
+            return Err("xfe u64 values vec must be a multiple of 3");
+        }
+
+        // map Xfe values to XFieldElement
+        let xfe_vec: Vec<XFieldElement> = xfe_vals.chunks(3).map(|chunk| {
+            // package raw coeffs into Bfe, then into Xfe
+            let bfe_vec: Vec<BFieldElement> = 
+                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
+            XFieldElement { coefficients: [bfe_vec[0], bfe_vec[1], bfe_vec[2]] }
+        }).collect();
+
+        Ok(xfe_vec)
+    }
+    
+    // convert from futhark type [][][]u64 into rust type Vec<Polynomial<XFieldElement>>
+    #[allow(dead_code)]
+    fn array_u64_3d_to_array_xfe_polynomial(
+        arr: &Array_u64_3d, 
+    ) -> Result <Vec<Polynomial<XFieldElement>>, Box<dyn Error>> {
+
+        // convert to 2d array of XFieldElement
+        let xfe_array = GpuParallel::array_u64_3d_to_array2_xfe(arr)?;
+
+        // convert each row to Polynomial<XFieldElement>
+        let mut poly_vec: Vec<Polynomial<XFieldElement>> = Vec::with_capacity(xfe_array.nrows());
+        for row in xfe_array.outer_iter() {
+                let poly = Polynomial { coefficients: row.to_vec(), };
+            poly_vec.push(poly);
+        }
+
+        Ok(poly_vec)
+    }
+
+    // bfe vec rust to genfut type
+    #[allow(dead_code)]
+    fn bfe_vec_to_array_u64_1d(input: &[BFieldElement], ctx: &mut FutharkContext) -> Array_u64_1d {
+        let input_u64_vec = input.iter().map(|b| b.raw_u64()).collect::<Vec<u64>>();
+        Array_u64_1d::from_vec(*ctx, &input_u64_vec, &[input_u64_vec.len() as i64]).unwrap()
     }
 }
 
