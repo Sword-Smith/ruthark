@@ -111,6 +111,35 @@ impl GpuParallel {
         Ok(digests)  
     }
 
+    pub fn master_base_table_merkle_tree_kernel(
+        interpolants: Array_u64_2d,
+        fri_domain_offset: BFieldElement,
+        fri_domain_generator: BFieldElement,
+        fri_domain_length: i64,
+     ) -> Result<Vec<Digest>, Box<dyn Error>> {
+
+        // run futhark kernel
+        let mut ctx = FutharkContext::new()?; 
+        let result: Array_u64_2d = ctx.master_base_table_merkle_tree_kernel(
+            interpolants, 
+            fri_domain_offset.raw_u64(),
+            fri_domain_generator.raw_u64(),
+            fri_domain_length
+        )?;
+
+        // covnert raw output back to digests
+        let (flat_u64_result_vec, _) = result.to_vec()?;
+        let digests: Vec<Digest> =  flat_u64_result_vec.chunks(Digest::LEN).map(|chunk| {
+            // digest u64 vals -> bfe
+            let bfe_vec: Vec<BFieldElement> = 
+                chunk.into_iter().map(|bfe| BFieldElement::from_raw_u64(*bfe)).collect();
+            // new digest
+            Digest::new([bfe_vec[0], bfe_vec[1], bfe_vec[2], bfe_vec[3], bfe_vec[4]])
+        }).collect();
+
+        Ok(digests)  
+    }
+
     pub fn master_ext_table_merkle_tree_kernel(
         interpolants: Array_u64_3d,
         fri_domain_offset: BFieldElement,
@@ -265,7 +294,7 @@ pub(crate) mod lde_gpu_tests {
     }
     
     #[test]
-    pub fn futhark_merkle_tree_same_as_rust() {
+    pub fn futhark_master_ext_table_merkle_tree_same_as_rust() {
 
         // program + inputs
         let factorial_program = shared::factorial_program();
@@ -298,6 +327,42 @@ pub(crate) mod lde_gpu_tests {
             assert_eq!(actual_nodes[i], futhark_nodes[i]);
         }
     }
+
+    #[test]
+    pub fn futhark_master_base_table_merkle_tree_same_as_rust() {
+
+        // program + inputs
+        let factorial_program = shared::factorial_program();
+        let public_input = PublicInput::from([bfe!(3)]);
+        let non_determinism = NonDeterminism::default();
+
+        // run stark prover until right before MasterExtensionTable LDE
+        let mut master_base_table: MasterBaseTable = 
+            shared::prove_until_master_base_table_lde(factorial_program, public_input, non_determinism);
+
+        // perform low degree extension using futhark implementation
+        let interpolant_polynomials: Array_u64_2d = 
+            GpuParallel::master_base_table_lde(master_base_table.clone()).unwrap();
+
+        // get merkle root
+        let futhark_nodes: Vec<Digest> = GpuParallel::master_base_table_merkle_tree_kernel(
+            interpolant_polynomials, 
+            master_base_table.fri_domain.offset,
+            master_base_table.fri_domain.generator,
+            master_base_table.fri_domain.length as i64
+        ).unwrap();
+
+        // perform lde and merklize w/ rust impl
+        master_base_table.low_degree_extend_all_columns();
+        let merkle_tree: MerkleTree = master_base_table.merkle_tree();
+        let actual_nodes: Vec<Digest> = merkle_tree.nodes().to_vec();
+
+        // verify trees are the same
+        for i in 0..actual_nodes.len() {
+            assert_eq!(actual_nodes[i], futhark_nodes[i]);
+        }
+    }
+    
     
     // This test times the entire process of converting rust types to genfut types, running 
     // lde on the GPU, and converting the output returned from the kernel to the GPU back to 
