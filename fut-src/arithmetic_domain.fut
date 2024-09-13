@@ -233,7 +233,6 @@ entry test_domain_values_xfe_over_domain : bool =
     let success = loop success = true for order in orders do
 
         -- generator, offset, domain (w/ offset applied)
-        let generator = BFieldElement.primitive_root order   
         let offset = BFieldElement.generator
         let b_domain: ArithmeticDomain = with_offset (of_length order) offset
 

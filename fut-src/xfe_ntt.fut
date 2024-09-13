@@ -74,7 +74,7 @@ entry xfe_xfe_inv_brings_back_original : bool =
         |> map (\(a, b, c) -> XFieldElement.new (a, b, c))
 
     -- ensure all of each value's coefficients is equal to the index
-    let (success, i) : (bool, i64) = loop (success, i) = (true, 0) while i < n do
+    let (success, _) : (bool, i64) = loop (success, i) = (true, 0) while i < n do
         -- get the coefficients of the Xfe value
         let (a, b, c) = values[i].coefficients
         let coeff_values = map BFieldElement.value [a, b, c]
