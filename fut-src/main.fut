@@ -72,6 +72,29 @@ entry lde_master_base_table_kernel
 
     in poly_coeff_values
 
+-- merklelize master base table
+entry master_base_table_merkle_tree_kernel
+  (interpolants: [][]u64)
+  (fri_domain_offset: u64) (fri_domain_gen: u64) (fri_domain_len: i64)
+  : [][]u64 =  
+
+    -- correct data format
+    let interpolants: []BfePolynomial[] = 
+      map (map BFieldElement.from_raw_u64) interpolants  
+      |> map bfe_poly.new 
+
+    let fri_domain = ArithmeticDomain.new 
+      (BFieldElement.from_raw_u64 fri_domain_offset) 
+      (BFieldElement.from_raw_u64 fri_domain_gen) 
+      fri_domain_len
+
+    -- hash all fri domain rows JIT
+    let hashed_rows: []Digest = 
+      master_base_table_module.hash_all_fri_domain_rows_just_in_time interpolants fri_domain
+
+    -- compute merkle tree
+    let merkle_tree: MerkleTree = MerkleTree.from_digests hashed_rows
+    in map (\x -> map BFieldElement.to_raw_u64 x.0) merkle_tree.nodes
 
 -- Note, the u64 values passed into this kernel are raw coefficient values for Xfe/Bfe/...
 -- This is not that same as what is returned by .value()/BFieldElement.value() 
