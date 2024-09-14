@@ -88,6 +88,45 @@ let authentication_structure_node_indices (num_leafs: i64) (leaf_indices: []i64)
   let sorted_set = merge_sort (<) set_difference
   in reverse sorted_set
 
+-- Generate a de-duplicated authentication structure for the given leaf indices.
+-- If a single index is supplied, the authentication structure is the
+-- authentication path for the indicated leaf.
+--
+-- For example, consider the following Merkle tree.
+--
+-- ```markdown
+--         ──── 1 ────          ╮
+--        ╱           ╲         │
+--       2             3        │
+--      ╱  ╲          ╱  ╲      ├╴ node indices
+--     ╱    ╲        ╱    ╲     │
+--    4      5      6      7    │
+--   ╱ ╲    ╱ ╲    ╱ ╲    ╱ ╲   │
+--  8   9  10 11  12 13  14 15  ╯
+--
+--  0   1  2   3  4   5  6   7  ←── leaf indices
+-- ```
+--
+-- The authentication path for leaf 2, _i.e._, node 10, is nodes [11, 4, 3].
+--
+-- The authentication structure for leafs 0 and 2, _i.e._, nodes 8 and 10
+-- respectively, is nodes [11, 9, 3].
+-- Note how:
+-- - Node 3 is included only once, even though the individual authentication
+--   paths for leafs 0 and 2 both include node 3. This is one part of the
+--   de-duplication.
+-- - Node 4 is not included at all, even though the authentication path for
+--   leaf 2 requires the node: node 4 can be computed from nodes 8 and 9;
+--   the former is supplied explicitly during [verification][verify],
+--   the latter is included in the authentication structure.
+--   This is the other part of the de-duplication.
+--
+-- [verify]: MerkleTreeInclusionProof::verify
+def authentication_structure (self: MerkleTree) (leaf_indices: []i64) : []Digest =
+  let num_leafs = num_leafs self
+  let indices: []i64 = authentication_structure_node_indices num_leafs leaf_indices ROOT_INDEX
+  in map (\idx -> self.nodes[idx]) indices
+
 -- ==
 -- entry: test_from_digests
 -- input {}
