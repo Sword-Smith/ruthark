@@ -1,6 +1,9 @@
 module Tip5 = import "Tip5"
 module Digest = import "Digest"
 module BFieldElement = import "BFieldElement"
+module merge_sort_module = import "./lib/github.com/diku-dk/sorts/merge_sort"
+
+let merge_sort = merge_sort_module.merge_sort
 
 type Digest = Digest.Digest
 type BFieldElement = BFieldElement.BFieldElement
@@ -41,6 +44,50 @@ def from_digests (digests: []Digest) : MerkleTree =
   in { nodes = nodes } :> MerkleTree
 
 
+-- check if an element is in an array
+let in_array_i64 (arr: []i64) (x: i64): bool =
+  reduce (||) false (map (== x) arr)
+
+--adds element to array if it's not already present
+let add_unique_i64 (arr: []i64) (x: i64): []i64 =
+  if in_array_i64 arr x then arr else arr ++ [x]
+
+-- Function to compute the difference between two sets represented as sorted arrays
+let array_difference (set1: []i64) (set2: []i64): []i64 =
+  filter (\x -> not (in_array_i64 set2 x)) set1
+
+-- Function to implement the authentication structure node indices logic
+let authentication_structure_node_indices (num_leafs: i64) (leaf_indices: []i64) (root_index: i64): []i64 =
+  let (node_is_needed, node_can_be_computed) =
+    loop (node_is_needed, node_can_be_computed) = ([], []) for leaf_index in leaf_indices do
+
+      if leaf_index >= num_leafs then
+        ([], [])  -- invalid leaf indices
+      else
+        let initial_node_index = leaf_index + num_leafs
+        let (node_is_needed, node_can_be_computed, _) =
+          loop (node_is_needed, node_can_be_computed, node_index) = (node_is_needed, node_can_be_computed, initial_node_index)
+          while node_index > root_index do
+
+            -- Calculate the sibling index (by flipping the last bit of node_index).
+            let sibling_index = node_index ^ 1
+
+             -- Add the sibling index to node_is_needed if it's not already included.
+            let node_is_needed = add_unique_i64 node_is_needed sibling_index
+
+            -- Add the current node index to node_can_be_computed if it's not already included.
+            let node_can_be_computed = add_unique_i64 node_can_be_computed node_index
+
+            -- Move to the parent node in the next iteration.
+            in (node_is_needed, node_can_be_computed, node_index // 2)
+
+        in (node_is_needed, node_can_be_computed)
+        
+  -- set diff of (needed - can be computed), sort, and reverse
+  let set_difference = array_difference node_is_needed node_can_be_computed
+  let sorted_set = merge_sort (<) set_difference
+  in reverse sorted_set
+
 -- ==
 -- entry: test_from_digests
 -- input {}
@@ -62,3 +109,12 @@ entry test_num_leafs : bool =
     let initial_digests: [16]Digest = map (\_ -> copy default_digest) (iota 16)
     let merkle_tree = from_digests initial_digests 
     in (num_leafs merkle_tree) == 16
+
+-- ==
+-- entry: test_authentication_structure_node_indices
+-- input { 8i64 [0i64, 5i64] }
+-- output {[12i64, 9i64, 7i64, 5i64] }
+-- input { 16i64 [3i64, 5i64, 8i64, 9i64] }
+-- output { [20i64, 18i64, 13i64, 11i64, 8i64, 7i64] }
+entry test_authentication_structure_node_indices (num_leafs: i64) (leaf_indices: []i64) : []i64 =
+  authentication_structure_node_indices num_leafs leaf_indices ROOT_INDEX
