@@ -179,6 +179,15 @@ entry from_digest_tip5_kernel (input: [][]u64) : [][Digest.DIGEST_LENGTH]u64 =
   let nodes = map (\x -> map BFieldElement.to_raw_u64 x.0) merkle_tree.nodes
   in nodes
 
+-- computes authentication structure for merkle tree
+entry authentication_structure_kernel(nodes: [][]u64) (leaf_indices: []i64) : [][]u64 = 
+  let merkle_tree: MerkleTree = map (\x -> map BFieldElement.from_raw_u64 x) nodes
+                        |> map (take Digest.DIGEST_LENGTH)
+                        |> map (\x -> { 0 = x}) 
+                        |>  \x -> {nodes = x} :> MerkleTree
+  let auth_structure = MerkleTree.authentication_structure merkle_tree leaf_indices 
+  in map (\x -> map BFieldElement.to_raw_u64 x.0) auth_structure
+
 -- compures fri domain rows using interpolation polynomials from lde of the 
 -- MasterExtTable, then computes the hash of each w/ SpongeWithPendingAbsorb
 -- (for testing purposes)
