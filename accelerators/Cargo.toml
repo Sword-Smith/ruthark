@@ -12,6 +12,8 @@ itertools = "0.10"
 gpu-accelerator = { path = "../gpu-accelerator" }
 triton-vm = { path = "../triton-vm" }
 ndarray = { version = "0.16", features = ["rayon"] }
+rand = "0.8"
+rand_xorshift = "0.3"
 
 [dev-dependencies.criterion]
 version = "0.4"
