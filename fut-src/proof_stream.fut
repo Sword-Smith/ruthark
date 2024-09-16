@@ -1,6 +1,7 @@
 module Tip5 = import "Tip5"
 module BFieldElement = import "BFieldElement"
 module Digest = import "Digest"
+module bfield_codec = import "bfield_codec"
 
 type Tip5 = Tip5.Tip5
 type BFieldElement = BFieldElement.BFieldElement
@@ -59,6 +60,10 @@ def enqueue_MerkleRoot (proof_stream: ProofStream) (root: Digest) : ProofStream 
     -- merkle root is _in_ the fiat shamir heuristic
     let proof_stream = alter_fiat_shamir_state_with proof_stream root.0
     in proof_stream with items = proof_stream.items ++ root.0
+
+def enqueue_Log2PaddedHeight (proof_stream: ProofStream) (l2ph: u32) : ProofStream =
+    -- merkle root is _not_in_ the fiat shamir heuristic
+    proof_stream with items = proof_stream.items ++ [bfield_codec.encode_u32 l2ph]
 
 -- recieve a merkle root proof item from prover as verifier
 def dequeue_MerkleRoot (proof_stream: ProofStream) : (ProofStream, Digest) = 
