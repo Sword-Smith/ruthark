@@ -22,6 +22,18 @@ def encode_arr_xfe [n]  (arr_xfe: []XFieldElement) : [n]BFieldElement =
         in (i, arr ++ x) 
     in encoded :> [n]BFieldElement
 
+-- u32 to bfe
+def encode_u32 (x: u32) : BFieldElement = u64.u32 x |> BFieldElement.new
+
+-- == 
+-- entry: test_encode_u32 
+-- input { 7u32 }
+-- output { 30064771065u64 }
+-- input { 9735u32 }
+-- output { 41811506616825u64 }
+entry test_encode_u32 (x: u32) : u64 = 
+  encode_u32 x |> BFieldElement.to_raw_u64 
+
 -- == 
 -- entry: test_encode_arr_xfe
 -- input { [1u64, 2u64, 3u64] [3u64, 1u64, 0u64, 0u64, 2u64, 0u64, 0u64, 3u64, 0u64, 0u64] }
