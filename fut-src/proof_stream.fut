@@ -59,3 +59,16 @@ def enqueue_MerkleRoot (proof_stream: ProofStream) (root: Digest) : ProofStream 
     -- merkle root is _in_ the fiat shamir heuristic
     let proof_stream = alter_fiat_shamir_state_with proof_stream root.0
     in proof_stream with items = proof_stream.items ++ root.0
+
+-- recieve a merkle root proof item from prover as verifier
+def dequeue_MerkleRoot (proof_stream: ProofStream) : (ProofStream, Digest) = 
+  -- locate and extract payload
+  let loc: ProofItem = proof_stream.item_locations[length proof_stream.item_locations]
+  let root = take (loc.end_idx - loc.start_idx) (drop loc.start_idx proof_stream.items) 
+             |> \root -> { 0 = root } :> Digest
+  
+  -- fiat shamir
+  let proof_stream' = proof_stream with items_idx = proof_stream.items_idx + 1
+  let proof_stream'' =  alter_fiat_shamir_state_with proof_stream' root.0
+
+  in  (proof_stream'', root)
