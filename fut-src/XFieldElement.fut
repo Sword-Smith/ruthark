@@ -4,6 +4,8 @@ module bfe_poly = import "bfe_poly"
 type BFieldElement = BFieldElement.BFieldElement
 type BfePolynomial [n] = bfe_poly.BfePolynomial [n]
 
+let EXTENSION_DEGREE: i64 = 3
+
 type XFieldElement = { coefficients: (BFieldElement, BFieldElement, BFieldElement) }
 
 -- packages Bfe directly into Xfe
