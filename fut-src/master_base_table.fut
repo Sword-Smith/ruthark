@@ -12,6 +12,8 @@ type SpongeWithPendingAbsorb = SpongeWithPendingAbsorb.SpongeWithPendingAbsorb
 type Digest = Digest.Digest
 type~ MerkleTree = MerkleTree.MerkleTree
 
+let AIR_TARGET_DEGREE: i64 = 4
+
 type~ MasterBaseTable [rows] [cols] = {
 
     -- num_randomizers: i64,
