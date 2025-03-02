@@ -2,7 +2,7 @@
 
 ## What can this GPU accelerator do?
 
-This repository implements a GPU accelerator written in futhark for Neptune's Triton-VM. The GPU kernels are accessible via an API that can be directly incorporated into the triton-vm prover.
+This repository implements a GPU accelerator written in futhark for Neptune's Triton-VM. The GPU kernels are accessible via rust bindings that can be directly incorporated into the triton-vm prover.
 
 The functionalities implemented include:
 
