@@ -1,94 +1,81 @@
 # Ruthark: Exploiting the parallelism in Neptune.
+
+## What can this GPU accelerator do?
+
+This repository implements a GPU accelerator written in futhark for Neptune's Triton-VM. The GPU kernels are accessible via an API that can be directly incorporated into the triton-vm prover.
+
+The functionalities implemented include:
+
+- Low degree extension for the MasterBaseTable
+- Low degree extension for the MasterExtTable
+- Merkle building
+- Tip5 hash function
+
+
 ## Repository setup
-Since we are generating a lot of code, and since we are using git repositories to make this accessible to cargo, we ended up having a balooning repository size. As of late october 2022, this is a quarter of a gigabyte. In order to minimize this, a quick and relatively simple solution is to separate the reposities for the source code and the generated files. So in order to get started, you must:
-0. Enter your workspace: `$ cd <your workspace>`
-1. Clone this repo: `$ git clone ssh://git@neptune.builders:2222/ulrik-dk/gpu-accelerator.git`
-2. Clone the generated repo: `$ git clone ssh://git@neptune.builders:2222/ulrik-dk/ruthark.git`
-3. Make sure the symbolic link `ruthark/gpu-accelerator` points to `../gpu-accelerator/`, and that you have cloned this repository.
 
-## How do I add a kernel to this project?
-0. Set up the repos. See above.
-1. Aquire the software dependencies, see below.
-2. Write a futhark entry-point you want to call.
-3. Compile the whole thing with `make all`. You can also use `make fast`, as long as you have called `make fu`(or `make all`) once.
-4. In the rust project where you want to use the generated code, set the dependency to the path of your generated-code-folder, in your Cargo.toml.
-5. Write your wrapping-code by pattern-matching on the code in [triton-vm-gpu/../gpu_kernels.rs](https://neptune.builders/ulrik-dk/triton-vm-gpu/src/branch/master/triton-vm/src/table/gpu_kernels.rs).
-6. Once you have something you want to put in a PR, please create branches on the target repo, this repo and the gpu-accelerator repo, and commit the code in all three repos.
-## More generally, how do I use Futhark in Rust, if I wanted to start over?
-Ok so you want to create and call GPU code from Rust. It will involve these steps:
+NOTE: I left this project somewhat abruptly due to an opportunity that came my way, so it’s in a bit of a hacky, but functional, state at the moment. Apologies in advance, the setup is a bit involved and would definitely benefit from some refactoring.
 
-0. Aquiring all software dependencies (see the relevant section).
-1. Writing a [futhark entry-point](https://futhark.readthedocs.io/en/latest/language-reference.html#entry-points) in a futhark file, such as `futhark-library/futhark_source/main.fut`.
-2. Creating a rust crate with an executable that depends on [genfut](https://github.com/Ulrik-dk/genfut.git), with a main function that calls `genfut()`, such as is done in `rust-generator/src/main.rs`.
-3. Run this crate, to generate a library, such as `gpu-accelerator`. This will be generated from wherever the executable is run.
-4. Compile the generated library.
-5. Import the generated library in your rust project, and use it, as is done in [triton-vm-gpu/../gpu_kernels.rs](https://neptune.builders/ulrik-dk/triton-vm-gpu/src/branch/master/triton-vm/src/table/gpu_kernels.rs)
-6. This means creating a FutharkContext, transforming your data into Futhark arrays (the rust class), calling the function in the context, (this will be named after your entrypoint in your `main.fut`). The result will then have to be unpacked awaited, unpacked etc.
-7. Please refer to the readinglist at the end of this README for more information on writing Futhark.
+### 1.)
+First run ./setup.sh in the root dir. This will do two things. The first is that it will clone a fork of the triton-vm with some slight modifications necessary for testing (it also runs some code gen on the triton-vm repo). Second, It will run the rust-generator crate, which is a member of the ruthark workspace. This will perform rust code generation that will create rust bindings for the futhark GPU kernels located in the fut-src directory. The result will be a crate called gpu-accelerator that contains those bindings.
 
-## Installation of dependencies
-* Futharks dependencies
-* Futhark
-* CUDA
+### 2.) 
+Also note that by default the accelerator backend in rust-generator/codegen.rs is set to OpenCL, but you can replace this with Cuda or C depending on your hardware. 
 
-### Futhark
-Generally: [Futharks own installation instructions](https://futhark.readthedocs.io/en/latest/installation.html)
-#### macOS
-Futhark is available on Homebrew, and the latest release can be installed via:
 
-`$ brew install futhark`
-Or you can install the unreleased development version with:
+    fn main() {
 
-macOS ships with one OpenCL platform and various devices. One of these devices is always the CPU, which is not fully functional, and is never picked by Futhark by default. You can still select it manually with the usual mechanisms (see Executable Options), but it is unlikely to be able to run most Futhark programs. Depending on the system, there may also be one or more GPU devices, and Futhark will simply pick the first one as always. On multi-GPU MacBooks, this is is the low-power integrated GPU. It should work just fine, but you might have better performance if you use the dedicated GPU instead. On a Mac with an AMD GPU, this is done by passing -dAMD to the generated Futhark executable.
+        genfut(Options {
 
-#### Ubuntu
-```bash
-# Install Futhark (by first installing linuxbrew)
-/bin/bash -c "(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            name: GENERATED_RUST_MODULE_NAME.to_string(),
 
-# Add /home/linuxbrew/.linuxbrew/bin to your PATH:
-export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH # You should add this to your ~/.bashrc
-brew install futhark # No sudo needed!
+            file: std::path::PathBuf::from(FUTHARK_SOURCE_FILE),
 
-# Clone repo
-$ git clone ssh://git@neptune.builders:2222/ulrik-dk/ruthark.git
- 
-# Install `libclang-dev`
-$ sudo apt-get install libclang-dev
+            author: "Name <name@example.com>".to_string(),
 
-# Run the Futhark program
-$ make all
-```
+            version: "0.1.0".to_string(),
 
-#### Arch
-* [the latest futhark release](https://futhark-lang.org/releases/)
-* [futhark dependencies](https://futhark.readthedocs.io/en/latest/installation.html#dependencies)
+            license: "NONE".to_string(),
 
-In the Makefile, there is a sudo-requiring command that generically installs futhark. It should work for all linux distros.
+            description: "Futhark accelerator for Neptune".to_string(),
 
-### CUDA
-* install the cuda package (depending on your distro)
-* arch: community/cuda
-* find your cuda path, and set it as an environment variable (e.g. in your .bashrc, but you probably have a nicer place to put it)
+            backend: Backend::OpenCL, //  <------ or Backend::Cuda or Backend::C
 
-`export MYCUDAPATH=/opt/cuda`
+        })
 
-* put the rest of the path variables there too
+    }
 
-`export CPATH=${MYCUDAPATH}/include:$CPATH`
 
-`export LD_LIBRARY_PATH=${MYCUDAPATH}/lib64/:$LD_LIBRARY_PATH`
+### 3.) 
 
-`export LIBRARY_PATH=${MYCUDAPATH}/lib64:$LIBRARY_PATH`
+Once you have the gpu-accelerators crate generated, you need to modify the Cargo.toml file by changing this line:
 
-### ISPC
-If you want to use the ISPC backend, which can give some appreciable CPU speedup, you can install the dependency, and use it as your backend in your generators call to `genfut()`. WARNING: Compilation may take a very long time.
-* arch: community/ispc
+    members = ["rust-generator"]
 
-## Futhark readinglist
-* [index](https://futhark-lang.org/index.html)
-* [Language Reference](https://futhark.readthedocs.io/en/latest/language-reference.html)
-* [Futhark Compared to Other Functional Languages](https://futhark.readthedocs.io/en/stable/versus-other-languages.html)
-* [Futhark Library Documentation](https://futhark-lang.org/docs/prelude/)
-* [Parallel Programming in Futhark](https://futhark-book.readthedocs.io/en/latest/)
-* [Writing Fast Futhark Programs](https://futhark.readthedocs.io/en/latest/performance.html)
+
+To this:
+
+    members  = ["triton-vm", "gpu-accelerator", "accelerators", "rust-generator"]
+
+### 4.) 
+
+Then you should be able to access the GPU kernels from the accelerators crate, which implements an API that can be incorporated into triton-vm. 
+
+Within gpu-accelerators there is a struct called GpuParallel, which implements methods that can directly replace functions in the triton-vm prover. You should be able to run the following functionalities on the GPU:
+
+
+- low degree extension for the master base table 
+
+- low degree extension for the master extension table 
+
+- Merkle building
+
+- Tip5
+
+### 5.)
+
+If all goes right, all tests should pass when you run *cargo test* in the accelerators directory.
+
+## If you have further issues:
+
+Submit an issue or contact me on telegram @huowli
