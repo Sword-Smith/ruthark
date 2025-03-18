@@ -137,28 +137,28 @@ def new
 
 -- used in lookup table verification
 def offset_fermat_cube_map (x: u16): u16 =
-  let xx = u64.u16(x) + 1 
-  let xxx = xx * xx * xx     
+  let xx = u64.u16(x) + 1
+  let xxx = xx * xx * xx
   let result = (xxx + 256) % 257
-  in u16.u64(result)   
+  in u16.u64(result)
 
 -- split and lookup
-def split_and_lookup 
+def split_and_lookup
   (element: BFieldElement)
-  : BFieldElement = 
+  : BFieldElement =
   -- convert field element value to bytes
   let bytes: [8]u8 = shared.u64_to_bytes_le element.0
-  -- Perform lookup 
-  let updated_bytes = 
+  -- Perform lookup
+  let updated_bytes =
     loop bytes_acc = bytes for i in 0..<8 do
       let index = i32.u8(bytes_acc[i])
       let new_val = LOOKUP_TABLE[index]
       in (bytes_acc with [i] = new_val)
   -- convert to u64, return
   in { 0 = shared.bytes_le_to_u64 updated_bytes }
-  
+
 -- mds generated
-def mds_generated 
+def mds_generated
   (self: *Tip5)  -- * == pass ownership to modify in place
   : Tip5 =
   -- init lo and hi arrs
@@ -186,7 +186,7 @@ def mds_generated
       -- split s bits into hi and lo
       let s_hi: u64 = BFieldElement.u64_from(BFieldElement.u128_right_shift s 64)
       let s_lo: u64 = BFieldElement.u64_from(s)
-      -- overflowing addition of hi and lo 
+      -- overflowing addition of hi and lo
       let (res, over) = BFieldElement.overflowing_add s_lo (s_hi * 0xffffffffu64)
       -- update state[r] depending on overflow
       in state with [r] =
@@ -198,25 +198,25 @@ def mds_generated
   in { state = new_state } :> Tip5
 
   -- sbox
-def sbox_layer 
+def sbox_layer
   (self: *Tip5) -- * == pass ownership
-  : Tip5 = 
+  : Tip5 =
   -- get alias for state
   let state = self.state
-  -- split and lookup 
+  -- split and lookup
   let state = loop state for i in 0..<NUM_SPLIT_AND_LOOKUP do
       let updated_element = split_and_lookup state[i]
       in (state with [i] = updated_element)
-  -- power map 
+  -- power map
   let state = loop state for i in NUM_SPLIT_AND_LOOKUP..<STATE_SIZE do
     let x: BFieldElement = state[i]
     let sq = BFieldElement.mul x x
     let qu = BFieldElement.mul sq sq
     let updated_element = BFieldElement.mul x ( BFieldElement.mul sq  qu)
     in (state with [i] = updated_element)
-  in { state = state } :> Tip5 
+  in { state = state } :> Tip5
 
--- round 
+-- round
 def round
   (round_index: i64)
   (self: *Tip5)
@@ -247,16 +247,16 @@ def hash_pair (left: Digest) (right: Digest) : Digest =
   -- extract the first DIGEST_LENGTH values for return
   let digest_values = take Digest.DIGEST_LENGTH sponge_state.state
   in { 0 = digest_values }
-  
+
 -- Hashes 10 elements or two digests. There is no padding ibc input len is fixed
-def hash_10 (input: [10]BFieldElement) : [Digest.DIGEST_LENGTH]BFieldElement = 
+def hash_10 (input: [10]BFieldElement) : [Digest.DIGEST_LENGTH]BFieldElement =
   -- init sponge state
   let sponge_state = input ++ replicate (STATE_SIZE - 10) BFieldElement.one :> [STATE_SIZE]BFieldElement
   -- package in Tip5 type
   let sponge: Tip5 = { state = sponge_state }
   -- permute
   let sponge_state = permutation sponge
-  -- return the first DIGEST_LENGTH values 
+  -- return the first DIGEST_LENGTH values
   in take Digest.DIGEST_LENGTH sponge_state.state
 
 -- absorb for sponge
@@ -305,7 +305,7 @@ def hash_varlen (input: []BFieldElement) : Digest =
 -- random input { }
 -- output { true }
 entry lookup_table_is_correct : bool =
-  let generated_table : [256]u8 = 
+  let generated_table : [256]u8 =
     map (\i -> u8.u16(offset_fermat_cube_map(u16.i64(i)))) (iota 256)
   in reduce (&&) true (map2 (==) LOOKUP_TABLE generated_table)
 
@@ -317,8 +317,8 @@ entry lookup_table_is_correct : bool =
 -- output { 14986571u64 }
 -- input { 5324675u64 }
 -- output { 6685552u64 }
-entry test_split_and_lookup (x: u64) : u64 = 
-  let field_element = BFieldElement.new x 
+entry test_split_and_lookup (x: u64) : u64 =
+  let field_element = BFieldElement.new x
   let out = split_and_lookup field_element
   in BFieldElement.value(out)
 
@@ -342,7 +342,7 @@ entry test_mds_generated (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
   let tip5: Tip5 = mds_generated tip5
   in map BFieldElement.value tip5.state
 
--- == 
+-- ==
 -- entry: test_round
 -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64, 8u64, 9u64, 10u64, 11u64, 12u64, 13u64, 14u64, 15u64, 16u64] }
 -- output { [13630787642203001902u64, 16896947564003473633u64, 10379470073464134983u64, 1965427456556198464u64, 15232567016277269303u64, 15892661416395869245u64, 3989155112214343120u64, 2851440915057620430u64, 8709159127100967584u64, 3694883791534778133u64, 12692463329003091445u64, 10722336274544247558u64, 12745456772474232568u64, 17932443119992221648u64, 7558121867372096151u64, 15551071123497955001u64] }
@@ -352,7 +352,7 @@ entry test_round (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
   let tip5: Tip5 = round 0 tip5
   in map BFieldElement.value tip5.state
 
--- == 
+-- ==
 -- entry: test_permutation
 -- input { [1u64, 2u64, 3u64, 4u64, 5u64, 6u64, 7u64, 8u64, 9u64, 10u64, 11u64, 12u64, 13u64, 14u64, 15u64, 16u64] }
 -- output { [3738715405479954556u64, 16991178370001441009u64, 1342414182333913173u64, 3805445081528134291u64, 16691165090776765767u64, 12310760454738969197u64, 12434079818696690066u64, 4565885946143111712u64, 10837812882172880148u64, 2010441594153163076u64, 16902475684635846384u64, 6159046892226671443u64, 13255912557551608855u64, 223433057183395922u64, 17068148105184310368u64, 357496177803468966u64]}
@@ -362,7 +362,7 @@ entry test_permutation (input: [STATE_SIZE]u64) : [STATE_SIZE]u64 =
   let tip5: Tip5 = permutation tip5
   in map BFieldElement.value tip5.state
 
--- == 
+-- ==
 -- entry: hash_pair_test
 -- input { [1u64, 1u64, 1u64, 1u64, 1u64] [2u64, 2u64, 2u64, 2u64, 2u64] }
 -- output { [8730289631809914998u64, 1009323861008521215u64, 58075149203029478u64, 10017054356005686881u64, 7147585122682319752u64] }
@@ -381,7 +381,7 @@ entry hash_pair_test (left: [Digest.DIGEST_LENGTH]u64) (right: [Digest.DIGEST_LE
 entry hash10_test_vectors : bool =
   -- create preimage
   let preimage_init: [10]BFieldElement = map (\_ -> BFieldElement.zero) (iota 10)
-  
+
   -- hash preimage multiple
   let final_preimage =
     loop (preimage) = (preimage_init) for i < 6 do
@@ -417,7 +417,7 @@ entry hash10_test_vectors : bool =
   in check_0 && check_1 && check_2 && check_3 && check_4
 
 
--- == 
+-- ==
 -- entry: absorb_test
 -- input { [1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64, 1u64] }
 -- output { [12276694923556208976u64, 7756442493947946745u64, 13743817057173723560u64, 3999954619626529058u64, 3348872667620553407u64, 11714074877412406751u64, 15106843309009503369u64, 9639208608967363300u64, 11549119483956107222u64, 5833668434441772619u64, 12025854796187829337u64, 15309005811211805093u64, 14033860760017979716u64, 2166987574418210223u64, 9392502802113476128u64, 6462878597501194570u64]}
@@ -427,13 +427,13 @@ entry absorb_test (input: [RATE]u64) : [STATE_SIZE]u64 =
   let tip5 = absorb tip5 input
   in map BFieldElement.value tip5.state
 
--- == 
+-- ==
 -- entry: squeeze_test
 -- input { }
 -- output { [9513097171871388188u64, 3642894535466991979u64, 11900176395730479649u64, 2833868294984721560u64, 13162030402806853734u64, 7298820437337462149u64, 7309960967578619849u64, 5771961918525632945u64, 9033987145334062528u64, 17091107411642127967u64, 14491063761991657932u64, 921297860939203994u64, 14761216787163201376u64, 4658636456911727154u64, 16629099993905651428u64, 13073621988708012208u64] [0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64, 0u64] }
-entry squeeze_test : ([STATE_SIZE]u64, [RATE]u64) = 
+entry squeeze_test : ([STATE_SIZE]u64, [RATE]u64) =
   let sponge = new #variable_length
-  let (produce, tip5) = squeeze sponge 
+  let (produce, tip5) = squeeze sponge
   let tip5_values = map BFieldElement.value tip5.state
   let produce_values = map BFieldElement.value produce
   in (tip5_values, produce_values)
@@ -442,13 +442,13 @@ entry squeeze_test : ([STATE_SIZE]u64, [RATE]u64) =
 -- entry: test_pad_and_absorb_all
 -- input { }
 -- output { [3588662367340377189u64, 1674308759493466027u64, 15812284298942888812u64, 7234362949470865885u64, 10691079157494539585u64, 9786430604252666752u64, 9603442183392290278u64, 8950705941670498115u64, 4433355208077567955u64, 1328443036119347625u64, 4821595268274838208u64, 7336820815704793185u64, 7436619006474582588u64, 744124146292718456u64, 2683076373473407838u64, 12204837371088226891u64] }
-entry test_pad_and_absorb_all : [STATE_SIZE]u64 = 
+entry test_pad_and_absorb_all : [STATE_SIZE]u64 =
   let sponge = new #variable_length
   let input = map (\_ -> BFieldElement.one) (iota (RATE * 7 + 3))
   let state = pad_and_absorb_all sponge input
   in map BFieldElement.value state.state
 
--- == 
+-- ==
 -- entry: hash_varlen_test
 -- input { }
 -- output {[3588662367340377189u64, 1674308759493466027u64, 15812284298942888812u64, 7234362949470865885u64, 10691079157494539585u64]}
